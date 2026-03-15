@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>إدارة | Axon Express</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://w.soundcloud.com/player/api.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        :root { --primary-blue: #0A3D62; --primary-red: #b82329; --white: #fff; --light-bg: #f4f7f6; --dark-text: #2c3e50; }
+        html, body { font-family: 'Cairo', sans-serif; margin: 0; background: var(--light-bg); color: var(--dark-text); overflow-x: hidden; scroll-behavior: smooth;}
+        header { background: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary-red); position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
+        .logo { font-size: 22px; font-weight: 900; color: var(--primary-blue);}
+        .logo span { color: var(--primary-red); }
+        .container { padding: 20px; max-width: 1400px; margin: 0 auto;}
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: var(--white); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-blue);}
+        .stat-card h3 { font-size: 15px; margin: 0 0 10px 0; color: #666; }
+        .stat-card .value { font-size: 24px; font-weight: 900; color: var(--primary-blue);}
+        
+        .admin-section { background: var(--white); padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
+        .admin-section h2 { color: var(--primary-blue); border-bottom: 2px solid var(--primary-red); padding-bottom: 10px; margin-top: 0; font-size: 18px;}
+        
+        /* تنسيق الخريطة */
+        #adminMap { height: 450px; width: 100%; border-radius: 12px; border: 3px solid var(--primary-blue); z-index: 1;}
+        
+        .table-wrapper { width: 100%; overflow-x: auto; border-radius: 8px; border: 1px solid #eee;}
+        table { width: 100%; min-width: 800px; border-collapse: collapse; text-align: right; }
+        th, td { padding: 12px; border-bottom: 1px solid #eee; font-size: 13px;}
+        th { background: var(--primary-blue); color: var(--white); }
+        tr:hover { background-color: #f9f9f9; }
+        
+        .btn-action { border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; color: white; margin-left: 3px; font-family: 'Cairo'; font-weight: bold; font-size: 12px; transition: 0.3s;}
+        .btn-save { background: #28a745; } .btn-edit { background: #007bff; } .btn-delete { background: var(--primary-red); } .btn-print { background: #333; } .btn-track { background: #17a2b8; margin-top: 5px; width: 100%; }
+        
+        .status-dropdown { padding: 6px; border-radius: 5px; border: 1px solid #ddd; font-family: 'Cairo'; font-weight: bold; outline: none;}
+        .logout-btn { background: var(--white); border: 2px solid var(--primary-red); color: var(--primary-red); padding: 6px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Cairo';}
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 61, 98, 0.9); align-items: center; justify-content: center; z-index: 2000; padding: 15px;}
+        .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 500px; position: relative;}
+        .modal-content input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo';}
+        .close-btn { position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 24px; cursor: pointer;}
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo"><i class="fa-solid fa-chess-king"></i> إدارة | <span>AXON</span></div>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <button onclick="window.toggleRadio()" style="background:none; border:none; color:var(--primary-red); font-size:24px; cursor:pointer;" title="تشغيل/إيقاف الراديو"><i class="fa-solid fa-radio"></i></button>
+            <button class="logout-btn" onclick="window.logout()">خروج</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card"><h3>إجمالي الشحنات</h3><div class="value" id="totalShipments">0</div></div>
+            <div class="stat-card"><h3>إجمالي التحصيلات</h3><div class="value" id="totalMoney" style="color: #28a745;">0 ج.م</div></div>
+            <div class="stat-card"><h3>طلبات اشتريلي</h3><div class="value" id="totalEshteryly">0</div></div>
+        </div>
+
+        <div class="admin-section">
+            <h2><i class="fa-solid fa-map-location-dot"></i> رادار المناديب (تتبع لايف)</h2>
+            <div id="adminMap"></div>
+        </div>
+
+        <div class="admin-section">
+            <h2><i class="fa-solid fa-basket-shopping"></i> رادار المشتريات (اشتريلي)</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>التاجر والتفاصيل</th><th>العنوان والدفع</th><th>حالة المندوب والتتبع</th></tr></thead>
+                    <tbody id="eshterylyBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="admin-section" style="background: #fffde7; border: 2px dashed #f57f17;">
+            <h2 style="color: #e65100; border-bottom-color: #f57f17;"><i class="fa-solid fa-gas-pump"></i> بورصة الشحن (تحديث فوري للجمهورية)</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 15px;">
+                <div><label style="font-size:13px; font-weight:bold;">الإسكندرية:</label><input type="number" id="priceAlex" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;"></div>
+                <div><label style="font-size:13px; font-weight:bold;">القاهرة والجيزة:</label><input type="number" id="priceCairo" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;"></div>
+                <div><label style="font-size:13px; font-weight:bold;">البحيرة:</label><input type="number" id="priceBeheira" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;"></div>
+                <div><label style="font-size:13px; font-weight:bold;">الدلتا والقناة:</label><input type="number" id="priceDelta" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;"></div>
+                <div><label style="font-size:13px; font-weight:bold;">الصعيد:</label><input type="number" id="priceSaeed" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;"></div>
+            </div>
+            <button onclick="window.updateLivePrices()" style="background: #e65100; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%;">تحديث وإذاعة 📡</button>
+            <p id="lastUpdateText" style="font-size: 11px; color: gray; text-align: center; margin-top: 10px;"></p>
+        </div>
+
+        <div class="admin-section">
+            <h2><i class="fa-solid fa-box"></i> إدارة الشحنات العادية</h2>
+            <input type="text" id="searchInput" placeholder="🔍 بحث في الشحنات..." style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd; font-family: 'Cairo';">
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>التاجر</th><th>البوليصة</th><th>المستلم</th><th>الموبايل</th><th>المدينة/الوزن</th><th>المبلغ</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+                    <tbody id="shipmentsBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="window.closeModal('editModal')">×</button>
+            <h3 style="color: var(--primary-blue); border-bottom: 2px solid var(--primary-red); padding-bottom: 10px;">تعديل الشحنة</h3>
+            <input type="hidden" id="editDocId">
+            <label>المستلم:</label> <input type="text" id="editName">
+            <label>الموبايل:</label> <input type="tel" id="editPhone">
+            <label>احتياطي:</label> <input type="tel" id="editPhone2">
+            <label>المدينة:</label> <input type="text" id="editCity">
+            <label>العنوان:</label> <input type="text" id="editAddress">
+            <label>الوزن (كجم):</label> <input type="number" id="editWeight">
+            <label>المبلغ (COD):</label> <input type="number" id="editAmount">
+            <button id="btnSaveEdit" onclick="window.saveEditedShipment()" style="width:100%; background:var(--primary-blue); color:white; padding:10px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">حفظ التعديلات</button>
+        </div>
+    </div>
+
+    <iframe id="sc-widget-admin" allow="autoplay" style="display:none;" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/artefacts-factory/sets&auto_play=false"></iframe>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const app = initializeApp({
+            apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
+            authDomain: "axon-express-2f534.firebaseapp.com",
+            projectId: "axon-express-2f534",
+            storageBucket: "axon-express-2f534.firebasestorage.app",
+            messagingSenderId: "958528400260",
+            appId: "1:958528400260:web:504ae94f3ef2225b928bd1"
+        });
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // تجهيز الخريطة
+        const adminMap = L.map('adminMap').setView([31.2001, 29.9187], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(adminMap);
+        const courierMarkers = {};
+        window.activeCouriersData = {}; // لحفظ بيانات المناديب عشان زرار التتبع
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) { window.location.href = "index.html"; return; }
+            if (user.email !== "admin@axon.com") {
+                const docSnap = await getDoc(doc(db, "admins", user.uid));
+                if (!docSnap.exists()) { window.location.href = "index.html"; return; }
+            }
+            loadShipments();
+            loadEshteryly();
+            trackCouriers();
+        });
+
+        window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
+
+        // --- تتبع المناديب على الخريطة (الرادار) ---
+        function trackCouriers() {
+            onSnapshot(collection(db, "couriers"), (snap) => {
+                snap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    const id = docSnap.id;
+                    if (data.currentLocation && data.currentLocation.lat && data.status === 'active') {
+                        const pos = [data.currentLocation.lat, data.currentLocation.lng];
+                        window.activeCouriersData[data.name] = { id: id, pos: pos }; // حفظ موقع المندوب باسمه
+
+                        if (courierMarkers[id]) {
+                            courierMarkers[id].setLatLng(pos);
+                        } else {
+                            courierMarkers[id] = L.marker(pos).addTo(adminMap)
+                                .bindPopup(`<div style="text-align:center;"><b>🏍️ كابتن: ${data.name || 'غير معروف'}</b><br><span style="color:green;">متصل الآن 🟢</span></div>`);
+                        }
+                    } else if(courierMarkers[id] && data.status !== 'active') {
+                        adminMap.removeLayer(courierMarkers[id]);
+                        delete courierMarkers[id];
+                        delete window.activeCouriersData[data.name];
+                    }
+                });
+            });
+        }
+
+        // --- دالة التتبع الفردي (الربط بين الجدول والخريطة) ---
+        window.locateCourier = (courierName) => {
+            const courier = window.activeCouriersData[courierName];
+            if (courier && courier.pos) {
+                // النزول للخريطة وعمل زووم
+                document.getElementById('adminMap').scrollIntoView({behavior: 'smooth', block: 'center'});
+                adminMap.setView(courier.pos, 16);
+                if(courierMarkers[courier.id]) {
+                    courierMarkers[courier.id].openPopup();
+                }
+            } else {
+                Swal.fire('غير متاح', 'الكابتن ' + courierName + ' غير متصل حالياً أو الـ GPS مغلق.', 'info');
+            }
+        };
+
+        // --- طلبات اشتريلي ---
+        function loadEshteryly() {
+            onSnapshot(query(collection(db, "eshteryly_orders"), orderBy("timestamp", "desc")), (snap) => {
+                let html = "", count = 0;
+                snap.forEach(docSnap => {
+                    const d = docSnap.data(), id = docSnap.id;
+                    if(d.status === "تم التسليم بنجاح" || d.status === "مرفوض") return;
+                    count++;
+                    let btns = "";
+                    if(d.status === "قيد المراجعة") {
+                        btns = `<button class="btn-action btn-save" onclick="window.approveEsh('${id}')">بث 📡</button>
+                                <button class="btn-action btn-edit" onclick="window.editEsh('${id}')">تعديل 📝</button>
+                                <button class="btn-action btn-delete" onclick="window.rejectEsh('${id}')">رفض ❌</button>`;
+                    } else if(d.status === "جاري البحث عن مندوب") {
+                        btns = `<span style="color:#856404; background:#fff3cd; padding:5px; border-radius:5px;">الرادار شغال 📡</span>`;
+                    } else {
+                        // إضافة زرار التتبع الخاص بالطلب والمندوب
+                        btns = `<div style="text-align:center;">
+                                    <span style="color:#155724; background:#d4edda; padding:5px; border-radius:5px; display:block; margin-bottom:5px;">الكابتن: ${d.courierName}</span>
+                                    <button class="btn-action btn-track" onclick="window.locateCourier('${d.courierName}')"><i class="fa-solid fa-location-crosshairs"></i> تتبع 📍</button>
+                                </div>`;
+                    }
+                    html += `<tr>
+                        <td><b>${d.merchantEmail.split('@')[0]}</b><br><span style="font-size:11px;">${d.details}</span></td>
+                        <td><span style="font-size:11px;">📍 ${d.address}</span><br><b style="color:var(--primary-red);">💳 ${d.paymentMethod}</b></td>
+                        <td>${btns}</td>
+                    </tr>`;
+                });
+                document.getElementById('eshterylyBody').innerHTML = html;
+                document.getElementById('totalEshteryly').innerText = count;
+            });
+        }
+
+        window.approveEsh = async (id) => {
+            if(confirm("سيتم إذاعة الطلب للمناديب. موافق؟")) await updateDoc(doc(db, "eshteryly_orders", id), {status: "جاري البحث عن مندوب"});
+        };
+
+        window.rejectEsh = async (id) => {
+            const reason = prompt("اكتب سبب الرفض:");
+            if(reason !== null) await updateDoc(doc(db, "eshteryly_orders", id), {status: "مرفوض", rejectReason: reason});
+        };
+
+        window.editEsh = async (id) => {
+            const { value: vals } = await Swal.fire({
+                title: 'تعديل طلب اشتريلي',
+                html: '<input id="sw-det" class="swal2-input" placeholder="التفاصيل الجديدة"><input id="sw-add" class="swal2-input" placeholder="العنوان الجديد">',
+                preConfirm: () => [document.getElementById('sw-det').value, document.getElementById('sw-add').value]
+            });
+            if(vals) {
+                let updates = {};
+                if(vals[0].trim()) updates.details = vals[0]; if(vals[1].trim()) updates.address = vals[1];
+                if(Object.keys(updates).length > 0) await updateDoc(doc(db, "eshteryly_orders", id), updates);
+            }
+        };
+
+        // --- الشحنات العادية ---
+        function loadShipments() {
+            onSnapshot(query(collection(db, "shipments"), orderBy("timestamp", "desc")), (snap) => {
+                let html = "", totalM = 0, count = 0;
+                snap.forEach(docSnap => {
+                    const d = docSnap.data(), id = docSnap.id;
+                    if(d.deleted) return;
+                    totalM += d.amount || 0; count++;
+                    const awb = "AXN" + id.substring(0,5).toUpperCase();
+                    const merchant = d.merchantEmail ? d.merchantEmail.split('@')[0] : "إدارة";
+                    html += `<tr class="shipment-row">
+                        <td><b>${merchant}</b></td> <td>${awb}</td> <td>${d.name}</td>
+                        <td dir="ltr">${d.phone}<br><span style="font-size:10px;color:gray;">${d.phone2||''}</span></td>
+                        <td>${d.city}<br><span style="font-size:10px;color:gray;">الوزن: ${d.weight||1}</span></td>
+                        <td style="color:red; font-weight:bold;">${d.amount}</td>
+                        <td><select id="st-${id}" class="status-dropdown">
+                            <option value="قيد التوصيل" ${d.status==='قيد التوصيل'?'selected':''}>قيد التوصيل</option>
+                            <option value="تم التسليم" ${d.status==='تم التسليم'?'selected':''}>تم التسليم</option>
+                            <option value="مرتجع" ${d.status==='مرتجع'?'selected':''}>مرتجع</option>
+                            <option value="مؤجل" ${d.status==='مؤجل'?'selected':''}>مؤجل</option>
+                        </select></td>
+                        <td style="white-space:nowrap;">
+                            <button class="btn-action btn-save" onclick="window.updateStatus('${id}')">حفظ</button>
+                            <button class="btn-action btn-edit" onclick="window.openEditModal('${id}','${d.name}','${d.phone}','${d.phone2}','${d.city}','${d.address}','${d.weight}','${d.amount}')">تعديل</button>
+                            <button class="btn-action btn-print" onclick="window.printWaybill('${merchant}','${d.name}','${d.phone}','${d.phone2}','${d.city}','${d.address}','${d.weight}','${d.amount}','${awb}','${d.details||''}')">طباعة</button>
+                            <button class="btn-action btn-delete" onclick="window.deleteShipment('${id}')">حذف</button>
+                        </td>
+                    </tr>`;
+                });
+                document.getElementById('shipmentsBody').innerHTML = html;
+                document.getElementById('totalShipments').innerText = count;
+                document.getElementById('totalMoney').innerText = totalM + " ج.م";
+            });
+        }
+
+        window.updateStatus = async (id) => {
+            const val = document.getElementById(`st-${id}`).value;
+            await updateDoc(doc(db, "shipments", id), { status: val });
+            Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم الحفظ', showConfirmButton:false, timer:2000});
+        };
+
+        window.deleteShipment = async (id) => {
+            if(confirm('متأكد من مسح الشحنة دي؟')) await updateDoc(doc(db, "shipments", id), { deleted: true });
+        };
+
+        window.openEditModal = (id, name, p1, p2, city, addr, w, amt) => {
+            document.getElementById('editDocId').value = id; document.getElementById('editName').value = name;
+            document.getElementById('editPhone').value = p1; document.getElementById('editPhone2').value = p2 !== 'undefined' ? p2 : '';
+            document.getElementById('editCity').value = city; document.getElementById('editAddress').value = addr;
+            document.getElementById('editWeight').value = w !== 'undefined' ? w : '1'; document.getElementById('editAmount').value = amt;
+            document.getElementById('editModal').style.display = 'flex';
+        };
+
+        window.closeModal = (id) => document.getElementById(id).style.display = 'none';
+
+        window.saveEditedShipment = async () => {
+            const id = document.getElementById('editDocId').value;
+            const updates = {
+                name: document.getElementById('editName').value, phone: document.getElementById('editPhone').value,
+                phone2: document.getElementById('editPhone2').value, city: document.getElementById('editCity').value,
+                address: document.getElementById('editAddress').value, weight: Number(document.getElementById('editWeight').value),
+                amount: Number(document.getElementById('editAmount').value)
+            };
+            document.getElementById('btnSaveEdit').innerHTML = "جاري...";
+            await updateDoc(doc(db, "shipments", id), updates);
+            document.getElementById('editModal').style.display = 'none';
+            document.getElementById('btnSaveEdit').innerHTML = "حفظ التعديلات";
+            Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم التعديل', showConfirmButton:false, timer:2000});
+        };
+
+        // --- بورصة الشحن ---
+        window.updateLivePrices = async () => {
+            const vals = { alex: document.getElementById("priceAlex")?.value, cairo: document.getElementById("priceCairo")?.value, beheira: document.getElementById("priceBeheira")?.value, delta: document.getElementById("priceDelta")?.value, saeed: document.getElementById("priceSaeed")?.value };
+            if(!vals.alex || !vals.cairo || !vals.beheira || !vals.delta || !vals.saeed) return Swal.fire('تنبيه', 'أكمل أسعار كل المحافظات', 'warning');
+            await setDoc(doc(db, "settings", "shipping_prices"), { alex: Number(vals.alex), cairo: Number(vals.cairo), beheira: Number(vals.beheira), delta: Number(vals.delta), saeed: Number(vals.saeed), lastUpdate: new Date().toLocaleTimeString("ar-EG") }, { merge: true });
+            Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم البث بنجاح', showConfirmButton:false, timer:2000});
+        };
+
+        onSnapshot(doc(db, "settings", "shipping_prices"), (docSnap) => {
+            if(docSnap.exists()) {
+                const d = docSnap.data();
+                ['Alex','Cairo','Beheira','Delta','Saeed'].forEach(reg => {
+                    if(document.getElementById(`price${reg}`)) document.getElementById(`price${reg}`).value = d[reg.toLowerCase()] || '';
+                });
+                document.getElementById("lastUpdateText").innerText = "آخر تحديث: " + (d.lastUpdate || "");
+            }
+        });
+
+        // --- الطباعة السريعة ---
+        window.printWaybill = (merchant, name, p1, p2, city, addr, w, amt, awb, details) => {
+            const printContent = `
+            <!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>طباعة بوليصة</title>
+            <style>
+                @page { size: A5 portrait; margin: 1cm; }
+                body { font-family: sans-serif; margin: 0; padding: 5mm; background: white; }
+                .wrapper { border: 2px solid #000; padding: 5mm; border-radius: 3mm; max-width: 148mm; margin: 0 auto; }
+                .header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 3mm; margin-bottom: 3mm; }
+                .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; margin-bottom: 3mm; border: 1px solid #000; padding: 3mm; }
+                .cod { text-align: center; border: 2px solid #000; padding: 3mm; background: #eee; }
+            </style>
+            <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"><\/script>
+            </head><body>
+                <div class="wrapper">
+                    <div class="header"><h2>AXON EXPRESS</h2><div style="text-align:center;"><svg id="bc"></svg><br><b>${awb}</b></div></div>
+                    <div class="grid">
+                        <div><h3>المرسل</h3><p>التاجر: ${merchant}</p><p>الوزن: ${w} كجم</p></div>
+                        <div style="border-right:1px solid #000; padding-right:3mm;"><h3>المستلم</h3><p>الاسم: ${name}</p><p>موبايل: ${p1} / ${p2}</p><p>المحافظة: ${city}</p><p>العنوان: ${addr}</p></div>
+                    </div>
+                    <div style="border:1px solid #000; padding:3mm; margin-bottom:3mm;">ملاحظات: <b>${details}</b></div>
+                    <div class="cod"><h3>المبلغ المطلوب (COD)</h3><h1>${amt} EGP</h1></div>
+                </div>
+                <script>JsBarcode("#bc", "${awb}", {format:"CODE128", width:2, height:40, displayValue:false}); setTimeout(window.print, 200);<\/script>
+            </body></html>`;
+            const win = window.open('', '_blank');
+            win.document.write(printContent); win.document.close();
+        };
+
+        // --- الراديو الشغال ---
+        window.toggleRadio = () => {
+            const iframe = document.getElementById('sc-widget-admin');
+            const widget = SC.Widget(iframe);
+            widget.getPaused((isPaused) => {
+                if(isPaused) { widget.play(); } 
+                else { widget.pause(); }
+            });
+        };
+        
+        document.body.addEventListener('click', () => { 
+            if(window.SC && !window.rs) { 
+                SC.Widget(document.getElementById('sc-widget-admin')).play(); 
+                window.rs = true; 
+            } 
+        }, {once:true});
+    </script>
+</body>
+</html>

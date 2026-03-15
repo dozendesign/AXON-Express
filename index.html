@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="أكسون إكسبريس - الشريك الأسرع لنجاح تجارتك. خدمات شحن وتوصيل وتجهيز طلبات التجارة الإلكترونية.">
+    <title>Axon Express | أسرع شحن في مصر</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://w.soundcloud.com/player/api.js"></script>
+
+    <style>
+        * { box-sizing: border-box; }
+        :root { 
+            --primary-blue: #0A3D62; --secondary-blue: #15558d;
+            --primary-red: #b82329; --white: #ffffff; --light-bg: #f4f7f6; --dark-text: #2c3e50; 
+        }
+        html, body { font-family: 'Cairo', sans-serif; margin: 0; padding: 0; background: var(--light-bg); color: var(--dark-text); overflow-x: hidden; scroll-behavior: smooth;}
+        
+        header { background: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary-red); position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
+        .logo { font-size: 24px; font-weight: 900; color: var(--primary-blue); text-decoration: none;}
+        .logo span { color: var(--primary-red); }
+        
+        .login-btn { background: var(--primary-blue); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 15px; transition: 0.3s;}
+        .login-btn:hover { background: var(--primary-red); transform: scale(1.05); }
+        
+        .hero { background: linear-gradient(rgba(10, 61, 98, 0.85), rgba(10, 61, 98, 0.95)), url('https://images.unsplash.com/photo-1580674285054-bed31e145f59?q=80&w=2070&auto=format&fit=crop') center/cover; text-align: center; padding: 100px 20px 140px; color: var(--white);}
+        .hero h1 { font-size: 42px; font-weight: 900; margin-bottom: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);}
+        .hero h1 span { color: var(--primary-red); }
+        .hero p { font-size: 18px; max-width: 600px; margin: 0 auto; line-height: 1.6;}
+        
+        .calc-box { background: var(--white); padding: 30px; border-radius: 15px; max-width: 500px; margin: -60px auto 30px; border: 1px solid #eee; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; position: relative; z-index: 10; transition: 0.3s;}
+        .calc-box:hover { transform: translateY(-5px); }
+        .calc-select { width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 8px; font-family: 'Cairo'; outline: none; margin-bottom: 15px; font-size: 15px;}
+        .calc-result { font-size: 28px; font-weight: 900; color: var(--primary-red); margin-top: 10px;}
+        
+        .section-title { text-align: center; font-size: 32px; margin: 60px 0 40px; color: var(--primary-blue); font-weight: 900;}
+        .section-title span { color: var(--primary-red); }
+        
+        .services-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; padding: 0 20px 60px; }
+        .service-card { background: var(--white); border-radius: 15px; width: 100%; max-width: 320px; text-align: center; border: 1px solid #eee; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: transform 0.3s; cursor: pointer; overflow: hidden;}
+        .service-card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); border-bottom: 4px solid var(--primary-red);}
+        .service-img { width: 100%; height: 200px; object-fit: cover; border-bottom: 3px solid var(--primary-blue);}
+        .service-content { padding: 20px; }
+        .service-content h4 { font-size: 20px; margin: 0 0 10px 0; color: var(--primary-blue);}
+        .service-content p { color: gray; margin: 0; font-size: 14px;}
+        
+        /* قسم الانضمام (توظيف وفرنشايز) */
+        .join-section { background: var(--primary-blue); padding: 60px 20px; text-align: center; color: white;}
+        .join-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 30px; }
+        .join-btn { background: white; color: var(--primary-blue); border: none; padding: 20px 30px; border-radius: 12px; font-size: 18px; font-weight: bold; font-family: 'Cairo'; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 10px; width: 100%; max-width: 300px; justify-content: center;}
+        .join-btn:hover { background: var(--primary-red); color: white; transform: scale(1.05); }
+
+        /* التذييل (Footer) */
+        footer { background: #052238; color: white; padding: 50px 20px 20px; border-top: 5px solid var(--primary-red);}
+        .footer-content { display: flex; flex-wrap: wrap; justify-content: space-around; max-width: 1200px; margin: 0 auto 30px; gap: 30px; text-align: right;}
+        .footer-col { flex: 1; min-width: 250px; }
+        .footer-col h3 { color: var(--primary-red); border-bottom: 2px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 15px;}
+        .footer-col p, .footer-col a { color: #ccc; text-decoration: none; line-height: 2; display: block; transition: 0.3s;}
+        .footer-col a:hover { color: white; padding-right: 5px;}
+        .footer-col i { margin-left: 8px; width: 20px; text-align: center; color: var(--primary-red);}
+        .social-icons { display: flex; gap: 15px; margin-top: 15px;}
+        .social-icons a { font-size: 24px; color: white; background: rgba(255,255,255,0.1); width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%;}
+        .social-icons a:hover { background: var(--primary-red); transform: scale(1.1);}
+        
+        /* الأزرار العائمة */
+        .floating-btn { position: fixed; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; z-index: 1000; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: 0.3s;}
+        .floating-btn:hover { transform: scale(1.1); }
+        .btn-radio { bottom: 20px; left: 20px; background: var(--white); color: var(--primary-blue); border: 2px solid var(--primary-blue);}
+        .btn-whatsapp { bottom: 90px; right: 20px; background: #25D366; color: white; text-decoration: none;}
+        .btn-chat { bottom: 20px; right: 20px; background: var(--primary-blue); color: white;}
+        
+        /* نافذة الشات بوت */
+        .chat-widget { display: none; position: fixed; bottom: 90px; right: 20px; width: 320px; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 1000; flex-direction: column; overflow: hidden; border: 1px solid #ddd; animation: slideUp 0.3s ease-out;}
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .chat-header { background: var(--primary-blue); color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center;}
+        .chat-body { padding: 15px; height: 280px; overflow-y: auto; background: #f9f9f9; font-size: 14px;}
+        .chat-footer { padding: 10px; background: white; border-top: 1px solid #eee; display: flex; gap: 10px;}
+        .chat-footer input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; font-family: 'Cairo'; outline: none;}
+        .chat-footer button { background: var(--primary-red); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer;}
+        
+        /* النوافذ المنبثقة (المودال) */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 61, 98, 0.9); align-items: center; justify-content: center; z-index: 2000; padding: 15px;}
+        .modal-content { background: var(--white); padding: 30px 20px; border-radius: 15px; width: 100%; max-width: 450px; text-align: center; position: relative; max-height: 90vh; overflow-y: auto;}
+        .modal-content input, .modal-content select, .modal-content textarea { width: 100%; padding: 12px; margin-bottom: 15px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; font-family: 'Cairo'; outline: none;}
+        .submit-btn { width: 100%; background: var(--primary-red); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-family: 'Cairo'; cursor: pointer; font-size: 16px; margin-top: 10px;}
+        .close-modal { position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 24px; cursor: pointer; color: gray;}
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo"><i class="fa-solid fa-truck-fast"></i> AXON <span>EXPRESS</span></div>
+        <button class="login-btn" onclick="document.getElementById('loginModal').style.display='flex'">بوابة التجار <i class="fa-solid fa-user-lock"></i></button>
+    </header>
+
+    <div class="hero">
+        <h1 data-aos="fade-down">شريكك الأسرع <span>للنجاح</span></h1>
+        <p data-aos="fade-up" data-aos-delay="100">نغطي جميع محافظات مصر بأمان وسرعة، مع خدمات متكاملة لتجهيز طلبات التجارة الإلكترونية بأسعار تنافسية.</p>
+    </div>
+
+    <div class="calc-box" data-aos="zoom-in" data-aos-delay="200">
+        <h3 style="color:var(--primary-blue); margin-top:0;"><i class="fa-solid fa-calculator"></i> حاسبة أسعار الشحن</h3>
+        <p style="font-size:13px; color:gray; margin-bottom:15px;">اختر المحافظة لمعرفة تكلفة الشحن المحدثة لايف</p>
+        <select class="calc-select" id="calcSelect" onchange="window.calculateRate()">
+            <option value="0">-- اختر المحافظة المراد الشحن إليها --</option>
+            <option value="alex">الإسكندرية</option>
+            <option value="cairo">القاهرة والجيزة</option>
+            <option value="beheira">البحيرة</option>
+            <option value="delta">الدلتا والقناة</option>
+            <option value="saeed">الصعيد</option>
+        </select>
+        <div class="calc-result" id="calcResult">0 ج.م</div>
+    </div>
+
+    <h2 class="section-title" data-aos="fade-up">لماذا تختار <span>أكسون إكسبريس؟</span></h2>
+    <div class="services-grid">
+        <div class="service-card" data-aos="fade-up" data-aos-delay="100" onclick="window.showService('ecommerce')">
+            <img src="1.jpg" alt="تجهيز الطلبات" class="service-img" onerror="this.src='https://images.unsplash.com/photo-1553413077-190dd305871c?q=80&w=600&auto=format&fit=crop'">
+            <div class="service-content">
+                <h4><i class="fa-solid fa-box-open" style="color:var(--primary-red);"></i> تجهيز طلبات E-commerce</h4>
+                <p>نستلم منتجاتك، نغلفها باحترافية، ونجهزها للشحن. (اضغط للتفاصيل)</p>
+            </div>
+        </div>
+        
+        <div class="service-card" data-aos="fade-up" data-aos-delay="200" onclick="window.showService('coverage')">
+            <img src="2.jpg" alt="تغطية شاملة" class="service-img" onerror="this.src='https://images.unsplash.com/photo-1580674285054-bed31e145f59?q=80&w=600&auto=format&fit=crop'">
+            <div class="service-content">
+                <h4><i class="fa-solid fa-truck-fast" style="color:var(--primary-red);"></i> تغطية شاملة</h4>
+                <p>أسطول ضخم يغطي جميع محافظات مصر بأسرع وقت. (اضغط للتفاصيل)</p>
+            </div>
+        </div>
+
+        <div class="service-card" data-aos="fade-up" data-aos-delay="300" onclick="window.showService('cod')">
+            <img src="3.jpg" alt="تحصيل الأموال" class="service-img" onerror="this.src='https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=600&auto=format&fit=crop'">
+            <div class="service-content">
+                <h4><i class="fa-solid fa-sack-dollar" style="color:var(--primary-red);"></i> تحصيل أموالك (COD)</h4>
+                <p>نظام مالي قوي يضمن لك استلام أموالك بأمان تام. (اضغط للتفاصيل)</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="join-section" data-aos="fade-in">
+        <h2 style="font-size: 32px; margin-top:0;">انضم لنجاح <span style="color:var(--primary-red);">أكسون</span></h2>
+        <p style="font-size: 16px; color: #ddd;">سواء كنت تبحث عن فرصة عمل مميزة أو ترغب في الاستثمار وفتح فرعك الخاص، نحن نرحب بك.</p>
+        <div class="join-grid">
+            <button class="join-btn" onclick="document.getElementById('careerModal').style.display='flex'" data-aos="zoom-in" data-aos-delay="100">
+                <i class="fa-solid fa-user-tie"></i> قدم على وظيفة
+            </button>
+            <button class="join-btn" onclick="document.getElementById('franchiseModal').style.display='flex'" data-aos="zoom-in" data-aos-delay="200">
+                <i class="fa-solid fa-store"></i> افتح فرع (فرنشايز)
+            </button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-col" data-aos="fade-up" data-aos-delay="100">
+                <h3>عن أكسون إكسبريس</h3>
+                <p>نحن شريكك اللوجستي الموثوق في مصر، نقدم حلولاً مبتكرة لضمان وصول منتجاتك بأمان وسرعة.</p>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="https://www.youtube.com" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="https://www.tiktok.com" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
+                </div>
+            </div>
+            <div class="footer-col" data-aos="fade-up" data-aos-delay="200">
+                <h3>روابط سريعة</h3>
+                <a href="#">الرئيسية</a>
+                <a href="#" onclick="document.getElementById('careerModal').style.display='flex'">التوظيف</a>
+                <a href="#" onclick="document.getElementById('franchiseModal').style.display='flex'">الفرنشايز</a>
+                <a href="#" onclick="document.getElementById('loginModal').style.display='flex'">بوابة التجار</a>
+            </div>
+            <div class="footer-col" data-aos="fade-up" data-aos-delay="300">
+                <h3>تواصل معنا</h3>
+                <p><i class="fa-solid fa-location-dot"></i> الإسكندرية، مصر</p>
+                <p><i class="fa-solid fa-phone"></i> 01147000882</p>
+                <p><i class="fa-solid fa-envelope"></i> info@axonexpress.com</p>
+            </div>
+        </div>
+        <p style="text-align:center; color:#888; border-top:1px solid rgba(255,255,255,0.1); padding-top:20px; margin:0;">
+            جميع الحقوق محفوظة &copy; 2026 لصالح شركة Axon Express
+        </p>
+    </footer>
+
+    <button onclick="window.toggleAudio()" class="floating-btn btn-radio"><i class="fa-solid fa-volume-xmark" id="musicIcon"></i></button>
+    <a href="https://wa.me/201147000882" target="_blank" class="floating-btn btn-whatsapp"><i class="fa-brands fa-whatsapp"></i></a>
+    <button onclick="window.toggleChat()" class="floating-btn btn-chat"><i class="fa-solid fa-comments"></i></button>
+
+    <div class="chat-widget" id="chatWidget">
+        <div class="chat-header">
+            <span><i class="fa-solid fa-robot"></i> أكسون بوت</span>
+            <button onclick="window.toggleChat()" style="background:none; border:none; color:white; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <div style="background:#e3f2fd; padding:10px; border-radius:10px; margin-bottom:10px; display:inline-block;">
+                مرحباً بك في أكسون إكسبريس! 👋<br>كيف يمكنني مساعدتك اليوم؟
+            </div>
+        </div>
+        <div class="chat-footer">
+            <input type="text" id="chatInput" placeholder="اكتب رسالتك هنا...">
+            <button onclick="window.sendToChat()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <button onclick="document.getElementById('loginModal').style.display='none'" class="close-modal">×</button>
+            <h3 style="color:var(--primary-blue); border-bottom:2px solid var(--primary-red); padding-bottom:10px; margin-top:0;">دخول التجار والإدارة</h3>
+            <input type="text" id="merchantEmail" placeholder="اسم المستخدم (مثال: admin)">
+            <input type="password" id="merchantPassword" placeholder="كلمة المرور">
+            <button id="btnLogin" class="submit-btn" onclick="window.handleLogin()">تسجيل الدخول</button>
+        </div>
+    </div>
+
+    <div id="careerModal" class="modal">
+        <div class="modal-content">
+            <button onclick="document.getElementById('careerModal').style.display='none'" class="close-modal">×</button>
+            <h3 style="color:var(--primary-blue); border-bottom:2px solid var(--primary-red); padding-bottom:10px; margin-top:0;">طلب انضمام لفريق العمل</h3>
+            <input type="text" id="carName" placeholder="الاسم الرباعي">
+            <input type="tel" id="carPhone" placeholder="رقم الموبايل">
+            <input type="text" id="carCity" placeholder="المحافظة / المنطقة">
+            <select id="carPosition">
+                <option value="">-- اختر الوظيفة المتقدم لها --</option>
+                <option value="مندوب شحن">مندوب شحن (كابتن)</option>
+                <option value="مسئول مخزن">مسئول مخزن / فرز</option>
+                <option value="خدمة عملاء">خدمة عملاء / كول سنتر</option>
+                <option value="أخرى">أخرى</option>
+            </select>
+            <textarea id="carNotes" placeholder="نبذة عن خبراتك السابقة..." rows="3"></textarea>
+            <button id="btnCareer" class="submit-btn" onclick="window.submitCareer()">إرسال الطلب</button>
+        </div>
+    </div>
+
+    <div id="franchiseModal" class="modal">
+        <div class="modal-content">
+            <button onclick="document.getElementById('franchiseModal').style.display='none'" class="close-modal">×</button>
+            <h3 style="color:var(--primary-blue); border-bottom:2px solid var(--primary-red); padding-bottom:10px; margin-top:0;">طلب وكالة (فرنشايز)</h3>
+            <input type="text" id="franName" placeholder="الاسم / اسم الشركة">
+            <input type="tel" id="franPhone" placeholder="رقم الموبايل">
+            <select id="franCity">
+                <option value="">-- المحافظة المراد فتح الفرع بها --</option>
+                <option value="الإسكندرية">الإسكندرية</option>
+                <option value="البحيرة">البحيرة</option>
+                <option value="القاهرة والجيزة">القاهرة والجيزة</option>
+                <option value="الدلتا">الدلتا</option>
+                <option value="الصعيد">الصعيد</option>
+            </select>
+            <select id="franOffice">
+                <option value="">-- هل تمتلك مقر حالي؟ --</option>
+                <option value="نعم">نعم، أمتلك مقر جاهز</option>
+                <option value="لا">لا، جاري البحث عن مقر</option>
+            </select>
+            <textarea id="franNotes" placeholder="أي تفاصيل أخرى (اختياري)..." rows="3"></textarea>
+            <button id="btnFranchise" class="submit-btn" onclick="window.submitFranchise()">إرسال طلب الفرنشايز</button>
+        </div>
+    </div>
+
+    <iframe id="sc-widget" allow="autoplay" style="display:none;" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/artefacts-factory/sets&auto_play=false"></iframe>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const app = initializeApp({
+            apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
+            authDomain: "axon-express-2f534.firebaseapp.com",
+            projectId: "axon-express-2f534",
+            storageBucket: "axon-express-2f534.firebasestorage.app",
+            messagingSenderId: "958528400260",
+            appId: "1:958528400260:web:504ae94f3ef2225b928bd1"
+        });
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // تشغيل مكتبة الأنيميشن
+        AOS.init({ duration: 800, once: true });
+
+        // --- 1. حاسبة الشحن اللايف ---
+        window.livePrices = { alex: 0, cairo: 0, beheira: 0, delta: 0, saeed: 0 };
+        onSnapshot(doc(db, "settings", "shipping_prices"), (docSnap) => {
+            if (docSnap.exists()) window.livePrices = docSnap.data();
+        });
+
+        window.calculateRate = () => {
+            const val = document.getElementById('calcSelect').value;
+            if (val === "0") { document.getElementById('calcResult').innerText = "0 ج.م"; return; }
+            const finalPrice = window.livePrices[val] || 0;
+            document.getElementById('calcResult').innerText = `${finalPrice} ج.م`;
+        };
+
+        // --- 2. تفاصيل الخدمات (Pop-ups) ---
+        window.showService = (type) => {
+            let title = "", text = "";
+            if(type === 'ecommerce') {
+                title = "تجهيز طلبات E-commerce";
+                text = "نقوم باستلام المنتجات من مقرك، وتغليفها بأفضل الخامات لضمان سلامتها، ثم شحنها مباشرة لعملائك مع إمكانية تخزين بضائعك لدينا.";
+            } else if(type === 'coverage') {
+                title = "تغطية شاملة";
+                text = "نمتلك أسطولاً كبيراً من المندوبين وخطوط السير التي تغطي الإسكندرية، القاهرة، البحيرة، الدلتا، وحتى الصعيد لضمان أسرع وصول لشحناتك.";
+            } else if(type === 'cod') {
+                title = "تحصيل الأموال (COD)";
+                text = "نضمن لك تحصيل أموالك من العملاء وتسليمها لك بشكل دوري وسريع (كاش، إنستاباي، محافظ إلكترونية، أو تحويل بنكي) بدون تأخير.";
+            }
+            Swal.fire({ title: title, text: text, icon: 'info', confirmButtonText: 'حسناً', confirmButtonColor: '#0A3D62' });
+        };
+
+        // --- 3. إرسال طلب التوظيف ---
+        window.submitCareer = async () => {
+            const name = document.getElementById('carName').value.trim();
+            const phone = document.getElementById('carPhone').value.trim();
+            const city = document.getElementById('carCity').value.trim();
+            const position = document.getElementById('carPosition').value;
+            const notes = document.getElementById('carNotes').value.trim();
+
+            if(!name || !phone || !city || !position) return Swal.fire('تنبيه', 'برجاء إكمال البيانات الأساسية', 'warning');
+            
+            const btn = document.getElementById('btnCareer'); btn.disabled = true; btn.innerHTML = "جاري الإرسال...";
+            try {
+                await addDoc(collection(db, "careers"), { name, phone, city, position, notes, timestamp: new Date() });
+                document.getElementById('careerModal').style.display = 'none';
+                Swal.fire('تم بنجاح', 'تم إرسال طلبك للإدارة، سنتواصل معك قريباً!', 'success');
+                document.querySelectorAll('#careerModal input, #careerModal select, #careerModal textarea').forEach(el => el.value = '');
+            } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
+            btn.disabled = false; btn.innerHTML = "إرسال الطلب";
+        };
+
+        // --- 4. إرسال طلب الفرنشايز ---
+        window.submitFranchise = async () => {
+            const name = document.getElementById('franName').value.trim();
+            const phone = document.getElementById('franPhone').value.trim();
+            const city = document.getElementById('franCity').value;
+            const office = document.getElementById('franOffice').value;
+            const notes = document.getElementById('franNotes').value.trim();
+
+            if(!name || !phone || !city || !office) return Swal.fire('تنبيه', 'برجاء إكمال البيانات الأساسية', 'warning');
+
+            const btn = document.getElementById('btnFranchise'); btn.disabled = true; btn.innerHTML = "جاري الإرسال...";
+            try {
+                await addDoc(collection(db, "franchises"), { name, phone, city, office, notes, timestamp: new Date() });
+                document.getElementById('franchiseModal').style.display = 'none';
+                Swal.fire('تم بنجاح', 'تم إرسال طلب الوكالة، إدارة أكسون ستتواصل معك في أقرب وقت!', 'success');
+                document.querySelectorAll('#franchiseModal input, #franchiseModal select, #franchiseModal textarea').forEach(el => el.value = '');
+            } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
+            btn.disabled = false; btn.innerHTML = "إرسال طلب الفرنشايز";
+        };
+
+        // --- 5. تسجيل الدخول ---
+        window.handleLogin = async () => {
+            let user = document.getElementById('merchantEmail').value.trim().toLowerCase();
+            const pass = document.getElementById('merchantPassword').value;
+            if(!user || !pass) return Swal.fire('تنبيه', 'أدخل اسم المستخدم وكلمة المرور', 'warning');
+            
+            const email = user + "@axon.com";
+            const btn = document.getElementById('btnLogin'); btn.disabled = true; btn.innerHTML = "جاري التحقق...";
+            
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+                if (email === "admin@axon.com") { window.location.href = "admin.html"; } 
+                else {
+                    const docSnap = await getDoc(doc(db, "admins", auth.currentUser.uid));
+                    if (docSnap.exists()) window.location.href = "admin.html";
+                    else window.location.href = "merchant.html";
+                }
+            } catch (error) { Swal.fire('خطأ', 'بيانات الدخول غير صحيحة', 'error'); btn.disabled = false; btn.innerHTML = "تسجيل الدخول"; }
+        };
+
+        // --- 6. الشات بوت ---
+        window.toggleChat = () => {
+            const widget = document.getElementById('chatWidget');
+            widget.style.display = (widget.style.display === 'flex') ? 'none' : 'flex';
+        };
+
+        window.sendToChat = () => {
+            const input = document.getElementById('chatInput');
+            const body = document.getElementById('chatBody');
+            if(input.value.trim()) {
+                body.innerHTML += `<div style="background:var(--primary-blue); color:white; padding:10px; border-radius:10px; margin-bottom:10px; display:inline-block; align-self:flex-end;">${input.value}</div><br>`;
+                setTimeout(() => {
+                    body.innerHTML += `<div style="background:#e3f2fd; padding:10px; border-radius:10px; margin-bottom:10px; display:inline-block;">تم استلام رسالتك، سيتواصل معك فريق الدعم قريباً!</div><br>`;
+                    body.scrollTop = body.scrollHeight;
+                }, 1000);
+                input.value = '';
+            }
+        };
+
+        // --- 7. الراديو ---
+        window.toggleAudio = () => {
+            const widget = SC.Widget(document.getElementById('sc-widget'));
+            const icon = document.getElementById('musicIcon');
+            widget.getPaused((isPaused) => {
+                if(isPaused) { 
+                    widget.play(); 
+                    icon.className = 'fa-solid fa-volume-high'; 
+                } else { 
+                    widget.pause(); 
+                    icon.className = 'fa-solid fa-volume-xmark'; 
+                }
+            });
+        };
+        
+        document.body.addEventListener('click', () => { 
+            if(window.SC && !window.radioStarted) { 
+                SC.Widget(document.getElementById('sc-widget')).play(); 
+                document.getElementById('musicIcon').className='fa-solid fa-volume-high'; 
+                window.radioStarted = true; 
+            } 
+        }, {once:true});
+    </script>
+</body>
+</html>
