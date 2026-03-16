@@ -218,10 +218,10 @@
             }).then(async (result) => { if (result.isConfirmed) { await updateDoc(doc(db, "eshteryly_orders", id), { status: "تم التسليم بنجاح" }); Swal.fire('عاش!', 'تم تقفيل الطلب', 'success'); } });
         };
 
-        // التعديل السحري هنا عشان الخرائط تفتح في التطبيق فوراً
+        // الرابط الرسمي لفتح التطبيق مباشرة (تصحيح نهائي)
         window.openMap = (addr) => {
-            const url = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(addr);
-            window.open(url, '_blank');
+            const url = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(addr);
+            window.location.href = url;
         };
 
         window.toggleRadio = () => {
