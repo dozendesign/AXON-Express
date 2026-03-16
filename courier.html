@@ -7,7 +7,6 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://w.soundcloud.com/player/api.js"></script>
     
     <style>
         :root { --primary-blue: #002b5c; --primary-red: #d32f2f; --bg-color: #f4f7f6; }
@@ -84,7 +83,7 @@
         </div>
     </div>
 
-    <iframe id="sc-widget" allow="autoplay" style="display:none;" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/artefacts-factory/sets&auto_play=false"></iframe>
+    <audio id="axonRadioPlayer" src="http://37.157.242.101:17317/stream" preload="none"></audio>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
@@ -105,9 +104,8 @@
         let isOnline = false;
         let currentCourierName = "";
         let watchId = null;
-        let notifiedOrders = new Set(); // مصفوفة لتسجيل الأوردرات اللي عملت صوت عشان متكررش
+        let notifiedOrders = new Set(); 
 
-        // دالة إطلاق الصوت والهزاز
         function playNewOrderAlert() {
             if ("vibrate" in navigator) {
                 navigator.vibrate([200, 100, 200, 100, 500]);
@@ -116,7 +114,6 @@
             audio.play().catch(e => console.log("المتصفح منع الصوت", e));
         }
 
-        // التحقق من الدخول
         onAuthStateChanged(auth, (user) => {
             if (user && user.email.includes("@courier.axon.com")) {
                 currentCourierName = user.email.split('@')[0];
@@ -131,14 +128,12 @@
             }
         });
 
-        // دالة تسجيل الدخول الجديدة (باسم المستخدم والباسورد)
         window.loginCourier = async () => {
             const user = document.getElementById('courierUsername').value.trim().toLowerCase();
             const pass = document.getElementById('courierPassword').value;
             
             if(!user || !pass) return Swal.fire('تنبيه', 'برجاء إدخال اسم المستخدم وكلمة المرور', 'warning');
             
-            // التريكة: إضافة النطاق الخاص بالمناديب أوتوماتيك
             const email = user + "@courier.axon.com";
             
             const btn = document.getElementById('loginBtn');
@@ -159,7 +154,6 @@
             }).then((result) => { if (result.isConfirmed) signOut(auth); });
         };
 
-        // الوردية والـ GPS
         window.toggleStatus = () => {
             isOnline = !isOnline;
             const btn = document.getElementById("toggleStatusBtn"), txt = document.getElementById("statusText");
@@ -191,20 +185,16 @@
             }
         }
 
-        // رادار الطلبات
         function loadRadar() {
             onSnapshot(collection(db, "eshteryly_orders"), (snap) => {
                 let radarHtml = "", tasksHtml = "";
                 snap.forEach(docSnap => {
                     const d = docSnap.data(), id = docSnap.id;
                     if(d.status === "جاري البحث عن مندوب" && isOnline) {
-                        
-                        // هنا التريكة: تشغيل الصوت والهزاز لو الأوردر جديد
                         if(!notifiedOrders.has(id)) {
                             playNewOrderAlert();
                             notifiedOrders.add(id);
                         }
-
                         radarHtml += `<div class="order-card" style="border-right-color:#ffc107">
                             <h4><i class="fa-solid fa-bolt"></i> طلب متاح!</h4>
                             <p><b>📍 التوصيل:</b> ${d.address}</p>
@@ -237,41 +227,38 @@
             }).then(async (result) => { if (result.isConfirmed) { await updateDoc(doc(db, "eshteryly_orders", id), { status: "تم التسليم بنجاح" }); Swal.fire('عاش!', 'تم تقفيل الطلب', 'success'); } });
         };
 
-        // ================== دالة فتح الخرائط المعدلة بالكامل ==================
         window.openMap = (addr) => {
-            // فك التشفير أولاً (لأنه مرسل مشفر)
             const decodedAddr = decodeURIComponent(addr);
-            // تشفير مرة واحدة للرابط
             const encodedAddr = encodeURIComponent(decodedAddr);
             const userAgent = navigator.userAgent.toLowerCase();
             const isAndroid = /android/.test(userAgent);
             
             if (isAndroid) {
-                // المحاولة الأولى: فتح تطبيق خرائط جوجل باستخدام Intent
                 const intentUrl = `intent://maps/search/?q=${encodedAddr}#Intent;scheme=https;package=com.google.android.apps.maps;action=android.intent.action.VIEW;end;`;
                 window.location.href = intentUrl;
-                
-                // المحاولة الثانية (fallback): إذا لم يفتح التطبيق خلال 1.5 ثانية، ننتقل إلى رابط الويب
                 setTimeout(() => {
                     window.location.href = `https://www.google.com/maps/search/?api=1&query=${encodedAddr}`;
                 }, 1500);
             } else {
-                // على أجهزة أخرى (أو متصفح عادي) نفتح الرابط في نافذة جديدة
                 window.open(`https://www.google.com/maps/search/?api=1&query=${encodedAddr}`, '_blank');
             }
         };
-        // =====================================================================
 
-        // الراديو والوضع الليلي
+        // --- تشغيل وإيقاف الراديو المباشر ---
+        const radioPlayer = document.getElementById('axonRadioPlayer');
         window.toggleRadio = () => {
-            const widget = SC.Widget(document.getElementById('sc-widget'));
             const icon = document.getElementById('radioIcon');
-            widget.getPaused((isPaused) => {
-                if(isPaused) { widget.play(); icon.className = 'fa-solid fa-volume-high'; icon.style.color = '#28a745'; } 
-                else { widget.pause(); icon.className = 'fa-solid fa-volume-xmark'; icon.style.color = 'white'; }
-            });
+            if (radioPlayer.paused) {
+                radioPlayer.load(); // ريفرش عشان يجيب البث المباشر فوراً وميأخرش
+                radioPlayer.play();
+                icon.className = 'fa-solid fa-volume-high';
+                icon.style.color = '#28a745';
+            } else {
+                radioPlayer.pause();
+                icon.className = 'fa-solid fa-volume-xmark';
+                icon.style.color = 'white';
+            }
         };
-        document.body.addEventListener('click', () => { if(window.SC && !window.radioStarted) { SC.Widget(document.getElementById('sc-widget')).play(); document.getElementById('radioIcon').className = 'fa-solid fa-volume-high'; document.getElementById('radioIcon').style.color = '#28a745'; window.radioStarted = true; } }, {once:true});
 
         window.toggleTheme = () => {
             document.body.classList.toggle('dark-mode');
