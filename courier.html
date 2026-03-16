@@ -237,26 +237,28 @@
             }).then(async (result) => { if (result.isConfirmed) { await updateDoc(doc(db, "eshteryly_orders", id), { status: "تم التسليم بنجاح" }); Swal.fire('عاش!', 'تم تقفيل الطلب', 'success'); } });
         };
 
-        // ================== تعديل دالة فتح الخرائط لتعمل في APK ==================
+        // ================== دالة فتح الخرائط المعدلة لتعمل في APK ==================
         window.openMap = (addr) => {
-            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-            // كشف أجهزة الأندرويد (تطبيق WebView)
-            if (/android/i.test(userAgent)) {
-                // استخدام رابط geo: لفتح تطبيق الخرائط مباشرة
-                const geoUrl = 'geo:0,0?q=' + encodeURIComponent(addr);
-                window.location.href = geoUrl;
-
-                // fallback: إذا لم يعمل geo بعد ثانية، نحاول فتح رابط الويب
+            // فك تشفير العنوان (قد يكون مشفرًا مسبقًا)
+            const decodedAddr = decodeURIComponent(addr);
+            const encodedAddr = encodeURIComponent(decodedAddr);
+            const isAndroid = /android/i.test(navigator.userAgent);
+            
+            if (isAndroid) {
+                // محاولة فتح تطبيق خرائط جوجل باستخدام Intent (أفضل حل لفتح التطبيق الخارجي)
+                const intentUrl = `intent://maps/search/?q=${encodedAddr}#Intent;scheme=https;package=com.google.android.apps.maps;end;`;
+                window.location.href = intentUrl;
+                
+                // إذا لم يتم فتح التطبيق خلال 2 ثانية، ننتقل إلى رابط الويب كحل احتياطي
                 setTimeout(() => {
-                    window.location.href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(addr);
-                }, 1500);
+                    window.location.href = `https://www.google.com/maps/search/?api=1&query=${encodedAddr}`;
+                }, 2000);
             } else {
-                // في المتصفح العادي نفتح تبويب جديد
-                window.open('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(addr), '_blank');
+                // في المتصفح العادي نفتح الرابط في نافذة جديدة
+                window.open(`https://www.google.com/maps/search/?api=1&query=${encodedAddr}`, '_blank');
             }
         };
-        // ========================================================================
+        // =========================================================================
 
         // الراديو والوضع الليلي
         window.toggleRadio = () => {
