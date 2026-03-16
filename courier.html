@@ -30,7 +30,6 @@
         body.dark-mode .status-bar, body.dark-mode .order-card { background: #1e1e1e; color: #fff; }
         body.dark-mode .section-title { color: #66b2ff; }
         
-        /* شاشة تسجيل الدخول الجديدة */
         #loginSection { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; background: var(--primary-blue); color: white; }
         #loginBox { background: white; padding: 30px; border-radius: 15px; width: 100%; max-width: 400px; text-align: center; }
         #loginBox input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Segoe UI'; font-size: 16px; text-align: right;}
@@ -105,18 +104,14 @@
         let isOnline = false;
         let currentCourierName = "";
         let watchId = null;
-        let notifiedOrders = new Set(); // مصفوفة لتسجيل الأوردرات اللي عملت صوت عشان متكررش
+        let notifiedOrders = new Set();
 
-        // دالة إطلاق الصوت والهزاز
         function playNewOrderAlert() {
-            if ("vibrate" in navigator) {
-                navigator.vibrate([200, 100, 200, 100, 500]);
-            }
+            if ("vibrate" in navigator) navigator.vibrate([200, 100, 200, 100, 500]);
             const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
             audio.play().catch(e => console.log("المتصفح منع الصوت", e));
         }
 
-        // التحقق من الدخول
         onAuthStateChanged(auth, (user) => {
             if (user && user.email.includes("@courier.axon.com")) {
                 currentCourierName = user.email.split('@')[0];
@@ -131,19 +126,13 @@
             }
         });
 
-        // دالة تسجيل الدخول الجديدة (باسم المستخدم والباسورد)
         window.loginCourier = async () => {
             const user = document.getElementById('courierUsername').value.trim().toLowerCase();
             const pass = document.getElementById('courierPassword').value;
-            
             if(!user || !pass) return Swal.fire('تنبيه', 'برجاء إدخال اسم المستخدم وكلمة المرور', 'warning');
-            
-            // التريكة: إضافة النطاق الخاص بالمناديب أوتوماتيك
             const email = user + "@courier.axon.com";
-            
             const btn = document.getElementById('loginBtn');
             btn.disabled = true; btn.innerHTML = 'جاري التحقق...';
-            
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
                 Swal.fire({toast:true, position:'top', icon:'success', title:'تم الدخول بنجاح', showConfirmButton:false, timer:2000});
@@ -159,7 +148,6 @@
             }).then((result) => { if (result.isConfirmed) signOut(auth); });
         };
 
-        // الوردية والـ GPS
         window.toggleStatus = () => {
             isOnline = !isOnline;
             const btn = document.getElementById("toggleStatusBtn"), txt = document.getElementById("statusText");
@@ -191,20 +179,13 @@
             }
         }
 
-        // رادار الطلبات
         function loadRadar() {
             onSnapshot(collection(db, "eshteryly_orders"), (snap) => {
                 let radarHtml = "", tasksHtml = "";
                 snap.forEach(docSnap => {
                     const d = docSnap.data(), id = docSnap.id;
                     if(d.status === "جاري البحث عن مندوب" && isOnline) {
-                        
-                        // هنا التريكة: تشغيل الصوت والهزاز لو الأوردر جديد
-                        if(!notifiedOrders.has(id)) {
-                            playNewOrderAlert();
-                            notifiedOrders.add(id);
-                        }
-
+                        if(!notifiedOrders.has(id)) { playNewOrderAlert(); notifiedOrders.add(id); }
                         radarHtml += `<div class="order-card" style="border-right-color:#ffc107">
                             <h4><i class="fa-solid fa-bolt"></i> طلب متاح!</h4>
                             <p><b>📍 التوصيل:</b> ${d.address}</p>
@@ -217,7 +198,7 @@
                             <h4><i class="fa-solid fa-motorcycle"></i> في العهدة</h4>
                             <p><b>📍 العنوان:</b> ${d.address}</p>
                             <div style="display:flex; gap:10px; margin-top:10px;">
-                                <button style="background:#4285F4; color:white; font-weight:bold; padding:12px; border:none; border-radius:5px; flex:1; cursor:pointer;" onclick="window.openMap('${encodeURIComponent(d.address)}')">الملاحة 🗺️</button>
+                                <button style="background:#4285F4; color:white; font-weight:bold; padding:12px; border:none; border-radius:5px; flex:1; cursor:pointer;" onclick="window.openMap('${d.address}')">الملاحة 🗺️</button>
                                 <button class="deliver-btn" style="flex:1; margin-top:0;" onclick="window.completeOrder('${id}')">تم التسليم ✅</button>
                             </div>
                         </div>`;
@@ -237,9 +218,12 @@
             }).then(async (result) => { if (result.isConfirmed) { await updateDoc(doc(db, "eshteryly_orders", id), { status: "تم التسليم بنجاح" }); Swal.fire('عاش!', 'تم تقفيل الطلب', 'success'); } });
         };
 
-        window.openMap = (addr) => window.open("https://www.google.com/maps/search/?api=1&query=" + addr, '_blank');
+        // التعديل السحري هنا عشان الخرائط تفتح في التطبيق فوراً
+        window.openMap = (addr) => {
+            const url = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(addr);
+            window.open(url, '_blank');
+        };
 
-        // الراديو والوضع الليلي
         window.toggleRadio = () => {
             const widget = SC.Widget(document.getElementById('sc-widget'));
             const icon = document.getElementById('radioIcon');
