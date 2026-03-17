@@ -12,7 +12,6 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://w.soundcloud.com/player/api.js"></script>
 
     <style>
         * { box-sizing: border-box; }
@@ -20,9 +19,9 @@
             --primary-blue: #0A3D62; --secondary-blue: #15558d;
             --primary-red: #b82329; --white: #ffffff; --light-bg: #f4f7f6; --dark-text: #2c3e50; 
         }
-        html, body { font-family: 'Cairo', sans-serif; margin: 0; padding: 0; background: var(--light-bg); color: var(--dark-text); overflow-x: hidden; scroll-behavior: smooth;}
+        html, body { font-family: 'Cairo', sans-serif; margin: 0; padding: 0; background: var(--light-bg); color: var(--dark-text); overflow-x: hidden; scroll-behavior: smooth; transition: background 0.3s, color 0.3s;}
         
-        header { background: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary-red); position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
+        header { background: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary-red); position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s;}
         .logo { font-size: 24px; font-weight: 900; color: var(--primary-blue); text-decoration: none;}
         .logo span { color: var(--primary-red); }
         
@@ -36,18 +35,18 @@
         
         .calc-box { background: var(--white); padding: 30px; border-radius: 15px; max-width: 500px; margin: -60px auto 30px; border: 1px solid #eee; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; position: relative; z-index: 10; transition: 0.3s;}
         .calc-box:hover { transform: translateY(-5px); }
-        .calc-select { width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 8px; font-family: 'Cairo'; outline: none; margin-bottom: 15px; font-size: 15px;}
+        .calc-select { width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 8px; font-family: 'Cairo'; outline: none; margin-bottom: 15px; font-size: 15px; transition: 0.3s;}
         .calc-result { font-size: 28px; font-weight: 900; color: var(--primary-red); margin-top: 10px;}
         
-        .section-title { text-align: center; font-size: 32px; margin: 60px 0 40px; color: var(--primary-blue); font-weight: 900;}
+        .section-title { text-align: center; font-size: 32px; margin: 60px 0 40px; color: var(--primary-blue); font-weight: 900; transition: 0.3s;}
         .section-title span { color: var(--primary-red); }
         
         .services-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; padding: 0 20px 60px; }
-        .service-card { background: var(--white); border-radius: 15px; width: 100%; max-width: 320px; text-align: center; border: 1px solid #eee; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: transform 0.3s; cursor: pointer; overflow: hidden;}
+        .service-card { background: var(--white); border-radius: 15px; width: 100%; max-width: 320px; text-align: center; border: 1px solid #eee; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: transform 0.3s, background 0.3s; cursor: pointer; overflow: hidden;}
         .service-card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); border-bottom: 4px solid var(--primary-red);}
         .service-img { width: 100%; height: 200px; object-fit: cover; border-bottom: 3px solid var(--primary-blue);}
         .service-content { padding: 20px; }
-        .service-content h4 { font-size: 20px; margin: 0 0 10px 0; color: var(--primary-blue);}
+        .service-content h4 { font-size: 20px; margin: 0 0 10px 0; color: var(--primary-blue); transition: 0.3s;}
         .service-content p { color: gray; margin: 0; font-size: 14px;}
         
         /* قسم الانضمام (توظيف وفرنشايز) */
@@ -76,26 +75,48 @@
         .btn-chat { bottom: 20px; right: 20px; background: var(--primary-blue); color: white;}
         
         /* نافذة الشات بوت */
-        .chat-widget { display: none; position: fixed; bottom: 90px; right: 20px; width: 320px; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 1000; flex-direction: column; overflow: hidden; border: 1px solid #ddd; animation: slideUp 0.3s ease-out;}
+        .chat-widget { display: none; position: fixed; bottom: 90px; right: 20px; width: 320px; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 1000; flex-direction: column; overflow: hidden; border: 1px solid #ddd; animation: slideUp 0.3s ease-out; transition: 0.3s;}
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .chat-header { background: var(--primary-blue); color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center;}
-        .chat-body { padding: 15px; height: 280px; overflow-y: auto; background: #f9f9f9; font-size: 14px;}
-        .chat-footer { padding: 10px; background: white; border-top: 1px solid #eee; display: flex; gap: 10px;}
-        .chat-footer input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; font-family: 'Cairo'; outline: none;}
+        .chat-header { background: var(--primary-blue); color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; transition: 0.3s;}
+        .chat-body { padding: 15px; height: 280px; overflow-y: auto; background: #f9f9f9; font-size: 14px; transition: 0.3s;}
+        .chat-footer { padding: 10px; background: white; border-top: 1px solid #eee; display: flex; gap: 10px; transition: 0.3s;}
+        .chat-footer input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; font-family: 'Cairo'; outline: none; transition: 0.3s;}
         .chat-footer button { background: var(--primary-red); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer;}
         
         /* النوافذ المنبثقة (المودال) */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 61, 98, 0.9); align-items: center; justify-content: center; z-index: 2000; padding: 15px;}
-        .modal-content { background: var(--white); padding: 30px 20px; border-radius: 15px; width: 100%; max-width: 450px; text-align: center; position: relative; max-height: 90vh; overflow-y: auto;}
-        .modal-content input, .modal-content select, .modal-content textarea { width: 100%; padding: 12px; margin-bottom: 15px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; font-family: 'Cairo'; outline: none;}
+        .modal-content { background: var(--white); padding: 30px 20px; border-radius: 15px; width: 100%; max-width: 450px; text-align: center; position: relative; max-height: 90vh; overflow-y: auto; transition: 0.3s;}
+        .modal-content input, .modal-content select, .modal-content textarea { width: 100%; padding: 12px; margin-bottom: 15px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; font-family: 'Cairo'; outline: none; transition: 0.3s;}
         .submit-btn { width: 100%; background: var(--primary-red); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-family: 'Cairo'; cursor: pointer; font-size: 16px; margin-top: 10px;}
         .close-modal { position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 24px; cursor: pointer; color: gray;}
+
+        /* ---------------- الوضع الليلي (Dark Mode) ---------------- */
+        body.dark-mode { --white: #1e1e1e; --light-bg: #121212; --dark-text: #e0e0e0; }
+        body.dark-mode header { background: #1e1e1e; border-bottom: 3px solid var(--primary-red); }
+        body.dark-mode .calc-box, body.dark-mode .service-card { background: #1e1e1e; border-color: #333; }
+        body.dark-mode .calc-select { background: #2c2c2c; color: #fff; border-color: #444; }
+        body.dark-mode .section-title, body.dark-mode .service-content h4 { color: #66b2ff; }
+        body.dark-mode header button i.fa-moon, body.dark-mode header button i.fa-sun { color: #66b2ff; }
+        body.dark-mode .modal-content { background: #1e1e1e; color: #fff; border: 1px solid #333; }
+        body.dark-mode .modal-content input, body.dark-mode .modal-content select, body.dark-mode .modal-content textarea { background: #2c2c2c; color: #fff; border-color: #444; }
+        body.dark-mode .chat-widget { background: #1e1e1e; border-color: #333; }
+        body.dark-mode .chat-header { background: #062338; }
+        body.dark-mode .chat-body { background: #121212; color: #e0e0e0; }
+        body.dark-mode .chat-footer { background: #1e1e1e; border-top-color: #333; }
+        body.dark-mode .chat-footer input { background: #2c2c2c; color: #fff; border-color: #444; }
+        body.dark-mode .btn-radio { background: #1e1e1e; border-color: #66b2ff; color: #66b2ff; }
     </style>
 </head>
 <body>
     <header>
-        <div class="logo"><i class="fa-solid fa-truck-fast"></i> AXON <span>EXPRESS</span></div>
-        <button class="login-btn" onclick="document.getElementById('loginModal').style.display='flex'">بوابة التجار <i class="fa-solid fa-user-lock"></i></button>
+        <a href="#" class="logo"><i class="fa-solid fa-truck-fast"></i> AXON <span>EXPRESS</span></a>
+        
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <button onclick="window.toggleTheme()" style="background:none; border:none; color:var(--primary-blue); font-size:24px; cursor:pointer;" title="الوضع الليلي">
+                <i id="themeIcon" class="fa-solid fa-moon"></i>
+            </button>
+            <button class="login-btn" onclick="document.getElementById('loginModal').style.display='flex'">بوابة التجار <i class="fa-solid fa-user-lock"></i></button>
+        </div>
     </header>
 
     <div class="hero">
@@ -197,7 +218,7 @@
             <button onclick="window.toggleChat()" style="background:none; border:none; color:white; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="chat-body" id="chatBody">
-            <div style="background:#e3f2fd; padding:10px; border-radius:10px; margin-bottom:10px; display:inline-block;">
+            <div style="background:#e3f2fd; padding:10px; border-radius:10px; margin-bottom:10px; display:inline-block; color:#2c3e50;">
                 مرحباً بك في أكسون إكسبريس! 👋<br>كيف يمكنني مساعدتك اليوم؟
             </div>
         </div>
@@ -260,7 +281,7 @@
         </div>
     </div>
 
-    <iframe id="sc-widget" allow="autoplay" style="display:none;" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/artefacts-factory/sets&auto_play=false"></iframe>
+    <audio id="axonRadioPlayer" src="http://37.157.242.101:17317/stream" preload="none"></audio>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script type="module">
@@ -383,35 +404,50 @@
             if(input.value.trim()) {
                 body.innerHTML += `<div style="background:var(--primary-blue); color:white; padding:10px; border-radius:10px; margin-bottom:10px; display:inline-block; align-self:flex-end;">${input.value}</div><br>`;
                 setTimeout(() => {
-                    body.innerHTML += `<div style="background:#e3f2fd; padding:10px; border-radius:10px; margin-bottom:10px; display:inline-block;">تم استلام رسالتك، سيتواصل معك فريق الدعم قريباً!</div><br>`;
+                    body.innerHTML += `<div style="background:#e3f2fd; padding:10px; border-radius:10px; margin-bottom:10px; display:inline-block; color:#2c3e50;">تم استلام رسالتك، سيتواصل معك فريق الدعم قريباً!</div><br>`;
                     body.scrollTop = body.scrollHeight;
                 }, 1000);
                 input.value = '';
             }
         };
 
-        // --- 7. الراديو ---
+        // --- 7. تشغيل وإيقاف الراديو المباشر ---
+        const radioPlayer = document.getElementById('axonRadioPlayer');
         window.toggleAudio = () => {
-            const widget = SC.Widget(document.getElementById('sc-widget'));
             const icon = document.getElementById('musicIcon');
-            widget.getPaused((isPaused) => {
-                if(isPaused) { 
-                    widget.play(); 
-                    icon.className = 'fa-solid fa-volume-high'; 
-                } else { 
-                    widget.pause(); 
-                    icon.className = 'fa-solid fa-volume-xmark'; 
-                }
-            });
+            if (radioPlayer.paused) {
+                radioPlayer.load(); // بيعمل ريفرش عشان يجيب البث لايف
+                radioPlayer.play();
+                icon.className = 'fa-solid fa-volume-high';
+                icon.style.color = '#28a745'; // أخضر لو شغال
+            } else {
+                radioPlayer.pause();
+                icon.className = 'fa-solid fa-volume-xmark';
+                icon.style.color = ''; // يرجع لونه الطبيعي
+            }
+        };
+
+        // --- 8. الوضع الليلي (Dark Mode) ---
+        window.toggleTheme = () => {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.getElementById('themeIcon');
+            if (document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('axon_main_theme', 'dark');
+                icon.className = 'fa-solid fa-sun';
+            } else {
+                localStorage.setItem('axon_main_theme', 'light');
+                icon.className = 'fa-solid fa-moon';
+            }
         };
         
-        document.body.addEventListener('click', () => { 
-            if(window.SC && !window.radioStarted) { 
-                SC.Widget(document.getElementById('sc-widget')).play(); 
-                document.getElementById('musicIcon').className='fa-solid fa-volume-high'; 
-                window.radioStarted = true; 
-            } 
-        }, {once:true});
+        // استرجاع الوضع المحفوظ عند فتح الصفحة
+        if(localStorage.getItem('axon_main_theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            setTimeout(() => {
+                const icon = document.getElementById('themeIcon');
+                if(icon) icon.className = 'fa-solid fa-sun';
+            }, 100);
+        }
     </script>
 </body>
 </html>
