@@ -11,50 +11,68 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://w.soundcloud.com/player/api.js"></script>
+    
     <style>
         * { box-sizing: border-box; }
         :root { --primary-blue: #0A3D62; --primary-red: #b82329; --white: #fff; --light-bg: #f4f7f6; --dark-text: #2c3e50; }
-        html, body { font-family: 'Cairo', sans-serif; margin: 0; background: var(--light-bg); color: var(--dark-text); overflow-x: hidden; scroll-behavior: smooth;}
-        header { background: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary-red); position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
+        html, body { font-family: 'Cairo', sans-serif; margin: 0; background: var(--light-bg); color: var(--dark-text); overflow-x: hidden; scroll-behavior: smooth; transition: background 0.3s, color 0.3s;}
+        
+        header { background: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary-red); position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s;}
         .logo { font-size: 22px; font-weight: 900; color: var(--primary-blue);}
         .logo span { color: var(--primary-red); }
         .container { padding: 20px; max-width: 1400px; margin: 0 auto;}
         
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: var(--white); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-blue);}
-        .stat-card h3 { font-size: 15px; margin: 0 0 10px 0; color: #666; }
+        .stat-card { background: var(--white); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-blue); transition: 0.3s;}
+        .stat-card h3 { font-size: 15px; margin: 0 0 10px 0; color: #666; transition: 0.3s;}
         .stat-card .value { font-size: 24px; font-weight: 900; color: var(--primary-blue);}
         
-        .admin-section { background: var(--white); padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
+        .admin-section { background: var(--white); padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s;}
         .admin-section h2 { color: var(--primary-blue); border-bottom: 2px solid var(--primary-red); padding-bottom: 10px; margin-top: 0; font-size: 18px;}
         
-        /* تنسيق الخريطة */
         #adminMap { height: 450px; width: 100%; border-radius: 12px; border: 3px solid var(--primary-blue); z-index: 1;}
         
         .table-wrapper { width: 100%; overflow-x: auto; border-radius: 8px; border: 1px solid #eee;}
         table { width: 100%; min-width: 800px; border-collapse: collapse; text-align: right; }
-        th, td { padding: 12px; border-bottom: 1px solid #eee; font-size: 13px;}
-        th { background: var(--primary-blue); color: var(--white); }
+        th, td { padding: 12px; border-bottom: 1px solid #eee; font-size: 13px; transition: 0.3s;}
+        th { background: var(--primary-blue); color: #fff; }
         tr:hover { background-color: #f9f9f9; }
         
         .btn-action { border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; color: white; margin-left: 3px; font-family: 'Cairo'; font-weight: bold; font-size: 12px; transition: 0.3s;}
         .btn-save { background: #28a745; } .btn-edit { background: #007bff; } .btn-delete { background: var(--primary-red); } .btn-print { background: #333; } .btn-track { background: #17a2b8; margin-top: 5px; width: 100%; }
         
-        .status-dropdown { padding: 6px; border-radius: 5px; border: 1px solid #ddd; font-family: 'Cairo'; font-weight: bold; outline: none;}
-        .logout-btn { background: var(--white); border: 2px solid var(--primary-red); color: var(--primary-red); padding: 6px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Cairo';}
+        .status-dropdown { padding: 6px; border-radius: 5px; border: 1px solid #ddd; font-family: 'Cairo'; font-weight: bold; outline: none; transition: 0.3s;}
+        .logout-btn { background: var(--white); border: 2px solid var(--primary-red); color: var(--primary-red); padding: 6px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; transition: 0.3s;}
         
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 61, 98, 0.9); align-items: center; justify-content: center; z-index: 2000; padding: 15px;}
-        .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 500px; position: relative;}
-        .modal-content input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo';}
+        .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 500px; position: relative; transition: 0.3s;}
+        .modal-content input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo'; transition: 0.3s;}
         .close-btn { position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 24px; cursor: pointer;}
+        
+        /* ---------------- الوضع الليلي (Dark Mode) ---------------- */
+        body.dark-mode { --white: #1e1e1e; --light-bg: #121212; --dark-text: #e0e0e0; }
+        body.dark-mode .stat-card h3 { color: #aaa; }
+        body.dark-mode .table-wrapper { border-color: #333; }
+        body.dark-mode th { background: #062338; border-color: #333; }
+        body.dark-mode td { border-color: #333; }
+        body.dark-mode tr:hover { background-color: #2a2a2a; }
+        body.dark-mode input, body.dark-mode select { background: #2c2c2c; color: #fff; border: 1px solid #444; }
+        body.dark-mode .status-dropdown { background: #2c2c2c; color: #fff; }
+        body.dark-mode .logout-btn { background: #1e1e1e; }
+        body.dark-mode .bourse-section { background: #3e2700 !important; border-color: #ff9800 !important; }
+        body.dark-mode .modal-content { background: #1e1e1e; color: #fff; }
     </style>
 </head>
 <body>
     <header>
         <div class="logo"><i class="fa-solid fa-chess-king"></i> إدارة | <span>AXON</span></div>
         <div style="display: flex; gap: 15px; align-items: center;">
-            <button onclick="window.toggleRadio()" style="background:none; border:none; color:var(--primary-red); font-size:24px; cursor:pointer;" title="تشغيل/إيقاف الراديو"><i class="fa-solid fa-radio"></i></button>
+            <button onclick="window.toggleRadio()" style="background:none; border:none; color:var(--primary-red); font-size:24px; cursor:pointer;" title="تشغيل/إيقاف الراديو">
+                <i id="radioIcon" class="fa-solid fa-radio"></i>
+            </button>
+            <button onclick="window.toggleTheme()" style="background:none; border:none; color:var(--primary-blue); font-size:24px; cursor:pointer;" title="الوضع الليلي">
+                <i class="fa-solid fa-moon"></i>
+            </button>
             <button class="logout-btn" onclick="window.logout()">خروج</button>
         </div>
     </header>
@@ -81,7 +99,7 @@
             </div>
         </div>
 
-        <div class="admin-section" style="background: #fffde7; border: 2px dashed #f57f17;">
+        <div class="admin-section bourse-section" style="background: #fffde7; border: 2px dashed #f57f17;">
             <h2 style="color: #e65100; border-bottom-color: #f57f17;"><i class="fa-solid fa-gas-pump"></i> بورصة الشحن (تحديث فوري للجمهورية)</h2>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 15px;">
                 <div><label style="font-size:13px; font-weight:bold;">الإسكندرية:</label><input type="number" id="priceAlex" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;"></div>
@@ -108,7 +126,7 @@
 
     <div id="editModal" class="modal">
         <div class="modal-content">
-            <button class="close-btn" onclick="window.closeModal('editModal')">×</button>
+            <button class="close-btn" onclick="window.closeModal('editModal')" style="color:var(--primary-red);">×</button>
             <h3 style="color: var(--primary-blue); border-bottom: 2px solid var(--primary-red); padding-bottom: 10px;">تعديل الشحنة</h3>
             <input type="hidden" id="editDocId">
             <label>المستلم:</label> <input type="text" id="editName">
@@ -122,7 +140,7 @@
         </div>
     </div>
 
-    <iframe id="sc-widget-admin" allow="autoplay" style="display:none;" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/artefacts-factory/sets&auto_play=false"></iframe>
+    <audio id="axonRadioPlayer" src="http://37.157.242.101:17317/stream" preload="none"></audio>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
@@ -140,11 +158,10 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // تجهيز الخريطة
         const adminMap = L.map('adminMap').setView([31.2001, 29.9187], 12);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(adminMap);
         const courierMarkers = {};
-        window.activeCouriersData = {}; // لحفظ بيانات المناديب عشان زرار التتبع
+        window.activeCouriersData = {}; 
 
         onAuthStateChanged(auth, async (user) => {
             if (!user) { window.location.href = "index.html"; return; }
@@ -159,7 +176,6 @@
 
         window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
 
-        // --- تتبع المناديب على الخريطة (الرادار) ---
         function trackCouriers() {
             onSnapshot(collection(db, "couriers"), (snap) => {
                 snap.forEach(docSnap => {
@@ -167,7 +183,7 @@
                     const id = docSnap.id;
                     if (data.currentLocation && data.currentLocation.lat && data.status === 'active') {
                         const pos = [data.currentLocation.lat, data.currentLocation.lng];
-                        window.activeCouriersData[data.name] = { id: id, pos: pos }; // حفظ موقع المندوب باسمه
+                        window.activeCouriersData[data.name] = { id: id, pos: pos }; 
 
                         if (courierMarkers[id]) {
                             courierMarkers[id].setLatLng(pos);
@@ -184,11 +200,9 @@
             });
         }
 
-        // --- دالة التتبع الفردي (الربط بين الجدول والخريطة) ---
         window.locateCourier = (courierName) => {
             const courier = window.activeCouriersData[courierName];
             if (courier && courier.pos) {
-                // النزول للخريطة وعمل زووم
                 document.getElementById('adminMap').scrollIntoView({behavior: 'smooth', block: 'center'});
                 adminMap.setView(courier.pos, 16);
                 if(courierMarkers[courier.id]) {
@@ -199,7 +213,6 @@
             }
         };
 
-        // --- طلبات اشتريلي ---
         function loadEshteryly() {
             onSnapshot(query(collection(db, "eshteryly_orders"), orderBy("timestamp", "desc")), (snap) => {
                 let html = "", count = 0;
@@ -215,7 +228,6 @@
                     } else if(d.status === "جاري البحث عن مندوب") {
                         btns = `<span style="color:#856404; background:#fff3cd; padding:5px; border-radius:5px;">الرادار شغال 📡</span>`;
                     } else {
-                        // إضافة زرار التتبع الخاص بالطلب والمندوب
                         btns = `<div style="text-align:center;">
                                     <span style="color:#155724; background:#d4edda; padding:5px; border-radius:5px; display:block; margin-bottom:5px;">الكابتن: ${d.courierName}</span>
                                     <button class="btn-action btn-track" onclick="window.locateCourier('${d.courierName}')"><i class="fa-solid fa-location-crosshairs"></i> تتبع 📍</button>
@@ -254,7 +266,6 @@
             }
         };
 
-        // --- الشحنات العادية ---
         function loadShipments() {
             onSnapshot(query(collection(db, "shipments"), orderBy("timestamp", "desc")), (snap) => {
                 let html = "", totalM = 0, count = 0;
@@ -324,7 +335,6 @@
             Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم التعديل', showConfirmButton:false, timer:2000});
         };
 
-        // --- بورصة الشحن ---
         window.updateLivePrices = async () => {
             const vals = { alex: document.getElementById("priceAlex")?.value, cairo: document.getElementById("priceCairo")?.value, beheira: document.getElementById("priceBeheira")?.value, delta: document.getElementById("priceDelta")?.value, saeed: document.getElementById("priceSaeed")?.value };
             if(!vals.alex || !vals.cairo || !vals.beheira || !vals.delta || !vals.saeed) return Swal.fire('تنبيه', 'أكمل أسعار كل المحافظات', 'warning');
@@ -342,7 +352,6 @@
             }
         });
 
-        // --- الطباعة السريعة ---
         window.printWaybill = (merchant, name, p1, p2, city, addr, w, amt, awb, details) => {
             const printContent = `
             <!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>طباعة بوليصة</title>
@@ -371,22 +380,30 @@
             win.document.write(printContent); win.document.close();
         };
 
-        // --- الراديو الشغال ---
+        // --- تشغيل وإيقاف الراديو ---
+        const radioPlayer = document.getElementById('axonRadioPlayer');
         window.toggleRadio = () => {
-            const iframe = document.getElementById('sc-widget-admin');
-            const widget = SC.Widget(iframe);
-            widget.getPaused((isPaused) => {
-                if(isPaused) { widget.play(); } 
-                else { widget.pause(); }
-            });
+            const icon = document.getElementById('radioIcon');
+            if (radioPlayer.paused) {
+                radioPlayer.load(); // بيعمل ريفرش عشان يجيب البث المباشر
+                radioPlayer.play();
+                icon.style.color = '#28a745'; // أخضر لو شغال
+            } else {
+                radioPlayer.pause();
+                icon.style.color = 'var(--primary-red)'; // أحمر لو واقف
+            }
+        };
+
+        // --- تفعيل الوضع الليلي ---
+        window.toggleTheme = () => {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('axon_admin_theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
         };
         
-        document.body.addEventListener('click', () => { 
-            if(window.SC && !window.rs) { 
-                SC.Widget(document.getElementById('sc-widget-admin')).play(); 
-                window.rs = true; 
-            } 
-        }, {once:true});
+        // --- التأكد من الوضع المحفوظ عند فتح الصفحة ---
+        if(localStorage.getItem('axon_admin_theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
     </script>
 </body>
 </html>
