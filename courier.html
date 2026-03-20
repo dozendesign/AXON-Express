@@ -5,62 +5,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>تطبيق المندوب | Axon Express</title>
     
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
-        :root { --primary-blue: #002b5c; --primary-red: #d32f2f; --bg-color: #f4f7f6; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-color); margin: 0; padding-bottom: 70px; transition: 0.3s; }
+        * { box-sizing: border-box; }
+        :root { --primary-blue: #0A3D62; --primary-red: #b82329; --bg-color: #f4f7f6; --white: #ffffff; --dark-text: #2c3e50; }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg-color); margin: 0; padding-bottom: 70px; transition: 0.3s; color: var(--dark-text); overflow-x: hidden; }
         
-        .header { background: var(--primary-blue); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .container { padding: 15px; }
+        .header { background: var(--primary-blue); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .header-logo { font-size: 18px; font-weight: 900; display: flex; align-items: center; gap: 8px; }
+        .container { padding: 15px; max-width: 600px; margin: 0 auto; }
         
-        .status-bar { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .toggle-btn { padding: 10px 20px; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .status-bar { display: flex; justify-content: space-between; align-items: center; background: var(--white); padding: 15px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #eee; transition: 0.3s; }
+        .toggle-btn { padding: 10px 20px; border: none; border-radius: 8px; font-weight: bold; font-family: 'Cairo'; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .toggle-btn:hover { transform: translateY(-2px); }
         .btn-online { background: #28a745; color: white; }
         .btn-offline { background: #dc3545; color: white; }
         
-        .section-title { color: var(--primary-blue); border-bottom: 2px solid var(--primary-red); padding-bottom: 5px; margin-bottom: 15px; }
-        .order-card { background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-right: 5px solid var(--primary-red); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .claim-btn { width: 100%; background: #ffc107; color: #000; font-weight: bold; padding: 12px; border: none; border-radius: 5px; margin-top: 10px; cursor: pointer; }
-        .deliver-btn { width: 100%; background: #28a745; color: white; font-weight: bold; padding: 12px; border: none; border-radius: 5px; margin-top: 10px; cursor: pointer; }
+        .section-title { color: var(--primary-blue); border-bottom: 2px solid var(--primary-red); padding-bottom: 5px; margin-bottom: 15px; font-size: 16px; font-weight: 900; }
         
-        body.dark-mode { --bg-color: #121212; color: #e0e0e0; }
-        body.dark-mode .status-bar, body.dark-mode .order-card { background: #1e1e1e; color: #fff; }
+        .order-card { background: var(--white); padding: 15px; border-radius: 12px; margin-bottom: 15px; border-right: 5px solid var(--primary-red); box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.3s; position: relative; overflow: hidden; }
+        .distance-badge { position: absolute; top: 15px; left: 15px; background: #e0eaf5; color: var(--primary-blue); padding: 4px 8px; border-radius: 5px; font-size: 12px; font-weight: bold; }
+        .order-card h4 { margin: 0 0 10px 0; font-size: 15px; }
+        .order-card p { margin: 5px 0; font-size: 13px; color: #555; }
+        
+        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .btn-core { width: 100%; font-weight: bold; font-family: 'Cairo'; padding: 12px; border: none; border-radius: 8px; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn-core:active { transform: scale(0.95); }
+        .claim-btn { background: #ffc107; color: #000; }
+        .reject-btn { background: var(--white); color: #dc3545; border: 1px solid #dc3545; }
+        .nav-btn { background: #007bff; color: white; }
+        .deliver-btn { background: #28a745; color: white; }
+        
+        /* مصفوفة الظلام */
+        body.dark-mode { --bg-color: #121212; --white: #1e1e1e; --dark-text: #e0e0e0; }
+        body.dark-mode .status-bar, body.dark-mode .order-card { border-color: #333; }
         body.dark-mode .section-title { color: #66b2ff; }
+        body.dark-mode .order-card p { color: #aaa; }
+        body.dark-mode .reject-btn { background: transparent; }
+        body.dark-mode .distance-badge { background: #062338; color: #66b2ff; }
         
-        /* شاشة تسجيل الدخول الجديدة */
-        #loginSection { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; background: var(--primary-blue); color: white; }
-        #loginBox { background: white; padding: 30px; border-radius: 15px; width: 100%; max-width: 400px; text-align: center; }
-        #loginBox input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Segoe UI'; font-size: 16px; text-align: right;}
-        #loginBox button { width: 100%; background: #28a745; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        /* شاشة تسجيل الدخول */
+        #loginSection { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; background: linear-gradient(135deg, var(--primary-blue), #15558d); color: white; }
+        #loginBox { background: var(--white); padding: 30px; border-radius: 15px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        #loginBox h3 { color: var(--primary-blue); margin-top: 0; }
+        #loginBox input { width: 100%; padding: 14px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Cairo'; font-size: 14px; text-align: right; background: var(--bg-color); color: var(--dark-text); transition: 0.3s;}
+        #loginBox input:focus { border-color: var(--primary-blue); outline: none; }
+        #loginBox button { width: 100%; background: var(--primary-red); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; font-family: 'Cairo'; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        #loginBox button:hover { background: #991c22; }
+
+        /* نبض الإنذار */
+        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(220, 53, 69, 0); } 100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); } }
+        .alarm-active { animation: pulse-red 1.5s infinite; border-right-color: #dc3545 !important; }
     </style>
 </head>
 <body>
     <div id="loginSection">
-        <h2 style="margin-bottom:20px; color:white;"><i class="fa-solid fa-motorcycle"></i> كباتن أكسون</h2>
+        <h2 style="margin-bottom:20px; color:white; font-weight:900;"><i class="fa-solid fa-motorcycle"></i> أكسون <span>كابتن</span></h2>
         <div id="loginBox">
-            <h3 style="color:var(--primary-blue); margin-top:0;">تسجيل دخول المندوب</h3>
-            <p style="color:gray; font-size:13px; margin-bottom:15px;">الرجاء إدخال بيانات الدخول الخاصة بك</p>
-            
-            <input type="text" id="courierUsername" placeholder="اسم المستخدم (مثال: ahmed)">
-            <input type="password" id="courierPassword" placeholder="كلمة المرور">
-            
-            <button id="loginBtn" onclick="window.loginCourier()">تسجيل الدخول</button>
+            <h3>بوابة التحقق</h3>
+            <p style="color:gray; font-size:13px; margin-bottom:15px;">الرجاء إدخال بيانات الـ DNA الرقمي الخاص بك</p>
+            <input type="text" id="courierUsername" placeholder="كود الكابتن (مثال: ahmed)">
+            <input type="password" id="courierPassword" placeholder="شفرة الدخول">
+            <button id="loginBtn" onclick="window.loginCourier()">تسجيل الدخول للنظام</button>
         </div>
     </div>
 
     <div id="appContent" style="display:none;">
         <div class="header">
-            <div><i class="fa-solid fa-motorcycle"></i> أكسون كابتن</div>
+            <div class="header-logo"><i class="fa-solid fa-crosshairs"></i> رادار القيادة</div>
             <div style="display: flex; gap: 20px; align-items: center;">
-                <button onclick="window.toggleRadio()" style="background:none; border:none; color:white; font-size:22px; cursor:pointer;" title="راديو أكسون">
+                <button onclick="window.toggleRadio()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;" title="تحكم الراديو">
                     <i id="radioIcon" class="fa-solid fa-volume-xmark"></i>
                 </button>
-                <button onclick="window.toggleTheme()" style="background:none; border:none; color:white; font-size:22px; cursor:pointer;" title="الوضع الليلي">
-                    <i class="fa-solid fa-moon"></i>
+                <button onclick="window.toggleTheme()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;" title="الوضع الليلي">
+                    <i id="themeIcon" class="fa-solid fa-moon"></i>
                 </button>
-                <button onclick="window.logoutCourier()" style="background:none; border:none; color:white; font-size:22px; cursor:pointer;" title="تسجيل خروج">
+                <button onclick="window.logoutCourier()" style="background:none; border:none; color:var(--primary-red); font-size:20px; cursor:pointer;" title="انسحاب">
                     <i class="fa-solid fa-right-from-bracket"></i>
                 </button>
             </div>
@@ -69,21 +92,25 @@
         <div class="container">
             <div class="status-bar">
                 <div>
-                    <h3 style="margin: 0; color: var(--primary-blue);" id="courierNameDisplay">مرحباً يا بطل</h3>
-                    <span id="statusText" style="color: #dc3545; font-weight: bold;">غير متاح الآن 🔴</span>
+                    <h3 style="margin: 0; color: var(--primary-blue); font-size: 16px;" id="courierNameDisplay">مرحباً يا بطل</h3>
+                    <span id="statusText" style="color: #dc3545; font-weight: bold; font-size: 13px;">خارج التغطية 🔴</span>
                 </div>
                 <button id="toggleStatusBtn" class="toggle-btn btn-offline" onclick="window.toggleStatus()">بدء الوردية</button>
             </div>
 
-            <h3 class="section-title"><i class="fa-solid fa-satellite-dish"></i> رادار اشتريلي (جديد)</h3>
-            <div id="radarContainer"></div>
+            <h3 class="section-title"><i class="fa-solid fa-satellite-dish"></i> أهداف تكتيكية (اشتريلي)</h3>
+            <div id="radarContainer">
+                <p style='color:gray; text-align:center; font-size: 14px;'>الرادار في وضع السكون. ابدأ الوردية.</p>
+            </div>
 
-            <h3 class="section-title" style="margin-top: 30px;"><i class="fa-solid fa-box-open"></i> طلباتي في العهدة</h3>
-            <div id="myTasksContainer"></div>
+            <h3 class="section-title" style="margin-top: 30px;"><i class="fa-solid fa-motorcycle"></i> أهداف في عهدتي</h3>
+            <div id="myTasksContainer">
+                <p style='color:gray; text-align:center; font-size: 14px;'>لا توجد مهام نشطة</p>
+            </div>
         </div>
     </div>
 
-    <audio id="axonRadioPlayer" src="http://37.157.242.101:17317/stream" preload="none"></audio>
+    <audio id="axonRadioPlayer" src="http://37.157.242.101:17317/stream" preload="none" loop></audio>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
@@ -104,16 +131,51 @@
         let isOnline = false;
         let currentCourierName = "";
         let watchId = null;
-        let notifiedOrders = new Set(); 
+        let currentLat = null, currentLng = null;
+        
+        // بروتوكول الإزعاج التكتيكي
+        let ignoredOrders = new Set(); 
+        let activeAlarmInterval = null;
+        let isAlarming = false;
 
-        function playNewOrderAlert() {
-            if ("vibrate" in navigator) {
-                navigator.vibrate([200, 100, 200, 100, 500]);
-            }
-            const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
-            audio.play().catch(e => console.log("المتصفح منع الصوت", e));
+        // خوارزمية Haversine لحساب المسافات بالكيلومتر
+        function getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; 
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return (R * c).toFixed(1); // يرجع المسافة برقم عشري واحد
         }
 
+        // إطلاق الإنذار المستمر
+        function triggerTacticalAlarm() {
+            if (isAlarming) return;
+            isAlarming = true;
+            const siren = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3'); // صوت إنذار
+            
+            // حلقة تكرارية كل 3 ثواني للصوت والاهتزاز
+            activeAlarmInterval = setInterval(() => {
+                if ("vibrate" in navigator) navigator.vibrate([500, 200, 500]);
+                siren.play().catch(e => console.log("المتصفح يحتاج لتفاعل المستخدم أولاً"));
+            }, 3000);
+            
+            // تشغيل فوري في أول مرة
+            if ("vibrate" in navigator) navigator.vibrate([500, 200, 500]);
+            siren.play().catch(e => {});
+        }
+
+        // إيقاف الإنذار
+        function stopTacticalAlarm() {
+            if (activeAlarmInterval) {
+                clearInterval(activeAlarmInterval);
+                activeAlarmInterval = null;
+                isAlarming = false;
+                if ("vibrate" in navigator) navigator.vibrate(0);
+            }
+        }
+
+        // مراقبة الدخول
         onAuthStateChanged(auth, (user) => {
             if (user && user.email.includes("@courier.axon.com")) {
                 currentCourierName = user.email.split('@')[0];
@@ -125,45 +187,58 @@
                 document.getElementById('loginSection').style.display = 'flex';
                 document.getElementById('appContent').style.display = 'none';
                 if(watchId) navigator.geolocation.clearWatch(watchId);
+                stopTacticalAlarm();
             }
         });
 
+        // تسجيل الدخول
         window.loginCourier = async () => {
             const user = document.getElementById('courierUsername').value.trim().toLowerCase();
             const pass = document.getElementById('courierPassword').value;
-            
-            if(!user || !pass) return Swal.fire('تنبيه', 'برجاء إدخال اسم المستخدم وكلمة المرور', 'warning');
+            if(!user || !pass) return Swal.fire('نقص بيانات', 'أدخل كود الكابتن وشفرة الدخول.', 'warning');
             
             const email = user + "@courier.axon.com";
-            
             const btn = document.getElementById('loginBtn');
-            btn.disabled = true; btn.innerHTML = 'جاري التحقق...';
+            btn.disabled = true; btn.innerHTML = 'جاري كسر التشفير...';
             
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
-                Swal.fire({toast:true, position:'top', icon:'success', title:'تم الدخول بنجاح', showConfirmButton:false, timer:2000});
+                Swal.fire({toast:true, position:'top-end', icon:'success', title:'دخول مصرح به', showConfirmButton:false, timer:2000});
             } catch (error) {
-                Swal.fire('خطأ', 'بيانات الدخول غير صحيحة!', 'error');
-                btn.disabled = false; btn.innerHTML = 'تسجيل الدخول';
+                Swal.fire('تم الرفض', 'البيانات غير متطابقة مع قاعدة أكسون.', 'error');
+                btn.disabled = false; btn.innerHTML = 'تسجيل الدخول للنظام';
             }
         };
 
         window.logoutCourier = () => {
-            Swal.fire({
-                title: 'تسجيل خروج؟', icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'نعم، خروج'
+            Swal.fire({ title: 'انسحاب تكتيكي؟', icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'نعم، تسجيل خروج'
             }).then((result) => { if (result.isConfirmed) signOut(auth); });
         };
+
+        // --- حصان طروادة الصوتي (التحكم في الوردية والـ GPS) ---
+        const radioPlayer = document.getElementById('axonRadioPlayer');
+        let userWantsRadioOn = false;
 
         window.toggleStatus = () => {
             isOnline = !isOnline;
             const btn = document.getElementById("toggleStatusBtn"), txt = document.getElementById("statusText");
             if(isOnline) {
                 btn.className = "toggle-btn btn-online"; btn.innerText = "إنهاء الوردية";
-                txt.innerHTML = "متاح ومستعد 🟢"; txt.style.color = "#28a745";
+                txt.innerHTML = "متصل بالرادار 🟢"; txt.style.color = "#28a745";
+                
+                // تفعيل حصان طروادة الصوتي لإبقاء الـ GPS مستيقظاً
+                radioPlayer.src = "http://37.157.242.101:17317/stream?" + new Date().getTime();
+                radioPlayer.volume = userWantsRadioOn ? 1.0 : 0.01; // شبه صامت إذا لم يطلب المستخدم الراديو
+                radioPlayer.play().catch(e => console.log("Audio lock"));
+                
                 startTracking();
             } else {
                 btn.className = "toggle-btn btn-offline"; btn.innerText = "بدء الوردية";
-                txt.innerHTML = "غير متاح الآن 🔴"; txt.style.color = "#dc3545";
+                txt.innerHTML = "خارج التغطية 🔴"; txt.style.color = "#dc3545";
+                
+                radioPlayer.pause(); // إيقاف اختراق الخلفية
+                stopTacticalAlarm(); // إيقاف أي إنذار معلق
+                
                 if(watchId) { navigator.geolocation.clearWatch(watchId); watchId = null; }
                 if(auth.currentUser) setDoc(doc(db, "couriers", auth.currentUser.uid), { status: "offline" }, { merge: true });
             }
@@ -173,99 +248,178 @@
         function startTracking() {
             if(navigator.geolocation) {
                 watchId = navigator.geolocation.watchPosition(async (pos) => {
+                    currentLat = pos.coords.latitude;
+                    currentLng = pos.coords.longitude;
                     if(auth.currentUser && isOnline) {
                         await setDoc(doc(db, "couriers", auth.currentUser.uid), {
                             name: currentCourierName,
-                            currentLocation: { lat: pos.coords.latitude, lng: pos.coords.longitude },
+                            currentLocation: { lat: currentLat, lng: currentLng },
                             lastSeen: serverTimestamp(),
                             status: "active"
                         }, { merge: true });
+                        loadRadar(); // إعادة ترتيب الخريطة فور تحرك المندوب
                     }
-                }, (err) => { Swal.fire('تنبيه', 'برجاء تفعيل الـ GPS ليعمل الرادار', 'warning'); }, { enableHighAccuracy: true });
+                }, (err) => { Swal.fire('حجب الـ GPS', 'النظام أعمى! يرجى السماح للمتصفح بالوصول لموقعك.', 'error'); }, { enableHighAccuracy: true });
             }
         }
 
+        // تحميل الرادار مع (الترتيب الجغرافي)
         function loadRadar() {
             onSnapshot(collection(db, "eshteryly_orders"), (snap) => {
-                let radarHtml = "", tasksHtml = "";
+                let availableOrders = [];
+                let tasksHtml = "";
+                let requiresAlarm = false;
+
                 snap.forEach(docSnap => {
                     const d = docSnap.data(), id = docSnap.id;
-                    if(d.status === "جاري البحث عن مندوب" && isOnline) {
-                        if(!notifiedOrders.has(id)) {
-                            playNewOrderAlert();
-                            notifiedOrders.add(id);
-                        }
-                        radarHtml += `<div class="order-card" style="border-right-color:#ffc107">
-                            <h4><i class="fa-solid fa-bolt"></i> طلب متاح!</h4>
-                            <p><b>📍 التوصيل:</b> ${d.address}</p>
-                            <p><b>📦 التفاصيل:</b> ${d.details}</p>
-                            <button class="claim-btn" onclick="window.claimOrder('${id}')">خطف الطلب 🚀</button>
-                        </div>`;
+                    
+                    // استخراج الإحداثيات من رابط جوجل الموجود في تفاصيل العنوان إن وجد
+                    let orderLat = null, orderLng = null, distanceStr = "مسافة غير معلومة";
+                    const regex = /maps\.google\.com\/[01]([\d\.-]+),([\d\.-]+)/;
+                    const match = d.address ? d.address.match(regex) : null;
+                    
+                    if(match && currentLat && currentLng) {
+                        orderLat = parseFloat(match[1]); orderLng = parseFloat(match[2]);
+                        const distKm = getDistance(currentLat, currentLng, orderLat, orderLng);
+                        distanceStr = distKm + " كم 📍";
+                        d._distVal = parseFloat(distKm); // للترتيب
+                    } else {
+                        d._distVal = 9999; // وضع الطلبات بدون إحداثيات في الأسفل
+                    }
+
+                    if(d.status === "جاري البحث عن مندوب" && isOnline && !ignoredOrders.has(id)) {
+                        availableOrders.push({ id, d, distanceStr });
+                        requiresAlarm = true; // يوجد طلبات متاحة غير متجاهلة
                     }
                     if(d.status === "تم الاستلام بواسطة المندوب" && d.courierName === currentCourierName) {
                         tasksHtml += `<div class="order-card" style="border-right-color:#28a745">
-                            <h4><i class="fa-solid fa-motorcycle"></i> في العهدة</h4>
-                            <p><b>📍 العنوان:</b> ${d.address}</p>
-                            <div style="display:flex; gap:10px; margin-top:10px;">
-                                <button style="background:#4285F4; color:white; font-weight:bold; padding:12px; border:none; border-radius:5px; flex:1; cursor:pointer;" onclick="window.openMap('${encodeURIComponent(d.address)}')">الملاحة 🗺️</button>
-                                <button class="deliver-btn" style="flex:1; margin-top:0;" onclick="window.completeOrder('${id}')">تم التسليم ✅</button>
+                            <div class="distance-badge">${distanceStr}</div>
+                            <h4 style="margin-top:15px;"><i class="fa-solid fa-motorcycle"></i> هدف في العهدة</h4>
+                            <p><b>الوجهة:</b> ${d.address}</p>
+                            <p><b>المهمة:</b> ${d.details}</p>
+                            <div class="action-grid">
+                                <button class="btn-core nav-btn" onclick="window.openMap('${encodeURIComponent(d.address)}')"><i class="fa-solid fa-location-arrow"></i> الملاحة</button>
+                                <button class="btn-core deliver-btn" onclick="window.completeOrder('${id}')"><i class="fa-solid fa-check-double"></i> تم التوصيل</button>
                             </div>
                         </div>`;
                     }
                 });
-                document.getElementById("radarContainer").innerHTML = isOnline ? (radarHtml || "<p style='color:gray; text-align:center;'>الرادار هادي.. 📡</p>") : "<p style='color:gray; text-align:center;'>ابدأ الوردية لتشغيل الرادار</p>";
-                document.getElementById("myTasksContainer").innerHTML = tasksHtml || "<p style='color:gray; text-align:center;'>معكش طلبات حالياً</p>";
+
+                // ترتيب الطلبات جغرافياً (الأقرب فالأبعد)
+                availableOrders.sort((a, b) => a.d._distVal - b.d._distVal);
+
+                let radarHtml = "";
+                availableOrders.forEach(order => {
+                    radarHtml += `<div class="order-card alarm-active" style="border-right-color:#ffc107">
+                        <div class="distance-badge">${order.distanceStr}</div>
+                        <h4 style="margin-top:15px;"><i class="fa-solid fa-bolt"></i> هدف جديد متاح!</h4>
+                        <p><b>المنطقة:</b> ${order.d.address.split('\n')[0]}</p>
+                        <p><b>الدفع:</b> <span style="color:var(--primary-red); font-weight:bold;">${order.d.paymentMethod}</span></p>
+                        <div class="action-grid">
+                            <button class="btn-core claim-btn" onclick="window.claimOrder('${order.id}')">خطف 🚀</button>
+                            <button class="btn-core reject-btn" onclick="window.ignoreOrder('${order.id}')">تجاهل ❌</button>
+                        </div>
+                    </div>`;
+                });
+
+                document.getElementById("radarContainer").innerHTML = isOnline ? (radarHtml || "<p style='color:gray; text-align:center; font-size:14px;'>الرادار خالي. جاري المسح...</p>") : "<p style='color:gray; text-align:center; font-size:14px;'>الرادار في وضع السكون.</p>";
+                document.getElementById("myTasksContainer").innerHTML = tasksHtml || "<p style='color:gray; text-align:center; font-size:14px;'>لا توجد مهام نشطة حالياً.</p>";
+
+                // تفعيل أو إيقاف الإنذار التكتيكي
+                if (requiresAlarm && isOnline) {
+                    triggerTacticalAlarm();
+                } else {
+                    stopTacticalAlarm();
+                }
             });
         }
 
+        // الإجراءات التكتيكية للمندوب
         window.claimOrder = async (id) => {
-            try { await updateDoc(doc(db, "eshteryly_orders", id), { status: "تم الاستلام بواسطة المندوب", courierName: currentCourierName }); Swal.fire({toast:true, position:'top', icon:'success', title:'الطلب بقى في عهدتك', showConfirmButton:false, timer:2000}); } catch(e) {}
+            try { 
+                await updateDoc(doc(db, "eshteryly_orders", id), { status: "تم الاستلام بواسطة المندوب", courierName: currentCourierName }); 
+                stopTacticalAlarm();
+                Swal.fire({toast:true, position:'top', icon:'success', title:'الهدف في عهدتك الآن', showConfirmButton:false, timer:2000}); 
+            } catch(e) { Swal.fire('عطل', 'سبقك مندوب آخر أو انقطع الاتصال.', 'error'); }
+        };
+
+        window.ignoreOrder = (id) => {
+            ignoredOrders.add(id); // تجاهل محلي لهذا المندوب فقط
+            loadRadar(); // إعادة التحميل لإخفاء الطلب وإسكات الإنذار
         };
 
         window.completeOrder = async (id) => {
-            Swal.fire({ title: 'هل تم التوصيل؟', icon: 'question', showCancelButton: true, confirmButtonColor: '#28a745', confirmButtonText: 'نعم'
-            }).then(async (result) => { if (result.isConfirmed) { await updateDoc(doc(db, "eshteryly_orders", id), { status: "تم التسليم بنجاح" }); Swal.fire('عاش!', 'تم تقفيل الطلب', 'success'); } });
+            Swal.fire({ title: 'تأكيد التسليم؟', icon: 'question', showCancelButton: true, confirmButtonColor: '#28a745', confirmButtonText: 'نعم، تم التسليم'
+            }).then(async (result) => { 
+                if (result.isConfirmed) { 
+                    await updateDoc(doc(db, "eshteryly_orders", id), { status: "تم التسليم بنجاح" }); 
+                    Swal.fire('تمت المهمة', 'تم إغلاق الهدف بنجاح.', 'success'); 
+                } 
+            });
         };
 
+        // الملاحة المتقدمة
         window.openMap = (addr) => {
             const decodedAddr = decodeURIComponent(addr);
-            const encodedAddr = encodeURIComponent(decodedAddr);
-            const userAgent = navigator.userAgent.toLowerCase();
-            const isAndroid = /android/.test(userAgent);
+            // استخراج الرابط إذا كان موجوداً
+            const regex = /http:\/\/googleusercontent\.com\/maps\.google\.com\/[01]([\d\.-]+),([\d\.-]+)/;
+            const match = decodedAddr.match(regex);
             
-            if (isAndroid) {
-                const intentUrl = `intent://maps/search/?q=${encodedAddr}#Intent;scheme=https;package=com.google.android.apps.maps;action=android.intent.action.VIEW;end;`;
-                window.location.href = intentUrl;
-                setTimeout(() => {
-                    window.location.href = `https://www.google.com/maps/search/?api=1&query=${encodedAddr}`;
-                }, 1500);
+            if (match) {
+                const lat = match[1]; const lng = match[2];
+                const isAndroid = /android/i.test(navigator.userAgent);
+                if (isAndroid) {
+                    window.location.href = `geo:${lat},${lng}?q=${lat},${lng}`;
+                } else {
+                    window.open(`https://maps.google.com/?q=${lat},${lng}`, '_blank');
+                }
             } else {
-                window.open(`https://www.google.com/maps/search/?api=1&query=${encodedAddr}`, '_blank');
+                Swal.fire('خطأ', 'لا توجد إحداثيات صالحة لهذا الطلب.', 'error');
             }
         };
 
-        // --- تشغيل وإيقاف الراديو المباشر ---
-        const radioPlayer = document.getElementById('axonRadioPlayer');
+        // --- التحكم بالراديو والواجهة ---
         window.toggleRadio = () => {
             const icon = document.getElementById('radioIcon');
-            if (radioPlayer.paused) {
-                radioPlayer.load(); // ريفرش عشان يجيب البث المباشر فوراً وميأخرش
-                radioPlayer.play();
+            userWantsRadioOn = !userWantsRadioOn; // تبديل رغبة المستخدم
+            
+            if (userWantsRadioOn) {
+                radioPlayer.volume = 1.0; // صوت عالي
+                if (radioPlayer.paused) {
+                    radioPlayer.src = "http://37.157.242.101:17317/stream?" + new Date().getTime();
+                    radioPlayer.play().catch(e => console.log(e));
+                }
                 icon.className = 'fa-solid fa-volume-high';
                 icon.style.color = '#28a745';
             } else {
-                radioPlayer.pause();
                 icon.className = 'fa-solid fa-volume-xmark';
                 icon.style.color = 'white';
+                
+                // إذا كان المندوب في وردية، لا نوقف الراديو، بل نكتمه للحفاظ على الـ GPS
+                if (isOnline) {
+                    radioPlayer.volume = 0.01;
+                } else {
+                    radioPlayer.pause();
+                }
             }
         };
 
         window.toggleTheme = () => {
             document.body.classList.toggle('dark-mode');
-            localStorage.setItem('axon_courier_theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+            const icon = document.getElementById('themeIcon');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('axon_courier_theme', isDark ? 'dark' : 'light');
+            icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            icon.style.color = isDark ? '#ffc107' : 'white';
         };
-        if(localStorage.getItem('axon_courier_theme') === 'dark') document.body.classList.add('dark-mode');
-
+        
+        if(localStorage.getItem('axon_courier_theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            setTimeout(() => {
+                const icon = document.getElementById('themeIcon');
+                if(icon) { icon.className = 'fa-solid fa-sun'; icon.style.color = '#ffc107'; }
+            }, 100);
+        }
     </script>
 </body>
 </html>
