@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>إدارة | Axon Express</title>
+    <title>المحطة التكتيكية | Axon Express</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
         * { box-sizing: border-box; }
-        :root { --primary-blue: #0A3D62; --primary-red: #b82329; --white: #fff; --light-bg: #f4f7f6; --dark-text: #2c3e50; }
+        :root { --primary-blue: #0A3D62; --primary-red: #b82329; --white: #fff; --light-bg: #f4f7f6; --dark-text: #2c3e50; --border-color: #eee; }
+        
         html, body { font-family: 'Cairo', sans-serif; margin: 0; background: var(--light-bg); color: var(--dark-text); overflow-x: hidden; scroll-behavior: smooth; transition: background 0.3s, color 0.3s;}
         
         header { background: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary-red); position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s;}
@@ -32,46 +32,48 @@
         
         #adminMap { height: 450px; width: 100%; border-radius: 12px; border: 3px solid var(--primary-blue); z-index: 1;}
         
-        .table-wrapper { width: 100%; overflow-x: auto; border-radius: 8px; border: 1px solid #eee;}
+        .table-wrapper { width: 100%; overflow-x: auto; border-radius: 8px; border: 1px solid var(--border-color);}
         table { width: 100%; min-width: 800px; border-collapse: collapse; text-align: right; }
-        th, td { padding: 12px; border-bottom: 1px solid #eee; font-size: 13px; transition: 0.3s;}
+        th, td { padding: 12px; border-bottom: 1px solid var(--border-color); font-size: 13px; transition: 0.3s;}
         th { background: var(--primary-blue); color: #fff; }
-        tr:hover { background-color: #f9f9f9; }
+        tr:hover { background-color: rgba(0,0,0,0.02); }
         
-        .btn-action { border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; color: white; margin-left: 3px; font-family: 'Cairo'; font-weight: bold; font-size: 12px; transition: 0.3s;}
+        .btn-action { border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; color: white; margin-left: 3px; margin-bottom: 3px; font-family: 'Cairo'; font-weight: bold; font-size: 12px; transition: 0.3s;}
+        .btn-action:hover { opacity: 0.8; }
         .btn-save { background: #28a745; } .btn-edit { background: #007bff; } .btn-delete { background: var(--primary-red); } .btn-print { background: #333; } .btn-track { background: #17a2b8; margin-top: 5px; width: 100%; }
         
+        .search-box { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd; font-family: 'Cairo'; font-size: 14px; transition: 0.3s; background: var(--white); color: var(--dark-text); }
+        .search-box:focus { outline: none; border-color: var(--primary-blue); box-shadow: 0 0 5px rgba(10, 61, 98, 0.3); }
+
         .status-dropdown { padding: 6px; border-radius: 5px; border: 1px solid #ddd; font-family: 'Cairo'; font-weight: bold; outline: none; transition: 0.3s;}
         .logout-btn { background: var(--white); border: 2px solid var(--primary-red); color: var(--primary-red); padding: 6px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; transition: 0.3s;}
         
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 61, 98, 0.9); align-items: center; justify-content: center; z-index: 2000; padding: 15px;}
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; z-index: 2000; padding: 15px; backdrop-filter: blur(5px);}
         .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 500px; position: relative; transition: 0.3s;}
-        .modal-content input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo'; transition: 0.3s;}
-        .close-btn { position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 24px; cursor: pointer;}
+        .modal-content input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo'; background: var(--white); color: var(--dark-text); transition: 0.3s;}
+        .close-btn { position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--primary-red);}
         
-        /* ---------------- الوضع الليلي (Dark Mode) ---------------- */
-        body.dark-mode { --white: #1e1e1e; --light-bg: #121212; --dark-text: #e0e0e0; }
+        /* --- Dark Mode Matrix --- */
+        body.dark-mode { --white: #1e1e1e; --light-bg: #121212; --dark-text: #e0e0e0; --border-color: #333; }
         body.dark-mode .stat-card h3 { color: #aaa; }
-        body.dark-mode .table-wrapper { border-color: #333; }
         body.dark-mode th { background: #062338; border-color: #333; }
-        body.dark-mode td { border-color: #333; }
-        body.dark-mode tr:hover { background-color: #2a2a2a; }
-        body.dark-mode input, body.dark-mode select { background: #2c2c2c; color: #fff; border: 1px solid #444; }
-        body.dark-mode .status-dropdown { background: #2c2c2c; color: #fff; }
-        body.dark-mode .logout-btn { background: #1e1e1e; }
-        body.dark-mode .bourse-section { background: #3e2700 !important; border-color: #ff9800 !important; }
-        body.dark-mode .modal-content { background: #1e1e1e; color: #fff; }
+        body.dark-mode tr:hover { background-color: rgba(255,255,255,0.05); }
+        body.dark-mode .search-box, body.dark-mode .status-dropdown { background: #2c2c2c; border: 1px solid #444; color: #fff; }
+        body.dark-mode .logout-btn { background: transparent; }
+        body.dark-mode .bourse-section { background: #2c1a00 !important; border-color: #ff9800 !important; }
+        body.dark-mode .bourse-section h2 { color: #ffb74d !important; border-bottom-color: #ff9800 !important; }
+        body.dark-mode input[type="number"] { background: #2c2c2c; color: #fff; border: 1px solid #444; }
     </style>
 </head>
 <body>
     <header>
         <div class="logo"><i class="fa-solid fa-chess-king"></i> إدارة | <span>AXON</span></div>
         <div style="display: flex; gap: 15px; align-items: center;">
-            <button onclick="window.toggleRadio()" style="background:none; border:none; color:var(--primary-red); font-size:24px; cursor:pointer;" title="تشغيل/إيقاف الراديو">
+            <button onclick="window.toggleRadio()" style="background:none; border:none; color:var(--primary-red); font-size:24px; cursor:pointer;" title="راديو العمليات">
                 <i id="radioIcon" class="fa-solid fa-radio"></i>
             </button>
             <button onclick="window.toggleTheme()" style="background:none; border:none; color:var(--primary-blue); font-size:24px; cursor:pointer;" title="الوضع الليلي">
-                <i class="fa-solid fa-moon"></i>
+                <i id="themeIcon" class="fa-solid fa-moon"></i>
             </button>
             <button class="logout-btn" onclick="window.logout()">خروج</button>
         </div>
@@ -80,44 +82,44 @@
     <div class="container">
         <div class="stats-grid">
             <div class="stat-card"><h3>إجمالي الشحنات</h3><div class="value" id="totalShipments">0</div></div>
-            <div class="stat-card"><h3>إجمالي التحصيلات</h3><div class="value" id="totalMoney" style="color: #28a745;">0 ج.م</div></div>
+            <div class="stat-card"><h3>إجمالي التحصيلات (COD)</h3><div class="value" id="totalMoney" style="color: #28a745;">0 ج.م</div></div>
             <div class="stat-card"><h3>طلبات اشتريلي</h3><div class="value" id="totalEshteryly">0</div></div>
         </div>
 
         <div class="admin-section">
-            <h2><i class="fa-solid fa-map-location-dot"></i> رادار المناديب (تتبع لايف)</h2>
+            <h2><i class="fa-solid fa-map-location-dot"></i> الرادار التكتيكي (تتبع حي)</h2>
             <div id="adminMap"></div>
         </div>
 
         <div class="admin-section">
-            <h2><i class="fa-solid fa-basket-shopping"></i> رادار المشتريات (اشتريلي)</h2>
+            <h2><i class="fa-solid fa-basket-shopping"></i> مهام التسوق المخصصة (اشتريلي)</h2>
             <div class="table-wrapper">
                 <table>
-                    <thead><tr><th>التاجر والتفاصيل</th><th>العنوان والدفع</th><th>حالة المندوب والتتبع</th></tr></thead>
+                    <thead><tr><th>التاجر والتفاصيل</th><th>العنوان وطريقة الدفع</th><th>الحالة والمتابعة</th></tr></thead>
                     <tbody id="eshterylyBody"></tbody>
                 </table>
             </div>
         </div>
 
         <div class="admin-section bourse-section" style="background: #fffde7; border: 2px dashed #f57f17;">
-            <h2 style="color: #e65100; border-bottom-color: #f57f17;"><i class="fa-solid fa-gas-pump"></i> بورصة الشحن (تحديث فوري للجمهورية)</h2>
+            <h2 style="color: #e65100; border-bottom-color: #f57f17;"><i class="fa-solid fa-tower-broadcast"></i> بورصة الشحن الحية (تحديث مركزي)</h2>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 15px;">
-                <div><label style="font-size:13px; font-weight:bold;">الإسكندرية:</label><input type="number" id="priceAlex" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;"></div>
-                <div><label style="font-size:13px; font-weight:bold;">القاهرة والجيزة:</label><input type="number" id="priceCairo" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;"></div>
-                <div><label style="font-size:13px; font-weight:bold;">البحيرة:</label><input type="number" id="priceBeheira" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;"></div>
-                <div><label style="font-size:13px; font-weight:bold;">الدلتا والقناة:</label><input type="number" id="priceDelta" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;"></div>
-                <div><label style="font-size:13px; font-weight:bold;">الصعيد:</label><input type="number" id="priceSaeed" style="width:100%; padding:8px; border-radius:5px; border:1px solid #ccc;"></div>
+                <div><label style="font-size:13px; font-weight:bold;">الإسكندرية:</label><input type="number" id="priceAlex" style="width:100%; padding:8px; border-radius:5px;"></div>
+                <div><label style="font-size:13px; font-weight:bold;">القاهرة والجيزة:</label><input type="number" id="priceCairo" style="width:100%; padding:8px; border-radius:5px;"></div>
+                <div><label style="font-size:13px; font-weight:bold;">البحيرة:</label><input type="number" id="priceBeheira" style="width:100%; padding:8px; border-radius:5px;"></div>
+                <div><label style="font-size:13px; font-weight:bold;">الدلتا والقناة:</label><input type="number" id="priceDelta" style="width:100%; padding:8px; border-radius:5px;"></div>
+                <div><label style="font-size:13px; font-weight:bold;">الصعيد:</label><input type="number" id="priceSaeed" style="width:100%; padding:8px; border-radius:5px;"></div>
             </div>
-            <button onclick="window.updateLivePrices()" style="background: #e65100; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%;">تحديث وإذاعة 📡</button>
+            <button onclick="window.updateLivePrices()" style="background: #e65100; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s;">تحديث التسعيرة في الشبكة 📡</button>
             <p id="lastUpdateText" style="font-size: 11px; color: gray; text-align: center; margin-top: 10px;"></p>
         </div>
 
         <div class="admin-section">
-            <h2><i class="fa-solid fa-box"></i> إدارة الشحنات العادية</h2>
-            <input type="text" id="searchInput" placeholder="🔍 بحث في الشحنات..." style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd; font-family: 'Cairo';">
+            <h2><i class="fa-solid fa-boxes-packing"></i> بنك الشحنات الرئيسي</h2>
+            <input type="text" id="searchInput" class="search-box" placeholder="🔍 بحث عن بوليصة، اسم، موبايل، أو مدينة...">
             <div class="table-wrapper">
                 <table>
-                    <thead><tr><th>التاجر</th><th>البوليصة</th><th>المستلم</th><th>الموبايل</th><th>المدينة/الوزن</th><th>المبلغ</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+                    <thead><tr><th>التاجر</th><th>البوليصة</th><th>المستلم</th><th>الموبايل</th><th>المدينة/الوزن</th><th>COD</th><th>الحالة</th><th>الإجراءات</th></tr></thead>
                     <tbody id="shipmentsBody"></tbody>
                 </table>
             </div>
@@ -126,17 +128,17 @@
 
     <div id="editModal" class="modal">
         <div class="modal-content">
-            <button class="close-btn" onclick="window.closeModal('editModal')" style="color:var(--primary-red);">×</button>
-            <h3 style="color: var(--primary-blue); border-bottom: 2px solid var(--primary-red); padding-bottom: 10px;">تعديل الشحنة</h3>
+            <button class="close-btn" onclick="window.closeModal('editModal')">×</button>
+            <h3 style="color: var(--primary-blue); border-bottom: 2px solid var(--primary-red); padding-bottom: 10px;">هندسة الشحنة</h3>
             <input type="hidden" id="editDocId">
             <label>المستلم:</label> <input type="text" id="editName">
             <label>الموبايل:</label> <input type="tel" id="editPhone">
-            <label>احتياطي:</label> <input type="tel" id="editPhone2">
+            <label>موبايل بديل:</label> <input type="tel" id="editPhone2">
             <label>المدينة:</label> <input type="text" id="editCity">
             <label>العنوان:</label> <input type="text" id="editAddress">
             <label>الوزن (كجم):</label> <input type="number" id="editWeight">
             <label>المبلغ (COD):</label> <input type="number" id="editAmount">
-            <button id="btnSaveEdit" onclick="window.saveEditedShipment()" style="width:100%; background:var(--primary-blue); color:white; padding:10px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">حفظ التعديلات</button>
+            <button id="btnSaveEdit" onclick="window.saveEditedShipment()" style="width:100%; background:var(--primary-blue); color:white; padding:10px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">تأكيد التعديلات</button>
         </div>
     </div>
 
@@ -145,7 +147,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const app = initializeApp({
             apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
@@ -158,11 +160,13 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // --- إعداد الخريطة ---
         const adminMap = L.map('adminMap').setView([31.2001, 29.9187], 12);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(adminMap);
         const courierMarkers = {};
         window.activeCouriersData = {}; 
 
+        // --- المصادقة وجلب البيانات ---
         onAuthStateChanged(auth, async (user) => {
             if (!user) { window.location.href = "index.html"; return; }
             if (user.email !== "admin@axon.com") {
@@ -176,6 +180,7 @@
 
         window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
 
+        // --- رادار المناديب ---
         function trackCouriers() {
             onSnapshot(collection(db, "couriers"), (snap) => {
                 snap.forEach(docSnap => {
@@ -184,12 +189,11 @@
                     if (data.currentLocation && data.currentLocation.lat && data.status === 'active') {
                         const pos = [data.currentLocation.lat, data.currentLocation.lng];
                         window.activeCouriersData[data.name] = { id: id, pos: pos }; 
-
                         if (courierMarkers[id]) {
                             courierMarkers[id].setLatLng(pos);
                         } else {
                             courierMarkers[id] = L.marker(pos).addTo(adminMap)
-                                .bindPopup(`<div style="text-align:center;"><b>🏍️ كابتن: ${data.name || 'غير معروف'}</b><br><span style="color:green;">متصل الآن 🟢</span></div>`);
+                                .bindPopup(`<div style="text-align:center;"><b>🏍️ ${data.name || 'مجهول'}</b><br><span style="color:green;">متصل الآن 🟢</span></div>`);
                         }
                     } else if(courierMarkers[id] && data.status !== 'active') {
                         adminMap.removeLayer(courierMarkers[id]);
@@ -205,14 +209,13 @@
             if (courier && courier.pos) {
                 document.getElementById('adminMap').scrollIntoView({behavior: 'smooth', block: 'center'});
                 adminMap.setView(courier.pos, 16);
-                if(courierMarkers[courier.id]) {
-                    courierMarkers[courier.id].openPopup();
-                }
+                if(courierMarkers[courier.id]) courierMarkers[courier.id].openPopup();
             } else {
-                Swal.fire('غير متاح', 'الكابتن ' + courierName + ' غير متصل حالياً أو الـ GPS مغلق.', 'info');
+                Swal.fire('غير متاح', 'الكابتن ' + courierName + ' خارج التغطية حالياً.', 'info');
             }
         };
 
+        // --- طلبات اشتريلي ---
         function loadEshteryly() {
             onSnapshot(query(collection(db, "eshteryly_orders"), orderBy("timestamp", "desc")), (snap) => {
                 let html = "", count = 0;
@@ -222,14 +225,14 @@
                     count++;
                     let btns = "";
                     if(d.status === "قيد المراجعة") {
-                        btns = `<button class="btn-action btn-save" onclick="window.approveEsh('${id}')">بث 📡</button>
+                        btns = `<button class="btn-action btn-save" onclick="window.approveEsh('${id}')">بث للشبكة 📡</button>
                                 <button class="btn-action btn-edit" onclick="window.editEsh('${id}')">تعديل 📝</button>
                                 <button class="btn-action btn-delete" onclick="window.rejectEsh('${id}')">رفض ❌</button>`;
                     } else if(d.status === "جاري البحث عن مندوب") {
-                        btns = `<span style="color:#856404; background:#fff3cd; padding:5px; border-radius:5px;">الرادار شغال 📡</span>`;
+                        btns = `<span style="color:#856404; background:#fff3cd; padding:5px; border-radius:5px; font-size:12px;">مذاع على الرادار 📡</span>`;
                     } else {
                         btns = `<div style="text-align:center;">
-                                    <span style="color:#155724; background:#d4edda; padding:5px; border-radius:5px; display:block; margin-bottom:5px;">الكابتن: ${d.courierName}</span>
+                                    <span style="color:#155724; background:#d4edda; padding:5px; border-radius:5px; display:block; margin-bottom:5px; font-size:12px;">في عهدة: ${d.courierName}</span>
                                     <button class="btn-action btn-track" onclick="window.locateCourier('${d.courierName}')"><i class="fa-solid fa-location-crosshairs"></i> تتبع 📍</button>
                                 </div>`;
                     }
@@ -244,42 +247,32 @@
             });
         }
 
-        window.approveEsh = async (id) => {
-            if(confirm("سيتم إذاعة الطلب للمناديب. موافق؟")) await updateDoc(doc(db, "eshteryly_orders", id), {status: "جاري البحث عن مندوب"});
-        };
-
-        window.rejectEsh = async (id) => {
-            const reason = prompt("اكتب سبب الرفض:");
-            if(reason !== null) await updateDoc(doc(db, "eshteryly_orders", id), {status: "مرفوض", rejectReason: reason});
-        };
-
+        window.approveEsh = async (id) => { if(confirm("سيتم إذاعة الطلب للمناديب. موافق؟")) await updateDoc(doc(db, "eshteryly_orders", id), {status: "جاري البحث عن مندوب"}); };
+        window.rejectEsh = async (id) => { const reason = prompt("سبب الرفض:"); if(reason !== null) await updateDoc(doc(db, "eshteryly_orders", id), {status: "مرفوض", rejectReason: reason}); };
+        
         window.editEsh = async (id) => {
-            const { value: vals } = await Swal.fire({
-                title: 'تعديل طلب اشتريلي',
-                html: '<input id="sw-det" class="swal2-input" placeholder="التفاصيل الجديدة"><input id="sw-add" class="swal2-input" placeholder="العنوان الجديد">',
-                preConfirm: () => [document.getElementById('sw-det').value, document.getElementById('sw-add').value]
-            });
+            const { value: vals } = await Swal.fire({ title: 'تعديل المهمة', html: '<input id="sw-det" class="swal2-input" placeholder="التفاصيل"><input id="sw-add" class="swal2-input" placeholder="العنوان">', preConfirm: () => [document.getElementById('sw-det').value, document.getElementById('sw-add').value] });
             if(vals) {
-                let updates = {};
-                if(vals[0].trim()) updates.details = vals[0]; if(vals[1].trim()) updates.address = vals[1];
+                let updates = {}; if(vals[0].trim()) updates.details = vals[0]; if(vals[1].trim()) updates.address = vals[1];
                 if(Object.keys(updates).length > 0) await updateDoc(doc(db, "eshteryly_orders", id), updates);
             }
         };
 
+        // --- إدارة الشحنات العادية ---
         function loadShipments() {
             onSnapshot(query(collection(db, "shipments"), orderBy("timestamp", "desc")), (snap) => {
                 let html = "", totalM = 0, count = 0;
                 snap.forEach(docSnap => {
                     const d = docSnap.data(), id = docSnap.id;
                     if(d.deleted) return;
-                    totalM += d.amount || 0; count++;
+                    totalM += Number(d.amount) || 0; count++;
                     const awb = "AXN" + id.substring(0,5).toUpperCase();
                     const merchant = d.merchantEmail ? d.merchantEmail.split('@')[0] : "إدارة";
                     html += `<tr class="shipment-row">
                         <td><b>${merchant}</b></td> <td>${awb}</td> <td>${d.name}</td>
                         <td dir="ltr">${d.phone}<br><span style="font-size:10px;color:gray;">${d.phone2||''}</span></td>
-                        <td>${d.city}<br><span style="font-size:10px;color:gray;">الوزن: ${d.weight||1}</span></td>
-                        <td style="color:red; font-weight:bold;">${d.amount}</td>
+                        <td>${d.city}<br><span style="font-size:10px;color:gray;">وزن: ${d.weight||1} كجم</span></td>
+                        <td style="color:var(--primary-red); font-weight:bold;">${d.amount}</td>
                         <td><select id="st-${id}" class="status-dropdown">
                             <option value="قيد التوصيل" ${d.status==='قيد التوصيل'?'selected':''}>قيد التوصيل</option>
                             <option value="تم التسليم" ${d.status==='تم التسليم'?'selected':''}>تم التسليم</option>
@@ -288,8 +281,8 @@
                         </select></td>
                         <td style="white-space:nowrap;">
                             <button class="btn-action btn-save" onclick="window.updateStatus('${id}')">حفظ</button>
+                            <button class="btn-action btn-print" onclick="window.printWaybill('${merchant}','${d.name}','${d.phone}','${d.phone2}','${d.city}','${d.address}','${d.weight}','${d.amount}','${awb}','${d.details||''}')">طباعة A5</button>
                             <button class="btn-action btn-edit" onclick="window.openEditModal('${id}','${d.name}','${d.phone}','${d.phone2}','${d.city}','${d.address}','${d.weight}','${d.amount}')">تعديل</button>
-                            <button class="btn-action btn-print" onclick="window.printWaybill('${merchant}','${d.name}','${d.phone}','${d.phone2}','${d.city}','${d.address}','${d.weight}','${d.amount}','${awb}','${d.details||''}')">طباعة</button>
                             <button class="btn-action btn-delete" onclick="window.deleteShipment('${id}')">حذف</button>
                         </td>
                     </tr>`;
@@ -300,21 +293,29 @@
             });
         }
 
+        // --- محرك البحث (تم تفعيله) ---
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            let filter = this.value.toLowerCase();
+            let rows = document.querySelectorAll('.shipment-row');
+            rows.forEach(row => {
+                let text = row.innerText.toLowerCase();
+                row.style.display = text.includes(filter) ? '' : 'none';
+            });
+        });
+
         window.updateStatus = async (id) => {
             const val = document.getElementById(`st-${id}`).value;
             await updateDoc(doc(db, "shipments", id), { status: val });
-            Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم الحفظ', showConfirmButton:false, timer:2000});
+            Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم حفظ الحالة', showConfirmButton:false, timer:2000});
         };
 
-        window.deleteShipment = async (id) => {
-            if(confirm('متأكد من مسح الشحنة دي؟')) await updateDoc(doc(db, "shipments", id), { deleted: true });
-        };
+        window.deleteShipment = async (id) => { if(confirm('متأكد من الإعدام الرقمي لهذه الشحنة؟')) await updateDoc(doc(db, "shipments", id), { deleted: true }); };
 
         window.openEditModal = (id, name, p1, p2, city, addr, w, amt) => {
             document.getElementById('editDocId').value = id; document.getElementById('editName').value = name;
-            document.getElementById('editPhone').value = p1; document.getElementById('editPhone2').value = p2 !== 'undefined' ? p2 : '';
+            document.getElementById('editPhone').value = p1; document.getElementById('editPhone2').value = (p2 !== 'undefined' && p2 !== 'null') ? p2 : '';
             document.getElementById('editCity').value = city; document.getElementById('editAddress').value = addr;
-            document.getElementById('editWeight').value = w !== 'undefined' ? w : '1'; document.getElementById('editAmount').value = amt;
+            document.getElementById('editWeight').value = (w !== 'undefined' && w !== 'null') ? w : '1'; document.getElementById('editAmount').value = amt;
             document.getElementById('editModal').style.display = 'flex';
         };
 
@@ -328,81 +329,104 @@
                 address: document.getElementById('editAddress').value, weight: Number(document.getElementById('editWeight').value),
                 amount: Number(document.getElementById('editAmount').value)
             };
-            document.getElementById('btnSaveEdit').innerHTML = "جاري...";
+            document.getElementById('btnSaveEdit').innerHTML = "جاري الحفظ...";
             await updateDoc(doc(db, "shipments", id), updates);
             document.getElementById('editModal').style.display = 'none';
-            document.getElementById('btnSaveEdit').innerHTML = "حفظ التعديلات";
+            document.getElementById('btnSaveEdit').innerHTML = "تأكيد التعديلات";
             Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم التعديل', showConfirmButton:false, timer:2000});
         };
 
+        // --- بورصة الشحن ---
         window.updateLivePrices = async () => {
             const vals = { alex: document.getElementById("priceAlex")?.value, cairo: document.getElementById("priceCairo")?.value, beheira: document.getElementById("priceBeheira")?.value, delta: document.getElementById("priceDelta")?.value, saeed: document.getElementById("priceSaeed")?.value };
-            if(!vals.alex || !vals.cairo || !vals.beheira || !vals.delta || !vals.saeed) return Swal.fire('تنبيه', 'أكمل أسعار كل المحافظات', 'warning');
+            if(!vals.alex || !vals.cairo || !vals.beheira || !vals.delta || !vals.saeed) return Swal.fire('خطأ', 'الشبكة ترفض التسعير الناقص. أكمل جميع الحقول.', 'error');
             await setDoc(doc(db, "settings", "shipping_prices"), { alex: Number(vals.alex), cairo: Number(vals.cairo), beheira: Number(vals.beheira), delta: Number(vals.delta), saeed: Number(vals.saeed), lastUpdate: new Date().toLocaleTimeString("ar-EG") }, { merge: true });
-            Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم البث بنجاح', showConfirmButton:false, timer:2000});
+            Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم بث التسعيرة للتجار', showConfirmButton:false, timer:2000});
         };
 
         onSnapshot(doc(db, "settings", "shipping_prices"), (docSnap) => {
             if(docSnap.exists()) {
                 const d = docSnap.data();
-                ['Alex','Cairo','Beheira','Delta','Saeed'].forEach(reg => {
-                    if(document.getElementById(`price${reg}`)) document.getElementById(`price${reg}`).value = d[reg.toLowerCase()] || '';
-                });
-                document.getElementById("lastUpdateText").innerText = "آخر تحديث: " + (d.lastUpdate || "");
+                ['Alex','Cairo','Beheira','Delta','Saeed'].forEach(reg => { if(document.getElementById(`price${reg}`)) document.getElementById(`price${reg}`).value = d[reg.toLowerCase()] || ''; });
+                document.getElementById("lastUpdateText").innerText = "آخر بث: " + (d.lastUpdate || "غير معروف");
             }
         });
 
+        // --- هندسة الطباعة (A5 Geometry Strict Rule) ---
         window.printWaybill = (merchant, name, p1, p2, city, addr, w, amt, awb, details) => {
             const printContent = `
-            <!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>طباعة بوليصة</title>
+            <!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>AWB: ${awb}</title>
             <style>
-                @page { size: A5 portrait; margin: 1cm; }
-                body { font-family: sans-serif; margin: 0; padding: 5mm; background: white; }
-                .wrapper { border: 2px solid #000; padding: 5mm; border-radius: 3mm; max-width: 148mm; margin: 0 auto; }
-                .header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 3mm; margin-bottom: 3mm; }
-                .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; margin-bottom: 3mm; border: 1px solid #000; padding: 3mm; }
-                .cod { text-align: center; border: 2px solid #000; padding: 3mm; background: #eee; }
+                @media print {
+                    @page { size: A5 portrait; margin: 0; }
+                    body { margin: 0; padding: 0; background: #fff; display: flex; justify-content: center; align-items: flex-start; }
+                    .strict-a5-wrapper { 
+                        width: 148mm; height: 200mm; /* Strict A5 boundary to prevent stretch on A4 */
+                        padding: 10mm; box-sizing: border-box; 
+                        border: 2px solid #000; overflow: hidden; page-break-after: always;
+                    }
+                }
+                body { font-family: sans-serif; background: #eee; display: flex; justify-content: center; padding: 20px; }
+                .strict-a5-wrapper { background: white; width: 148mm; min-height: 200mm; padding: 10mm; box-sizing: border-box; border: 2px solid #000; }
+                .header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 5mm; margin-bottom: 5mm; }
+                .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; margin-bottom: 5mm; border: 1px solid #000; padding: 5mm; }
+                .cod { text-align: center; border: 2px solid #000; padding: 5mm; background: #f9f9f9; }
+                p { margin: 5px 0; font-size: 14px; } h3 { margin: 0 0 10px 0; font-size: 16px;}
             </style>
             <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"><\/script>
             </head><body>
-                <div class="wrapper">
-                    <div class="header"><h2>AXON EXPRESS</h2><div style="text-align:center;"><svg id="bc"></svg><br><b>${awb}</b></div></div>
-                    <div class="grid">
-                        <div><h3>المرسل</h3><p>التاجر: ${merchant}</p><p>الوزن: ${w} كجم</p></div>
-                        <div style="border-right:1px solid #000; padding-right:3mm;"><h3>المستلم</h3><p>الاسم: ${name}</p><p>موبايل: ${p1} / ${p2}</p><p>المحافظة: ${city}</p><p>العنوان: ${addr}</p></div>
+                <div class="strict-a5-wrapper">
+                    <div class="header">
+                        <div><h2 style="margin:0;">AXON EXPRESS</h2><p style="margin:0;color:#666;">الإسكندرية - المنشية</p></div>
+                        <div style="text-align:center;"><svg id="bc"></svg><br><b style="font-size:18px;">${awb}</b></div>
                     </div>
-                    <div style="border:1px solid #000; padding:3mm; margin-bottom:3mm;">ملاحظات: <b>${details}</b></div>
-                    <div class="cod"><h3>المبلغ المطلوب (COD)</h3><h1>${amt} EGP</h1></div>
+                    <div class="grid">
+                        <div><h3>بيانات المرسل</h3><p>التاجر: <b>${merchant}</b></p><p>الوزن: <b>${w} كجم</b></p></div>
+                        <div style="border-right:1px solid #000; padding-right:5mm;">
+                            <h3>بيانات المستلم</h3><p>الاسم: <b>${name}</b></p><p>الهاتف: <b dir="ltr">${p1}</b></p>
+                            ${p2 && p2 !== 'undefined' ? `<p>بديل: <b dir="ltr">${p2}</b></p>` : ''}
+                            <p>المحافظة: <b>${city}</b></p><p>العنوان: <b>${addr}</b></p>
+                        </div>
+                    </div>
+                    <div style="border:1px solid #000; padding:5mm; margin-bottom:5mm; min-height: 20mm;">
+                        ملاحظات الشحنة: <b>${details && details !== 'undefined' ? details : 'لا يوجد'}</b>
+                    </div>
+                    <div class="cod"><h3>المبلغ المطلوب تحصيله (COD)</h3><h1 style="margin:0; font-size: 32px;">${amt} EGP</h1></div>
                 </div>
-                <script>JsBarcode("#bc", "${awb}", {format:"CODE128", width:2, height:40, displayValue:false}); setTimeout(window.print, 200);<\/script>
+                <script>JsBarcode("#bc", "${awb}", {format:"CODE128", width:2, height:45, displayValue:false}); setTimeout(window.print, 500);<\/script>
             </body></html>`;
             const win = window.open('', '_blank');
             win.document.write(printContent); win.document.close();
         };
 
-        // --- تشغيل وإيقاف الراديو ---
+        // --- نظام التحكم البيئي (Theme & Radio) ---
         const radioPlayer = document.getElementById('axonRadioPlayer');
+        const radioIcon = document.getElementById('radioIcon');
+        const themeIcon = document.getElementById('themeIcon');
+
         window.toggleRadio = () => {
-            const icon = document.getElementById('radioIcon');
             if (radioPlayer.paused) {
-                radioPlayer.load(); // بيعمل ريفرش عشان يجيب البث المباشر
+                radioPlayer.src = "http://37.157.242.101:17317/stream?" + new Date().getTime(); // يمنع الكاش ويجبر البث الحي
                 radioPlayer.play();
-                icon.style.color = '#28a745'; // أخضر لو شغال
+                radioIcon.style.color = '#28a745';
+                radioIcon.classList.add('fa-beat'); // أنيميشن خفيف للنبض
             } else {
                 radioPlayer.pause();
-                icon.style.color = 'var(--primary-red)'; // أحمر لو واقف
+                radioIcon.style.color = 'var(--primary-red)';
+                radioIcon.classList.remove('fa-beat');
             }
         };
 
-        // --- تفعيل الوضع الليلي ---
         window.toggleTheme = () => {
             document.body.classList.toggle('dark-mode');
-            localStorage.setItem('axon_admin_theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('axon_admin_theme', isDark ? 'dark' : 'light');
+            themeIcon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
         };
         
-        // --- التأكد من الوضع المحفوظ عند فتح الصفحة ---
         if(localStorage.getItem('axon_admin_theme') === 'dark') {
             document.body.classList.add('dark-mode');
+            themeIcon.className = 'fa-solid fa-sun';
         }
     </script>
 </body>
