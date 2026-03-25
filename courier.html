@@ -56,7 +56,7 @@
         #loginBox button { width: 100%; background: var(--primary-red); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; font-family: 'Cairo'; font-size: 16px; cursor: pointer; transition: 0.3s; }
         #loginBox button:hover { background: #991c22; }
 
-        /* نبض الإنذار */
+        /* نبض الإنذار البصري */
         @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(220, 53, 69, 0); } 100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); } }
         .alarm-active { animation: pulse-red 1.5s infinite; border-right-color: #dc3545 !important; }
     </style>
@@ -110,7 +110,7 @@
         </div>
     </div>
 
-    <audio id="axonRadioPlayer" src="http://37.157.242.101:17317/stream" preload="none" loop></audio>
+    <audio id="axonRadioPlayer" src="http://37.157.242.101:17317/stream" preload="none"></audio>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
@@ -137,6 +137,10 @@
         let ignoredOrders = new Set(); 
         let activeAlarmInterval = null;
         let isAlarming = false;
+        
+        // إعداد ملف الصوت للإنذار ليعمل بشكل متكرر
+        const sirenAudio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+        sirenAudio.loop = true;
 
         // خوارزمية Haversine لحساب المسافات بالكيلومتر
         function getDistance(lat1, lon1, lat2, lon2) {
@@ -145,33 +149,38 @@
             const dLon = (lon2 - lon1) * Math.PI / 180;
             const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return (R * c).toFixed(1); // يرجع المسافة برقم عشري واحد
+            return (R * c).toFixed(1); 
         }
 
-        // إطلاق الإنذار المستمر
+        // إطلاق الإنذار المستمر العنيف
         function triggerTacticalAlarm() {
             if (isAlarming) return;
             isAlarming = true;
-            const siren = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3'); // صوت إنذار
             
-            // حلقة تكرارية كل 3 ثواني للصوت والاهتزاز
-            activeAlarmInterval = setInterval(() => {
-                if ("vibrate" in navigator) navigator.vibrate([500, 200, 500]);
-                siren.play().catch(e => console.log("المتصفح يحتاج لتفاعل المستخدم أولاً"));
-            }, 3000);
+            // تشغيل الصوت (تم أخذ إذن المتصفح مسبقاً عند ضغط المندوب على بدء الوردية)
+            sirenAudio.play().catch(e => console.log("الصوت يحتاج تفاعل المستخدم"));
             
-            // تشغيل فوري في أول مرة
-            if ("vibrate" in navigator) navigator.vibrate([500, 200, 500]);
-            siren.play().catch(e => {});
+            // هزاز متواصل (يشتغل ويقفل)
+            if ("vibrate" in navigator) {
+                // نمط هزاز طويل
+                navigator.vibrate([1000, 500, 1000, 500, 1000, 500]); 
+                activeAlarmInterval = setInterval(() => {
+                    navigator.vibrate([1000, 500, 1000, 500]);
+                }, 3000);
+            }
         }
 
-        // إيقاف الإنذار
+        // إيقاف الإنذار يدوياً
         function stopTacticalAlarm() {
-            if (activeAlarmInterval) {
-                clearInterval(activeAlarmInterval);
-                activeAlarmInterval = null;
+            if (isAlarming) {
                 isAlarming = false;
-                if ("vibrate" in navigator) navigator.vibrate(0);
+                sirenAudio.pause();
+                sirenAudio.currentTime = 0; // إرجاع الصوت للصفر
+                if (activeAlarmInterval) {
+                    clearInterval(activeAlarmInterval);
+                    activeAlarmInterval = null;
+                }
+                if ("vibrate" in navigator) navigator.vibrate(0); // إيقاف الهزاز فوراً
             }
         }
 
@@ -215,28 +224,23 @@
             }).then((result) => { if (result.isConfirmed) signOut(auth); });
         };
 
-        // --- حصان طروادة الصوتي (التحكم في الوردية والـ GPS) ---
         const radioPlayer = document.getElementById('axonRadioPlayer');
-        let userWantsRadioOn = false;
 
         window.toggleStatus = () => {
             isOnline = !isOnline;
             const btn = document.getElementById("toggleStatusBtn"), txt = document.getElementById("statusText");
+            
+            // هذه الضغطة تعطي صلاحية كاملة للمتصفح لتشغيل الأصوات تلقائياً لاحقاً
+            sirenAudio.load(); 
+
             if(isOnline) {
                 btn.className = "toggle-btn btn-online"; btn.innerText = "إنهاء الوردية";
                 txt.innerHTML = "متصل بالرادار 🟢"; txt.style.color = "#28a745";
-                
-                // تفعيل حصان طروادة الصوتي لإبقاء الـ GPS مستيقظاً
-                radioPlayer.src = "http://37.157.242.101:17317/stream?" + new Date().getTime();
-                radioPlayer.volume = userWantsRadioOn ? 1.0 : 0.01; // شبه صامت إذا لم يطلب المستخدم الراديو
-                radioPlayer.play().catch(e => console.log("Audio lock"));
-                
                 startTracking();
             } else {
                 btn.className = "toggle-btn btn-offline"; btn.innerText = "بدء الوردية";
                 txt.innerHTML = "خارج التغطية 🔴"; txt.style.color = "#dc3545";
                 
-                radioPlayer.pause(); // إيقاف اختراق الخلفية
                 stopTacticalAlarm(); // إيقاف أي إنذار معلق
                 
                 if(watchId) { navigator.geolocation.clearWatch(watchId); watchId = null; }
@@ -257,7 +261,7 @@
                             lastSeen: serverTimestamp(),
                             status: "active"
                         }, { merge: true });
-                        loadRadar(); // إعادة ترتيب الخريطة فور تحرك المندوب
+                        loadRadar(); 
                     }
                 }, (err) => { Swal.fire('حجب الـ GPS', 'النظام أعمى! يرجى السماح للمتصفح بالوصول لموقعك.', 'error'); }, { enableHighAccuracy: true });
             }
@@ -273,7 +277,6 @@
                 snap.forEach(docSnap => {
                     const d = docSnap.data(), id = docSnap.id;
                     
-                    // استخراج الإحداثيات من رابط جوجل الموجود في تفاصيل العنوان إن وجد
                     let orderLat = null, orderLng = null, distanceStr = "مسافة غير معلومة";
                     const regex = /maps\.google\.com\/[01]([\d\.-]+),([\d\.-]+)/;
                     const match = d.address ? d.address.match(regex) : null;
@@ -282,14 +285,15 @@
                         orderLat = parseFloat(match[1]); orderLng = parseFloat(match[2]);
                         const distKm = getDistance(currentLat, currentLng, orderLat, orderLng);
                         distanceStr = distKm + " كم 📍";
-                        d._distVal = parseFloat(distKm); // للترتيب
+                        d._distVal = parseFloat(distKm); 
                     } else {
-                        d._distVal = 9999; // وضع الطلبات بدون إحداثيات في الأسفل
+                        d._distVal = 9999; 
                     }
 
+                    // إذا كان الطلب متاح والمندوب متصل ولم يتجاهل الطلب
                     if(d.status === "جاري البحث عن مندوب" && isOnline && !ignoredOrders.has(id)) {
                         availableOrders.push({ id, d, distanceStr });
-                        requiresAlarm = true; // يوجد طلبات متاحة غير متجاهلة
+                        requiresAlarm = true; // يوجد هدف جديد يستدعي الإنذار
                     }
                     if(d.status === "تم الاستلام بواسطة المندوب" && d.courierName === currentCourierName) {
                         tasksHtml += `<div class="order-card" style="border-right-color:#28a745">
@@ -325,7 +329,7 @@
                 document.getElementById("radarContainer").innerHTML = isOnline ? (radarHtml || "<p style='color:gray; text-align:center; font-size:14px;'>الرادار خالي. جاري المسح...</p>") : "<p style='color:gray; text-align:center; font-size:14px;'>الرادار في وضع السكون.</p>";
                 document.getElementById("myTasksContainer").innerHTML = tasksHtml || "<p style='color:gray; text-align:center; font-size:14px;'>لا توجد مهام نشطة حالياً.</p>";
 
-                // تفعيل أو إيقاف الإنذار التكتيكي
+                // تفعيل أو إيقاف الإنذار بناءً على وجود طلبات جديدة
                 if (requiresAlarm && isOnline) {
                     triggerTacticalAlarm();
                 } else {
@@ -334,18 +338,18 @@
             });
         }
 
-        // الإجراءات التكتيكية للمندوب
+        // الإجراءات التكتيكية للمندوب (إيقاف الإنذار اليدوي يحدث هنا)
         window.claimOrder = async (id) => {
             try { 
                 await updateDoc(doc(db, "eshteryly_orders", id), { status: "تم الاستلام بواسطة المندوب", courierName: currentCourierName }); 
-                stopTacticalAlarm();
+                stopTacticalAlarm(); // إسكات الإنذار بعد الخطف
                 Swal.fire({toast:true, position:'top', icon:'success', title:'الهدف في عهدتك الآن', showConfirmButton:false, timer:2000}); 
             } catch(e) { Swal.fire('عطل', 'سبقك مندوب آخر أو انقطع الاتصال.', 'error'); }
         };
 
         window.ignoreOrder = (id) => {
-            ignoredOrders.add(id); // تجاهل محلي لهذا المندوب فقط
-            loadRadar(); // إعادة التحميل لإخفاء الطلب وإسكات الإنذار
+            ignoredOrders.add(id); // التجاهل يسكت الإنذار لهذا المندوب فقط
+            loadRadar(); 
         };
 
         window.completeOrder = async (id) => {
@@ -361,7 +365,6 @@
         // الملاحة المتقدمة
         window.openMap = (addr) => {
             const decodedAddr = decodeURIComponent(addr);
-            // استخراج الرابط إذا كان موجوداً
             const regex = /http:\/\/googleusercontent\.com\/maps\.google\.com\/[01]([\d\.-]+),([\d\.-]+)/;
             const match = decodedAddr.match(regex);
             
@@ -381,26 +384,18 @@
         // --- التحكم بالراديو والواجهة ---
         window.toggleRadio = () => {
             const icon = document.getElementById('radioIcon');
-            userWantsRadioOn = !userWantsRadioOn; // تبديل رغبة المستخدم
             
-            if (userWantsRadioOn) {
-                radioPlayer.volume = 1.0; // صوت عالي
-                if (radioPlayer.paused) {
-                    radioPlayer.src = "http://37.157.242.101:17317/stream?" + new Date().getTime();
-                    radioPlayer.play().catch(e => console.log(e));
-                }
+            if (radioPlayer.paused) {
+                // منع الكاش وإجبار البث المباشر
+                radioPlayer.src = "http://37.157.242.101:17317/stream?cb=" + new Date().getTime();
+                radioPlayer.play().catch(err => console.log("المتصفح يمنع التشغيل التلقائي"));
                 icon.className = 'fa-solid fa-volume-high';
                 icon.style.color = '#28a745';
             } else {
+                radioPlayer.pause();
+                radioPlayer.src = ""; // إيقاف السحب من الباقة
                 icon.className = 'fa-solid fa-volume-xmark';
                 icon.style.color = 'white';
-                
-                // إذا كان المندوب في وردية، لا نوقف الراديو، بل نكتمه للحفاظ على الـ GPS
-                if (isOnline) {
-                    radioPlayer.volume = 0.01;
-                } else {
-                    radioPlayer.pause();
-                }
             }
         };
 
