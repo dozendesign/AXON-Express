@@ -252,10 +252,8 @@
 
         // --- تحميل الشحنات ---
         function loadShipments() {
-            // ملاحظة: لاستخدام orderBy مع where تحتاج لفهرس (Index) في فايربيز، لذلك نكتفي بـ where هنا.
             onSnapshot(query(collection(db, "shipments"), where("merchantEmail", "==", merchantEmail)), (snap) => {
                 let total = 0, html = "", count = 0;
-                // نعكس المصفوفة محلياً لترتيبها من الأحدث للأقدم
                 let docs = [];
                 snap.forEach(doc => docs.push({id: doc.id, ...doc.data()}));
                 docs.sort((a, b) => b.timestamp - a.timestamp);
@@ -356,7 +354,8 @@
                 btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري قراءة الأقمار الصناعية...';
                 navigator.geolocation.getCurrentPosition(
                     (pos) => {
-                        const link = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                        // تم إصلاح الخطأ المطبعي في رابط خرائط جوجل
+                        const link = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
                         const addressField = document.getElementById('eshAddress');
                         addressField.value = addressField.value ? addressField.value + ` \n📍 ${link}` : `📍 ${link}`;
                         btn.innerHTML = '✅ تم التقاط الإحداثيات';
@@ -381,12 +380,13 @@
 
         window.toggleRadio = () => {
             if (radioPlayer.paused) {
-                radioPlayer.src = "http://37.157.242.101:17317/stream?" + new Date().getTime(); // Anti-Cache Logic
-                radioPlayer.play();
+                radioPlayer.src = "http://37.157.242.101:17317/stream?cb=" + new Date().getTime(); // Anti-Cache Logic
+                radioPlayer.play().catch(err => console.log("تنبيه مشغل الراديو: ", err));
                 radioIcon.style.color = '#28a745';
                 radioIcon.classList.add('fa-beat');
             } else {
                 radioPlayer.pause();
+                radioPlayer.src = ""; // إيقاف السحب الفعلي لباقة الإنترنت
                 radioIcon.style.color = 'var(--primary-red)';
                 radioIcon.classList.remove('fa-beat');
             }
