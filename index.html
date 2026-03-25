@@ -435,13 +435,13 @@
         window.toggleAudio = () => {
             const icon = document.getElementById('musicIcon');
             if (radioPlayer.paused) {
-                // إضافة متغير الوقت يجبر المتصفح على كسر الكاش وسحب البث الحي فوراً
-                radioPlayer.src = "http://37.157.242.101:17317/stream?" + new Date().getTime(); 
-                radioPlayer.play();
+                radioPlayer.src = "http://37.157.242.101:17317/stream?cb=" + new Date().getTime(); 
+                radioPlayer.play().catch(err => console.log("تنبيه مشغل الراديو: ", err));
                 icon.style.color = '#28a745'; 
-                icon.classList.add('fa-beat'); // نبض بصري
+                icon.classList.add('fa-beat');
             } else {
                 radioPlayer.pause();
+                radioPlayer.src = ""; // إيقاف السحب الفعلي لباقة الإنترنت
                 icon.style.color = 'var(--primary-blue)';
                 icon.classList.remove('fa-beat');
             }
