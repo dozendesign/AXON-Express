@@ -41,6 +41,7 @@
         .btn-action { border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; color: white; margin-left: 3px; margin-bottom: 3px; font-family: 'Cairo'; font-weight: bold; font-size: 12px; transition: 0.3s;}
         .btn-action:hover { opacity: 0.8; }
         .btn-save { background: #28a745; } .btn-edit { background: #007bff; } .btn-delete { background: var(--primary-red); } .btn-print { background: #333; } .btn-track { background: #17a2b8; margin-top: 5px; width: 100%; }
+        .btn-broadcast { background: #8e44ad; } /* لون جديد لزرار البث للرادار */
         
         .search-box { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd; font-family: 'Cairo'; font-size: 14px; transition: 0.3s; background: var(--white); color: var(--dark-text); }
         .search-box:focus { outline: none; border-color: var(--primary-blue); box-shadow: 0 0 5px rgba(10, 61, 98, 0.3); }
@@ -83,7 +84,7 @@
         <div class="stats-grid">
             <div class="stat-card"><h3>إجمالي الشحنات</h3><div class="value" id="totalShipments">0</div></div>
             <div class="stat-card"><h3>إجمالي التحصيلات (COD)</h3><div class="value" id="totalMoney" style="color: #28a745;">0 ج.م</div></div>
-            <div class="stat-card"><h3>طلبات اشتريلي</h3><div class="value" id="totalEshteryly">0</div></div>
+            <div class="stat-card"><h3>مهام الرادار النشطة</h3><div class="value" id="totalEshteryly">0</div></div>
         </div>
 
         <div class="admin-section">
@@ -92,10 +93,14 @@
         </div>
 
         <div class="admin-section">
-            <h2><i class="fa-solid fa-basket-shopping"></i> مهام التسوق المخصصة (اشتريلي)</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary-red); padding-bottom: 10px; margin-bottom: 15px;">
+                <h2 style="border: none; padding: 0; margin: 0;"><i class="fa-solid fa-satellite-dish"></i> أهداف الرادار (اشتريلي / بيكب / شحن مباشر)</h2>
+                <button onclick="window.issuePickupOrder()" style="background: var(--primary-red); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-family: 'Cairo'; font-weight: bold;"><i class="fa-solid fa-truck-pickup"></i> إصدار أمر بيكب جديد</button>
+            </div>
+            
             <div class="table-wrapper">
                 <table>
-                    <thead><tr><th>التاجر والتفاصيل</th><th>العنوان وطريقة الدفع</th><th>الحالة والمتابعة</th></tr></thead>
+                    <thead><tr><th>النوع والتفاصيل</th><th>العنوان والمبلغ</th><th>الحالة والمتابعة</th></tr></thead>
                     <tbody id="eshterylyBody"></tbody>
                 </table>
             </div>
@@ -119,7 +124,7 @@
             <input type="text" id="searchInput" class="search-box" placeholder="🔍 بحث عن بوليصة، اسم، موبايل، أو مدينة...">
             <div class="table-wrapper">
                 <table>
-                    <thead><tr><th>التاجر</th><th>البوليصة</th><th>المستلم</th><th>الموبايل</th><th>المدينة/الوزن</th><th>COD</th><th>الحالة</th><th>الإجراءات</th></tr></thead>
+                    <thead><tr><th>التاجر</th><th>البوليصة</th><th>المستلم</th><th>المدينة/الدفع</th><th>COD</th><th>الحالة</th><th>الإجراءات</th></tr></thead>
                     <tbody id="shipmentsBody"></tbody>
                 </table>
             </div>
@@ -147,7 +152,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, setDoc, getDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const app = initializeApp({
             apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
@@ -174,11 +179,49 @@
                 if (!docSnap.exists()) { window.location.href = "index.html"; return; }
             }
             loadShipments();
-            loadEshteryly();
+            loadRadarTasks();
             trackCouriers();
         });
 
         window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
+
+        // --- إصدار أمر بيكب جديد ---
+        window.issuePickupOrder = async () => {
+            const { value: formValues } = await Swal.fire({
+                title: 'إصدار أمر استلام (Pickup)',
+                html:
+                    '<input id="swal-merchant" class="swal2-input" placeholder="اسم التاجر أو الشركة">' +
+                    '<input id="swal-address" class="swal2-input" placeholder="عنوان الاستلام بالتفصيل">' +
+                    '<input id="swal-notes" class="swal2-input" placeholder="ملاحظات (مثال: عدد الطرود المتوقعة 15)">',
+                focusConfirm: false,
+                showCancelButton: true,
+                confirmButtonText: 'إطلاق على الرادار 📡',
+                cancelButtonText: 'إلغاء',
+                preConfirm: () => {
+                    return [
+                        document.getElementById('swal-merchant').value,
+                        document.getElementById('swal-address').value,
+                        document.getElementById('swal-notes').value
+                    ]
+                }
+            });
+
+            if (formValues) {
+                if(!formValues[0] || !formValues[1]) return Swal.fire('خطأ', 'اسم التاجر والعنوان مطلوبان', 'error');
+                
+                try {
+                    await addDoc(collection(db, "eshteryly_orders"), {
+                        merchantEmail: formValues[0], // بنستخدم الحقل ده عشان نعرض الاسم
+                        details: formValues[2] || "طلب استلام طرود",
+                        address: formValues[1],
+                        paymentMethod: "pickup", // نوع جديد للفايربيز
+                        status: "جاري البحث عن مندوب", // ينزل عالرادار فوراً
+                        timestamp: new Date()
+                    });
+                    Swal.fire('تم', 'أمر البيكب ظهر الآن على شاشات المناديب', 'success');
+                } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
+            }
+        };
 
         // --- رادار المناديب ---
         function trackCouriers() {
@@ -215,14 +258,22 @@
             }
         };
 
-        // --- طلبات اشتريلي ---
-        function loadEshteryly() {
+        // --- مهام الرادار (اشتريلي + بيكب + شحن داخلي) ---
+        function loadRadarTasks() {
             onSnapshot(query(collection(db, "eshteryly_orders"), orderBy("timestamp", "desc")), (snap) => {
                 let html = "", count = 0;
                 snap.forEach(docSnap => {
                     const d = docSnap.data(), id = docSnap.id;
                     if(d.status === "تم التسليم بنجاح" || d.status === "مرفوض") return;
                     count++;
+                    
+                    // تحديد شكل الأيقونة واللون بناءً على نوع المهمة
+                    let typeIcon = "🛒 اشتريلي";
+                    let typeColor = "#000";
+                    if(d.paymentMethod === 'pickup') { typeIcon = "📦 أمر بيكب"; typeColor = "#8e44ad"; } // بنفسجي
+                    else if(d.paymentMethod === 'prepaid') { typeIcon = "⚡ شحن داخلي (دفع مقدم)"; typeColor = "#28a745"; } // أخضر
+                    else if(d.paymentMethod === 'normal') { typeIcon = "🚚 شحن داخلي (تحصيل عادي)"; typeColor = "#007bff"; } // أزرق
+
                     let btns = "";
                     if(d.status === "قيد المراجعة") {
                         btns = `<button class="btn-action btn-save" onclick="window.approveEsh('${id}')">بث للشبكة 📡</button>
@@ -237,8 +288,8 @@
                                 </div>`;
                     }
                     html += `<tr>
-                        <td><b>${d.merchantEmail.split('@')[0]}</b><br><span style="font-size:11px;">${d.details}</span></td>
-                        <td><span style="font-size:11px;">📍 ${d.address}</span><br><b style="color:var(--primary-red);">💳 ${d.paymentMethod}</b></td>
+                        <td><b>${d.merchantEmail.split('@')[0]}</b><br><span style="font-size:11px; color:${typeColor}; font-weight:bold;">${typeIcon}</span><br><span style="font-size:11px;">${d.details}</span></td>
+                        <td><span style="font-size:11px;">📍 ${d.address}</span><br><b style="color:var(--primary-red); font-size:11px;">💳 ${d.paymentMethod === 'pickup' ? '-' : d.paymentMethod}</b></td>
                         <td>${btns}</td>
                     </tr>`;
                 });
@@ -258,7 +309,7 @@
             }
         };
 
-        // --- إدارة الشحنات العادية ---
+        // --- إدارة الشحنات العادية (مع زرار البث) ---
         function loadShipments() {
             onSnapshot(query(collection(db, "shipments"), orderBy("timestamp", "desc")), (snap) => {
                 let html = "", totalM = 0, count = 0;
@@ -268,21 +319,26 @@
                     totalM += Number(d.amount) || 0; count++;
                     const awb = "AXN" + id.substring(0,5).toUpperCase();
                     const merchant = d.merchantEmail ? d.merchantEmail.split('@')[0] : "إدارة";
+                    
+                    let paymentBadge = d.paymentType === 'prepaid' ? '<span style="color:green; font-weight:bold; font-size:11px;">(دفع مقدم)</span>' : '';
+                    
                     html += `<tr class="shipment-row">
-                        <td><b>${merchant}</b></td> <td>${awb}</td> <td>${d.name}</td>
-                        <td dir="ltr">${d.phone}<br><span style="font-size:10px;color:gray;">${d.phone2||''}</span></td>
-                        <td>${d.city}<br><span style="font-size:10px;color:gray;">وزن: ${d.weight||1} كجم</span></td>
+                        <td><b>${merchant}</b></td> 
+                        <td>${awb}<br><span style="font-size:10px;color:gray;">${d.name}</span></td> 
+                        <td dir="ltr">${d.phone}</td>
+                        <td>${d.city}<br>${paymentBadge}</td>
                         <td style="color:var(--primary-red); font-weight:bold;">${d.amount}</td>
                         <td><select id="st-${id}" class="status-dropdown">
                             <option value="قيد التوصيل" ${d.status==='قيد التوصيل'?'selected':''}>قيد التوصيل</option>
+                            <option value="مذاع للرادار" ${d.status==='مذاع للرادار'?'selected':''}>مذاع للرادار</option>
                             <option value="تم التسليم" ${d.status==='تم التسليم'?'selected':''}>تم التسليم</option>
                             <option value="مرتجع" ${d.status==='مرتجع'?'selected':''}>مرتجع</option>
                             <option value="مؤجل" ${d.status==='مؤجل'?'selected':''}>مؤجل</option>
                         </select></td>
                         <td style="white-space:nowrap;">
                             <button class="btn-action btn-save" onclick="window.updateStatus('${id}')">حفظ</button>
-                            <button class="btn-action btn-print" onclick="window.printWaybill('${merchant}','${d.name}','${d.phone}','${d.phone2}','${d.city}','${d.address}','${d.weight}','${d.amount}','${awb}','${d.details||''}')">طباعة A5</button>
-                            <button class="btn-action btn-edit" onclick="window.openEditModal('${id}','${d.name}','${d.phone}','${d.phone2}','${d.city}','${d.address}','${d.weight}','${d.amount}')">تعديل</button>
+                            <button class="btn-action btn-broadcast" onclick="window.broadcastShipmentToRadar('${id}', '${merchant}', '${d.city}', '${d.address}', '${d.amount}', '${d.paymentType || 'normal'}', '${awb}')" title="بث المهمة لموبايلات المناديب"><i class="fa-solid fa-satellite-dish"></i> للرادار</button>
+                            <button class="btn-action btn-print" onclick="window.printWaybill('${merchant}','${d.name}','${d.phone}','${d.phone2}','${d.city}','${d.address}','${d.weight}','${d.amount}','${awb}','${d.details||''}')">طباعة</button>
                             <button class="btn-action btn-delete" onclick="window.deleteShipment('${id}')">حذف</button>
                         </td>
                     </tr>`;
@@ -292,6 +348,29 @@
                 document.getElementById('totalMoney').innerText = totalM + " ج.م";
             });
         }
+
+        // تحويل الشحنة من الجدول لـ (مهمة رادار) تظهر للمناديب
+        window.broadcastShipmentToRadar = async (shipmentId, merchantName, city, address, amount, paymentType, awb) => {
+            if(!confirm("هل تريد بث هذه الشحنة للرادار ليقوم مندوب بتوصيلها الآن؟")) return;
+            
+            try {
+                // إضافة المهمة في كولكشن eshteryly_orders (لأن هو ده اللي بيقراه رادار المندوب)
+                await addDoc(collection(db, "eshteryly_orders"), {
+                    merchantEmail: merchantName,
+                    details: `توصيل بوليصة رقم: ${awb} - تحصيل: ${amount} ج.م`,
+                    address: `${city} - ${address}`,
+                    paymentMethod: paymentType, // هنا بيبعت إذا كانت prepaid أو normal
+                    status: "جاري البحث عن مندوب",
+                    timestamp: new Date(),
+                    linkedShipmentId: shipmentId // ربطها برقم الشحنة الأصلي
+                });
+                
+                // تحديث حالة الشحنة في الجدول
+                await updateDoc(doc(db, "shipments", shipmentId), { status: "مذاع للرادار" });
+                
+                Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم البث بنجاح', showConfirmButton:false, timer:2000});
+            } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
+        };
 
         // --- محرك البحث (تم تفعيله) ---
         document.getElementById('searchInput').addEventListener('keyup', function() {
@@ -358,16 +437,16 @@
             <!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>AWB: ${awb}</title>
             <style>
                 @media print {
-                    @page { size: A5 portrait; margin: 0; }
-                    body { margin: 0; padding: 0; background: #fff; display: flex; justify-content: center; align-items: flex-start; }
+                    @page { size: A5 portrait; margin: 0mm; } 
+                    body { margin: 0; padding: 0; background: #fff; display: block; }
                     .strict-a5-wrapper { 
-                        width: 148mm; height: 200mm; /* Strict A5 boundary to prevent stretch on A4 */
+                        width: 148mm; height: 195mm; 
                         padding: 10mm; box-sizing: border-box; 
-                        border: 2px solid #000; overflow: hidden; page-break-after: always;
+                        border: 2px solid #000; overflow: hidden; margin: 0 auto;
                     }
                 }
                 body { font-family: sans-serif; background: #eee; display: flex; justify-content: center; padding: 20px; }
-                .strict-a5-wrapper { background: white; width: 148mm; min-height: 200mm; padding: 10mm; box-sizing: border-box; border: 2px solid #000; }
+                .strict-a5-wrapper { background: white; width: 148mm; min-height: 195mm; padding: 10mm; box-sizing: border-box; border: 2px solid #000; }
                 .header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 5mm; margin-bottom: 5mm; }
                 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; margin-bottom: 5mm; border: 1px solid #000; padding: 5mm; }
                 .cod { text-align: center; border: 2px solid #000; padding: 5mm; background: #f9f9f9; }
@@ -406,13 +485,13 @@
 
         window.toggleRadio = () => {
             if (radioPlayer.paused) {
-                radioPlayer.src = "http://37.157.242.101:17317/stream?cb=" + new Date().getTime(); // يمنع الكاش ويجبر البث الحي
+                radioPlayer.src = "http://37.157.242.101:17317/stream?cb=" + new Date().getTime(); 
                 radioPlayer.play().catch(err => console.log("تنبيه مشغل الراديو: ", err));
                 radioIcon.style.color = '#28a745';
-                radioIcon.classList.add('fa-beat'); // أنيميشن خفيف للنبض
+                radioIcon.classList.add('fa-beat'); 
             } else {
                 radioPlayer.pause();
-                radioPlayer.src = ""; // إيقاف سحب الباقة
+                radioPlayer.src = ""; 
                 radioIcon.style.color = 'var(--primary-red)';
                 radioIcon.classList.remove('fa-beat');
             }
