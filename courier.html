@@ -58,7 +58,7 @@
 
         /* نبض الإنذار البصري */
         @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(220, 53, 69, 0); } 100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); } }
-        .alarm-active { animation: pulse-red 1.5s infinite; border-right-color: #dc3545 !important; }
+        .alarm-active { animation: pulse-red 1.5s infinite; }
     </style>
 </head>
 <body>
@@ -98,7 +98,7 @@
                 <button id="toggleStatusBtn" class="toggle-btn btn-offline" onclick="window.toggleStatus()">بدء الوردية</button>
             </div>
 
-            <h3 class="section-title"><i class="fa-solid fa-satellite-dish"></i> أهداف تكتيكية (اشتريلي)</h3>
+            <h3 class="section-title"><i class="fa-solid fa-satellite-dish"></i> أهداف تكتيكية (الرادار)</h3>
             <div id="radarContainer">
                 <p style='color:gray; text-align:center; font-size: 14px;'>الرادار في وضع السكون. ابدأ الوردية.</p>
             </div>
@@ -157,12 +157,9 @@
             if (isAlarming) return;
             isAlarming = true;
             
-            // تشغيل الصوت (تم أخذ إذن المتصفح مسبقاً عند ضغط المندوب على بدء الوردية)
             sirenAudio.play().catch(e => console.log("الصوت يحتاج تفاعل المستخدم"));
             
-            // هزاز متواصل (يشتغل ويقفل)
             if ("vibrate" in navigator) {
-                // نمط هزاز طويل
                 navigator.vibrate([1000, 500, 1000, 500, 1000, 500]); 
                 activeAlarmInterval = setInterval(() => {
                     navigator.vibrate([1000, 500, 1000, 500]);
@@ -175,12 +172,12 @@
             if (isAlarming) {
                 isAlarming = false;
                 sirenAudio.pause();
-                sirenAudio.currentTime = 0; // إرجاع الصوت للصفر
+                sirenAudio.currentTime = 0; 
                 if (activeAlarmInterval) {
                     clearInterval(activeAlarmInterval);
                     activeAlarmInterval = null;
                 }
-                if ("vibrate" in navigator) navigator.vibrate(0); // إيقاف الهزاز فوراً
+                if ("vibrate" in navigator) navigator.vibrate(0); 
             }
         }
 
@@ -230,7 +227,6 @@
             isOnline = !isOnline;
             const btn = document.getElementById("toggleStatusBtn"), txt = document.getElementById("statusText");
             
-            // هذه الضغطة تعطي صلاحية كاملة للمتصفح لتشغيل الأصوات تلقائياً لاحقاً
             sirenAudio.load(); 
 
             if(isOnline) {
@@ -241,7 +237,7 @@
                 btn.className = "toggle-btn btn-offline"; btn.innerText = "بدء الوردية";
                 txt.innerHTML = "خارج التغطية 🔴"; txt.style.color = "#dc3545";
                 
-                stopTacticalAlarm(); // إيقاف أي إنذار معلق
+                stopTacticalAlarm(); 
                 
                 if(watchId) { navigator.geolocation.clearWatch(watchId); watchId = null; }
                 if(auth.currentUser) setDoc(doc(db, "couriers", auth.currentUser.uid), { status: "offline" }, { merge: true });
@@ -267,7 +263,7 @@
             }
         }
 
-        // تحميل الرادار مع (الترتيب الجغرافي)
+        // تحميل الرادار مع (الترتيب الجغرافي والألوان الذكية)
         function loadRadar() {
             onSnapshot(collection(db, "eshteryly_orders"), (snap) => {
                 let availableOrders = [];
@@ -290,37 +286,65 @@
                         d._distVal = 9999; 
                     }
 
-                    // إذا كان الطلب متاح والمندوب متصل ولم يتجاهل الطلب
-                    if(d.status === "جاري البحث عن مندوب" && isOnline && !ignoredOrders.has(id)) {
-                        availableOrders.push({ id, d, distanceStr });
-                        requiresAlarm = true; // يوجد هدف جديد يستدعي الإنذار
+                    // --- تحديد الألوان وأنواع المهام ---
+                    let cardColor = "#ffc107"; // برتقالي افتراضي (اشتريلي)
+                    let iconClass = "fa-cart-shopping";
+                    let taskTitle = "مهمة تسوق (اشتريلي)";
+                    let moneyInfo = `<p><b>الدفع:</b> <span style="color:var(--primary-red); font-weight:bold;">${d.paymentMethod}</span></p>`;
+
+                    if (d.paymentMethod === 'pickup') {
+                        cardColor = "#8e44ad"; // بنفسجي
+                        iconClass = "fa-box-open";
+                        taskTitle = "أمر بيكب (استلام طرود)";
+                        moneyInfo = `<p><b>التاجر:</b> ${d.merchantEmail.split('@')[0]}</p>`;
+                    } else if (d.paymentMethod === 'prepaid') {
+                        cardColor = "#28a745"; // أخضر
+                        iconClass = "fa-money-bill-wave";
+                        taskTitle = "شحن داخلي (دفع مقدم)";
+                        // استخراج المبلغ من التفاصيل (بافتراض شكل التفاصيل اللي عملناه في الأدمن)
+                        let amount = d.details.split('تحصيل: ')[1] || "غير محدد";
+                        moneyInfo = `<p style="background:#e8f5e9; padding:5px; border-radius:5px; border:1px solid #c3e6cb;">⚠️ <b>ادفع للتاجر:</b> <span style="color:#28a745; font-weight:bold;">${amount}</span></p>`;
+                    } else if (d.paymentMethod === 'normal') {
+                        cardColor = "#007bff"; // أزرق
+                        iconClass = "fa-truck-fast";
+                        taskTitle = "شحن داخلي (توصيل وتحصيل)";
+                        let amount = d.details.split('تحصيل: ')[1] || "غير محدد";
+                        moneyInfo = `<p style="background:#cce5ff; padding:5px; border-radius:5px; border:1px solid #b8daff;">⚠️ <b>حصل من العميل:</b> <span style="color:#0056b3; font-weight:bold;">${amount}</span></p>`;
                     }
+
+                    // --- المهام المتاحة على الرادار ---
+                    if(d.status === "جاري البحث عن مندوب" && isOnline && !ignoredOrders.has(id)) {
+                        availableOrders.push({ id, d, distanceStr, cardColor, iconClass, taskTitle, moneyInfo });
+                        requiresAlarm = true; 
+                    }
+                    
+                    // --- المهام في العهدة ---
                     if(d.status === "تم الاستلام بواسطة المندوب" && d.courierName === currentCourierName) {
-                        tasksHtml += `<div class="order-card" style="border-right-color:#28a745">
+                        tasksHtml += `<div class="order-card" style="border-right-color:${cardColor}">
                             <div class="distance-badge">${distanceStr}</div>
-                            <h4 style="margin-top:15px;"><i class="fa-solid fa-motorcycle"></i> هدف في العهدة</h4>
+                            <h4 style="margin-top:15px; color:${cardColor};"><i class="fa-solid ${iconClass}"></i> ${taskTitle}</h4>
                             <p><b>الوجهة:</b> ${d.address}</p>
-                            <p><b>المهمة:</b> ${d.details}</p>
+                            <p><b>التفاصيل:</b> ${d.details}</p>
+                            ${moneyInfo}
                             <div class="action-grid">
                                 <button class="btn-core nav-btn" onclick="window.openMap('${encodeURIComponent(d.address)}')"><i class="fa-solid fa-location-arrow"></i> الملاحة</button>
-                                <button class="btn-core deliver-btn" onclick="window.completeOrder('${id}')"><i class="fa-solid fa-check-double"></i> تم التوصيل</button>
+                                <button class="btn-core deliver-btn" onclick="window.completeOrder('${id}')"><i class="fa-solid fa-check-double"></i> تمت المهمة</button>
                             </div>
                         </div>`;
                     }
                 });
 
-                // ترتيب الطلبات جغرافياً (الأقرب فالأبعد)
                 availableOrders.sort((a, b) => a.d._distVal - b.d._distVal);
 
                 let radarHtml = "";
                 availableOrders.forEach(order => {
-                    radarHtml += `<div class="order-card alarm-active" style="border-right-color:#ffc107">
+                    radarHtml += `<div class="order-card alarm-active" style="border-right-color:${order.cardColor}; border-width: 3px;">
                         <div class="distance-badge">${order.distanceStr}</div>
-                        <h4 style="margin-top:15px;"><i class="fa-solid fa-bolt"></i> هدف جديد متاح!</h4>
+                        <h4 style="margin-top:15px; color:${order.cardColor};"><i class="fa-solid ${order.iconClass}"></i> ${order.taskTitle}</h4>
                         <p><b>المنطقة:</b> ${order.d.address.split('\n')[0]}</p>
-                        <p><b>الدفع:</b> <span style="color:var(--primary-red); font-weight:bold;">${order.d.paymentMethod}</span></p>
+                        ${order.moneyInfo}
                         <div class="action-grid">
-                            <button class="btn-core claim-btn" onclick="window.claimOrder('${order.id}')">خطف 🚀</button>
+                            <button class="btn-core claim-btn" style="background:${order.cardColor}; color:white;" onclick="window.claimOrder('${order.id}')">خطف 🚀</button>
                             <button class="btn-core reject-btn" onclick="window.ignoreOrder('${order.id}')">تجاهل ❌</button>
                         </div>
                     </div>`;
@@ -329,7 +353,6 @@
                 document.getElementById("radarContainer").innerHTML = isOnline ? (radarHtml || "<p style='color:gray; text-align:center; font-size:14px;'>الرادار خالي. جاري المسح...</p>") : "<p style='color:gray; text-align:center; font-size:14px;'>الرادار في وضع السكون.</p>";
                 document.getElementById("myTasksContainer").innerHTML = tasksHtml || "<p style='color:gray; text-align:center; font-size:14px;'>لا توجد مهام نشطة حالياً.</p>";
 
-                // تفعيل أو إيقاف الإنذار بناءً على وجود طلبات جديدة
                 if (requiresAlarm && isOnline) {
                     triggerTacticalAlarm();
                 } else {
@@ -338,17 +361,16 @@
             });
         }
 
-        // الإجراءات التكتيكية للمندوب (إيقاف الإنذار اليدوي يحدث هنا)
         window.claimOrder = async (id) => {
             try { 
                 await updateDoc(doc(db, "eshteryly_orders", id), { status: "تم الاستلام بواسطة المندوب", courierName: currentCourierName }); 
-                stopTacticalAlarm(); // إسكات الإنذار بعد الخطف
+                stopTacticalAlarm(); 
                 Swal.fire({toast:true, position:'top', icon:'success', title:'الهدف في عهدتك الآن', showConfirmButton:false, timer:2000}); 
             } catch(e) { Swal.fire('عطل', 'سبقك مندوب آخر أو انقطع الاتصال.', 'error'); }
         };
 
         window.ignoreOrder = (id) => {
-            ignoredOrders.add(id); // التجاهل يسكت الإنذار لهذا المندوب فقط
+            ignoredOrders.add(id); 
             loadRadar(); 
         };
 
@@ -362,7 +384,6 @@
             });
         };
 
-        // الملاحة المتقدمة
         window.openMap = (addr) => {
             const decodedAddr = decodeURIComponent(addr);
             const regex = /http:\/\/googleusercontent\.com\/maps\.google\.com\/[01]([\d\.-]+),([\d\.-]+)/;
@@ -381,19 +402,17 @@
             }
         };
 
-        // --- التحكم بالراديو والواجهة ---
         window.toggleRadio = () => {
             const icon = document.getElementById('radioIcon');
             
             if (radioPlayer.paused) {
-                // منع الكاش وإجبار البث المباشر
                 radioPlayer.src = "http://37.157.242.101:17317/stream?cb=" + new Date().getTime();
                 radioPlayer.play().catch(err => console.log("المتصفح يمنع التشغيل التلقائي"));
                 icon.className = 'fa-solid fa-volume-high';
                 icon.style.color = '#28a745';
             } else {
                 radioPlayer.pause();
-                radioPlayer.src = ""; // إيقاف السحب من الباقة
+                radioPlayer.src = ""; 
                 icon.className = 'fa-solid fa-volume-xmark';
                 icon.style.color = 'white';
             }
