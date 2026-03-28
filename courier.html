@@ -301,7 +301,6 @@
                         cardColor = "#28a745"; // أخضر
                         iconClass = "fa-money-bill-wave";
                         taskTitle = "شحن داخلي (دفع مقدم)";
-                        // استخراج المبلغ من التفاصيل (بافتراض شكل التفاصيل اللي عملناه في الأدمن)
                         let amount = d.details.split('تحصيل: ')[1] || "غير محدد";
                         moneyInfo = `<p style="background:#e8f5e9; padding:5px; border-radius:5px; border:1px solid #c3e6cb;">⚠️ <b>ادفع للتاجر:</b> <span style="color:#28a745; font-weight:bold;">${amount}</span></p>`;
                     } else if (d.paymentMethod === 'normal') {
@@ -384,21 +383,28 @@
             });
         };
 
+        // --- الملاحة الذكية المعالجة ---
         window.openMap = (addr) => {
             const decodedAddr = decodeURIComponent(addr);
             const regex = /http:\/\/googleusercontent\.com\/maps\.google\.com\/[01]([\d\.-]+),([\d\.-]+)/;
             const match = decodedAddr.match(regex);
+            const isAndroid = /android/i.test(navigator.userAgent);
             
             if (match) {
+                // لو التاجر باعت لوكيشن صريح بإحداثيات
                 const lat = match[1]; const lng = match[2];
-                const isAndroid = /android/i.test(navigator.userAgent);
                 if (isAndroid) {
                     window.location.href = `geo:${lat},${lng}?q=${lat},${lng}`;
                 } else {
-                    window.open(`https://maps.google.com/?q=${lat},${lng}`, '_blank');
+                    window.open(`https://www.google.com/maps/search/?api=1&query=$${lat},${lng}`, '_blank');
                 }
             } else {
-                Swal.fire('خطأ', 'لا توجد إحداثيات صالحة لهذا الطلب.', 'error');
+                // لو التاجر كاتب العنوان كنص بس (بدون إحداثيات)
+                if (isAndroid) {
+                    window.location.href = `geo:0,0?q=${encodeURIComponent(decodedAddr)}`;
+                } else {
+                    window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(decodedAddr)}`, '_blank');
+                }
             }
         };
 
