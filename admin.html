@@ -41,7 +41,7 @@
         .btn-action { border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; color: white; margin-left: 3px; margin-bottom: 3px; font-family: 'Cairo'; font-weight: bold; font-size: 12px; transition: 0.3s;}
         .btn-action:hover { opacity: 0.8; }
         .btn-save { background: #28a745; } .btn-edit { background: #007bff; } .btn-delete { background: var(--primary-red); } .btn-print { background: #333; } .btn-track { background: #17a2b8; margin-top: 5px; width: 100%; }
-        .btn-broadcast { background: #8e44ad; } /* لون جديد لزرار البث للرادار */
+        .btn-broadcast { background: #8e44ad; } 
         
         .search-box { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd; font-family: 'Cairo'; font-size: 14px; transition: 0.3s; background: var(--white); color: var(--dark-text); }
         .search-box:focus { outline: none; border-color: var(--primary-blue); box-shadow: 0 0 5px rgba(10, 61, 98, 0.3); }
@@ -211,11 +211,11 @@
                 
                 try {
                     await addDoc(collection(db, "eshteryly_orders"), {
-                        merchantEmail: formValues[0], // بنستخدم الحقل ده عشان نعرض الاسم
+                        merchantEmail: formValues[0], 
                         details: formValues[2] || "طلب استلام طرود",
                         address: formValues[1],
-                        paymentMethod: "pickup", // نوع جديد للفايربيز
-                        status: "جاري البحث عن مندوب", // ينزل عالرادار فوراً
+                        paymentMethod: "pickup", 
+                        status: "جاري البحث عن مندوب", 
                         timestamp: new Date()
                     });
                     Swal.fire('تم', 'أمر البيكب ظهر الآن على شاشات المناديب', 'success');
@@ -267,12 +267,11 @@
                     if(d.status === "تم التسليم بنجاح" || d.status === "مرفوض") return;
                     count++;
                     
-                    // تحديد شكل الأيقونة واللون بناءً على نوع المهمة
                     let typeIcon = "🛒 اشتريلي";
                     let typeColor = "#000";
-                    if(d.paymentMethod === 'pickup') { typeIcon = "📦 أمر بيكب"; typeColor = "#8e44ad"; } // بنفسجي
-                    else if(d.paymentMethod === 'prepaid') { typeIcon = "⚡ شحن داخلي (دفع مقدم)"; typeColor = "#28a745"; } // أخضر
-                    else if(d.paymentMethod === 'normal') { typeIcon = "🚚 شحن داخلي (تحصيل عادي)"; typeColor = "#007bff"; } // أزرق
+                    if(d.paymentMethod === 'pickup') { typeIcon = "📦 أمر بيكب"; typeColor = "#8e44ad"; } 
+                    else if(d.paymentMethod === 'prepaid') { typeIcon = "⚡ شحن داخلي (دفع مقدم)"; typeColor = "#28a745"; } 
+                    else if(d.paymentMethod === 'normal') { typeIcon = "🚚 شحن داخلي (تحصيل عادي)"; typeColor = "#007bff"; } 
 
                     let btns = "";
                     if(d.status === "قيد المراجعة") {
@@ -309,7 +308,7 @@
             }
         };
 
-        // --- إدارة الشحنات العادية (مع زرار البث) ---
+        // --- إدارة الشحنات العادية (مع زرار البث والتعديل) ---
         function loadShipments() {
             onSnapshot(query(collection(db, "shipments"), orderBy("timestamp", "desc")), (snap) => {
                 let html = "", totalM = 0, count = 0;
@@ -339,6 +338,7 @@
                             <button class="btn-action btn-save" onclick="window.updateStatus('${id}')">حفظ</button>
                             <button class="btn-action btn-broadcast" onclick="window.broadcastShipmentToRadar('${id}', '${merchant}', '${d.city}', '${d.address}', '${d.amount}', '${d.paymentType || 'normal'}', '${awb}')" title="بث المهمة لموبايلات المناديب"><i class="fa-solid fa-satellite-dish"></i> للرادار</button>
                             <button class="btn-action btn-print" onclick="window.printWaybill('${merchant}','${d.name}','${d.phone}','${d.phone2}','${d.city}','${d.address}','${d.weight}','${d.amount}','${awb}','${d.details||''}')">طباعة</button>
+                            <button class="btn-action btn-edit" onclick="window.openEditModal('${id}','${d.name}','${d.phone}','${d.phone2}','${d.city}','${d.address}','${d.weight}','${d.amount}')">تعديل 📝</button>
                             <button class="btn-action btn-delete" onclick="window.deleteShipment('${id}')">حذف</button>
                         </td>
                     </tr>`;
@@ -349,30 +349,27 @@
             });
         }
 
-        // تحويل الشحنة من الجدول لـ (مهمة رادار) تظهر للمناديب
         window.broadcastShipmentToRadar = async (shipmentId, merchantName, city, address, amount, paymentType, awb) => {
             if(!confirm("هل تريد بث هذه الشحنة للرادار ليقوم مندوب بتوصيلها الآن؟")) return;
             
             try {
-                // إضافة المهمة في كولكشن eshteryly_orders (لأن هو ده اللي بيقراه رادار المندوب)
                 await addDoc(collection(db, "eshteryly_orders"), {
                     merchantEmail: merchantName,
                     details: `توصيل بوليصة رقم: ${awb} - تحصيل: ${amount} ج.م`,
                     address: `${city} - ${address}`,
-                    paymentMethod: paymentType, // هنا بيبعت إذا كانت prepaid أو normal
+                    paymentMethod: paymentType, 
                     status: "جاري البحث عن مندوب",
                     timestamp: new Date(),
-                    linkedShipmentId: shipmentId // ربطها برقم الشحنة الأصلي
+                    linkedShipmentId: shipmentId 
                 });
                 
-                // تحديث حالة الشحنة في الجدول
                 await updateDoc(doc(db, "shipments", shipmentId), { status: "مذاع للرادار" });
                 
                 Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم البث بنجاح', showConfirmButton:false, timer:2000});
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
         };
 
-        // --- محرك البحث (تم تفعيله) ---
+        // --- محرك البحث ---
         document.getElementById('searchInput').addEventListener('keyup', function() {
             let filter = this.value.toLowerCase();
             let rows = document.querySelectorAll('.shipment-row');
