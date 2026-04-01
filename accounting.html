@@ -71,16 +71,16 @@
     </header>
 
     <div class="container">
-        <div id="loading" class="loader"><i class="fa-solid fa-spinner fa-spin"></i> جاري فك تشفير الدفاتر...</div>
+        <div id="loading" class="loader"><i class="fa-solid fa-spinner fa-spin"></i> جاري الاتصال بالخزينة وفك التشفير...</div>
 
         <div id="financeDashboard" style="display: none;">
             
             <div class="tabs">
-                <button class="tab-btn active" onclick="openTab('tab-overview')"><i class="fa-solid fa-chart-pie"></i> الموقف المالي</button>
-                <button class="tab-btn" onclick="openTab('tab-merchants')"><i class="fa-solid fa-store"></i> تسويات التجار</button>
-                <button class="tab-btn" onclick="openTab('tab-couriers')"><i class="fa-solid fa-motorcycle"></i> عهد المناديب</button>
-                <button class="tab-btn" onclick="openTab('tab-expenses')"><i class="fa-solid fa-file-invoice-dollar"></i> المصروفات</button>
-                <button class="tab-btn" onclick="openTab('tab-salaries')"><i class="fa-solid fa-users"></i> الرواتب والأجور</button>
+                <button class="tab-btn active" onclick="window.openTab('tab-overview')"><i class="fa-solid fa-chart-pie"></i> الموقف المالي</button>
+                <button class="tab-btn" onclick="window.openTab('tab-merchants')"><i class="fa-solid fa-store"></i> تسويات التجار</button>
+                <button class="tab-btn" onclick="window.openTab('tab-couriers')"><i class="fa-solid fa-motorcycle"></i> عهد المناديب</button>
+                <button class="tab-btn" onclick="window.openTab('tab-expenses')"><i class="fa-solid fa-file-invoice-dollar"></i> المصروفات</button>
+                <button class="tab-btn" onclick="window.openTab('tab-salaries')"><i class="fa-solid fa-users"></i> الرواتب والأجور</button>
             </div>
 
             <div id="tab-overview" class="tab-content active">
@@ -228,7 +228,7 @@
         const SHIPPING_FEE = 50; 
         let currentAdminEmail = "";
 
-        // إدارة التبويبات (UI)
+        // تبديل الشاشات
         window.openTab = (tabId) => {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -236,105 +236,148 @@
             event.currentTarget.classList.add('active');
         };
 
-        // تأمين البوابة
+        // تأمين الواجهة بـ حماية قوية
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentAdminEmail = user.email;
                 loadFinancialData();
             } else {
-                Swal.fire('حظر دخول', 'غير مصرح لك بالدخول للخزينة.', 'error').then(()=>{ window.location.href="index.html"; });
+                document.getElementById('loading').innerHTML = '<span style="color:red;"><i class="fa-solid fa-triangle-exclamation"></i> غير مصرح لك بالدخول للخزينة. يرجى تسجيل الدخول من لوحة الإدارة أولاً.</span>';
+                setTimeout(() => { window.location.href = "index.html"; }, 3000);
             }
         });
 
         function loadFinancialData() {
-            // 1. سحب الشحنات (للإيرادات والتسويات)
-            onSnapshot(query(collection(db, "shipments"), where("status", "==", "تم التسليم")), (snap) => {
-                let merchants = {}, couriers = {}, totalCustody = 0, totalDues = 0, totalProfit = 0;
-                snap.forEach(doc => {
-                    let d = doc.data(); if(d.deleted) return;
-                    let amt = Number(d.amount)||0, mEmail = d.merchantEmail||"غير مسجل", cName = d.courier||"مندوب خارجي";
+            // إظهار لوحة التحكم بمجرد التأكد من تسجيل الدخول
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('financeDashboard').style.display = 'block';
+
+            // 1. سحب بيانات الشحنات والتسويات (مؤمن بـ Try/Catch و Error Handler)
+            try {
+                onSnapshot(query(collection(db, "shipments"), where("status", "==", "تم التسليم")), (snap) => {
+                    let merchants = {}, couriers = {}, totalCustody = 0, totalDues = 0, totalProfit = 0;
                     
-                    if(!merchants[mEmail]) merchants[mEmail] = { count:0, cod:0, fees:0, net:0 };
-                    merchants[mEmail].count++; merchants[mEmail].cod += amt; merchants[mEmail].fees += SHIPPING_FEE; merchants[mEmail].net = merchants[mEmail].cod - merchants[mEmail].fees;
+                    snap.forEach(doc => {
+                        let d = doc.data(); if(d.deleted) return;
+                        let amt = Number(d.amount) || 0;
+                        let mEmail = d.merchantEmail || "غير مسجل";
+                        let cName = d.courier || "مندوب خارجي";
+                        
+                        if(!merchants[mEmail]) merchants[mEmail] = { count:0, cod:0, fees:0, net:0 };
+                        merchants[mEmail].count++; merchants[mEmail].cod += amt; merchants[mEmail].fees += SHIPPING_FEE; merchants[mEmail].net = merchants[mEmail].cod - merchants[mEmail].fees;
+                        
+                        if(!couriers[cName]) couriers[cName] = { count:0, cash:0 };
+                        couriers[cName].count++; couriers[cName].cash += amt;
+
+                        totalCustody += amt; totalProfit += SHIPPING_FEE;
+                    });
                     
-                    if(!couriers[cName]) couriers[cName] = { count:0, cash:0 };
-                    couriers[cName].count++; couriers[cName].cash += amt;
+                    totalDues = totalCustody - totalProfit;
 
-                    totalCustody += amt; totalProfit += SHIPPING_FEE;
+                    document.getElementById('valCustody').innerText = totalCustody.toLocaleString();
+                    document.getElementById('valMerchantDues').innerText = totalDues.toLocaleString();
+                    document.getElementById('valProfit').innerText = totalProfit.toLocaleString();
+                    window.updateNetProfit();
+
+                    let cHtml = ""; for(let c in couriers) { cHtml += `<tr><td><b>${c}</b></td><td>${couriers[c].count}</td><td style="color:var(--primary-red); font-weight:bold;">${couriers[c].cash} ج.م</td><td><button class="btn-action btn-pay" onclick="window.printReceipt('قبض من مندوب', '${c}', 'توريد عهدة كاش', ${couriers[c].cash})"><i class="fa-solid fa-print"></i> استلام النقدية</button></td></tr>`; }
+                    document.getElementById('tblCouriers').innerHTML = cHtml || "<tr><td colspan='4'>لا توجد عهد</td></tr>";
+
+                    let mHtml = ""; for(let m in merchants) { mHtml += `<tr><td><b>${m.split('@')[0]}</b></td><td>${merchants[m].count}</td><td>${merchants[m].cod}</td><td style="color:red;">${merchants[m].fees}</td><td style="color:green;font-weight:bold;">${merchants[m].net}</td><td><button class="btn-action btn-print" onclick="window.printReceipt('تسوية تاجر', '${m.split('@')[0]}', 'تسوية مستحقات شحنات', ${merchants[m].net})"><i class="fa-solid fa-print"></i> طباعة مخالصة</button></td></tr>`; }
+                    document.getElementById('tblMerchants').innerHTML = mHtml || "<tr><td colspan='6'>لا توجد تسويات</td></tr>";
+                }, (error) => {
+                    console.error("خطأ في قراءة الشحنات:", error);
+                    document.getElementById('tblMerchants').innerHTML = `<tr><td colspan="6" style="color:red;">خطأ في جلب البيانات: ${error.message}</td></tr>`;
                 });
-                totalDues = totalCustody - totalProfit;
+            } catch (err) { console.error("Error setting up shipments listener:", err); }
 
-                document.getElementById('valCustody').innerText = totalCustody.toLocaleString();
-                document.getElementById('valMerchantDues').innerText = totalDues.toLocaleString();
-                document.getElementById('valProfit').innerText = totalProfit.toLocaleString();
-                updateNetProfit();
-
-                let cHtml = ""; for(let c in couriers) { cHtml += `<tr><td><b>${c}</b></td><td>${couriers[c].count}</td><td style="color:var(--primary-red); font-weight:bold;">${couriers[c].cash} ج.م</td><td><button class="btn-action btn-pay" onclick="window.printReceipt('قبض من مندوب', '${c}', 'توريد عهدة كاش', ${couriers[c].cash})"><i class="fa-solid fa-print"></i> طباعة إيصال استلام نقدية</button></td></tr>`; }
-                document.getElementById('tblCouriers').innerHTML = cHtml || "<tr><td colspan='4'>لا توجد عهد</td></tr>";
-
-                let mHtml = ""; for(let m in merchants) { mHtml += `<tr><td><b>${m.split('@')[0]}</b></td><td>${merchants[m].count}</td><td>${merchants[m].cod}</td><td style="color:red;">${merchants[m].fees}</td><td style="color:green;font-weight:bold;">${merchants[m].net}</td><td><button class="btn-action btn-print" onclick="window.printReceipt('تسوية تاجر', '${m.split('@')[0]}', 'تسوية مستحقات شحنات', ${merchants[m].net})"><i class="fa-solid fa-print"></i> طباعة مخالصة</button></td></tr>`; }
-                document.getElementById('tblMerchants').innerHTML = mHtml || "<tr><td colspan='6'>لا توجد تسويات</td></tr>";
-                document.getElementById('loading').style.display='none'; document.getElementById('financeDashboard').style.display='block';
-            });
-
-            // 2. سحب المصروفات
-            onSnapshot(collection(db, "expenses"), (snap) => {
-                let html = "", totalExp = 0; let docs = []; snap.forEach(d=>docs.push(d.data())); docs.sort((a,b)=>b.timestamp-a.timestamp);
-                docs.forEach(d => {
-                    totalExp += d.amount;
-                    let dateStr = new Date(d.timestamp).toLocaleDateString('ar-EG');
-                    html += `<tr><td>${dateStr}</td><td><span style="background:#e0eaf5; padding:3px 8px; border-radius:4px; font-size:11px;">${d.category}</span></td><td>${d.desc}</td><td style="color:red; font-weight:bold;">${d.amount}</td><td><button class="btn-action btn-print" onclick="window.printReceipt('سند صرف', '${d.category}', '${d.desc}', ${d.amount})"><i class="fa-solid fa-print"></i> طباعة</button></td></tr>`;
+            // 2. سحب المصروفات (مؤمن ضد عدم وجود الجدول)
+            try {
+                onSnapshot(collection(db, "expenses"), (snap) => {
+                    let html = "", totalExp = 0; let docs = []; 
+                    snap.forEach(d => docs.push(d.data())); 
+                    docs.sort((a,b) => b.timestamp - a.timestamp);
+                    
+                    docs.forEach(d => {
+                        totalExp += d.amount;
+                        let dateStr = new Date(d.timestamp).toLocaleDateString('ar-EG');
+                        html += `<tr><td>${dateStr}</td><td><span style="background:#e0eaf5; padding:3px 8px; border-radius:4px; font-size:11px;">${d.category}</span></td><td>${d.desc}</td><td style="color:red; font-weight:bold;">${d.amount}</td><td><button class="btn-action btn-print" onclick="window.printReceipt('سند صرف', '${d.category}', '${d.desc}', ${d.amount})"><i class="fa-solid fa-print"></i> طباعة</button></td></tr>`;
+                    });
+                    document.getElementById('tblExpenses').innerHTML = html || "<tr><td colspan='5'>لا توجد مصروفات مسجلة</td></tr>";
+                    document.getElementById('valExpenses').innerText = totalExp.toLocaleString(); 
+                    window.updateNetProfit();
+                }, (error) => {
+                    console.warn("تجاهل هذا الخطأ لو جدول المصروفات لسه متعملش:", error);
                 });
-                document.getElementById('tblExpenses').innerHTML = html || "<tr><td colspan='5'>لا توجد مصروفات</td></tr>";
-                document.getElementById('valExpenses').innerText = totalExp.toLocaleString(); updateNetProfit();
-            });
+            } catch (err) { console.error("Error setting up expenses listener:", err); }
 
-            // 3. سحب الرواتب
-            onSnapshot(collection(db, "salaries"), (snap) => {
-                let html = "", totalSal = 0; let docs = []; snap.forEach(d=>docs.push(d.data())); docs.sort((a,b)=>b.timestamp-a.timestamp);
-                docs.forEach(d => {
-                    totalSal += d.amount;
-                    let dateStr = new Date(d.timestamp).toLocaleDateString('ar-EG');
-                    html += `<tr><td>${dateStr}</td><td><b>${d.name}</b></td><td>${d.role}</td><td style="color:red; font-weight:bold;">${d.amount}</td><td><button class="btn-action btn-print" onclick="window.printReceipt('صرف راتب/سلفة', '${d.name}', '${d.notes}', ${d.amount})"><i class="fa-solid fa-print"></i> طباعة إيصال استلام</button></td></tr>`;
+            // 3. سحب الرواتب (مؤمن ضد عدم وجود الجدول)
+            try {
+                onSnapshot(collection(db, "salaries"), (snap) => {
+                    let html = "", totalSal = 0; let docs = []; 
+                    snap.forEach(d => docs.push(d.data())); 
+                    docs.sort((a,b) => b.timestamp - a.timestamp);
+                    
+                    docs.forEach(d => {
+                        totalSal += d.amount;
+                        let dateStr = new Date(d.timestamp).toLocaleDateString('ar-EG');
+                        html += `<tr><td>${dateStr}</td><td><b>${d.name}</b></td><td>${d.role}</td><td style="color:red; font-weight:bold;">${d.amount}</td><td><button class="btn-action btn-print" onclick="window.printReceipt('صرف راتب/سلفة', '${d.name}', '${d.notes}', ${d.amount})"><i class="fa-solid fa-print"></i> طباعة الإيصال</button></td></tr>`;
+                    });
+                    document.getElementById('tblSalaries').innerHTML = html || "<tr><td colspan='5'>لا توجد رواتب مسجلة</td></tr>";
+                    document.getElementById('valSalaries').innerText = totalSal.toLocaleString(); 
+                    window.updateNetProfit();
+                }, (error) => {
+                    console.warn("تجاهل هذا الخطأ لو جدول الرواتب لسه متعملش:", error);
                 });
-                document.getElementById('tblSalaries').innerHTML = html || "<tr><td colspan='5'>لا توجد رواتب مسجلة</td></tr>";
-                document.getElementById('valSalaries').innerText = totalSal.toLocaleString(); updateNetProfit();
-            });
+            } catch (err) { console.error("Error setting up salaries listener:", err); }
         }
 
-        // حساب صافي ربح الشركة النهائي
-        function updateNetProfit() {
-            let p = Number(document.getElementById('valProfit').innerText.replace(/,/g, ''))||0;
-            let e = Number(document.getElementById('valExpenses').innerText.replace(/,/g, ''))||0;
-            let s = Number(document.getElementById('valSalaries').innerText.replace(/,/g, ''))||0;
+        // دالة تحديث الصافي النهائي للشركة
+        window.updateNetProfit = () => {
+            let p = Number(document.getElementById('valProfit').innerText.replace(/,/g, '')) || 0;
+            let e = Number(document.getElementById('valExpenses').innerText.replace(/,/g, '')) || 0;
+            let s = Number(document.getElementById('valSalaries').innerText.replace(/,/g, '')) || 0;
             let net = p - (e + s);
             document.getElementById('valNetProfit').innerText = net.toLocaleString();
             document.getElementById('valNetProfit').style.color = net < 0 ? 'red' : '#28a745';
-        }
+        };
 
-        // حفظ المصروف
+        // حفظ المصروفات الجديدة
         window.saveExpense = async () => {
-            let cat = document.getElementById('expCategory').value, desc = document.getElementById('expDesc').value, amt = document.getElementById('expAmount').value;
-            if(!desc || !amt) return Swal.fire('تنبيه','أدخل البيان والمبلغ','warning');
+            let cat = document.getElementById('expCategory').value;
+            let desc = document.getElementById('expDesc').value;
+            let amt = document.getElementById('expAmount').value;
+            
+            if(!desc || !amt) return Swal.fire('تنبيه', 'أدخل البيان والمبلغ', 'warning');
+            
             try {
                 await addDoc(collection(db, "expenses"), { category: cat, desc: desc, amount: Number(amt), addedBy: currentAdminEmail, timestamp: Date.now() });
-                document.getElementById('modalExpense').style.display='none'; document.getElementById('expDesc').value=''; document.getElementById('expAmount').value='';
+                document.getElementById('modalExpense').style.display='none'; 
+                document.getElementById('expDesc').value=''; 
+                document.getElementById('expAmount').value='';
                 window.printReceipt('سند صرف مصاريف', cat, desc, amt);
-            } catch(e){ Swal.fire('خطأ', e.message, 'error'); }
+            } catch(e){ Swal.fire('خطأ في الحفظ', e.message, 'error'); }
         };
 
-        // حفظ الراتب
+        // حفظ الرواتب والسلف
         window.saveSalary = async () => {
-            let name = document.getElementById('salName').value, role = document.getElementById('salRole').value, amt = document.getElementById('salAmount').value, notes = document.getElementById('salNotes').value;
-            if(!name || !amt) return Swal.fire('تنبيه','أدخل الاسم والمبلغ','warning');
+            let name = document.getElementById('salName').value;
+            let role = document.getElementById('salRole').value;
+            let amt = document.getElementById('salAmount').value;
+            let notes = document.getElementById('salNotes').value;
+            
+            if(!name || !amt) return Swal.fire('تنبيه', 'أدخل الاسم والمبلغ', 'warning');
+            
             try {
-                await addDoc(collection(db, "salaries"), { name: name, role: role, amount: Number(amt), notes: notes, addedBy: currentAdminEmail, timestamp: Date.now() });
-                document.getElementById('modalSalary').style.display='none'; document.getElementById('salName').value=''; document.getElementById('salAmount').value=''; document.getElementById('salNotes').value='';
+                await addDoc(collection(db, "salaries"), { name: name, role: role, amount: Number(amt), notes: notes || "بدون ملاحظات", addedBy: currentAdminEmail, timestamp: Date.now() });
+                document.getElementById('modalSalary').style.display='none'; 
+                document.getElementById('salName').value=''; 
+                document.getElementById('salAmount').value=''; 
+                document.getElementById('salNotes').value='';
                 window.printReceipt('مسير رواتب (صرف)', name, `${role} - ${notes}`, amt);
-            } catch(e){ Swal.fire('خطأ', e.message, 'error'); }
+            } catch(e){ Swal.fire('خطأ في الحفظ', e.message, 'error'); }
         };
 
-        // ماكينة طباعة الإيصالات الاحترافية
+        // ماكينة الطباعة الاحترافية A5
         window.printReceipt = (docType, partyName, description, amount) => {
             let date = new Date().toLocaleString('ar-EG');
             let content = `
