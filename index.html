@@ -27,13 +27,19 @@
         .login-btn:hover { background: var(--primary-red); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(184, 35, 41, 0.3); }
         
         /* --- Hero Section --- */
-        .hero { background: linear-gradient(rgba(10, 61, 98, 0.85), rgba(10, 61, 98, 0.95)), url('https://images.unsplash.com/photo-1580674285054-bed31e145f59?q=80&w=2070&auto=format&fit=crop') center/cover; text-align: center; padding: 100px 20px 140px; color: var(--white); position: relative;}
+        .hero { background: linear-gradient(rgba(10, 61, 98, 0.85), rgba(10, 61, 98, 0.95)), url('https://images.unsplash.com/photo-1580674285054-bed31e145f59?q=80&w=2070&auto=format&fit=crop') center/cover; text-align: center; padding: 80px 20px 140px; color: var(--white); position: relative;}
         .hero h1 { font-size: 48px; font-weight: 900; margin-bottom: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); line-height: 1.2;}
         .hero h1 span { color: var(--primary-red); }
-        .hero p { font-size: 18px; max-width: 600px; margin: 0 auto; line-height: 1.6; color: #ddd;}
+        .hero p { font-size: 18px; max-width: 600px; margin: 0 auto 30px; line-height: 1.6; color: #ddd;}
         
+        /* --- Tracking Search Box --- */
+        .tracking-box { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding: 15px; border-radius: 50px; max-width: 500px; margin: 0 auto; display: flex; gap: 10px; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.3);}
+        .tracking-box input { flex: 1; padding: 12px 20px; border: none; border-radius: 30px; font-family: 'Cairo'; font-size: 16px; outline: none; background: var(--white); color: var(--dark-text);}
+        .tracking-box button { background: var(--primary-red); color: white; border: none; padding: 12px 25px; border-radius: 30px; font-weight: bold; font-family: 'Cairo'; cursor: pointer; transition: 0.3s; font-size: 16px;}
+        .tracking-box button:hover { background: #991c22; transform: scale(1.05); }
+
         /* --- Live Calculator --- */
-        .calc-box { background: var(--white); padding: 30px; border-radius: 15px; max-width: 500px; margin: -60px auto 30px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; position: relative; z-index: 10; transition: 0.3s;}
+        .calc-box { background: var(--white); padding: 30px; border-radius: 15px; max-width: 500px; margin: -50px auto 30px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; position: relative; z-index: 10; transition: 0.3s;}
         .calc-select { width: 100%; padding: 14px; border: 2px solid var(--border-color); border-radius: 8px; font-family: 'Cairo'; outline: none; margin-bottom: 15px; font-size: 15px; transition: 0.3s; background: var(--light-bg); color: var(--dark-text); font-weight: bold;}
         .calc-select:focus { border-color: var(--primary-blue); box-shadow: 0 0 8px rgba(10, 61, 98, 0.2); }
         .calc-result { font-size: 32px; font-weight: 900; color: var(--primary-red); margin-top: 10px; transition: 0.3s;}
@@ -92,6 +98,22 @@
         .msg-bot { background: #e0eaf5; color: var(--primary-blue); padding: 10px 15px; border-radius: 15px 15px 0 15px; margin-bottom: 10px; display: inline-block; max-width: 85%; font-weight: bold;}
         .msg-user { background: var(--primary-blue); color: white; padding: 10px 15px; border-radius: 15px 15px 15px 0; margin-bottom: 10px; display: inline-block; max-width: 85%; align-self: flex-end;}
         
+        /* --- Tracking Dashboard Styles --- */
+        .timeline { display: flex; justify-content: space-between; align-items: center; margin: 30px 0; position: relative; }
+        .timeline::before { content: ''; position: absolute; top: 15px; left: 0; width: 100%; height: 4px; background: #eee; z-index: 1; }
+        .timeline-step { position: relative; z-index: 2; text-align: center; flex: 1; }
+        .timeline-icon { width: 35px; height: 35px; background: #eee; color: #aaa; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 16px; border: 3px solid white; transition: 0.3s;}
+        .timeline-step.active .timeline-icon { background: var(--primary-red); color: white; box-shadow: 0 0 10px rgba(184,35,41,0.5);}
+        .timeline-step.done .timeline-icon { background: #28a745; color: white; }
+        .timeline-text { font-size: 12px; font-weight: bold; color: #888; }
+        .timeline-step.active .timeline-text, .timeline-step.done .timeline-text { color: var(--primary-blue); }
+        
+        .dash-action-btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-family: 'Cairo'; font-weight: bold; font-size: 14px; cursor: pointer; margin-bottom: 10px; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;}
+        .btn-gps { background: var(--primary-blue); color: white; }
+        .btn-gps:hover { background: #082d49; }
+        .btn-delay { background: #f39c12; color: white; }
+        .btn-support { background: var(--light-bg); color: var(--primary-blue); border: 1px solid var(--primary-blue); }
+
         /* --- Modals --- */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; z-index: 2000; padding: 15px; backdrop-filter: blur(5px);}
         .modal-content { background: var(--white); padding: 30px; border-radius: 15px; width: 100%; max-width: 450px; text-align: center; position: relative; max-height: 90vh; overflow-y: auto; transition: 0.3s; border: 1px solid var(--border-color);}
@@ -118,6 +140,9 @@
         body.dark-mode .chat-footer input { background: #2c2c2c; border-color: #444; }
         body.dark-mode .btn-radio { background: #1e1e1e; border-color: #66b2ff; color: #66b2ff; }
         body.dark-mode .msg-bot { background: #0d233a; color: #66b2ff; }
+        body.dark-mode .btn-support { background: #2c2c2c; color: #66b2ff; border-color: #66b2ff; }
+        body.dark-mode .timeline::before { background: #333; }
+        body.dark-mode .timeline-icon { background: #333; border-color: #1e1e1e; }
     </style>
 </head>
 <body>
@@ -135,9 +160,15 @@
     <div class="hero">
         <h1 data-aos="fade-down">شريكك الأسرع <span>للنجاح</span></h1>
         <p data-aos="fade-up" data-aos-delay="100">نحن لا ننقل الصناديق، نحن ننقل الثقة. شبكة لوجستية تغطي جميع محافظات مصر بأمان، سرعة، وأنظمة تتبع حية لخدمة تجارتك الإلكترونية.</p>
+        
+        <!-- رادار التتبع الجديد للعميل -->
+        <div class="tracking-box" data-aos="fade-up" data-aos-delay="200">
+            <input type="text" id="trackAwbInput" placeholder="أدخل رقم البوليصة (مثال: AXN12345)">
+            <button onclick="window.initiateTracking()"><i class="fa-solid fa-magnifying-glass"></i> تتبع شحنتك</button>
+        </div>
     </div>
 
-    <div class="calc-box" data-aos="zoom-in" data-aos-delay="200">
+    <div class="calc-box" data-aos="zoom-in" data-aos-delay="300">
         <h3 style="color:var(--primary-blue); margin-top:0; display: flex; justify-content: center; align-items: center; gap: 10px;"><i class="fa-solid fa-calculator"></i> تسعير الشحن الفوري</h3>
         <p style="font-size:13px; color:#888; margin-bottom:15px;">متصل مباشرة بـ "بورصة أكسون" للحصول على التحديثات اللحظية</p>
         <select class="calc-select" id="calcSelect" onchange="window.calculateRate()">
@@ -243,6 +274,7 @@
         </div>
     </div>
 
+    <!-- Modals الأصلية -->
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <button onclick="document.getElementById('loginModal').style.display='none'" class="close-modal">✖</button>
@@ -296,13 +328,51 @@
         </div>
     </div>
 
+    <!-- Modals التتبع وخدمة العملاء (الجديدة) -->
+    
+    <!-- جدار حماية التتبع (رقم الموبايل) -->
+    <div id="verifyPhoneModal" class="modal">
+        <div class="modal-content">
+            <button onclick="document.getElementById('verifyPhoneModal').style.display='none'" class="close-modal">✖</button>
+            <h3 style="color:var(--primary-blue); margin-top:0;"><i class="fa-solid fa-shield-halved"></i> تأكيد الهوية</h3>
+            <p style="font-size: 14px; color: #666;">تم العثور على الشحنة. للحفاظ على سريتك، يرجى إدخال رقم الهاتف المسجل في البوليصة.</p>
+            <input type="tel" id="verifyPhoneInput" placeholder="أدخل رقم الهاتف (مثال: 01xxxxxxxxx)">
+            <button class="submit-btn" onclick="window.verifyTrackingPhone()">تحقق وعرض البيانات</button>
+        </div>
+    </div>
+
+    <!-- لوحة التحكم في الشحنة (الداشبورد) -->
+    <div id="trackingDashboardModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <button onclick="document.getElementById('trackingDashboardModal').style.display='none'" class="close-modal">✖</button>
+            <h3 style="color:var(--primary-blue); margin-top:0;" id="dashAwbTitle">AXN00000</h3>
+            <p style="font-size: 14px; color: #666; margin-bottom: 20px;">مرحباً <b id="dashCustName"></b>، شحنتك في أمان.</p>
+            
+            <div class="timeline">
+                <div class="timeline-step" id="step1"><div class="timeline-icon"><i class="fa-solid fa-box"></i></div><div class="timeline-text">تم التأكيد</div></div>
+                <div class="timeline-step" id="step2"><div class="timeline-icon"><i class="fa-solid fa-warehouse"></i></div><div class="timeline-text">في المخزن</div></div>
+                <div class="timeline-step" id="step3"><div class="timeline-icon"><i class="fa-solid fa-motorcycle"></i></div><div class="timeline-text">مع المندوب</div></div>
+                <div class="timeline-step" id="step4"><div class="timeline-icon"><i class="fa-solid fa-check"></i></div><div class="timeline-text">تم التسليم</div></div>
+            </div>
+
+            <div style="background: var(--light-bg); padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: right; border: 1px solid var(--border-color);">
+                <p style="margin: 0 0 8px 0; font-size: 14px;"><b>المبلغ المطلوب سداده (COD):</b> <span id="dashAmount" style="color:var(--primary-red); font-weight:bold; font-size: 16px;"></span></p>
+                <p style="margin: 0; font-size: 13px; color: #555;"><b>عنوان التسليم:</b> <span id="dashAddress"></span></p>
+            </div>
+
+            <button class="dash-action-btn btn-gps" onclick="window.openLocationFineModal()"><i class="fa-solid fa-map-location-dot"></i> طلب تغيير مسار / تعديل العنوان</button>
+            <button class="dash-action-btn btn-delay" onclick="window.rescheduleDelivery()"><i class="fa-solid fa-clock-rotate-left"></i> تأجيل موعد الاستلام لبكرة</button>
+            <button class="dash-action-btn btn-support" onclick="window.openSupportTicket()"><i class="fa-solid fa-headset"></i> التحدث مع خدمة العملاء بخصوص الشحنة</button>
+        </div>
+    </div>
+
     <audio id="axonRadioPlayer" src="http://37.157.242.101:17317/stream" preload="none"></audio>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, getDocs, onSnapshot, collection, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const app = initializeApp({
             apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
@@ -317,14 +387,10 @@
 
         AOS.init({ duration: 800, once: true });
 
-        // --- 1. حاسبة الشحن الحية (النبض المباشر) ---
+        // --- دوال اللوجستيات الأصلية ---
         window.livePrices = { alex: 0, cairo: 0, beheira: 0, delta: 0, saeed: 0 };
         onSnapshot(doc(db, "settings", "shipping_prices"), (docSnap) => {
-            if (docSnap.exists()) {
-                window.livePrices = docSnap.data();
-                // تحديث الشاشة فوراً إذا كان المستخدم يقف على محافظة معينة أثناء تغيير السعر من الإدارة
-                window.calculateRate(); 
-            }
+            if (docSnap.exists()) { window.livePrices = docSnap.data(); window.calculateRate(); }
         });
 
         window.calculateRate = () => {
@@ -334,7 +400,6 @@
             document.getElementById('calcResult').innerText = `${finalPrice} EGP`;
         };
 
-        // --- 2. الإشعارات المعرفية (Services) ---
         window.showService = (type) => {
             let title = "", text = "";
             if(type === 'ecommerce') { title = "مستودعات التجارة الإلكترونية"; text = "نستلم البضائع دفعة واحدة ونخزنها. فور وصول طلب من عملائك، نقوم نحن بتغليفه وطباعة بوليصته وإرساله مباشرة دون تدخلك."; } 
@@ -343,127 +408,209 @@
             Swal.fire({ title: title, text: text, icon: 'info', confirmButtonText: 'علم', confirmButtonColor: '#0A3D62' });
         };
 
-        // --- 3. بوابة التجنيد (Careers) ---
-        window.submitCareer = async () => {
-            const name = document.getElementById('carName').value.trim();
-            const phone = document.getElementById('carPhone').value.trim();
-            const city = document.getElementById('carCity').value.trim();
-            const position = document.getElementById('carPosition').value;
-            const notes = document.getElementById('carNotes').value.trim();
-
+        window.submitCareer = async () => { /* Original Logic */
+            const name = document.getElementById('carName').value.trim(), phone = document.getElementById('carPhone').value.trim(), city = document.getElementById('carCity').value.trim(), position = document.getElementById('carPosition').value, notes = document.getElementById('carNotes').value.trim();
             if(!name || !phone || !city || !position) return Swal.fire('خطأ إدخال', 'يرجى استكمال البيانات المطلوبة.', 'warning');
-            
             const btn = document.getElementById('btnCareer'); btn.disabled = true; btn.innerHTML = "جاري تشفير البيانات...";
-            try {
-                await addDoc(collection(db, "careers"), { name, phone, city, position, notes, timestamp: new Date() });
-                document.getElementById('careerModal').style.display = 'none';
-                Swal.fire('تم الإرسال', 'تم توجيه ملفك لإدارة الموارد البشرية. استعد للتحرك.', 'success');
-                document.querySelectorAll('#careerModal input, #careerModal select, #careerModal textarea').forEach(el => el.value = '');
-            } catch(e) { Swal.fire('فشل الاتصال', e.message, 'error'); }
+            try { await addDoc(collection(db, "careers"), { name, phone, city, position, notes, timestamp: new Date() }); document.getElementById('careerModal').style.display = 'none'; Swal.fire('تم الإرسال', 'تم توجيه ملفك لإدارة الموارد البشرية. استعد للتحرك.', 'success'); document.querySelectorAll('#careerModal input, #careerModal select, #careerModal textarea').forEach(el => el.value = ''); } catch(e) { Swal.fire('فشل الاتصال', e.message, 'error'); }
             btn.disabled = false; btn.innerHTML = "إرسال بياناتك للقيادة";
         };
 
-        // --- 4. التوسع المعماري (Franchise) ---
-        window.submitFranchise = async () => {
-            const name = document.getElementById('franName').value.trim();
-            const phone = document.getElementById('franPhone').value.trim();
-            const city = document.getElementById('franCity').value;
-            const office = document.getElementById('franOffice').value;
-            const notes = document.getElementById('franNotes').value.trim();
-
+        window.submitFranchise = async () => { /* Original Logic */
+            const name = document.getElementById('franName').value.trim(), phone = document.getElementById('franPhone').value.trim(), city = document.getElementById('franCity').value, office = document.getElementById('franOffice').value, notes = document.getElementById('franNotes').value.trim();
             if(!name || !phone || !city || !office) return Swal.fire('خطأ إدخال', 'جميع الحقول الأساسية مطلوبة.', 'warning');
-
             const btn = document.getElementById('btnFranchise'); btn.disabled = true; btn.innerHTML = "جاري الإرسال للقيادة العليا...";
-            try {
-                await addDoc(collection(db, "franchises"), { name, phone, city, office, notes, timestamp: new Date() });
-                document.getElementById('franchiseModal').style.display = 'none';
-                Swal.fire('نجاح', 'تم تسجيل طلب الوكالة. إدارة التوسعات ستتواصل معك لترتيب اجتماع.', 'success');
-                document.querySelectorAll('#franchiseModal input, #franchiseModal select, #franchiseModal textarea').forEach(el => el.value = '');
-            } catch(e) { Swal.fire('فشل الاتصال', e.message, 'error'); }
+            try { await addDoc(collection(db, "franchises"), { name, phone, city, office, notes, timestamp: new Date() }); document.getElementById('franchiseModal').style.display = 'none'; Swal.fire('نجاح', 'تم تسجيل طلب الوكالة.', 'success'); document.querySelectorAll('#franchiseModal input, #franchiseModal select, #franchiseModal textarea').forEach(el => el.value = ''); } catch(e) { Swal.fire('فشل الاتصال', e.message, 'error'); }
             btn.disabled = false; btn.innerHTML = "تسجيل طلب الفرنشايز";
         };
 
-        // --- 5. بوابة الدخول للمحطة التكتيكية ---
-        window.handleLogin = async () => {
-            let user = document.getElementById('merchantEmail').value.trim().toLowerCase();
-            const pass = document.getElementById('merchantPassword').value;
+        window.handleLogin = async () => { /* Original Logic */
+            let user = document.getElementById('merchantEmail').value.trim().toLowerCase(), pass = document.getElementById('merchantPassword').value;
             if(!user || !pass) return Swal.fire('رفض الوصول', 'يجب إدخال كود التاجر وشفرة المرور.', 'error');
-            
-            const email = user + "@axon.com";
-            const btn = document.getElementById('btnLogin'); btn.disabled = true; btn.innerHTML = "جاري مطابقة الحمض النووي الرقمي...";
-            
-            try {
-                await signInWithEmailAndPassword(auth, email, pass);
-                if (email === "admin@axon.com") { window.location.href = "admin.html"; } 
-                else {
-                    const docSnap = await getDoc(doc(db, "admins", auth.currentUser.uid));
-                    if (docSnap.exists()) window.location.href = "admin.html";
-                    else window.location.href = "merchant.html";
-                }
-            } catch (error) { Swal.fire('اختراق فاشل', 'شفرة الدخول أو كود التاجر غير صحيح.', 'error'); btn.disabled = false; btn.innerHTML = "دخول المحطة"; }
+            const email = user + "@axon.com", btn = document.getElementById('btnLogin'); btn.disabled = true; btn.innerHTML = "جاري مطابقة الحمض النووي الرقمي...";
+            try { await signInWithEmailAndPassword(auth, email, pass); if (email === "admin@axon.com") { window.location.href = "admin.html"; } else { const docSnap = await getDoc(doc(db, "admins", auth.currentUser.uid)); if (docSnap.exists()) window.location.href = "admin.html"; else window.location.href = "merchant.html"; } } catch (error) { Swal.fire('اختراق فاشل', 'شفرة الدخول أو كود التاجر غير صحيح.', 'error'); btn.disabled = false; btn.innerHTML = "دخول المحطة"; }
         };
 
-        // --- 6. الشات بوت المسلح (Weaponized Chatbot) ---
-        window.toggleChat = () => {
-            const widget = document.getElementById('chatWidget');
-            widget.style.display = (widget.style.display === 'flex') ? 'none' : 'flex';
-        };
-
+        window.toggleChat = () => { const widget = document.getElementById('chatWidget'); widget.style.display = (widget.style.display === 'flex') ? 'none' : 'flex'; };
         window.sendToChat = async () => {
-            const input = document.getElementById('chatInput');
-            const body = document.getElementById('chatBody');
-            const msg = input.value.trim();
+            const input = document.getElementById('chatInput'), body = document.getElementById('chatBody'), msg = input.value.trim();
             if(msg) {
-                // عرض رسالة المستخدم محلياً
-                body.innerHTML += `<div class="msg-user">${msg}</div>`;
-                input.value = '';
-                body.scrollTop = body.scrollHeight;
-
-                // حقن الرسالة في قاعدة البيانات (صيد العملاء المحتملين)
-                try {
-                    await addDoc(collection(db, "web_inquiries"), { message: msg, timestamp: new Date(), status: "new" });
-                    setTimeout(() => {
-                        body.innerHTML += `<div class="msg-bot">تم استلام طلبك وتوجيهه لمركز العمليات. اترك رقم هاتفك إذا لم تكن قد كتبته وسنتصل بك.</div>`;
-                        body.scrollTop = body.scrollHeight;
-                    }, 800);
-                } catch(e) { console.error("Chat DB Error:", e); }
+                body.innerHTML += `<div class="msg-user">${msg}</div>`; input.value = ''; body.scrollTop = body.scrollHeight;
+                try { await addDoc(collection(db, "web_inquiries"), { message: msg, timestamp: new Date(), status: "new" }); setTimeout(() => { body.innerHTML += `<div class="msg-bot">تم استلام طلبك وتوجيهه لمركز العمليات. اترك رقم هاتفك إذا لم تكن قد كتبته وسنتصل بك.</div>`; body.scrollTop = body.scrollHeight; }, 800); } catch(e) { console.error("Chat Error:", e); }
             }
         };
 
-        // --- 7. راديو العمليات (Anti-Cache Logic) ---
         const radioPlayer = document.getElementById('axonRadioPlayer');
         window.toggleAudio = () => {
             const icon = document.getElementById('musicIcon');
-            if (radioPlayer.paused) {
-                radioPlayer.src = "http://37.157.242.101:17317/stream?cb=" + new Date().getTime(); 
-                radioPlayer.play().catch(err => console.log("تنبيه مشغل الراديو: ", err));
-                icon.style.color = '#28a745'; 
-                icon.classList.add('fa-beat');
-            } else {
-                radioPlayer.pause();
-                radioPlayer.src = ""; // إيقاف السحب الفعلي لباقة الإنترنت
-                icon.style.color = 'var(--primary-blue)';
-                icon.classList.remove('fa-beat');
+            if (radioPlayer.paused) { radioPlayer.src = "http://37.157.242.101:17317/stream?cb=" + new Date().getTime(); radioPlayer.play().catch(e => console.log(e)); icon.style.color = '#28a745'; icon.classList.add('fa-beat'); } else { radioPlayer.pause(); radioPlayer.src = ""; icon.style.color = 'var(--primary-blue)'; icon.classList.remove('fa-beat'); }
+        };
+
+        window.toggleTheme = () => {
+            document.body.classList.toggle('dark-mode'); const icon = document.getElementById('themeIcon');
+            if (document.body.classList.contains('dark-mode')) { localStorage.setItem('axon_main_theme', 'dark'); icon.className = 'fa-solid fa-sun'; } else { localStorage.setItem('axon_main_theme', 'light'); icon.className = 'fa-solid fa-moon'; }
+        };
+        if(localStorage.getItem('axon_main_theme') === 'dark') { document.body.classList.add('dark-mode'); setTimeout(() => { const icon = document.getElementById('themeIcon'); if(icon) icon.className = 'fa-solid fa-sun'; }, 100); }
+
+        // ==========================================
+        // 🚀 نظام التتبع وخدمة العملاء الجديد (Core)
+        // ==========================================
+        
+        let currentTrackedDoc = null; // لتخزين الداتا مؤقتاً
+
+        window.initiateTracking = async () => {
+            const awbInput = document.getElementById('trackAwbInput').value.trim().toUpperCase();
+            if(!awbInput || !awbInput.startsWith('AXN')) return Swal.fire('بوليصة غير صحيحة', 'يرجى إدخال رقم البوليصة الصحيح (يبدأ بـ AXN).', 'error');
+
+            Swal.fire({ title: 'جاري البحث في الرادار...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
+
+            try {
+                // سحب كل الشحنات لفلترتها بالـ ID (لأننا مبنسجلش الـ AWB كحقل منفصل في الداتا بيز)
+                const snap = await getDocs(collection(db, "shipments"));
+                let foundDoc = null;
+                snap.forEach(d => {
+                    const docAwb = "AXN" + d.id.substring(0,5).toUpperCase();
+                    if(docAwb === awbInput && !d.data().deleted) foundDoc = { id: d.id, ...d.data(), awb: docAwb };
+                });
+
+                if(foundDoc) {
+                    currentTrackedDoc = foundDoc;
+                    Swal.close();
+                    document.getElementById('verifyPhoneModal').style.display = 'flex';
+                } else {
+                    Swal.fire('غير موجود', 'لم يتم العثور على شحنة بهذا الرقم.', 'error');
+                }
+            } catch (e) {
+                Swal.fire('خطأ اتصال', 'حدث خطأ أثناء فحص السيرفر.', 'error');
             }
         };
 
-        // --- 8. مصفوفة الظلام (Dark Mode) ---
-        window.toggleTheme = () => {
-            document.body.classList.toggle('dark-mode');
-            const icon = document.getElementById('themeIcon');
-            if (document.body.classList.contains('dark-mode')) {
-                localStorage.setItem('axon_main_theme', 'dark');
-                icon.className = 'fa-solid fa-sun';
+        window.verifyTrackingPhone = () => {
+            const phoneInput = document.getElementById('verifyPhoneInput').value.trim();
+            if(phoneInput === currentTrackedDoc.phone || phoneInput === currentTrackedDoc.phone2) {
+                document.getElementById('verifyPhoneModal').style.display = 'none';
+                openDashboard();
             } else {
-                localStorage.setItem('axon_main_theme', 'light');
-                icon.className = 'fa-solid fa-moon';
+                Swal.fire('تأكيد فاشل', 'رقم الهاتف لا يتطابق مع المسجل في البوليصة.', 'error');
             }
         };
-        
-        if(localStorage.getItem('axon_main_theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-            setTimeout(() => { const icon = document.getElementById('themeIcon'); if(icon) icon.className = 'fa-solid fa-sun'; }, 100);
+
+        function openDashboard() {
+            document.getElementById('trackingDashboardModal').style.display = 'flex';
+            document.getElementById('dashAwbTitle').innerText = currentTrackedDoc.awb;
+            document.getElementById('dashCustName').innerText = currentTrackedDoc.name.split(' ')[0];
+            document.getElementById('dashAmount').innerText = currentTrackedDoc.amount + " ج.م";
+            document.getElementById('dashAddress').innerText = currentTrackedDoc.city + " - " + currentTrackedDoc.address;
+
+            // تحديث التايم لاين
+            const status = currentTrackedDoc.status;
+            document.querySelectorAll('.timeline-step').forEach(el => { el.classList.remove('active'); el.classList.remove('done'); });
+            
+            document.getElementById('step1').classList.add('done'); // التأكيد دايمًا تم
+            
+            if(status === 'قيد التوصيل') {
+                document.getElementById('step2').classList.add('active'); // في المخزن
+            } else if(status === 'مذاع للرادار' || status.includes('مندوب')) {
+                document.getElementById('step2').classList.add('done');
+                document.getElementById('step3').classList.add('active'); // مع المندوب
+            } else if(status === 'تم التسليم' || status === 'تمت التسوية') {
+                document.getElementById('step2').classList.add('done');
+                document.getElementById('step3').classList.add('done');
+                document.getElementById('step4').classList.add('done'); // تم التسليم
+            } else {
+                // مرتجع أو مؤجل
+                document.getElementById('step2').classList.add('active');
+            }
         }
+
+        // --- خوارزمية الغرامة والـ GPS الذكية ---
+        function getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; 
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))); 
+        }
+
+        window.openLocationFineModal = () => {
+            if(currentTrackedDoc.status === 'تم التسليم' || currentTrackedDoc.status === 'تمت التسوية') return Swal.fire('مغلق', 'لا يمكن تعديل مسار شحنة تم تسليمها.', 'info');
+
+            Swal.fire({
+                title: 'تعديل مسار الشحنة',
+                text: 'سيتم سحب موقعك الحالي عبر الأقمار الصناعية وحساب الغرامة المقررة (12 ج.م لكل كيلومتر).',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'تحديد موقعي الآن 📍',
+                cancelButtonText: 'إلغاء'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if(!navigator.geolocation) return Swal.fire('خطأ', 'متصفحك لا يدعم تحديد الموقع.', 'error');
+                    
+                    Swal.fire({ title: 'جاري الحساب...', didOpen: () => { Swal.showLoading(); }});
+
+                    navigator.geolocation.getCurrentPosition(async (pos) => {
+                        const newLat = pos.coords.latitude; const newLng = pos.coords.longitude;
+                        // نقطة المركز الافتراضية (محطة أكسون بالإسكندرية) لعدم وجود إحداثيات قديمة للشحنة العادية
+                        const baseLat = 31.1990; const baseLng = 29.8944; 
+                        
+                        const distanceKm = getDistance(baseLat, baseLng, newLat, newLng);
+                        const fine = Math.ceil(distanceKm) * 12; // 12 جنيه لكل كيلو
+
+                        Swal.fire({
+                            title: 'تقرير إعادة التوجيه',
+                            html: `<b>المسافة المقدرة:</b> ${distanceKm.toFixed(1)} كم<br><b>الغرامة المستحقة:</b> <span style="color:red; font-weight:bold;">${fine} ج.م</span><br>سيتم إضافة المبلغ على إجمالي التحصيل (COD).`,
+                            icon: 'info',
+                            showCancelButton: true,
+                            confirmButtonText: 'موافق، أضف الغرامة وعدل المسار',
+                            cancelButtonText: 'تراجع',
+                            confirmButtonColor: '#b82329'
+                        }).then(async (res) => {
+                            if(res.isConfirmed) {
+                                try {
+                                    const newAmount = Number(currentTrackedDoc.amount) + fine;
+                                    const newAddressLink = `https://maps.google.com/?q=${newLat},${newLng}`;
+                                    await updateDoc(doc(db, "shipments", currentTrackedDoc.id), {
+                                        amount: newAmount,
+                                        address: currentTrackedDoc.address + ` | ⚠️ مسار معدل: ${newAddressLink}`,
+                                        fineAdded: fine,
+                                        status: "قيد التوصيل" // نرجعها للمخزن لو كانت مع مندوب عشان التوجيه الجديد
+                                    });
+                                    currentTrackedDoc.amount = newAmount; // تحديث اللوحة الحالية
+                                    document.getElementById('dashAmount').innerText = newAmount + " ج.م";
+                                    Swal.fire('تمت العملية', 'تم تعديل المسار وإرسال التوجيهات الجديدة للأسطول.', 'success');
+                                } catch (e) { Swal.fire('خطأ', 'حدثت مشكلة أثناء تحديث البيانات.', 'error'); }
+                            }
+                        });
+                    }, (err) => { Swal.fire('حجب الـ GPS', 'يرجى السماح للمتصفح بالوصول لموقعك.', 'error'); }, { enableHighAccuracy: true });
+                }
+            });
+        };
+
+        window.rescheduleDelivery = async () => {
+            if(currentTrackedDoc.status === 'تم التسليم') return Swal.fire('مغلق', 'لا يمكن تأجيل شحنة تم تسليمها.', 'info');
+            const result = await Swal.fire({ title: 'تأجيل الاستلام', text: 'هل تود تأجيل استلام الشحنة للغد؟', icon: 'question', showCancelButton: true, confirmButtonText: 'نعم، قم بالتأجيل', cancelButtonText: 'إلغاء' });
+            if(result.isConfirmed) {
+                try {
+                    await updateDoc(doc(db, "shipments", currentTrackedDoc.id), { status: "مؤجل", rescheduleRequest: true });
+                    Swal.fire('تم التأجيل', 'تم إبلاغ الأسطول بتأجيل موعد التوصيل.', 'success');
+                    openDashboard(); // ريفريش للوحة
+                } catch(e) { Swal.fire('خطأ', 'فشل الاتصال.', 'error'); }
+            }
+        };
+
+        window.openSupportTicket = async () => {
+            const { value: problem } = await Swal.fire({ title: 'التواصل مع القيادة', input: 'textarea', inputLabel: 'اشرح مشكلتك بالتفصيل بخصوص هذه الشحنة', inputPlaceholder: 'اكتب هنا...', showCancelButton: true, confirmButtonText: 'إرسال التذكرة' });
+            if (problem) {
+                try {
+                    await addDoc(collection(db, "web_inquiries"), {
+                        message: `تذكرة تتبع (بوليصة: ${currentTrackedDoc.awb}): ${problem}`,
+                        phone: currentTrackedDoc.phone,
+                        status: "new", timestamp: new Date()
+                    });
+                    Swal.fire('تم الإرسال', 'تم فتح تذكرة لخدمة العملاء وسيتم حل المشكلة في أسرع وقت.', 'success');
+                } catch(e) { Swal.fire('خطأ', 'لم يتم إرسال التذكرة.', 'error'); }
+            }
+        };
     </script>
 </body>
 </html>
