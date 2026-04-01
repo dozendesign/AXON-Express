@@ -31,6 +31,10 @@
         th, td { padding: 12px; text-align: right; border-bottom: 1px solid #eee; font-size: 13px; }
         th { background: var(--primary-blue); color: white; }
         tr:hover { background-color: rgba(0,0,0,0.02); }
+        .btn-action { border: none; padding: 6px 10px; border-radius: 5px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; font-size: 11px; margin-left: 5px; transition: 0.3s; color: white; }
+        .btn-action:hover { opacity: 0.8; transform: translateY(-1px); }
+        .btn-print { background: #333; }
+        .btn-settle { background: #28a745; }
         .btn-add { background: var(--primary-red); color: white; border: none; padding: 8px 15px; border-radius: 8px; font-family: 'Cairo'; font-weight: bold; cursor: pointer; margin-bottom: 15px;}
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 1000; }
         .modal-content { background: #fff; padding: 25px; border-radius: 15px; width: 90%; max-width: 400px; }
@@ -38,7 +42,6 @@
         .radio-btn.playing { background: #28a745; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); } 100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); } }
         
-        /* Dark mode support */
         body.dark-mode { --bg-color: #121212; --card-bg: #1e1e1e; --text-dark: #e0e0e0; }
         body.dark-mode th { background: #062338; }
         body.dark-mode td { border-bottom-color: #333; }
@@ -63,7 +66,7 @@
     </header>
 
     <div class="container">
-        <div id="loading" style="text-align:center; padding:50px;"><i class="fa-solid fa-spinner fa-spin"></i> جاري مزامنة بيانات الرادار والشحنات...</div>
+        <div id="loading" style="text-align:center; padding:50px;"><i class="fa-solid fa-spinner fa-spin"></i> جاري مزامنة الدفاتر مع البورصة...</div>
 
         <div id="dashboard" style="display:none;">
             <div class="tabs">
@@ -85,7 +88,7 @@
             <div id="journal" class="tab-content">
                 <div class="table-responsive">
                     <table>
-                        <thead><tr><th>تاريخ</th><th>المصدر</th><th>التاجر</th><th>المندوب</th><th>التحصيل (COD)</th><th>الحالة</th></tr></thead>
+                        <thead><tr><th>التاريخ</th><th>النوع</th><th>التاجر</th><th>المندوب</th><th>المبلغ</th><th>الحالة</th></tr></thead>
                         <tbody id="tblJournal"></tbody>
                     </table>
                 </div>
@@ -94,19 +97,29 @@
             <div id="couriers" class="tab-content">
                 <div class="table-responsive">
                     <table>
-                        <thead><tr><th>الكابتن</th><th>المهام المسلمة</th><th>العهدة النقدية</th><th>إجراء</th></tr></thead>
+                        <thead><tr><th>الكابتن</th><th>المهام المسلمة</th><th>العهدة النقدية</th><th>إجراءات التصفية والطباعة</th></tr></thead>
                         <tbody id="tblCouriers"></tbody>
                     </table>
                 </div>
             </div>
 
             <div id="merchants" class="tab-content">
-                <div class="table-responsive"><table><thead><tr><th>التاجر</th><th>مسلم</th><th>إجمالي الفلوس</th><th>رسوم الشحن</th><th>الصافي للتاجر</th></tr></thead><tbody id="tblMerchants"></tbody></table></div>
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>التاجر</th><th>شحنات مسلمة</th><th>الإجمالي</th><th>رسوم الشحن</th><th>الصافي للتاجر</th><th>إجراءات التوريد والطباعة</th></tr></thead>
+                        <tbody id="tblMerchants"></tbody>
+                    </table>
+                </div>
             </div>
 
             <div id="expenses" class="tab-content">
                 <button class="btn-add" onclick="openModal('modalExp')">+ تسجيل مصروف</button>
-                <div class="table-responsive"><table><thead><tr><th>التاريخ</th><th>البند</th><th>المبلغ</th></tr></thead><tbody id="tblExpenses"></tbody></table></div>
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>التاريخ</th><th>البند</th><th>المبلغ</th></tr></thead>
+                        <tbody id="tblExpenses"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -116,23 +129,23 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, doc, addDoc, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        const firebaseConfig = {
+        const app = initializeApp({
             apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
             authDomain: "axon-express-2f534.firebaseapp.com",
             projectId: "axon-express-2f534",
             storageBucket: "axon-express-2f534.firebasestorage.app",
             messagingSenderId: "958528400260",
             appId: "1:958528400260:web:504ae94f3ef2225b928bd1"
-        };
-        const app = initializeApp(firebaseConfig);
+        });
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const FEE = 50;
 
-        // حالة مجمعة لتخزين الداتا من الجدولين
+        // متغيرات عامة
         let globalData = { shipments: [], radar: [] };
+        let livePrices = { alex: 90, cairo: 100, beheira: 115, delta: 115, saeed: 150 }; // القيم الافتراضية
+        let structuredData = { merchants: {}, couriers: {} }; // لتخزين الداتا للطباعة
 
         window.toggleRadio = () => {
             const radio = document.getElementById('axonRadio'), btn = document.getElementById('radioToggleBtn');
@@ -159,21 +172,24 @@
         onAuthStateChanged(auth, (user) => { if (user) { loadUnifiedData(); } else { window.location.href = "index.html"; } });
 
         function loadUnifiedData() {
-            // 1. مراقبة جدول الشحنات العادية (اللي الإدارة بتسلمها يدوي)
+            // سحب بورصة الشحن الحية
+            onSnapshot(doc(db, "settings", "shipping_prices"), (docSnap) => {
+                if(docSnap.exists()) { livePrices = { ...livePrices, ...docSnap.data() }; }
+                renderAccounting();
+            });
+
             onSnapshot(collection(db, "shipments"), (snap) => {
                 globalData.shipments = [];
                 snap.forEach(d => globalData.shipments.push({id: d.id, type: 'shipment', ...d.data()}));
                 renderAccounting();
             });
 
-            // 2. مراقبة جدول الرادار (اللي المناديب بيسلموه)
             onSnapshot(collection(db, "eshteryly_orders"), (snap) => {
                 globalData.radar = [];
                 snap.forEach(d => globalData.radar.push({id: d.id, type: 'radar', ...d.data()}));
                 renderAccounting();
             });
             
-            // 3. المصروفات
             onSnapshot(collection(db, "expenses"), (snap) => {
                 let expHtml = "";
                 snap.forEach(doc => {
@@ -185,90 +201,194 @@
             });
         }
 
-        // دالة الفلترة والدمج الذكية
+        // الذكاء الاصطناعي لحساب سعر الشحن بناءً على المحافظة
+        function calculateFee(locationStr) {
+            if(!locationStr) return Number(livePrices.alex);
+            let loc = locationStr.toLowerCase();
+            if(loc.includes("اسكندرية") || loc.includes("إسكندرية") || loc.includes("alex")) return Number(livePrices.alex);
+            if(loc.includes("قاهرة") || loc.includes("جيزة") || loc.includes("cairo") || loc.includes("giza")) return Number(livePrices.cairo);
+            if(loc.includes("بحيرة") || loc.includes("دمنهور") || loc.includes("beheira")) return Number(livePrices.beheira);
+            if(loc.includes("صعيد") || loc.includes("سوهاج") || loc.includes("اسيوط") || loc.includes("منيا") || loc.includes("قنا") || loc.includes("اسوان") || loc.includes("أقصر")) return Number(livePrices.saeed);
+            if(loc.includes("دلتا") || loc.includes("قناة") || loc.includes("طنطا") || loc.includes("منصورة") || loc.includes("بورسعيد") || loc.includes("سويس") || loc.includes("اسماعيلية") || loc.includes("زقازيق") || loc.includes("شرقية") || loc.includes("غربية") || loc.includes("منوفية")) return Number(livePrices.delta);
+            return Number(livePrices.alex); // الافتراضي
+        }
+
         function renderAccounting() {
-            let merchants = {}, couriers = {}, totalCustody = 0, totalProfit = 0;
+            structuredData = { merchants: {}, couriers: {} };
+            let totalCustody = 0, totalProfit = 0;
             let journalHtml = "";
             let allTasks = [...globalData.shipments, ...globalData.radar].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
             allTasks.forEach(d => {
                 if(d.deleted) return;
                 
-                let amt = 0, cName = "غير محدد", mEmail = "غير مسجل", status = "", source = "", isDelivered = false;
+                let amt = 0, cName = "غير محدد", mEmail = "إدارة", status = d.status || "جديد", source = "";
+                let isDelivered = (status === "تم التسليم" || status === "تم التسليم بنجاح");
+                
+                // لو تمت التسوية خلاص، مش هنحسبها في العهد والمستحقات، بس هتظهر في الدفتر
+                let isSettled = (status === "تمت التسوية"); 
 
-                // استخراج الداتا بناءً على نوع الجدول
                 if (d.type === 'shipment') {
-                    // لو شحنة عادية والإدارة سلمتها يدوي (بدون رادار)
                     amt = Number(d.amount) || 0;
-                    cName = "الإدارة المركزية (تسليم يدوي)";
+                    cName = "الإدارة (تسليم يدوي)";
                     mEmail = d.merchantEmail || "إدارة";
-                    status = d.status || "جديد";
-                    source = `<span style="color:#0A3D62; font-weight:bold;">📦 بوليصة</span>`;
-                    if (status === "تم التسليم") isDelivered = true;
-                    // هنتجاهل الشحنات اللي حالتها "مذاع للرادار" لأنها هتظهر من جدول الرادار نفسه عشان التكرار
+                    source = `📦 بوليصة`;
                     if (status === "مذاع للرادار") return; 
 
                 } else if (d.type === 'radar') {
-                    // لو أمر من الرادار والمندوب اتعامل معاه
-                    status = d.status || "جديد";
                     cName = d.courierName || "متاح للجميع";
                     mEmail = d.merchantEmail || "إدارة";
-                    
-                    if(d.paymentMethod === 'pickup') source = `<span style="color:#8e44ad; font-weight:bold;">🚚 بيكب</span>`;
-                    else if (d.linkedShipmentId) source = `<span style="color:#28a745; font-weight:bold;">📡 بوليصة (رادار)</span>`;
-                    else source = `<span style="color:#e65100; font-weight:bold;">🛒 اشتريلي</span>`;
+                    if(d.paymentMethod === 'pickup') source = `🚚 بيكب`;
+                    else if (d.linkedShipmentId) source = `📡 رادار`;
+                    else source = `🛒 اشتريلي`;
 
-                    // الخوارزمية السحرية لاستخراج الفلوس من التفاصيل (لأنها مش متسجلة في رقم)
                     if (d.details && d.details.includes("تحصيل:")) {
                         let match = d.details.match(/تحصيل:\s*(\d+(\.\d+)?)/);
                         amt = match ? Number(match[1]) : 0;
-                    } else if (d.paymentMethod === 'pickup') {
-                        amt = 0; // البيكب مفيش فيه تحصيل من العميل
                     }
-                    
-                    if (status === "تم التسليم بنجاح") isDelivered = true;
                 }
 
                 let mDisplay = mEmail.split('@')[0];
                 let dateStr = d.timestamp ? (d.timestamp.toDate ? d.timestamp.toDate().toLocaleDateString('ar-EG') : new Date(d.timestamp).toLocaleDateString('ar-EG')) : '-';
+                
+                // حساب رسوم الشحن الذكية للشحنة دي
+                let locStr = d.city || d.address || "";
+                let itemFee = calculateFee(locStr);
+                if (d.paymentMethod === 'pickup' || source.includes('اشتريلي')) itemFee = 0; // البيكب والاشتريلي حسب الاتفاق (خليناها صفر مؤقتاً وممكن تتغير)
 
-                // رسم الدفتر الشامل
-                journalHtml += `<tr><td>${dateStr}</td><td>${source}</td><td>${mDisplay}</td><td>${cName}</td><td style="color:var(--primary-red); font-weight:bold;">${amt} ج.م</td><td><span style="background:#e0eaf5; padding:3px 8px; border-radius:4px; font-size:11px;">${status}</span></td></tr>`;
+                // دفتر اليومية الشامل (بيظهر فيه كل حاجة حتى اللي تمت تسويتها)
+                let statusColor = isSettled ? '#28a745' : '#6c757d';
+                journalHtml += `<tr><td>${dateStr}</td><td>${source}</td><td>${mDisplay}</td><td>${cName}</td><td style="color:var(--primary-red); font-weight:bold;">${amt}</td><td><span style="background:${isSettled?'#d4edda':'#e0eaf5'}; color:${statusColor}; padding:3px 8px; border-radius:4px; font-size:11px; font-weight:bold;">${status}</span></td></tr>`;
 
-                // حساب العهد والتسويات (للي اتسلم فقط)
-                if(isDelivered) {
-                    if(!merchants[mEmail]) merchants[mEmail] = { cod:0, count:0, display: mDisplay };
-                    merchants[mEmail].count++; 
-                    merchants[mEmail].cod += amt;
+                // حسابات العهد والمستحقات (للشحنات اللي اتسلمت ولسه "ماتمتش تسويتها")
+                if(isDelivered && !isSettled) {
+                    // بيانات التاجر
+                    if(!structuredData.merchants[mEmail]) structuredData.merchants[mEmail] = { display: mDisplay, items: [], totalCod: 0, totalFees: 0 };
+                    structuredData.merchants[mEmail].items.push({ date: dateStr, source: source, loc: locStr, amt: amt, fee: itemFee });
+                    structuredData.merchants[mEmail].totalCod += amt;
+                    structuredData.merchants[mEmail].totalFees += itemFee;
                     
-                    if(!couriers[cName]) couriers[cName] = { count:0, cash:0 };
-                    couriers[cName].count++; 
-                    couriers[cName].cash += amt;
+                    // بيانات المندوب
+                    if(!structuredData.couriers[cName]) structuredData.couriers[cName] = { items: [], totalCash: 0 };
+                    structuredData.couriers[cName].items.push({ date: dateStr, source: source, amt: amt });
+                    structuredData.couriers[cName].totalCash += amt;
 
                     totalCustody += amt; 
-                    totalProfit += FEE;
+                    totalProfit += itemFee;
                 }
             });
 
-            document.getElementById('statCustody').innerText = totalCustody.toLocaleString();
-            document.getElementById('statProfit').innerText = totalProfit.toLocaleString();
-            document.getElementById('statDues').innerText = (totalCustody - totalProfit).toLocaleString();
+            document.getElementById('statCustody').innerText = totalCustody.toLocaleString() + " ج.م";
+            document.getElementById('statProfit').innerText = totalProfit.toLocaleString() + " ج.م";
+            document.getElementById('statDues').innerText = (totalCustody - totalProfit).toLocaleString() + " ج.م";
             document.getElementById('tblJournal').innerHTML = journalHtml || "<tr><td colspan='6'>لا توجد حركات مسجلة</td></tr>";
 
-            let cHtml = ""; for(let c in couriers) {
-                cHtml += `<tr><td><b>${c}</b></td><td>${couriers[c].count}</td><td style="color:red;font-weight:bold;">${couriers[c].cash} ج.م</td><td><button class="tab-btn" onclick="alert('استلام نقدية من ${c}')">تصفية العهدة</button></td></tr>`;
+            // رسم جدول الكباتن
+            let cHtml = ""; 
+            for(let c in structuredData.couriers) {
+                let data = structuredData.couriers[c];
+                cHtml += `<tr>
+                    <td><b>${c}</b></td><td>${data.items.length}</td><td style="color:red;font-weight:bold;">${data.totalCash} ج.م</td>
+                    <td>
+                        <button class="btn-action btn-print" onclick="window.printReport('courier', '${c}')"><i class="fa-solid fa-print"></i> طباعة</button>
+                        <button class="btn-action btn-settle" onclick="window.settleAccount('courier', '${c}')"><i class="fa-solid fa-check-double"></i> تصفية العهدة</button>
+                    </td>
+                </tr>`;
             }
-            document.getElementById('tblCouriers').innerHTML = cHtml || "<tr><td colspan='4'>لا توجد عهد بالخارج</td></tr>";
+            document.getElementById('tblCouriers').innerHTML = cHtml || "<tr><td colspan='4'>لا توجد عهد نشطة حالياً</td></tr>";
 
-            let mHtml = ""; for(let m in merchants) {
-                let mNet = merchants[m].cod - (merchants[m].count * FEE);
-                mHtml += `<tr><td>${merchants[m].display}</td><td>${merchants[m].count}</td><td>${merchants[m].cod}</td><td style="color:red;">${merchants[m].count * FEE}</td><td style="color:green;font-weight:bold;">${mNet}</td></tr>`;
+            // رسم جدول التجار
+            let mHtml = ""; 
+            for(let m in structuredData.merchants) {
+                let data = structuredData.merchants[m];
+                let net = data.totalCod - data.totalFees;
+                mHtml += `<tr>
+                    <td><b>${data.display}</b></td><td>${data.items.length}</td><td>${data.totalCod}</td><td style="color:red;">${data.totalFees}</td><td style="color:green;font-weight:bold;">${net}</td>
+                    <td>
+                        <button class="btn-action btn-print" onclick="window.printReport('merchant', '${m}')"><i class="fa-solid fa-print"></i> طباعة كشف</button>
+                        <button class="btn-action btn-settle" onclick="window.settleAccount('merchant', '${m}')"><i class="fa-solid fa-hand-holding-dollar"></i> إتمام التوريد</button>
+                    </td>
+                </tr>`;
             }
-            document.getElementById('tblMerchants').innerHTML = mHtml || "<tr><td colspan='5'>لا توجد تسويات مستحقة</td></tr>";
-            
-            document.getElementById('loading').style.display='none'; 
-            document.getElementById('dashboard').style.display='block';
+            document.getElementById('tblMerchants').innerHTML = mHtml || "<tr><td colspan='6'>لا توجد تسويات مستحقة</td></tr>";
         }
+
+        // دالة التصفية السحرية (تغيير الحالة لـ تمت التسوية)
+        window.settleAccount = async (type, key) => {
+            const result = await Swal.fire({ title: 'تأكيد التصفية؟', text: "سيتم تصفير العداد ونقل الشحنات لأرشيف (تمت التسوية)", icon: 'warning', showCancelButton: true, confirmButtonColor: '#28a745', confirmButtonText: 'نعم، تم الاستلام/التوريد' });
+            if (!result.isConfirmed) return;
+
+            const batch = writeBatch(db);
+            let count = 0;
+            let allTasks = [...globalData.shipments, ...globalData.radar];
+
+            allTasks.forEach(d => {
+                let isDelivered = (d.status === "تم التسليم" || d.status === "تم التسليم بنجاح");
+                if (!isDelivered) return;
+
+                let cName = d.courierName || (d.type === 'shipment' ? "الإدارة (تسليم يدوي)" : "متاح للجميع");
+                let mEmail = d.merchantEmail || "إدارة";
+
+                if ((type === 'courier' && cName === key) || (type === 'merchant' && mEmail === key)) {
+                    let ref = doc(db, d.type === 'shipment' ? 'shipments' : 'eshteryly_orders', d.id);
+                    batch.update(ref, { status: "تمت التسوية", settledAt: new Date() });
+                    count++;
+                }
+            });
+
+            if(count > 0) {
+                await batch.commit();
+                Swal.fire('تمت العملية', `تمت تسوية عدد ${count} شحنة بنجاح.`, 'success');
+            }
+        };
+
+        // دالة الطباعة الاحترافية
+        window.printReport = (type, key) => {
+            let title = "", htmlRows = "", grandTotal = "";
+            
+            if (type === 'courier') {
+                let data = structuredData.couriers[key];
+                title = `تصفية عهدة الكابتن: ${key}`;
+                htmlRows = `<tr><th>التاريخ</th><th>النوع</th><th>المبلغ المحصل</th></tr>`;
+                data.items.forEach(i => htmlRows += `<tr><td>${i.date}</td><td>${i.source}</td><td>${i.amt} ج.م</td></tr>`);
+                grandTotal = `<h3>إجمالي العهدة المطلوبة: <span style="color:red;">${data.totalCash} ج.م</span></h3>`;
+            } else {
+                let data = structuredData.merchants[key];
+                title = `كشف حساب التاجر: ${data.display}`;
+                htmlRows = `<tr><th>التاريخ</th><th>النوع والمكان</th><th>قيمة الشحنة (COD)</th><th>مصاريف الشحن</th></tr>`;
+                data.items.forEach(i => htmlRows += `<tr><td>${i.date}</td><td>${i.source} <br><span style="font-size:10px;">${i.loc}</span></td><td>${i.amt}</td><td style="color:red;">${i.fee}</td></tr>`);
+                let net = data.totalCod - data.totalFees;
+                grandTotal = `<div style="display:flex; justify-content:space-between; margin-top:20px; padding:10px; border:2px solid #000;">
+                    <div>إجمالي الكاش: <b>${data.totalCod}</b></div>
+                    <div style="color:red;">إجمالي الشحن: <b>${data.totalFees}</b></div>
+                    <div style="font-size:18px;">صافي التوريد المستحق: <b style="color:green;">${net} ج.م</b></div>
+                </div>`;
+            }
+
+            const printHtml = `
+            <html dir="rtl"><head><title>${title}</title>
+            <style>
+                body { font-family: 'Cairo', sans-serif; padding: 20px; }
+                h2 { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                th, td { border: 1px solid #000; padding: 10px; text-align: center; }
+                th { background: #eee; }
+                .footer { margin-top: 40px; text-align: center; font-size: 12px; color: #555; }
+                @media print { button { display: none; } }
+            </style>
+            </head><body>
+                <h2>AXON FINANCE - تقرير مالي</h2>
+                <h3>${title}</h3>
+                <p>تاريخ الإصدار: ${new Date().toLocaleString('ar-EG')}</p>
+                <table>${htmlRows}</table>
+                ${grandTotal}
+                <div class="footer">تم إنشاء هذا التقرير آلياً بواسطة الإدارة المركزية لأكسون إكسبريس.</div>
+                <script>setTimeout(window.print, 500);<\/script>
+            </body></html>`;
+
+            const win = window.open('', '_blank');
+            win.document.write(printHtml); win.document.close();
+        };
 
         window.saveExp = async () => {
             let desc = document.getElementById('expDesc').value;
