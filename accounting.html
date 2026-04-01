@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>المخ المالي المحترف | Axon Express</title>
+    <title>الخزينة المركزية | Axon Express</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         * { box-sizing: border-box; }
         :root { --primary-blue: #0A3D62; --primary-red: #b82329; --bg-color: #f4f7f6; --card-bg: #fff; --text-dark: #333; }
-        body { font-family: 'Cairo', sans-serif; margin: 0; background: var(--bg-color); color: var(--text-dark); }
+        body { font-family: 'Cairo', sans-serif; margin: 0; background: var(--bg-color); color: var(--text-dark); transition: 0.3s; }
         header { background: var(--primary-blue); padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100;}
         header h1 { margin: 0; font-size: 20px; font-weight: 900; display: flex; align-items: center; gap: 15px;}
         header h1 span { color: var(--primary-red); }
@@ -21,24 +21,28 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: var(--card-bg); padding: 15px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: center; border-bottom: 4px solid var(--primary-blue); }
+        .stat-card { background: var(--card-bg); padding: 15px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: center; border-bottom: 4px solid var(--primary-blue); transition: 0.3s;}
         .stat-card.red { border-bottom-color: var(--primary-red); }
         .stat-card.green { border-bottom-color: #28a745; }
         .stat-card h3 { margin: 0 0 5px 0; font-size: 12px; color: #666; }
         .stat-card .value { font-size: 24px; font-weight: 900; color: var(--primary-blue); }
-        .table-responsive { width: 100%; overflow-x: auto; background: var(--card-bg); border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 25px; }
+        .table-responsive { width: 100%; overflow-x: auto; background: var(--card-bg); border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 25px; transition: 0.3s;}
         table { width: 100%; min-width: 800px; border-collapse: collapse; }
         th, td { padding: 12px; text-align: right; border-bottom: 1px solid #eee; font-size: 13px; }
-        th { background: #e0eaf5; color: var(--primary-blue); }
+        th { background: var(--primary-blue); color: white; }
+        tr:hover { background-color: rgba(0,0,0,0.02); }
         .btn-add { background: var(--primary-red); color: white; border: none; padding: 8px 15px; border-radius: 8px; font-family: 'Cairo'; font-weight: bold; cursor: pointer; margin-bottom: 15px;}
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 1000; }
         .modal-content { background: #fff; padding: 25px; border-radius: 15px; width: 90%; max-width: 400px; }
-        
-        /* تنسيق زرار الراديو */
         .radio-btn { background: var(--primary-red); color: white; border: none; padding: 5px 12px; border-radius: 20px; cursor: pointer; font-family: 'Cairo'; font-size: 12px; font-weight: bold; transition: 0.3s; display: flex; align-items: center; gap: 5px; }
-        .radio-btn:hover { opacity: 0.8; transform: scale(1.05); }
         .radio-btn.playing { background: #28a745; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); } 100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); } }
+        
+        /* Dark mode support */
+        body.dark-mode { --bg-color: #121212; --card-bg: #1e1e1e; --text-dark: #e0e0e0; }
+        body.dark-mode th { background: #062338; }
+        body.dark-mode td { border-bottom-color: #333; }
+        body.dark-mode .modal-content { background: #1e1e1e; border: 1px solid #333;}
     </style>
 </head>
 <body>
@@ -50,15 +54,21 @@
             </button>
             <audio id="axonRadio" src="http://37.157.242.101:17317/stream" preload="none"></audio>
         </h1>
-        <div style="font-size: 12px;"><i class="fa-solid fa-lock"></i> الخزينة الذكية - أكسون</div>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <button onclick="window.toggleTheme()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;" title="الوضع الليلي">
+                <i id="themeIcon" class="fa-solid fa-moon"></i>
+            </button>
+            <div style="font-size: 12px;"><i class="fa-solid fa-lock"></i> الخزينة الذكية</div>
+        </div>
     </header>
 
     <div class="container">
-        <div id="loading" style="text-align:center; padding:50px;"><i class="fa-solid fa-spinner fa-spin"></i> جاري ربط الحسابات بأسماء المناديب...</div>
+        <div id="loading" style="text-align:center; padding:50px;"><i class="fa-solid fa-spinner fa-spin"></i> جاري مزامنة بيانات الرادار والشحنات...</div>
 
         <div id="dashboard" style="display:none;">
             <div class="tabs">
                 <button class="tab-btn active" onclick="showTab('overview')">الموقف العام</button>
+                <button class="tab-btn" onclick="showTab('journal')">الدفتر الشامل (الكل)</button>
                 <button class="tab-btn" onclick="showTab('couriers')">عهد الكباتن</button>
                 <button class="tab-btn" onclick="showTab('merchants')">تسويات التجار</button>
                 <button class="tab-btn" onclick="showTab('expenses')">المصروفات</button>
@@ -66,38 +76,47 @@
 
             <div id="overview" class="tab-content active">
                 <div class="stats-grid">
-                    <div class="stat-card"><h3>إجمالي الكاش (عهد)</h3><div class="value" id="statCustody">0</div></div>
+                    <div class="stat-card"><h3>إجمالي الكاش بالخارج (عهد)</h3><div class="value" id="statCustody">0</div></div>
                     <div class="stat-card red"><h3>مستحقات التجار</h3><div class="value" id="statDues">0</div></div>
-                    <div class="stat-card green"><h3>أرباح الشحن</h3><div class="value" id="statProfit">0</div></div>
+                    <div class="stat-card green"><h3>أرباح التشغيل</h3><div class="value" id="statProfit">0</div></div>
+                </div>
+            </div>
+
+            <div id="journal" class="tab-content">
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>تاريخ</th><th>المصدر</th><th>التاجر</th><th>المندوب</th><th>التحصيل (COD)</th><th>الحالة</th></tr></thead>
+                        <tbody id="tblJournal"></tbody>
+                    </table>
                 </div>
             </div>
 
             <div id="couriers" class="tab-content">
                 <div class="table-responsive">
                     <table>
-                        <thead><tr><th>الكابتن</th><th>شحنات مسلمة</th><th>العهدة الحالية</th><th>إجراء</th></tr></thead>
+                        <thead><tr><th>الكابتن</th><th>المهام المسلمة</th><th>العهدة النقدية</th><th>إجراء</th></tr></thead>
                         <tbody id="tblCouriers"></tbody>
                     </table>
                 </div>
             </div>
 
             <div id="merchants" class="tab-content">
-                <div class="table-responsive"><table><thead><tr><th>التاجر</th><th>مسلم</th><th>COD</th><th>رسوم</th><th>الصافي</th></tr></thead><tbody id="tblMerchants"></tbody></table></div>
+                <div class="table-responsive"><table><thead><tr><th>التاجر</th><th>مسلم</th><th>إجمالي الفلوس</th><th>رسوم الشحن</th><th>الصافي للتاجر</th></tr></thead><tbody id="tblMerchants"></tbody></table></div>
             </div>
 
             <div id="expenses" class="tab-content">
-                <button class="btn-add" onclick="openModal('modalExp')">+ إضافة مصروف</button>
+                <button class="btn-add" onclick="openModal('modalExp')">+ تسجيل مصروف</button>
                 <div class="table-responsive"><table><thead><tr><th>التاريخ</th><th>البند</th><th>المبلغ</th></tr></thead><tbody id="tblExpenses"></tbody></table></div>
             </div>
         </div>
     </div>
 
-    <div id="modalExp" class="modal"><div class="modal-content"><h3>تسجيل مصروف</h3><input type="text" id="expDesc" placeholder="البند" style="width:100%;margin-bottom:10px;padding:10px;"><input type="number" id="expAmt" placeholder="المبلغ" style="width:100%;margin-bottom:10px;padding:10px;"><button class="btn-add" style="width:100%" onclick="saveExp()">حفظ</button></div></div>
+    <div id="modalExp" class="modal"><div class="modal-content"><h3>تسجيل مصروف</h3><input type="text" id="expDesc" placeholder="البيان" style="width:100%;margin-bottom:10px;padding:10px; border:1px solid #ccc; border-radius:5px;"><input type="number" id="expAmt" placeholder="المبلغ (ج.م)" style="width:100%;margin-bottom:10px;padding:10px; border:1px solid #ccc; border-radius:5px;"><button class="btn-add" style="width:100%" onclick="saveExp()">حفظ</button><button onclick="document.getElementById('modalExp').style.display='none'" style="width:100%; background:#ccc; border:none; padding:10px; border-radius:8px; font-family:'Cairo';">إلغاء</button></div></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, query, where, addDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
@@ -112,20 +131,22 @@
         const db = getFirestore(app);
         const FEE = 50;
 
-        // تشغيل وإيقاف الراديو
+        // حالة مجمعة لتخزين الداتا من الجدولين
+        let globalData = { shipments: [], radar: [] };
+
         window.toggleRadio = () => {
-            const radio = document.getElementById('axonRadio');
-            const btn = document.getElementById('radioToggleBtn');
-            if (radio.paused) {
-                radio.play();
-                btn.classList.add('playing');
-                btn.innerHTML = '<i class="fa-solid fa-circle-stop"></i> طفي الراديو';
-            } else {
-                radio.pause();
-                btn.classList.remove('playing');
-                btn.innerHTML = '<i class="fa-solid fa-radio"></i> روق دماغك';
-            }
+            const radio = document.getElementById('axonRadio'), btn = document.getElementById('radioToggleBtn');
+            if (radio.paused) { radio.play(); btn.classList.add('playing'); btn.innerHTML = '<i class="fa-solid fa-circle-stop"></i> طفي الراديو'; } 
+            else { radio.pause(); btn.classList.remove('playing'); btn.innerHTML = '<i class="fa-solid fa-radio"></i> روق دماغك'; }
         };
+
+        window.toggleTheme = () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('axon_acc_theme', isDark ? 'dark' : 'light');
+            document.getElementById('themeIcon').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        };
+        if(localStorage.getItem('axon_acc_theme') === 'dark') document.body.classList.add('dark-mode');
 
         window.showTab = (id) => {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -135,45 +156,128 @@
         };
         window.openModal = (id) => document.getElementById(id).style.display = 'flex';
 
-        onAuthStateChanged(auth, (user) => { if (user) { loadData(); } else { window.location.href = "index.html"; } });
+        onAuthStateChanged(auth, (user) => { if (user) { loadUnifiedData(); } else { window.location.href = "index.html"; } });
 
-        function loadData() {
-            onSnapshot(query(collection(db, "shipments"), where("status", "==", "تم التسليم")), (snap) => {
-                let merchants = {}, couriers = {}, totalCustody = 0, totalProfit = 0;
-                
+        function loadUnifiedData() {
+            // 1. مراقبة جدول الشحنات العادية (اللي الإدارة بتسلمها يدوي)
+            onSnapshot(collection(db, "shipments"), (snap) => {
+                globalData.shipments = [];
+                snap.forEach(d => globalData.shipments.push({id: d.id, type: 'shipment', ...d.data()}));
+                renderAccounting();
+            });
+
+            // 2. مراقبة جدول الرادار (اللي المناديب بيسلموه)
+            onSnapshot(collection(db, "eshteryly_orders"), (snap) => {
+                globalData.radar = [];
+                snap.forEach(d => globalData.radar.push({id: d.id, type: 'radar', ...d.data()}));
+                renderAccounting();
+            });
+            
+            // 3. المصروفات
+            onSnapshot(collection(db, "expenses"), (snap) => {
+                let expHtml = "";
                 snap.forEach(doc => {
-                    let d = doc.data(); if(d.deleted) return;
-                    let amt = Number(d.amount)||0, mEmail = d.merchantEmail||"غير مسجل";
-                    
-                    // السحر الشامل هنا: هيدور على اسم المندوب في كل الخانات الممكنة في الرادار والفايربيز
-                    let cName = d.acceptedBy || d.courierName || d.driverName || d.courierPhone || d.courier || (d.courierEmail ? d.courierEmail.split('@')[0] : null) || "كابتن غير مسمى";
-
-                    if(!merchants[mEmail]) merchants[mEmail] = { cod:0, count:0 };
-                    merchants[mEmail].count++; merchants[mEmail].cod += amt;
-                    
-                    if(!couriers[cName]) couriers[cName] = { count:0, cash:0 };
-                    couriers[cName].count++; couriers[cName].cash += amt;
-
-                    totalCustody += amt; totalProfit += FEE;
+                    let d = doc.data();
+                    let dateStr = d.timestamp ? new Date(d.timestamp).toLocaleDateString('ar-EG') : '-';
+                    expHtml += `<tr><td>${dateStr}</td><td>${d.desc}</td><td style="color:red; font-weight:bold;">${d.amt} ج.م</td></tr>`;
                 });
-
-                document.getElementById('statCustody').innerText = totalCustody.toLocaleString();
-                document.getElementById('statProfit').innerText = totalProfit.toLocaleString();
-                document.getElementById('statDues').innerText = (totalCustody - totalProfit).toLocaleString();
-
-                let cHtml = ""; for(let c in couriers) {
-                    cHtml += `<tr><td><b>${c}</b></td><td>${couriers[c].count}</td><td style="color:red;font-weight:bold;">${couriers[c].cash} ج.م</td><td><button class="tab-btn" onclick="alert('سند قبض من ${c}')">طباعة إيصال</button></td></tr>`;
-                }
-                document.getElementById('tblCouriers').innerHTML = cHtml || "<tr><td colspan='4'>لا توجد عهد حالياً</td></tr>";
-
-                let mHtml = ""; for(let m in merchants) {
-                    let mNet = merchants[m].cod - (merchants[m].count * FEE);
-                    mHtml += `<tr><td>${m.split('@')[0]}</td><td>${merchants[m].count}</td><td>${merchants[m].cod}</td><td>${merchants[m].count * FEE}</td><td style="color:green;font-weight:bold;">${mNet}</td></tr>`;
-                }
-                document.getElementById('tblMerchants').innerHTML = mHtml;
-                document.getElementById('loading').style.display='none'; document.getElementById('dashboard').style.display='block';
+                document.getElementById('tblExpenses').innerHTML = expHtml || "<tr><td colspan='3'>لا توجد مصروفات</td></tr>";
             });
         }
+
+        // دالة الفلترة والدمج الذكية
+        function renderAccounting() {
+            let merchants = {}, couriers = {}, totalCustody = 0, totalProfit = 0;
+            let journalHtml = "";
+            let allTasks = [...globalData.shipments, ...globalData.radar].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+            allTasks.forEach(d => {
+                if(d.deleted) return;
+                
+                let amt = 0, cName = "غير محدد", mEmail = "غير مسجل", status = "", source = "", isDelivered = false;
+
+                // استخراج الداتا بناءً على نوع الجدول
+                if (d.type === 'shipment') {
+                    // لو شحنة عادية والإدارة سلمتها يدوي (بدون رادار)
+                    amt = Number(d.amount) || 0;
+                    cName = "الإدارة المركزية (تسليم يدوي)";
+                    mEmail = d.merchantEmail || "إدارة";
+                    status = d.status || "جديد";
+                    source = `<span style="color:#0A3D62; font-weight:bold;">📦 بوليصة</span>`;
+                    if (status === "تم التسليم") isDelivered = true;
+                    // هنتجاهل الشحنات اللي حالتها "مذاع للرادار" لأنها هتظهر من جدول الرادار نفسه عشان التكرار
+                    if (status === "مذاع للرادار") return; 
+
+                } else if (d.type === 'radar') {
+                    // لو أمر من الرادار والمندوب اتعامل معاه
+                    status = d.status || "جديد";
+                    cName = d.courierName || "متاح للجميع";
+                    mEmail = d.merchantEmail || "إدارة";
+                    
+                    if(d.paymentMethod === 'pickup') source = `<span style="color:#8e44ad; font-weight:bold;">🚚 بيكب</span>`;
+                    else if (d.linkedShipmentId) source = `<span style="color:#28a745; font-weight:bold;">📡 بوليصة (رادار)</span>`;
+                    else source = `<span style="color:#e65100; font-weight:bold;">🛒 اشتريلي</span>`;
+
+                    // الخوارزمية السحرية لاستخراج الفلوس من التفاصيل (لأنها مش متسجلة في رقم)
+                    if (d.details && d.details.includes("تحصيل:")) {
+                        let match = d.details.match(/تحصيل:\s*(\d+(\.\d+)?)/);
+                        amt = match ? Number(match[1]) : 0;
+                    } else if (d.paymentMethod === 'pickup') {
+                        amt = 0; // البيكب مفيش فيه تحصيل من العميل
+                    }
+                    
+                    if (status === "تم التسليم بنجاح") isDelivered = true;
+                }
+
+                let mDisplay = mEmail.split('@')[0];
+                let dateStr = d.timestamp ? (d.timestamp.toDate ? d.timestamp.toDate().toLocaleDateString('ar-EG') : new Date(d.timestamp).toLocaleDateString('ar-EG')) : '-';
+
+                // رسم الدفتر الشامل
+                journalHtml += `<tr><td>${dateStr}</td><td>${source}</td><td>${mDisplay}</td><td>${cName}</td><td style="color:var(--primary-red); font-weight:bold;">${amt} ج.م</td><td><span style="background:#e0eaf5; padding:3px 8px; border-radius:4px; font-size:11px;">${status}</span></td></tr>`;
+
+                // حساب العهد والتسويات (للي اتسلم فقط)
+                if(isDelivered) {
+                    if(!merchants[mEmail]) merchants[mEmail] = { cod:0, count:0, display: mDisplay };
+                    merchants[mEmail].count++; 
+                    merchants[mEmail].cod += amt;
+                    
+                    if(!couriers[cName]) couriers[cName] = { count:0, cash:0 };
+                    couriers[cName].count++; 
+                    couriers[cName].cash += amt;
+
+                    totalCustody += amt; 
+                    totalProfit += FEE;
+                }
+            });
+
+            document.getElementById('statCustody').innerText = totalCustody.toLocaleString();
+            document.getElementById('statProfit').innerText = totalProfit.toLocaleString();
+            document.getElementById('statDues').innerText = (totalCustody - totalProfit).toLocaleString();
+            document.getElementById('tblJournal').innerHTML = journalHtml || "<tr><td colspan='6'>لا توجد حركات مسجلة</td></tr>";
+
+            let cHtml = ""; for(let c in couriers) {
+                cHtml += `<tr><td><b>${c}</b></td><td>${couriers[c].count}</td><td style="color:red;font-weight:bold;">${couriers[c].cash} ج.م</td><td><button class="tab-btn" onclick="alert('استلام نقدية من ${c}')">تصفية العهدة</button></td></tr>`;
+            }
+            document.getElementById('tblCouriers').innerHTML = cHtml || "<tr><td colspan='4'>لا توجد عهد بالخارج</td></tr>";
+
+            let mHtml = ""; for(let m in merchants) {
+                let mNet = merchants[m].cod - (merchants[m].count * FEE);
+                mHtml += `<tr><td>${merchants[m].display}</td><td>${merchants[m].count}</td><td>${merchants[m].cod}</td><td style="color:red;">${merchants[m].count * FEE}</td><td style="color:green;font-weight:bold;">${mNet}</td></tr>`;
+            }
+            document.getElementById('tblMerchants').innerHTML = mHtml || "<tr><td colspan='5'>لا توجد تسويات مستحقة</td></tr>";
+            
+            document.getElementById('loading').style.display='none'; 
+            document.getElementById('dashboard').style.display='block';
+        }
+
+        window.saveExp = async () => {
+            let desc = document.getElementById('expDesc').value;
+            let amt = document.getElementById('expAmt').value;
+            if(!desc || !amt) return;
+            await addDoc(collection(db, "expenses"), { desc: desc, amt: Number(amt), timestamp: Date.now() });
+            document.getElementById('modalExp').style.display='none';
+            document.getElementById('expDesc').value = ''; document.getElementById('expAmt').value = '';
+        };
     </script>
 </body>
 </html>
