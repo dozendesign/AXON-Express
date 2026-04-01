@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الإدارة المالية | Axon Express</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; }
+        :root { --primary-blue: #0A3D62; --primary-red: #b82329; --bg-color: #f4f7f6; --card-bg: #fff; --text-dark: #333; }
+        body { font-family: 'Cairo', sans-serif; margin: 0; background: var(--bg-color); color: var(--text-dark); }
+        
+        /* الهيدر */
+        header { background: var(--primary-blue); padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100;}
+        header h1 { margin: 0; font-size: 20px; font-weight: 900; }
+        header h1 span { color: var(--primary-red); }
+        
+        .container { padding: 20px; max-width: 1200px; margin: 0 auto; }
+        
+        /* كروت الإحصائيات */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: center; border-bottom: 5px solid var(--primary-blue); position: relative; overflow: hidden; }
+        .stat-card.red { border-bottom-color: var(--primary-red); }
+        .stat-card.green { border-bottom-color: #28a745; }
+        .stat-card h3 { margin: 0 0 10px 0; font-size: 16px; color: #666; }
+        .stat-card .value { font-size: 32px; font-weight: 900; color: var(--primary-blue); }
+        .stat-card.red .value { color: var(--primary-red); }
+        .stat-card.green .value { color: #28a745; }
+        .stat-card i { position: absolute; top: 20px; left: -20px; font-size: 80px; opacity: 0.05; }
+
+        /* الجداول */
+        .section-title { font-size: 20px; font-weight: bold; color: var(--primary-blue); margin-bottom: 15px; border-bottom: 2px solid var(--primary-red); display: inline-block; padding-bottom: 5px;}
+        .table-responsive { width: 100%; overflow-x: auto; background: var(--card-bg); border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        table { width: 100%; min-width: 600px; border-collapse: collapse; }
+        th, td { padding: 15px; text-align: right; border-bottom: 1px solid #eee; font-size: 14px; }
+        th { background: #e0eaf5; color: var(--primary-blue); font-weight: bold; }
+        tr:hover { background-color: #f9f9f9; }
+        
+        .badge { padding: 5px 10px; border-radius: 6px; font-weight: bold; font-size: 12px; }
+        .badge.debt { background: #ffebeb; color: var(--primary-red); }
+        .badge.clear { background: #e6f4ea; color: #1e8e3e; }
+        
+        .btn-action { background: var(--primary-blue); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; transition: 0.3s; }
+        .btn-action:hover { opacity: 0.9; transform: translateY(-2px); }
+        .btn-pay { background: var(--primary-red); }
+
+        .loader { text-align: center; padding: 50px; font-size: 20px; color: var(--primary-blue); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>AXON <span>FINANCE</span></h1>
+        <div style="font-size: 14px;"><i class="fa-solid fa-building-columns"></i> الإدارة المالية والخزينة</div>
+    </header>
+
+    <div class="container">
+        <div id="loading" class="loader"><i class="fa-solid fa-spinner fa-spin"></i> جاري سحب ومعالجة الدفاتر المالية...</div>
+
+        <div id="financeDashboard" style="display: none;">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fa-solid fa-hand-holding-dollar"></i>
+                    <h3>إجمالي الكاش مع المناديب (العهد)</h3>
+                    <div class="value" id="totalCustody">0 <span style="font-size: 16px;">ج.م</span></div>
+                    <p style="font-size: 12px; color: #888; margin-top: 5px;">فلوس بره الشركة لم تورد</p>
+                </div>
+                <div class="stat-card red">
+                    <i class="fa-solid fa-money-bill-transfer"></i>
+                    <h3>مستحقات التجار (صافي)</h3>
+                    <div class="value" id="totalMerchantDues">0 <span style="font-size: 16px;">ج.م</span></div>
+                    <p style="font-size: 12px; color: #888; margin-top: 5px;">ديون الشركة للتجار بعد الخصم</p>
+                </div>
+                <div class="stat-card green">
+                    <i class="fa-solid fa-vault"></i>
+                    <h3>أرباح أكسون (مصاريف الشحن)</h3>
+                    <div class="value" id="totalAxonProfit">0 <span style="font-size: 16px;">ج.م</span></div>
+                    <p style="font-size: 12px; color: #888; margin-top: 5px;">أرباح متوقعة من الشحنات المسلمة</p>
+                </div>
+            </div>
+
+            <div class="section-title"><i class="fa-solid fa-motorcycle"></i> عهد الكباتن (الكاش المحصل)</div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>اسم الكابتن</th>
+                            <th>عدد الشحنات المسلمة</th>
+                            <th>إجمالي الكاش المحصل</th>
+                            <th>الحالة</th>
+                            <th>إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="couriersTable"></tbody>
+                </table>
+            </div>
+
+            <div class="section-title"><i class="fa-solid fa-store"></i> محافظ التجار (التسويات)</div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>حساب التاجر (الإيميل)</th>
+                            <th>بوالص مسلمة</th>
+                            <th>إجمالي الـ COD</th>
+                            <th style="color:var(--primary-red);">رسوم أكسون (مخصومة)</th>
+                            <th style="color:#28a745;">الصافي للتاجر</th>
+                            <th>إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="merchantsTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        // نفس قاعدة بيانات أكسون
+        const firebaseConfig = {
+            apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
+            authDomain: "axon-express-2f534.firebaseapp.com",
+            projectId: "axon-express-2f534",
+            storageBucket: "axon-express-2f534.firebasestorage.app",
+            messagingSenderId: "958528400260",
+            appId: "1:958528400260:web:504ae94f3ef2225b928bd1"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // متغيرات لضبط الحسابات (ممكن تعديلها بعدين لتكون ديناميكية)
+        const STANDARD_SHIPPING_FEE = 50; // افتراض إن تكلفة الشحن 50 جنيه للبوليصة
+
+        // سحب الشحنات اللي اتسلمت بس
+        const q = query(collection(db, "shipments"), where("status", "==", "تم التسليم"));
+
+        onSnapshot(q, (snapshot) => {
+            let merchantsData = {};
+            let couriersData = {};
+            
+            let totalCustody = 0;
+            let totalMerchantDues = 0;
+            let totalAxonProfit = 0;
+
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                if(data.deleted) return;
+
+                const amount = Number(data.amount) || 0;
+                const merchant = data.merchantEmail || "غير محدد";
+                const courier = data.courier || "مندوب غير مسجل"; // محتاجين نضيف حقل courier في لوحة الأدمن لو مش موجود
+
+                // 1. حسابات التاجر
+                if (!merchantsData[merchant]) {
+                    merchantsData[merchant] = { totalCOD: 0, orderCount: 0, shippingFees: 0, netPayable: 0 };
+                }
+                merchantsData[merchant].orderCount += 1;
+                merchantsData[merchant].totalCOD += amount;
+                merchantsData[merchant].shippingFees += STANDARD_SHIPPING_FEE;
+                merchantsData[merchant].netPayable = merchantsData[merchant].totalCOD - merchantsData[merchant].shippingFees;
+
+                // 2. عهدة المندوب
+                if (!couriersData[courier]) {
+                    couriersData[courier] = { collectedCash: 0, orderCount: 0 };
+                }
+                couriersData[courier].orderCount += 1;
+                couriersData[courier].collectedCash += amount;
+
+                // 3. مجاميع الشركة
+                totalCustody += amount;
+                totalAxonProfit += STANDARD_SHIPPING_FEE;
+            });
+
+            totalMerchantDues = totalCustody - totalAxonProfit;
+
+            // تحديث الشاشة المركزية
+            document.getElementById('totalCustody').innerText = totalCustody.toLocaleString();
+            document.getElementById('totalMerchantDues').innerText = totalMerchantDues.toLocaleString();
+            document.getElementById('totalAxonProfit').innerText = totalAxonProfit.toLocaleString();
+
+            // رسم جدول المناديب
+            let couriersHtml = "";
+            for (let c in couriersData) {
+                couriersHtml += `
+                    <tr>
+                        <td><strong>${c}</strong></td>
+                        <td>${couriersData[c].orderCount} شحنات</td>
+                        <td style="color:var(--primary-blue); font-weight:bold;">${couriersData[c].collectedCash.toLocaleString()} ج.م</td>
+                        <td><span class="badge debt">مطلوب توريدها</span></td>
+                        <td><button class="btn-action" onclick="alert('جاري برمجة التوريد وإغلاق العهدة قريباً')">استلام النقدية</button></td>
+                    </tr>
+                `;
+            }
+            if(couriersHtml === "") couriersHtml = "<tr><td colspan='5' style='text-align:center;'>لا توجد عهد مفتوحة حالياً</td></tr>";
+            document.getElementById('couriersTable').innerHTML = couriersHtml;
+
+            // رسم جدول التجار
+            let merchantsHtml = "";
+            for (let m in merchantsData) {
+                merchantsHtml += `
+                    <tr>
+                        <td><strong>${m.split('@')[0]}</strong> <br><span style="font-size:11px; color:#888;">${m}</span></td>
+                        <td>${merchantsData[m].orderCount}</td>
+                        <td>${merchantsData[m].totalCOD.toLocaleString()} ج.م</td>
+                        <td style="color:var(--primary-red);">- ${merchantsData[m].shippingFees.toLocaleString()} ج.م</td>
+                        <td style="color:#28a745; font-weight:bold; font-size:16px;">${merchantsData[m].netPayable.toLocaleString()} ج.م</td>
+                        <td><button class="btn-action btn-pay" onclick="alert('جاري برمجة شاشة تحويل المستحقات وإغلاق الحساب قريباً')"><i class="fa-solid fa-money-bill-wave"></i> تسوية الرصيد</button></td>
+                    </tr>
+                `;
+            }
+            if(merchantsHtml === "") merchantsHtml = "<tr><td colspan='6' style='text-align:center;'>لا توجد مستحقات للتجار حالياً</td></tr>";
+            document.getElementById('merchantsTable').innerHTML = merchantsHtml;
+
+            // إخفاء التحميل وإظهار الداتا
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('financeDashboard').style.display = 'block';
+        });
+    </script>
+</body>
+</html>
