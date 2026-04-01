@@ -161,7 +161,6 @@
         <h1 data-aos="fade-down">شريكك الأسرع <span>للنجاح</span></h1>
         <p data-aos="fade-up" data-aos-delay="100">نحن لا ننقل الصناديق، نحن ننقل الثقة. شبكة لوجستية تغطي جميع محافظات مصر بأمان، سرعة، وأنظمة تتبع حية لخدمة تجارتك الإلكترونية.</p>
         
-        <!-- رادار التتبع الجديد للعميل -->
         <div class="tracking-box" data-aos="fade-up" data-aos-delay="200">
             <input type="text" id="trackAwbInput" placeholder="أدخل رقم البوليصة (مثال: AXN12345)">
             <button onclick="window.initiateTracking()"><i class="fa-solid fa-magnifying-glass"></i> تتبع شحنتك</button>
@@ -328,9 +327,8 @@
         </div>
     </div>
 
-    <!-- Modals التتبع وخدمة العملاء (الجديدة) -->
+    <!-- Modals التتبع وخدمة العملاء -->
     
-    <!-- جدار حماية التتبع (رقم الموبايل) -->
     <div id="verifyPhoneModal" class="modal">
         <div class="modal-content">
             <button onclick="document.getElementById('verifyPhoneModal').style.display='none'" class="close-modal">✖</button>
@@ -341,7 +339,6 @@
         </div>
     </div>
 
-    <!-- لوحة التحكم في الشحنة (الداشبورد) -->
     <div id="trackingDashboardModal" class="modal">
         <div class="modal-content" style="max-width: 500px;">
             <button onclick="document.getElementById('trackingDashboardModal').style.display='none'" class="close-modal">✖</button>
@@ -360,6 +357,7 @@
                 <p style="margin: 0; font-size: 13px; color: #555;"><b>عنوان التسليم:</b> <span id="dashAddress"></span></p>
             </div>
 
+            <!-- تم تعديل هذه الأزرار لإخفاء اللوحة البيضاء قبل فتح رسائل التأكيد -->
             <button class="dash-action-btn btn-gps" onclick="window.openLocationFineModal()"><i class="fa-solid fa-map-location-dot"></i> طلب تغيير مسار / تعديل العنوان</button>
             <button class="dash-action-btn btn-delay" onclick="window.rescheduleDelivery()"><i class="fa-solid fa-clock-rotate-left"></i> تأجيل موعد الاستلام لبكرة</button>
             <button class="dash-action-btn btn-support" onclick="window.openSupportTicket()"><i class="fa-solid fa-headset"></i> التحدث مع خدمة العملاء بخصوص الشحنة</button>
@@ -408,7 +406,7 @@
             Swal.fire({ title: title, text: text, icon: 'info', confirmButtonText: 'علم', confirmButtonColor: '#0A3D62' });
         };
 
-        window.submitCareer = async () => { /* Original Logic */
+        window.submitCareer = async () => { 
             const name = document.getElementById('carName').value.trim(), phone = document.getElementById('carPhone').value.trim(), city = document.getElementById('carCity').value.trim(), position = document.getElementById('carPosition').value, notes = document.getElementById('carNotes').value.trim();
             if(!name || !phone || !city || !position) return Swal.fire('خطأ إدخال', 'يرجى استكمال البيانات المطلوبة.', 'warning');
             const btn = document.getElementById('btnCareer'); btn.disabled = true; btn.innerHTML = "جاري تشفير البيانات...";
@@ -416,7 +414,7 @@
             btn.disabled = false; btn.innerHTML = "إرسال بياناتك للقيادة";
         };
 
-        window.submitFranchise = async () => { /* Original Logic */
+        window.submitFranchise = async () => { 
             const name = document.getElementById('franName').value.trim(), phone = document.getElementById('franPhone').value.trim(), city = document.getElementById('franCity').value, office = document.getElementById('franOffice').value, notes = document.getElementById('franNotes').value.trim();
             if(!name || !phone || !city || !office) return Swal.fire('خطأ إدخال', 'جميع الحقول الأساسية مطلوبة.', 'warning');
             const btn = document.getElementById('btnFranchise'); btn.disabled = true; btn.innerHTML = "جاري الإرسال للقيادة العليا...";
@@ -424,7 +422,7 @@
             btn.disabled = false; btn.innerHTML = "تسجيل طلب الفرنشايز";
         };
 
-        window.handleLogin = async () => { /* Original Logic */
+        window.handleLogin = async () => { 
             let user = document.getElementById('merchantEmail').value.trim().toLowerCase(), pass = document.getElementById('merchantPassword').value;
             if(!user || !pass) return Swal.fire('رفض الوصول', 'يجب إدخال كود التاجر وشفرة المرور.', 'error');
             const email = user + "@axon.com", btn = document.getElementById('btnLogin'); btn.disabled = true; btn.innerHTML = "جاري مطابقة الحمض النووي الرقمي...";
@@ -456,7 +454,7 @@
         // 🚀 نظام التتبع وخدمة العملاء الجديد (Core)
         // ==========================================
         
-        let currentTrackedDoc = null; // لتخزين الداتا مؤقتاً
+        let currentTrackedDoc = null;
 
         window.initiateTracking = async () => {
             const awbInput = document.getElementById('trackAwbInput').value.trim().toUpperCase();
@@ -465,7 +463,6 @@
             Swal.fire({ title: 'جاري البحث في الرادار...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
 
             try {
-                // سحب كل الشحنات لفلترتها بالـ ID (لأننا مبنسجلش الـ AWB كحقل منفصل في الداتا بيز)
                 const snap = await getDocs(collection(db, "shipments"));
                 let foundDoc = null;
                 snap.forEach(d => {
@@ -502,28 +499,24 @@
             document.getElementById('dashAmount').innerText = currentTrackedDoc.amount + " ج.م";
             document.getElementById('dashAddress').innerText = currentTrackedDoc.city + " - " + currentTrackedDoc.address;
 
-            // تحديث التايم لاين
             const status = currentTrackedDoc.status;
             document.querySelectorAll('.timeline-step').forEach(el => { el.classList.remove('active'); el.classList.remove('done'); });
-            
-            document.getElementById('step1').classList.add('done'); // التأكيد دايمًا تم
+            document.getElementById('step1').classList.add('done'); 
             
             if(status === 'قيد التوصيل') {
-                document.getElementById('step2').classList.add('active'); // في المخزن
+                document.getElementById('step2').classList.add('active');
             } else if(status === 'مذاع للرادار' || status.includes('مندوب')) {
                 document.getElementById('step2').classList.add('done');
-                document.getElementById('step3').classList.add('active'); // مع المندوب
+                document.getElementById('step3').classList.add('active');
             } else if(status === 'تم التسليم' || status === 'تمت التسوية') {
                 document.getElementById('step2').classList.add('done');
                 document.getElementById('step3').classList.add('done');
-                document.getElementById('step4').classList.add('done'); // تم التسليم
+                document.getElementById('step4').classList.add('done'); 
             } else {
-                // مرتجع أو مؤجل
                 document.getElementById('step2').classList.add('active');
             }
         }
 
-        // --- خوارزمية الغرامة والـ GPS الذكية ---
         function getDistance(lat1, lon1, lat2, lon2) {
             const R = 6371; 
             const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -532,8 +525,11 @@
             return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))); 
         }
 
+        // تم إضافة إخفاء اللوحة قبل الـ Swal لحل مشكلة الـ Z-Index
         window.openLocationFineModal = () => {
             if(currentTrackedDoc.status === 'تم التسليم' || currentTrackedDoc.status === 'تمت التسوية') return Swal.fire('مغلق', 'لا يمكن تعديل مسار شحنة تم تسليمها.', 'info');
+
+            document.getElementById('trackingDashboardModal').style.display = 'none'; // إخفاء اللوحة مؤقتاً
 
             Swal.fire({
                 title: 'تعديل مسار الشحنة',
@@ -550,11 +546,10 @@
 
                     navigator.geolocation.getCurrentPosition(async (pos) => {
                         const newLat = pos.coords.latitude; const newLng = pos.coords.longitude;
-                        // نقطة المركز الافتراضية (محطة أكسون بالإسكندرية) لعدم وجود إحداثيات قديمة للشحنة العادية
                         const baseLat = 31.1990; const baseLng = 29.8944; 
                         
                         const distanceKm = getDistance(baseLat, baseLng, newLat, newLng);
-                        const fine = Math.ceil(distanceKm) * 12; // 12 جنيه لكل كيلو
+                        const fine = Math.ceil(distanceKm) * 12; 
 
                         Swal.fire({
                             title: 'تقرير إعادة التوجيه',
@@ -573,33 +568,38 @@
                                         amount: newAmount,
                                         address: currentTrackedDoc.address + ` | ⚠️ مسار معدل: ${newAddressLink}`,
                                         fineAdded: fine,
-                                        status: "قيد التوصيل" // نرجعها للمخزن لو كانت مع مندوب عشان التوجيه الجديد
+                                        status: "قيد التوصيل" 
                                     });
-                                    currentTrackedDoc.amount = newAmount; // تحديث اللوحة الحالية
-                                    document.getElementById('dashAmount').innerText = newAmount + " ج.م";
+                                    currentTrackedDoc.amount = newAmount; 
                                     Swal.fire('تمت العملية', 'تم تعديل المسار وإرسال التوجيهات الجديدة للأسطول.', 'success');
                                 } catch (e) { Swal.fire('خطأ', 'حدثت مشكلة أثناء تحديث البيانات.', 'error'); }
-                            }
+                            } else { openDashboard(); } // رجوع اللوحة لو تراجع
                         });
-                    }, (err) => { Swal.fire('حجب الـ GPS', 'يرجى السماح للمتصفح بالوصول لموقعك.', 'error'); }, { enableHighAccuracy: true });
-                }
+                    }, (err) => { Swal.fire('حجب الـ GPS', 'يرجى السماح للمتصفح بالوصول لموقعك.', 'error'); openDashboard(); }, { enableHighAccuracy: true });
+                } else { openDashboard(); } // رجوع اللوحة لو تراجع
             });
         };
 
+        // تم إضافة إخفاء اللوحة قبل الـ Swal
         window.rescheduleDelivery = async () => {
             if(currentTrackedDoc.status === 'تم التسليم') return Swal.fire('مغلق', 'لا يمكن تأجيل شحنة تم تسليمها.', 'info');
+            
+            document.getElementById('trackingDashboardModal').style.display = 'none';
+
             const result = await Swal.fire({ title: 'تأجيل الاستلام', text: 'هل تود تأجيل استلام الشحنة للغد؟', icon: 'question', showCancelButton: true, confirmButtonText: 'نعم، قم بالتأجيل', cancelButtonText: 'إلغاء' });
             if(result.isConfirmed) {
                 try {
                     await updateDoc(doc(db, "shipments", currentTrackedDoc.id), { status: "مؤجل", rescheduleRequest: true });
-                    Swal.fire('تم التأجيل', 'تم إبلاغ الأسطول بتأجيل موعد التوصيل.', 'success');
-                    openDashboard(); // ريفريش للوحة
-                } catch(e) { Swal.fire('خطأ', 'فشل الاتصال.', 'error'); }
-            }
+                    Swal.fire('تم التأجيل', 'تم إبلاغ الأسطول بتأجيل موعد التوصيل.', 'success').then(() => openDashboard());
+                } catch(e) { Swal.fire('خطأ', 'فشل الاتصال.', 'error').then(() => openDashboard()); }
+            } else { openDashboard(); }
         };
 
+        // تم إضافة إخفاء اللوحة قبل الـ Swal
         window.openSupportTicket = async () => {
-            const { value: problem } = await Swal.fire({ title: 'التواصل مع القيادة', input: 'textarea', inputLabel: 'اشرح مشكلتك بالتفصيل بخصوص هذه الشحنة', inputPlaceholder: 'اكتب هنا...', showCancelButton: true, confirmButtonText: 'إرسال التذكرة' });
+            document.getElementById('trackingDashboardModal').style.display = 'none';
+
+            const { value: problem } = await Swal.fire({ title: 'التواصل مع القيادة', input: 'textarea', inputLabel: 'اشرح مشكلتك بالتفصيل بخصوص هذه الشحنة', inputPlaceholder: 'اكتب هنا...', showCancelButton: true, confirmButtonText: 'إرسال التذكرة', cancelButtonText: 'إلغاء' });
             if (problem) {
                 try {
                     await addDoc(collection(db, "web_inquiries"), {
@@ -607,9 +607,9 @@
                         phone: currentTrackedDoc.phone,
                         status: "new", timestamp: new Date()
                     });
-                    Swal.fire('تم الإرسال', 'تم فتح تذكرة لخدمة العملاء وسيتم حل المشكلة في أسرع وقت.', 'success');
-                } catch(e) { Swal.fire('خطأ', 'لم يتم إرسال التذكرة.', 'error'); }
-            }
+                    Swal.fire('تم الإرسال', 'تم فتح تذكرة لخدمة العملاء وسيتم حل المشكلة في أسرع وقت.', 'success').then(() => openDashboard());
+                } catch(e) { Swal.fire('خطأ', 'لم يتم إرسال التذكرة.', 'error').then(() => openDashboard()); }
+            } else { openDashboard(); }
         };
     </script>
 </body>
