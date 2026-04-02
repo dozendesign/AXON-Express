@@ -11,41 +11,33 @@
         * { box-sizing: border-box; }
         :root { --primary-blue: #0A3D62; --primary-red: #b82329; --white: #ffffff; --light-bg: #f4f7f6; --dark-text: #2c3e50; --border-color: #eee; }
         html, body { font-family: 'Cairo', sans-serif; margin: 0; background: var(--light-bg); color: var(--dark-text); overflow-x: hidden; scroll-behavior: smooth; transition: background 0.3s, color 0.3s;}
-        
         header { background: var(--white); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary-red); position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s;}
         .logo { font-size: 20px; font-weight: 900; color: var(--primary-blue); text-decoration: none;}
         .logo span { color: var(--primary-red); }
         .header-actions { display: flex; align-items: center;}
         #logoutBtn { background: var(--white); border: 2px solid var(--primary-red); color: var(--primary-red); padding: 6px 15px; border-radius: 5px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; transition: 0.3s;}
         #logoutBtn:hover { background: var(--primary-red); color: var(--white); }
-        
         .container { padding: 15px; max-width: 1200px; margin: 0 auto; min-height: 80vh;}
         .merchant-badge { background: var(--primary-blue); padding: 6px 15px; border-radius: 20px; font-size: 13px; margin-bottom: 20px; display: inline-block; color: white; font-weight: bold; box-shadow: 0 4px 10px rgba(10, 61, 98, 0.2);}
-        
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .stat-card { background: var(--white); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-blue); transition: 0.3s;}
         .stat-card h3 { font-size: 15px; margin: 0 0 10px 0; color: #666; transition: 0.3s;}
         .stat-card .value { font-size: 24px; font-weight: 900; color: var(--primary-blue);}
-        
         .actions-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px; }
         .btn-core { border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; display: flex; align-items: center; gap: 8px; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
         .btn-core:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
         .add-btn { background: var(--primary-red); color: white; }
         .eshteryly-btn { background: #28a745; color: white; }
-        
         .search-box { flex: 1; min-width: 250px; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Cairo'; outline: none; transition: 0.3s; background: var(--white); color: var(--dark-text);}
         .search-box:focus { border-color: var(--primary-blue); box-shadow: 0 0 5px rgba(10, 61, 98, 0.3); }
-        
         .table-responsive { width: 100%; overflow-x: auto; background: var(--white); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; border: 1px solid var(--border-color);}
         table { width: 100%; min-width: 800px; border-collapse: collapse; }
         th, td { padding: 12px; text-align: right; border-bottom: 1px solid var(--border-color); font-size: 13px; transition: 0.3s;}
         th { background: var(--primary-blue); color: var(--white); }
         tr:hover { background-color: rgba(0,0,0,0.02); }
-        
         .print-btn { background: #333; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-family: 'Cairo'; transition: 0.3s; font-weight: bold;}
         .print-btn:hover { opacity: 0.8; }
         .awb-badge { background: #e0eaf5; color: var(--primary-blue); padding: 4px 10px; border-radius: 5px; font-weight: bold; transition: 0.3s; letter-spacing: 1px;}
-        
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; z-index: 1000; padding: 15px; backdrop-filter: blur(5px);}
         .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; position: relative; transition: 0.3s;}
         .input-group label { font-size: 13px; font-weight: bold; color: var(--primary-blue); margin-top: 10px; display: block; }
@@ -53,8 +45,6 @@
         .input-group input:focus, .input-group select:focus, .modal-content textarea:focus { border-color: var(--primary-blue); outline: none; }
         .close-btn { position: absolute; top: 15px; left: 15px; border: none; background: none; font-size: 24px; cursor: pointer; color: var(--primary-red); transition: 0.3s;}
         .close-btn:hover { transform: scale(1.1); }
-
-        /* الشبكة العصبية للتواصل (Social Footer) */
         .social-footer { text-align: center; padding: 20px; margin-top: 30px; border-top: 1px solid var(--border-color); transition: 0.3s; }
         .social-footer p { font-size: 14px; color: #666; margin-bottom: 10px; font-weight: bold; }
         .social-icons { display: flex; justify-content: center; gap: 15px; }
@@ -63,8 +53,6 @@
         .icon-fb { background: #1877F2; }
         .icon-yt { background: #FF0000; }
         .icon-tk { background: #000000; }
-        
-        /* ---------------- مصفوفة الظلام (Dark Mode) ---------------- */
         body.dark-mode { --white: #1e1e1e; --light-bg: #121212; --dark-text: #e0e0e0; --border-color: #333; }
         body.dark-mode header { background: #1e1e1e; border-bottom: 3px solid var(--primary-red); }
         body.dark-mode .stat-card h3 { color: #aaa; }
@@ -210,240 +198,7 @@
     <audio id="axonRadioPlayer" src="http://37.157.242.101:17317/stream" preload="none"></audio>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-
-        const app = initializeApp({
-            apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
-            authDomain: "axon-express-2f534.firebaseapp.com",
-            projectId: "axon-express-2f534",
-            storageBucket: "axon-express-2f534.firebasestorage.app",
-            messagingSenderId: "958528400260",
-            appId: "1:958528400260:web:504ae94f3ef2225b928bd1"
-        });
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        let merchantEmail = "", merchantName = "";
-
-        // --- المصادقة وجلب البيانات ---
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                merchantEmail = user.email;
-                merchantName = merchantEmail.split('@')[0];
-                document.getElementById('merchantEmailDisplay').innerHTML = `مرحباً بك: ${merchantName} <i class="fa-solid fa-bolt" style="color:#ffc107;"></i>`;
-                loadShipments();
-            } else { window.location.href = "index.html"; }
-        });
-
-        window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
-
-        // --- فلتر الإسكندرية الذكي (حساس المدن) ---
-        window.checkCityFilter = () => {
-            const cityValue = document.getElementById('recCity').value.trim().toLowerCase();
-            const paymentGroup = document.getElementById('paymentTypeGroup');
-            const paymentSelect = document.getElementById('shipmentPaymentType');
-            
-            // الكلمات الدلالية للإسكندرية
-            const alexKeywords = ['اسكندرية', 'الاسكندرية', 'إسكندرية', 'الإسكندرية', 'اسكندريه', 'الاسكندريه'];
-            
-            const isAlex = alexKeywords.some(keyword => cityValue.includes(keyword));
-            
-            if (isAlex) {
-                paymentGroup.style.display = 'block';
-            } else {
-                paymentGroup.style.display = 'none';
-                paymentSelect.value = 'normal'; // إرجاع القيمة الافتراضية لمنع التحايل
-            }
-        };
-
-        // --- إصدار البوليصة العادية ---
-        window.saveShipment = async () => {
-            const name = document.getElementById('recName').value;
-            const phone = document.getElementById('recPhone').value.trim();
-            const city = document.getElementById('recCity').value;
-            const address = document.getElementById('recAddress').value;
-            const amount = document.getElementById('codAmount').value;
-            
-            // سحب قيمة نوع التحصيل
-            const paymentType = document.getElementById('shipmentPaymentType').value;
-
-            if(!name || !phone || !city || !address || !amount) return Swal.fire('نقص بيانات', 'لا يمكن توليد البوليصة ببيانات مفقودة.', 'warning');
-            if(!/^01[0125][0-9]{8}$/.test(phone)) return Swal.fire('خطأ هيكلي', 'رقم الموبايل غير صحيح.', 'error');
-
-            const btn = document.getElementById('btnSave'); btn.disabled = true; btn.innerHTML = "جاري التشفير...";
-            try {
-                await addDoc(collection(db, "shipments"), {
-                    merchantEmail, name, phone, phone2: document.getElementById('recPhone2').value || "لا يوجد",
-                    city, address, weight: Number(document.getElementById('recWeight').value||1),
-                    amount: Number(amount), 
-                    paymentType: paymentType, // زرعنا الحقل الجديد هنا عشان الأدمن يشوفه
-                    status: "قيد التوصيل", deleted: false, timestamp: new Date()
-                });
-                document.getElementById('addModal').style.display='none';
-                Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم إصدار البوليصة', showConfirmButton:false, timer:2000});
-                document.querySelectorAll('#addModal input').forEach(inp => inp.value = '');
-                
-                // إعادة الإخفاء للحقل الذكي
-                document.getElementById('paymentTypeGroup').style.display='none';
-                document.getElementById('shipmentPaymentType').value = 'normal';
-
-            } catch(e) { Swal.fire('خطأ بالشبكة', e.message, 'error'); }
-            btn.disabled = false; btn.innerHTML = "حفظ وتوليد البوليصة";
-        };
-
-        // --- تحميل الشحنات ---
-        function loadShipments() {
-            onSnapshot(query(collection(db, "shipments"), where("merchantEmail", "==", merchantEmail)), (snap) => {
-                let total = 0, html = "", count = 0;
-                let docs = [];
-                snap.forEach(doc => docs.push({id: doc.id, ...doc.data()}));
-                docs.sort((a, b) => b.timestamp - a.timestamp);
-
-                docs.forEach(d => {
-                    if(d.deleted) return;
-                    total += Number(d.amount) || 0; count++;
-                    const awb = "AXN" + d.id.substring(0,5).toUpperCase();
-                    html += `<tr><td><span class="awb-badge">${awb}</span></td><td><b>${d.name}</b></td>
-                        <td dir="ltr">${d.phone}</td><td>${d.city}</td><td style="color:var(--primary-red); font-weight:bold;">${d.amount}</td>
-                        <td style="font-weight:bold; color:${d.status==='تم التسليم'?'#28a745':(d.status==='مرتجع'?'#dc3545':'#f39c12')}">${d.status}</td>
-                        <td><button class="print-btn" onclick="window.printWB('${awb}', '${d.name}', '${d.phone}', '${d.phone2}', '${d.city}', '${d.address}', '${d.weight}', '${d.amount}')"><i class="fa-solid fa-print"></i> طباعة A5</button></td></tr>`;
-                });
-                document.getElementById('tableBody').innerHTML = html;
-                document.getElementById('totalShipments').innerText = count;
-                document.getElementById('totalMoney').innerText = total + " ج.م";
-            });
-        }
-
-        // --- هندسة الطباعة الصارمة (Strict A5 Geometry) ---
-        window.printWB = (awb, name, p1, p2, city, addr, w, amt) => {
-            const printContent = `
-            <!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>AWB: ${awb}</title>
-            <style>
-                @media print {
-                    @page { size: A5 portrait; margin: 0mm; } /* margin 0 بتلغي رقم الصفحة واللينك */
-                    body { margin: 0; padding: 0; background: #fff; display: block; }
-                    .strict-a5-wrapper { 
-                        width: 148mm; height: 195mm; /* قللنا الطول شوية عشان ميرميش صفحة تانية */
-                        padding: 10mm; box-sizing: border-box; 
-                        border: 2px solid #000; overflow: hidden; margin: 0 auto;
-                    }
-                }
-                body { font-family: sans-serif; background: #eee; display: flex; justify-content: center; padding: 20px; }
-                .strict-a5-wrapper { background: white; width: 148mm; min-height: 195mm; padding: 10mm; box-sizing: border-box; border: 2px solid #000; }
-                .header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 5mm; margin-bottom: 5mm; }
-                .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; margin-bottom: 5mm; border: 1px solid #000; padding: 5mm; }
-                .cod { text-align: center; border: 2px solid #000; padding: 5mm; background: #f9f9f9; }
-                p { margin: 5px 0; font-size: 14px; } h3 { margin: 0 0 10px 0; font-size: 16px;}
-            </style>
-            <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"><\/script>
-            </head><body>
-                <div class="strict-a5-wrapper">
-                    <div class="header">
-                        <div><h2 style="margin:0;">AXON EXPRESS</h2><p style="margin:0;color:#666;">الإسكندرية - المنشية</p></div>
-                        <div style="text-align:center;"><svg id="bc"></svg><br><b style="font-size:18px;">${awb}</b></div>
-                    </div>
-                    <div class="grid">
-                        <div><h3>بيانات المرسل</h3><p>التاجر: <b>${merchantName}</b></p><p>الوزن: <b>${w} كجم</b></p></div>
-                        <div style="border-right:1px solid #000; padding-right:5mm;">
-                            <h3>بيانات المستلم</h3><p>الاسم: <b>${name}</b></p><p>الهاتف: <b dir="ltr">${p1}</b></p>
-                            ${p2 && p2 !== 'undefined' && p2 !== 'لا يوجد' ? `<p>بديل: <b dir="ltr">${p2}</b></p>` : ''}
-                            <p>المحافظة: <b>${city}</b></p><p>العنوان: <b>${addr}</b></p>
-                        </div>
-                    </div>
-                    <div class="cod"><h3>المبلغ المطلوب تحصيله (COD)</h3><h1 style="margin:0; font-size: 32px;">${amt} EGP</h1></div>
-                    <div style="text-align:center; font-size:12px; margin-top:10mm; font-weight:bold;">تم الإصدار إلكترونياً من بوابة التجار | خدمة العملاء: 01147000882</div>
-                </div>
-                <script>JsBarcode("#bc", "${awb}", {format:"CODE128", width:2, height:45, displayValue:false}); setTimeout(window.print, 500);<\/script>
-            </body></html>`;
-            const win = window.open('', '_blank');
-            win.document.write(printContent); win.document.close();
-        };
-
-        // --- اشتريلي ---
-        window.togglePaymentDetails = () => {
-            const val = document.getElementById('eshPayment').value;
-            document.getElementById('instapayDetails').style.display = val === 'instapay' ? 'block' : 'none';
-            document.getElementById('vfcashDetails').style.display = val === 'vfcash' ? 'block' : 'none';
-            document.getElementById('ajelDetails').style.display = val === 'ajel' ? 'block' : 'none';
-        };
-
-        window.submitEshteryly = async () => {
-            const details = document.getElementById('eshDetails').value.trim();
-            const address = document.getElementById('eshAddress').value.trim();
-            const payment = document.getElementById('eshPayment').value;
-            
-            if(!details || !address || !payment) return Swal.fire('تنبيه', 'البيانات غير مكتملة.', 'warning');
-            if(payment === 'ajel' && !document.getElementById('ajelAgree').checked) return Swal.fire('خطأ', 'يلزم الموافقة على شروط الدفع الآجل.', 'error');
-            if(!document.getElementById('legalAgree').checked) return Swal.fire('رفض العملية', 'يجب إقرار المسؤولية قبل الإرسال.', 'error');
-
-            try {
-                await addDoc(collection(db, "eshteryly_orders"), {
-                    merchantEmail, details, address, paymentMethod: payment, status: "قيد المراجعة", timestamp: new Date()
-                });
-                document.getElementById('eshterylyModal').style.display='none';
-                Swal.fire({icon:'success', title:'تم الاستلام', text:'مهمتك الآن على رادار الإدارة', timer:2000});
-                document.getElementById('eshDetails').value = ''; document.getElementById('eshAddress').value = '';
-                document.getElementById('eshPayment').value = ''; document.getElementById('legalAgree').checked = false;
-                window.togglePaymentDetails();
-            } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
-        };
-
-        // --- الهندسة الجغرافية (إصلاح رابط اللوكيشن) ---
-        window.getLocation = () => {
-            const btn = document.getElementById('locationBtn');
-            if(navigator.geolocation) {
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري قراءة الأقمار الصناعية...';
-                navigator.geolocation.getCurrentPosition(
-                    (pos) => {
-                        const link = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
-                        const addressField = document.getElementById('eshAddress');
-                        addressField.value = addressField.value ? addressField.value + ` \n📍 ${link}` : `📍 ${link}`;
-                        btn.innerHTML = '✅ تم التقاط الإحداثيات';
-                        setTimeout(() => btn.innerHTML = '📍 سحب إحداثيات موقعي الحالي', 3000);
-                    },
-                    (err) => { btn.innerHTML = '📍 سحب إحداثيات موقعي الحالي'; Swal.fire('تم الحجب', 'الرجاء تفعيل إذن الـ GPS في المتصفح.', 'error'); },
-                    { enableHighAccuracy: true }
-                );
-            }
-        };
-
-        // --- محرك البحث ---
-        document.getElementById('searchInput').addEventListener('keyup', function() {
-            const val = this.value.toLowerCase();
-            document.querySelectorAll('#tableBody tr').forEach(r => r.style.display = r.innerText.toLowerCase().includes(val) ? '' : 'none');
-        });
-
-        // --- نظام التحكم البيئي (Radio & Theme) ---
-        const radioPlayer = document.getElementById('axonRadioPlayer');
-        const radioIcon = document.getElementById('radioIcon');
-        const themeIcon = document.getElementById('themeIcon');
-
-        window.toggleRadio = () => {
-            if (radioPlayer.paused) {
-                radioPlayer.src = "http://37.157.242.101:17317/stream?cb=" + new Date().getTime(); 
-                radioPlayer.play().catch(err => console.log("تنبيه مشغل الراديو: ", err));
-                radioIcon.style.color = '#28a745';
-                radioIcon.classList.add('fa-beat');
-            } else {
-                radioPlayer.pause();
-                radioPlayer.src = ""; 
-                radioIcon.style.color = 'var(--primary-red)';
-                radioIcon.classList.remove('fa-beat');
-            }
-        };
-
-        window.toggleTheme = () => {
-            document.body.classList.toggle('dark-mode');
-            const isDark = document.body.classList.contains('dark-mode');
-            localStorage.setItem('axon_merchant_theme', isDark ? 'dark' : 'light');
-            themeIcon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-        };
-        
-        if(localStorage.getItem('axon_merchant_theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-            setTimeout(() => { if(themeIcon) themeIcon.className = 'fa-solid fa-sun'; }, 100);
-        }
+        import{initializeApp as a}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";import{getAuth as b,onAuthStateChanged as c,signOut as d}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";import{getFirestore as e,collection as f,addDoc as g,onSnapshot as h,query as i,where as j,orderBy as k}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";const app=a({apiKey:"AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",authDomain:"axon-express-2f534.firebaseapp.com",projectId:"axon-express-2f534",storageBucket:"axon-express-2f534.firebasestorage.app",messagingSenderId:"958528400260",appId:"1:958528400260:web:504ae94f3ef2225b928bd1"});const auth=b(app);const db=e(app);let mE="",mN="";c(auth,z=>{if(z){mE=z.email;mN=mE.split('@')[0];document.getElementById('merchantEmailDisplay').innerHTML=`مرحباً بك: ${mN} <i class="fa-solid fa-bolt" style="color:#ffc107;"></i>`;lS();}else{window.location.href="index.html";}});window.logout=()=>d(auth).then(()=>window.location.href="index.html");window.checkCityFilter=()=>{const z=document.getElementById('recCity').value.trim().toLowerCase(),y=document.getElementById('paymentTypeGroup'),x=document.getElementById('shipmentPaymentType'),w=['اسكندرية','الاسكندرية','إسكندرية','الإسكندرية','اسكندريه','الاسكندريه'],v=w.some(u=>z.includes(u));if(v){y.style.display='block';}else{y.style.display='none';x.value='normal';}};window.saveShipment=async()=>{const z=document.getElementById('recName').value,y=document.getElementById('recPhone').value.trim(),x=document.getElementById('recCity').value,w=document.getElementById('recAddress').value,v=document.getElementById('codAmount').value,u=document.getElementById('shipmentPaymentType').value;if(!z||!y||!x||!w||!v)return Swal.fire('نقص بيانات','لا يمكن توليد البوليصة ببيانات مفقودة.','warning');if(!/^01[0125][0-9]{8}$/.test(y))return Swal.fire('خطأ هيكلي','رقم الموبايل غير صحيح.','error');const t=document.getElementById('btnSave');t.disabled=true;t.innerHTML="جاري التشفير...";try{await g(f(db,"shipments"),{merchantEmail:mE,name:z,phone:y,phone2:document.getElementById('recPhone2').value||"لا يوجد",city:x,address:w,weight:Number(document.getElementById('recWeight').value||1),amount:Number(v),paymentType:u,status:"قيد التوصيل",deleted:false,timestamp:new Date()});document.getElementById('addModal').style.display='none';Swal.fire({toast:true,position:'top-end',icon:'success',title:'تم إصدار البوليصة',showConfirmButton:false,timer:2000});document.querySelectorAll('#addModal input').forEach(s=>s.value='');document.getElementById('paymentTypeGroup').style.display='none';document.getElementById('shipmentPaymentType').value='normal';}catch(s){Swal.fire('خطأ بالشبكة',s.message,'error');}t.disabled=false;t.innerHTML="حفظ وتوليد البوليصة";};function lS(){h(i(f(db,"shipments"),j("merchantEmail","==",mE)),z=>{let y=0,x="",w=0,v=[];z.forEach(u=>v.push({id:u.id,...u.data()}));v.sort((a,b)=>b.timestamp-a.timestamp);v.forEach(u=>{if(u.deleted)return;y+=Number(u.amount)||0;w++;const t="AXN"+u.id.substring(0,5).toUpperCase();x+=`<tr><td><span class="awb-badge">${t}</span></td><td><b>${u.name}</b></td><td dir="ltr">${u.phone}</td><td>${u.city}</td><td style="color:var(--primary-red); font-weight:bold;">${u.amount}</td><td style="font-weight:bold; color:${u.status==='تم التسليم'?'#28a745':(u.status==='مرتجع'?'#dc3545':'#f39c12')}">${u.status}</td><td><button class="print-btn" onclick="window.printWB('${t}', '${u.name}', '${u.phone}', '${u.phone2}', '${u.city}', '${u.address}', '${u.weight}', '${u.amount}')"><i class="fa-solid fa-print"></i> طباعة A5</button></td></tr>`;});document.getElementById('tableBody').innerHTML=x;document.getElementById('totalShipments').innerText=w;document.getElementById('totalMoney').innerText=y+" ج.م";});}window.printWB=(z,y,x,w,v,u,t,s)=>{const r=`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>AWB: ${z}</title><style>@media print { @page { size: A5 portrait; margin: 0mm; } body { margin: 0; padding: 0; background: #fff; display: block; } .strict-a5-wrapper { width: 148mm; height: 195mm; padding: 10mm; box-sizing: border-box; border: 2px solid #000; overflow: hidden; margin: 0 auto; } } body { font-family: sans-serif; background: #eee; display: flex; justify-content: center; padding: 20px; } .strict-a5-wrapper { background: white; width: 148mm; min-height: 195mm; padding: 10mm; box-sizing: border-box; border: 2px solid #000; } .header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 5mm; margin-bottom: 5mm; } .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; margin-bottom: 5mm; border: 1px solid #000; padding: 5mm; } .cod { text-align: center; border: 2px solid #000; padding: 5mm; background: #f9f9f9; } p { margin: 5px 0; font-size: 14px; } h3 { margin: 0 0 10px 0; font-size: 16px;}</style><script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"><\/script></head><body><div class="strict-a5-wrapper"><div class="header"><div><h2 style="margin:0;">AXON EXPRESS</h2><p style="margin:0;color:#666;">الإسكندرية - المنشية</p></div><div style="text-align:center;"><svg id="bc"></svg><br><b style="font-size:18px;">${z}</b></div></div><div class="grid"><div><h3>بيانات المرسل</h3><p>التاجر: <b>${mN}</b></p><p>الوزن: <b>${t} كجم</b></p></div><div style="border-right:1px solid #000; padding-right:5mm;"><h3>بيانات المستلم</h3><p>الاسم: <b>${y}</b></p><p>الهاتف: <b dir="ltr">${x}</b></p>${w&&w!=='undefined'&&w!=='لا يوجد'?`<p>بديل: <b dir="ltr">${w}</b></p>`:''}<p>المحافظة: <b>${v}</b></p><p>العنوان: <b>${u}</b></p></div></div><div class="cod"><h3>المبلغ المطلوب تحصيله (COD)</h3><h1 style="margin:0; font-size: 32px;">${s} EGP</h1></div><div style="text-align:center; font-size:12px; margin-top:10mm; font-weight:bold;">تم الإصدار إلكترونياً من بوابة التجار | خدمة العملاء: 01147000882</div></div><script>JsBarcode("#bc", "${z}", {format:"CODE128", width:2, height:45, displayValue:false}); setTimeout(window.print, 500);<\/script></body></html>`;const q=window.open('','_blank');q.document.write(r);q.document.close();};window.togglePaymentDetails=()=>{const z=document.getElementById('eshPayment').value;document.getElementById('instapayDetails').style.display=z==='instapay'?'block':'none';document.getElementById('vfcashDetails').style.display=z==='vfcash'?'block':'none';document.getElementById('ajelDetails').style.display=z==='ajel'?'block':'none';};window.submitEshteryly=async()=>{const z=document.getElementById('eshDetails').value.trim(),y=document.getElementById('eshAddress').value.trim(),x=document.getElementById('eshPayment').value;if(!z||!y||!x)return Swal.fire('تنبيه','البيانات غير مكتملة.','warning');if(x==='ajel'&&!document.getElementById('ajelAgree').checked)return Swal.fire('خطأ','يلزم الموافقة على شروط الدفع الآجل.','error');if(!document.getElementById('legalAgree').checked)return Swal.fire('رفض العملية','يجب إقرار المسؤولية قبل الإرسال.','error');try{await g(f(db,"eshteryly_orders"),{merchantEmail:mE,details:z,address:y,paymentMethod:x,status:"قيد المراجعة",timestamp:new Date()});document.getElementById('eshterylyModal').style.display='none';Swal.fire({icon:'success',title:'تم الاستلام',text:'مهمتك الآن على رادار الإدارة',timer:2000});document.getElementById('eshDetails').value='';document.getElementById('eshAddress').value='';document.getElementById('eshPayment').value='';document.getElementById('legalAgree').checked=false;window.togglePaymentDetails();}catch(w){Swal.fire('خطأ',w.message,'error');}};window.getLocation=()=>{const z=document.getElementById('locationBtn');if(navigator.geolocation){z.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> جاري قراءة الأقمار الصناعية...';navigator.geolocation.getCurrentPosition(y=>{const x=`https://maps.google.com/?q=${y.coords.latitude},${y.coords.longitude}`,w=document.getElementById('eshAddress');w.value=w.value?w.value+` \n📍 ${x}`:`📍 ${x}`;z.innerHTML='✅ تم التقاط الإحداثيات';setTimeout(()=>z.innerHTML='📍 سحب إحداثيات موقعي الحالي',3000);},y=>{z.innerHTML='📍 سحب إحداثيات موقعي الحالي';Swal.fire('تم الحجب','الرجاء تفعيل إذن الـ GPS في المتصفح.','error');},{enableHighAccuracy:true});}};document.getElementById('searchInput').addEventListener('keyup',function(){const z=this.value.toLowerCase();document.querySelectorAll('#tableBody tr').forEach(y=>y.style.display=y.innerText.toLowerCase().includes(z)?'':'none');});const radioPlayer=document.getElementById('axonRadioPlayer'),radioIcon=document.getElementById('radioIcon'),themeIcon=document.getElementById('themeIcon');window.toggleRadio=()=>{if(radioPlayer.paused){radioPlayer.src="http://37.157.242.101:17317/stream?cb="+new Date().getTime();radioPlayer.play().catch(z=>{});radioIcon.style.color='#28a745';radioIcon.classList.add('fa-beat');}else{radioPlayer.pause();radioPlayer.src="";radioIcon.style.color='var(--primary-red)';radioIcon.classList.remove('fa-beat');}};window.toggleTheme=()=>{document.body.classList.toggle('dark-mode');const z=document.body.classList.contains('dark-mode');localStorage.setItem('axon_merchant_theme',z?'dark':'light');themeIcon.className=z?'fa-solid fa-sun':'fa-solid fa-moon';};if(localStorage.getItem('axon_merchant_theme')==='dark'){document.body.classList.add('dark-mode');setTimeout(()=>{if(themeIcon)themeIcon.className='fa-solid fa-sun';},100);}
     </script>
 </body>
 </html>
