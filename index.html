@@ -357,7 +357,6 @@
                 <p style="margin: 0; font-size: 13px; color: #555;"><b>عنوان التسليم:</b> <span id="dashAddress"></span></p>
             </div>
 
-            <!-- تم تعديل هذه الأزرار لإخفاء اللوحة البيضاء قبل فتح رسائل التأكيد -->
             <button class="dash-action-btn btn-gps" onclick="window.openLocationFineModal()"><i class="fa-solid fa-map-location-dot"></i> طلب تغيير مسار / تعديل العنوان</button>
             <button class="dash-action-btn btn-delay" onclick="window.rescheduleDelivery()"><i class="fa-solid fa-clock-rotate-left"></i> تأجيل موعد الاستلام لبكرة</button>
             <button class="dash-action-btn btn-support" onclick="window.openSupportTicket()"><i class="fa-solid fa-headset"></i> التحدث مع خدمة العملاء بخصوص الشحنة</button>
@@ -385,10 +384,14 @@
 
         AOS.init({ duration: 800, once: true });
 
-        // --- دوال اللوجستيات الأصلية ---
-        window.livePrices = { alex: 0, cairo: 0, beheira: 0, delta: 0, saeed: 0 };
+        // --- دوال اللوجستيات الأصلية + استدعاء الغرامة ---
+        window.livePrices = { alex: 0, cairo: 0, beheira: 0, delta: 0, saeed: 0, penalty: 30 };
+        
         onSnapshot(doc(db, "settings", "shipping_prices"), (docSnap) => {
-            if (docSnap.exists()) { window.livePrices = docSnap.data(); window.calculateRate(); }
+            if (docSnap.exists()) { 
+                window.livePrices = docSnap.data(); 
+                window.calculateRate(); 
+            }
         });
 
         window.calculateRate = () => {
@@ -517,85 +520,96 @@
             }
         }
 
-        function getDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371; 
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
-            return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))); 
-        }
-
-        // تم إضافة إخفاء اللوحة قبل الـ Swal لحل مشكلة الـ Z-Index
-        window.openLocationFineModal = () => {
+        // التعديل: قراءة الغرامة من البورصة وتطبيقها عند تغيير العنوان
+        window.openLocationFineModal = async () => {
             if(currentTrackedDoc.status === 'تم التسليم' || currentTrackedDoc.status === 'تمت التسوية') return Swal.fire('مغلق', 'لا يمكن تعديل مسار شحنة تم تسليمها.', 'info');
 
-            document.getElementById('trackingDashboardModal').style.display = 'none'; // إخفاء اللوحة مؤقتاً
+            document.getElementById('trackingDashboardModal').style.display = 'none';
+            const fixedFine = Number(window.livePrices.penalty) || 30; // سحب الغرامة من الداتا
 
-            Swal.fire({
+            const { value: formValues } = await Swal.fire({
                 title: 'تعديل مسار الشحنة',
-                text: 'سيتم سحب موقعك الحالي عبر الأقمار الصناعية وحساب الغرامة المقررة (12 ج.م لكل كيلومتر).',
+                html: `
+                    <p style="font-size:13px; color:#666;">سيتم إضافة <b>رسوم تغيير مسار (${fixedFine} ج.م)</b> على إجمالي الشحنة.</p>
+                    <input id="new-address-input" class="swal2-input" placeholder="اكتب العنوان الجديد بالتفصيل...">
+                `,
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'تحديد موقعي الآن 📍',
-                cancelButtonText: 'إلغاء'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    if(!navigator.geolocation) return Swal.fire('خطأ', 'متصفحك لا يدعم تحديد الموقع.', 'error');
-                    
-                    Swal.fire({ title: 'جاري الحساب...', didOpen: () => { Swal.showLoading(); }});
-
-                    navigator.geolocation.getCurrentPosition(async (pos) => {
-                        const newLat = pos.coords.latitude; const newLng = pos.coords.longitude;
-                        const baseLat = 31.1990; const baseLng = 29.8944; 
-                        
-                        const distanceKm = getDistance(baseLat, baseLng, newLat, newLng);
-                        const fine = Math.ceil(distanceKm) * 12; 
-
-                        Swal.fire({
-                            title: 'تقرير إعادة التوجيه',
-                            html: `<b>المسافة المقدرة:</b> ${distanceKm.toFixed(1)} كم<br><b>الغرامة المستحقة:</b> <span style="color:red; font-weight:bold;">${fine} ج.م</span><br>سيتم إضافة المبلغ على إجمالي التحصيل (COD).`,
-                            icon: 'info',
-                            showCancelButton: true,
-                            confirmButtonText: 'موافق، أضف الغرامة وعدل المسار',
-                            cancelButtonText: 'تراجع',
-                            confirmButtonColor: '#b82329'
-                        }).then(async (res) => {
-                            if(res.isConfirmed) {
-                                try {
-                                    const newAmount = Number(currentTrackedDoc.amount) + fine;
-                                    const newAddressLink = `https://maps.google.com/?q=${newLat},${newLng}`;
-                                    await updateDoc(doc(db, "shipments", currentTrackedDoc.id), {
-                                        amount: newAmount,
-                                        address: currentTrackedDoc.address + ` | ⚠️ مسار معدل: ${newAddressLink}`,
-                                        fineAdded: fine,
-                                        status: "قيد التوصيل" 
-                                    });
-                                    currentTrackedDoc.amount = newAmount; 
-                                    Swal.fire('تمت العملية', 'تم تعديل المسار وإرسال التوجيهات الجديدة للأسطول.', 'success');
-                                } catch (e) { Swal.fire('خطأ', 'حدثت مشكلة أثناء تحديث البيانات.', 'error'); }
-                            } else { openDashboard(); } // رجوع اللوحة لو تراجع
-                        });
-                    }, (err) => { Swal.fire('حجب الـ GPS', 'يرجى السماح للمتصفح بالوصول لموقعك.', 'error'); openDashboard(); }, { enableHighAccuracy: true });
-                } else { openDashboard(); } // رجوع اللوحة لو تراجع
+                confirmButtonText: 'موافق، تأكيد العنوان',
+                cancelButtonText: 'تراجع',
+                confirmButtonColor: '#b82329',
+                preConfirm: () => {
+                    const newAddr = document.getElementById('new-address-input').value.trim();
+                    if (!newAddr) Swal.showValidationMessage('الرجاء كتابة العنوان الجديد');
+                    return newAddr;
+                }
             });
+
+            if (formValues) {
+                try {
+                    const newAmount = Number(currentTrackedDoc.amount) + fixedFine;
+                    await updateDoc(doc(db, "shipments", currentTrackedDoc.id), {
+                        amount: newAmount,
+                        address: formValues + " (معدل)",
+                        fineAdded: (currentTrackedDoc.fineAdded || 0) + fixedFine,
+                        status: "قيد التوصيل" 
+                    });
+                    currentTrackedDoc.amount = newAmount; 
+                    currentTrackedDoc.address = formValues + " (معدل)";
+                    Swal.fire('تم التعديل', 'تم تغيير المسار وإضافة الرسوم بنجاح.', 'success').then(() => openDashboard());
+                } catch (e) { 
+                    Swal.fire('خطأ', 'حدثت مشكلة أثناء تحديث البيانات.', 'error').then(() => openDashboard()); 
+                }
+            } else { 
+                openDashboard(); 
+            }
         };
 
-        // تم إضافة إخفاء اللوحة قبل الـ Swal
+        // التعديل: تطبيق الغرامة على التأجيل فقط في حالة (قيد التوصيل أو مؤجل أو مرتجع)
         window.rescheduleDelivery = async () => {
-            if(currentTrackedDoc.status === 'تم التسليم') return Swal.fire('مغلق', 'لا يمكن تأجيل شحنة تم تسليمها.', 'info');
+            if(currentTrackedDoc.status === 'تم التسليم' || currentTrackedDoc.status === 'تمت التسوية') return Swal.fire('مغلق', 'لا يمكن تأجيل شحنة تم تسليمها.', 'info');
             
             document.getElementById('trackingDashboardModal').style.display = 'none';
 
-            const result = await Swal.fire({ title: 'تأجيل الاستلام', text: 'هل تود تأجيل استلام الشحنة للغد؟', icon: 'question', showCancelButton: true, confirmButtonText: 'نعم، قم بالتأجيل', cancelButtonText: 'إلغاء' });
+            // التحقق من حالة الشحنة لتطبيق الغرامة
+            const isLateChange = (currentTrackedDoc.status === 'قيد التوصيل' || currentTrackedDoc.status === 'مؤجل' || currentTrackedDoc.status === 'مرتجع');
+            const penaltyFee = isLateChange ? (Number(window.livePrices.penalty) || 30) : 0;
+            
+            let textMsg = isLateChange 
+                ? `لقد تحرك المندوب بالفعل أو جرت محاولة تسليم. تأجيل الموعد الآن سيضيف غرامة قدرها (${penaltyFee} ج.م) لتعويض وقت ومجهود الكابتن. هل توافق؟` 
+                : `تأجيل الاستلام مجاني لأن المندوب لم يتحرك بعد. هل تود تأجيل استلام الشحنة للغد؟`;
+
+            const result = await Swal.fire({ 
+                title: 'تأجيل الاستلام', 
+                text: textMsg, 
+                icon: isLateChange ? 'warning' : 'question', 
+                showCancelButton: true, 
+                confirmButtonText: 'نعم، قم بالتأجيل', 
+                cancelButtonText: 'إلغاء' 
+            });
+
             if(result.isConfirmed) {
                 try {
-                    await updateDoc(doc(db, "shipments", currentTrackedDoc.id), { status: "مؤجل", rescheduleRequest: true });
+                    let updates = { status: "مؤجل", rescheduleRequest: true };
+                    let newAmount = Number(currentTrackedDoc.amount);
+                    
+                    if (isLateChange) {
+                        newAmount += penaltyFee;
+                        updates.amount = newAmount;
+                        updates.fineAdded = (currentTrackedDoc.fineAdded || 0) + penaltyFee;
+                        updates.address = currentTrackedDoc.address + " | ⚠️ (غرامة تأجيل)";
+                    }
+
+                    await updateDoc(doc(db, "shipments", currentTrackedDoc.id), updates);
+                    
+                    currentTrackedDoc.amount = newAmount;
+                    if(isLateChange) currentTrackedDoc.address += " | ⚠️ (غرامة تأجيل)";
+
                     Swal.fire('تم التأجيل', 'تم إبلاغ الأسطول بتأجيل موعد التوصيل.', 'success').then(() => openDashboard());
                 } catch(e) { Swal.fire('خطأ', 'فشل الاتصال.', 'error').then(() => openDashboard()); }
             } else { openDashboard(); }
         };
 
-        // تم إضافة إخفاء اللوحة قبل الـ Swal
         window.openSupportTicket = async () => {
             document.getElementById('trackingDashboardModal').style.display = 'none';
 
