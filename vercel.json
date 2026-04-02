@@ -1,0 +1,18 @@
+{
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/radio-stream",
+      "destination": "http://37.157.242.101:17317/stream"
+    }
+  ]
+}
