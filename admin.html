@@ -95,7 +95,6 @@
 
     <div class="container">
         
-        <!-- التبويبات العلوية -->
         <div class="admin-tabs">
             <button class="admin-tab-btn active" onclick="switchAdminTab('mainOps')"><i class="fa-solid fa-truck-fast"></i> العمليات الرئيسية</button>
             <button class="admin-tab-btn" onclick="switchAdminTab('supportOps')" style="position: relative;">
@@ -104,7 +103,6 @@
             </button>
         </div>
 
-        <!-- التبويب الأول: العمليات الأساسية (القديم كله) -->
         <div id="mainOps" class="admin-tab-content active">
             <div class="stats-grid">
                 <div class="stat-card"><h3>إجمالي الشحنات</h3><div class="value" id="totalShipments">0</div></div>
@@ -157,6 +155,12 @@
                     <div><label style="font-size:13px; font-weight:bold;">البحيرة:</label><input type="number" id="priceBeheira" style="width:100%; padding:8px; border-radius:5px;"></div>
                     <div><label style="font-size:13px; font-weight:bold;">الدلتا والقناة:</label><input type="number" id="priceDelta" style="width:100%; padding:8px; border-radius:5px;"></div>
                     <div><label style="font-size:13px; font-weight:bold;">الصعيد:</label><input type="number" id="priceSaeed" style="width:100%; padding:8px; border-radius:5px;"></div>
+                    
+                    <!-- إضافة خانة الغرامة الجديدة بناء على توجيهات الـ CEO -->
+                    <div style="grid-column: 1 / -1; background: #ffe0b2; padding: 10px; border-radius: 5px; border: 1px solid #ff9800; margin-top: 5px;">
+                        <label style="font-size:13px; font-weight:bold; color: #d84315;"><i class="fa-solid fa-triangle-exclamation"></i> غرامة تغيير المسار / تأجيل الموعد المتأخر للعميل:</label>
+                        <input type="number" id="pricePenalty" placeholder="مثال: 30" style="width:100%; padding:8px; border-radius:5px; border: 1px solid #ff9800; font-weight:bold; color:#d84315;">
+                    </div>
                 </div>
                 <button onclick="window.updateLivePrices()" style="background: #e65100; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s;">تحديث التسعيرة في الشبكة 📡</button>
                 <p id="lastUpdateText" style="font-size: 11px; color: gray; text-align: center; margin-top: 10px;"></p>
@@ -174,7 +178,6 @@
             </div>
         </div>
 
-        <!-- التبويب الثاني: الدعم والطلبات (جديد) -->
         <div id="supportOps" class="admin-tab-content">
             <div class="admin-section">
                 <h2><i class="fa-solid fa-headset"></i> تذاكر خدمة العملاء (العملاء والموقع)</h2>
@@ -247,7 +250,6 @@
         const secondaryApp = initializeApp(firebaseConfig, "SecondaryApp");
         const secondaryAuth = getAuth(secondaryApp);
 
-        // --- تبديل التبويبات (جديد) ---
         window.switchAdminTab = (tabId) => {
             document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
@@ -264,12 +266,11 @@
             loadShipments();
             loadRadarTasks();
             trackCouriers();
-            loadSupportTickets(); // سحب بيانات الدعم والطلبات
+            loadSupportTickets(); 
         });
 
         window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
 
-        // --- إنشاء حسابات جديدة ---
         window.createNewAccount = async () => {
             const name = document.getElementById('newAccName').value;
             const email = document.getElementById('newAccEmail').value;
@@ -302,7 +303,6 @@
             finally { btn.innerHTML = 'إنشاء الحساب فوراً 🚀'; btn.disabled = false; }
         };
 
-        // --- إعداد الخريطة ---
         const adminMap = L.map('adminMap').setView([31.2001, 29.9187], 12);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(adminMap);
         const courierMarkers = {};
@@ -436,22 +436,37 @@
         window.closeModal = (id) => document.getElementById(id).style.display = 'none';
         window.saveEditedShipment = async () => { const id = document.getElementById('editDocId').value; const updates = { name: document.getElementById('editName').value, phone: document.getElementById('editPhone').value, phone2: document.getElementById('editPhone2').value, city: document.getElementById('editCity').value, address: document.getElementById('editAddress').value, weight: Number(document.getElementById('editWeight').value), amount: Number(document.getElementById('editAmount').value) }; document.getElementById('btnSaveEdit').innerHTML = "جاري الحفظ..."; await updateDoc(doc(db, "shipments", id), updates); document.getElementById('editModal').style.display = 'none'; document.getElementById('btnSaveEdit').innerHTML = "تأكيد التعديلات"; Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم التعديل', showConfirmButton:false, timer:2000}); };
 
-        window.updateLivePrices = async () => { const vals = { alex: document.getElementById("priceAlex")?.value, cairo: document.getElementById("priceCairo")?.value, beheira: document.getElementById("priceBeheira")?.value, delta: document.getElementById("priceDelta")?.value, saeed: document.getElementById("priceSaeed")?.value }; if(!vals.alex || !vals.cairo || !vals.beheira || !vals.delta || !vals.saeed) return Swal.fire('خطأ', 'أكمل جميع الحقول.', 'error'); await setDoc(doc(db, "settings", "shipping_prices"), { alex: Number(vals.alex), cairo: Number(vals.cairo), beheira: Number(vals.beheira), delta: Number(vals.delta), saeed: Number(vals.saeed), lastUpdate: new Date().toLocaleTimeString("ar-EG") }, { merge: true }); Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم بث التسعيرة', showConfirmButton:false, timer:2000}); };
-        onSnapshot(doc(db, "settings", "shipping_prices"), (docSnap) => { if(docSnap.exists()) { const d = docSnap.data(); ['Alex','Cairo','Beheira','Delta','Saeed'].forEach(reg => { if(document.getElementById(`price${reg}`)) document.getElementById(`price${reg}`).value = d[reg.toLowerCase()] || ''; }); document.getElementById("lastUpdateText").innerText = "آخر بث: " + (d.lastUpdate || "غير معروف"); } });
+        // --- تحديث كود البورصة ليتضمن غرامة التأخير/المسار ---
+        window.updateLivePrices = async () => { 
+            const vals = { 
+                alex: document.getElementById("priceAlex")?.value, 
+                cairo: document.getElementById("priceCairo")?.value, 
+                beheira: document.getElementById("priceBeheira")?.value, 
+                delta: document.getElementById("priceDelta")?.value, 
+                saeed: document.getElementById("priceSaeed")?.value,
+                penalty: document.getElementById("pricePenalty")?.value // سحب قيمة الغرامة
+            }; 
+            if(!vals.alex || !vals.cairo || !vals.beheira || !vals.delta || !vals.saeed || !vals.penalty) return Swal.fire('خطأ', 'أكمل جميع الحقول بما فيها حقل الغرامة.', 'error'); 
+            await setDoc(doc(db, "settings", "shipping_prices"), { alex: Number(vals.alex), cairo: Number(vals.cairo), beheira: Number(vals.beheira), delta: Number(vals.delta), saeed: Number(vals.saeed), penalty: Number(vals.penalty), lastUpdate: new Date().toLocaleTimeString("ar-EG") }, { merge: true }); 
+            Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم تحديث التسعيرة والغرامة بنجاح', showConfirmButton:false, timer:2000}); 
+        };
+        
+        onSnapshot(doc(db, "settings", "shipping_prices"), (docSnap) => { 
+            if(docSnap.exists()) { 
+                const d = docSnap.data(); 
+                ['Alex','Cairo','Beheira','Delta','Saeed','Penalty'].forEach(reg => { if(document.getElementById(`price${reg}`)) document.getElementById(`price${reg}`).value = d[reg.toLowerCase()] || ''; }); 
+                document.getElementById("lastUpdateText").innerText = "آخر بث: " + (d.lastUpdate || "غير معروف"); 
+            } 
+        });
 
-        window.printWaybill = (merchant, name, p1, p2, city, addr, w, amt, awb, details) => { /* Original Print Logic */ const printContent = `<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>AWB: ${awb}</title><style>@media print { @page { size: A5 portrait; margin: 0mm; } body { margin: 0; padding: 0; background: #fff; display: block; } .strict-a5-wrapper { width: 148mm; height: 195mm; padding: 10mm; box-sizing: border-box; border: 2px solid #000; overflow: hidden; margin: 0 auto; } } body { font-family: sans-serif; background: #eee; display: flex; justify-content: center; padding: 20px; } .strict-a5-wrapper { background: white; width: 148mm; min-height: 195mm; padding: 10mm; box-sizing: border-box; border: 2px solid #000; } .header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 5mm; margin-bottom: 5mm; } .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; margin-bottom: 5mm; border: 1px solid #000; padding: 5mm; } .cod { text-align: center; border: 2px solid #000; padding: 5mm; background: #f9f9f9; } p { margin: 5px 0; font-size: 14px; } h3 { margin: 0 0 10px 0; font-size: 16px;}</style><script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"><\/script></head><body><div class="strict-a5-wrapper"><div class="header"><div><h2 style="margin:0;">AXON EXPRESS</h2><p style="margin:0;color:#666;">الإسكندرية - المنشية</p></div><div style="text-align:center;"><svg id="bc"></svg><br><b style="font-size:18px;">${awb}</b></div></div><div class="grid"><div><h3>بيانات المرسل</h3><p>التاجر: <b>${merchant}</b></p><p>الوزن: <b>${w} كجم</b></p></div><div style="border-right:1px solid #000; padding-right:5mm;"><h3>بيانات المستلم</h3><p>الاسم: <b>${name}</b></p><p>الهاتف: <b dir="ltr">${p1}</b></p>${p2 && p2 !== 'undefined' ? `<p>بديل: <b dir="ltr">${p2}</b></p>` : ''}<p>المحافظة: <b>${city}</b></p><p>العنوان: <b>${addr}</b></p></div></div><div style="border:1px solid #000; padding:5mm; margin-bottom:5mm; min-height: 20mm;">ملاحظات الشحنة: <b>${details && details !== 'undefined' ? details : 'لا يوجد'}</b></div><div class="cod"><h3>المبلغ المطلوب تحصيله (COD)</h3><h1 style="margin:0; font-size: 32px;">${amt} EGP</h1></div></div><script>JsBarcode("#bc", "${awb}", {format:"CODE128", width:2, height:45, displayValue:false}); setTimeout(window.print, 500);<\/script></body></html>`; const win = window.open('', '_blank'); win.document.write(printContent); win.document.close(); };
+        window.printWaybill = (merchant, name, p1, p2, city, addr, w, amt, awb, details) => { const printContent = `<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>AWB: ${awb}</title><style>@media print { @page { size: A5 portrait; margin: 0mm; } body { margin: 0; padding: 0; background: #fff; display: block; } .strict-a5-wrapper { width: 148mm; height: 195mm; padding: 10mm; box-sizing: border-box; border: 2px solid #000; overflow: hidden; margin: 0 auto; } } body { font-family: sans-serif; background: #eee; display: flex; justify-content: center; padding: 20px; } .strict-a5-wrapper { background: white; width: 148mm; min-height: 195mm; padding: 10mm; box-sizing: border-box; border: 2px solid #000; } .header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 5mm; margin-bottom: 5mm; } .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; margin-bottom: 5mm; border: 1px solid #000; padding: 5mm; } .cod { text-align: center; border: 2px solid #000; padding: 5mm; background: #f9f9f9; } p { margin: 5px 0; font-size: 14px; } h3 { margin: 0 0 10px 0; font-size: 16px;}</style><script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"><\/script></head><body><div class="strict-a5-wrapper"><div class="header"><div><h2 style="margin:0;">AXON EXPRESS</h2><p style="margin:0;color:#666;">الإسكندرية - المنشية</p></div><div style="text-align:center;"><svg id="bc"></svg><br><b style="font-size:18px;">${awb}</b></div></div><div class="grid"><div><h3>بيانات المرسل</h3><p>التاجر: <b>${merchant}</b></p><p>الوزن: <b>${w} كجم</b></p></div><div style="border-right:1px solid #000; padding-right:5mm;"><h3>بيانات المستلم</h3><p>الاسم: <b>${name}</b></p><p>الهاتف: <b dir="ltr">${p1}</b></p>${p2 && p2 !== 'undefined' ? `<p>بديل: <b dir="ltr">${p2}</b></p>` : ''}<p>المحافظة: <b>${city}</b></p><p>العنوان: <b>${addr}</b></p></div></div><div style="border:1px solid #000; padding:5mm; margin-bottom:5mm; min-height: 20mm;">ملاحظات الشحنة: <b>${details && details !== 'undefined' ? details : 'لا يوجد'}</b></div><div class="cod"><h3>المبلغ المطلوب تحصيله (COD)</h3><h1 style="margin:0; font-size: 32px;">${amt} EGP</h1></div></div><script>JsBarcode("#bc", "${awb}", {format:"CODE128", width:2, height:45, displayValue:false}); setTimeout(window.print, 500);<\/script></body></html>`; const win = window.open('', '_blank'); win.document.write(printContent); win.document.close(); };
 
         const radioPlayer = document.getElementById('axonRadioPlayer');
         window.toggleRadio = () => { const radioIcon = document.getElementById('radioIcon'); if (radioPlayer.paused) { radioPlayer.src = "http://37.157.242.101:17317/stream?cb=" + new Date().getTime(); radioPlayer.play().catch(e=>{}); radioIcon.style.color = '#28a745'; radioIcon.classList.add('fa-beat'); } else { radioPlayer.pause(); radioPlayer.src = ""; radioIcon.style.color = 'var(--primary-red)'; radioIcon.classList.remove('fa-beat'); } };
         window.toggleTheme = () => { document.body.classList.toggle('dark-mode'); const isDark = document.body.classList.contains('dark-mode'); localStorage.setItem('axon_admin_theme', isDark ? 'dark' : 'light'); document.getElementById('themeIcon').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon'; };
         if(localStorage.getItem('axon_admin_theme') === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('themeIcon').className = 'fa-solid fa-sun'; }
-
-        // ========================================================
-        // 🚀 جديد: إدارة تذاكر خدمة العملاء والطلبات (اللالالاند)
-        // ========================================================
         
         function loadSupportTickets() {
-            // سحب شكاوي التتبع ورسائل الشات بوت
             onSnapshot(query(collection(db, "web_inquiries"), orderBy("timestamp", "desc")), (snap) => {
                 let html = "", count = 0;
                 snap.forEach(doc => {
@@ -466,7 +481,6 @@
                 updateBadge(count);
             });
 
-            // سحب طلبات التوظيف
             onSnapshot(query(collection(db, "careers"), orderBy("timestamp", "desc")), (snap) => {
                 let html = "";
                 snap.forEach(doc => {
@@ -480,7 +494,6 @@
                 document.getElementById('careersBody').innerHTML = html || "<tr><td colspan='4'>لا توجد طلبات انضمام.</td></tr>";
             });
 
-            // سحب طلبات الفرنشايز
             onSnapshot(query(collection(db, "franchises"), orderBy("timestamp", "desc")), (snap) => {
                 let html = "";
                 snap.forEach(doc => {
