@@ -18,33 +18,23 @@
             --primary-red: #b82329; --white: #ffffff; --light-bg: #f4f7f6; --dark-text: #2c3e50; --border-color: #eee;
         }
         html, body { font-family: 'Cairo', sans-serif; margin: 0; padding: 0; background: var(--light-bg); color: var(--dark-text); overflow-x: hidden; scroll-behavior: smooth; transition: background 0.3s, color 0.3s;}
-        
-        /* --- Navigation --- */
         header { background: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary-red); position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s;}
         .logo { font-size: 24px; font-weight: 900; color: var(--primary-blue); text-decoration: none; display: flex; align-items: center; gap: 8px;}
         .logo span { color: var(--primary-red); }
         .login-btn { background: var(--primary-blue); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 14px; transition: 0.3s; box-shadow: 0 4px 10px rgba(10, 61, 98, 0.2);}
         .login-btn:hover { background: var(--primary-red); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(184, 35, 41, 0.3); }
-        
-        /* --- Hero Section --- */
         .hero { background: linear-gradient(rgba(10, 61, 98, 0.85), rgba(10, 61, 98, 0.95)), url('https://images.unsplash.com/photo-1580674285054-bed31e145f59?q=80&w=2070&auto=format&fit=crop') center/cover; text-align: center; padding: 80px 20px 140px; color: var(--white); position: relative;}
         .hero h1 { font-size: 48px; font-weight: 900; margin-bottom: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); line-height: 1.2;}
         .hero h1 span { color: var(--primary-red); }
         .hero p { font-size: 18px; max-width: 600px; margin: 0 auto 30px; line-height: 1.6; color: #ddd;}
-        
-        /* --- Tracking Search Box --- */
         .tracking-box { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding: 15px; border-radius: 50px; max-width: 500px; margin: 0 auto; display: flex; gap: 10px; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.3);}
         .tracking-box input { flex: 1; padding: 12px 20px; border: none; border-radius: 30px; font-family: 'Cairo'; font-size: 16px; outline: none; background: var(--white); color: var(--dark-text);}
         .tracking-box button { background: var(--primary-red); color: white; border: none; padding: 12px 25px; border-radius: 30px; font-weight: bold; font-family: 'Cairo'; cursor: pointer; transition: 0.3s; font-size: 16px;}
         .tracking-box button:hover { background: #991c22; transform: scale(1.05); }
-
-        /* --- Live Calculator --- */
         .calc-box { background: var(--white); padding: 30px; border-radius: 15px; max-width: 500px; margin: -50px auto 30px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; position: relative; z-index: 10; transition: 0.3s;}
         .calc-select { width: 100%; padding: 14px; border: 2px solid var(--border-color); border-radius: 8px; font-family: 'Cairo'; outline: none; margin-bottom: 15px; font-size: 15px; transition: 0.3s; background: var(--light-bg); color: var(--dark-text); font-weight: bold;}
         .calc-select:focus { border-color: var(--primary-blue); box-shadow: 0 0 8px rgba(10, 61, 98, 0.2); }
         .calc-result { font-size: 32px; font-weight: 900; color: var(--primary-red); margin-top: 10px; transition: 0.3s;}
-        
-        /* --- Services --- */
         .section-title { text-align: center; font-size: 32px; margin: 60px 0 40px; color: var(--primary-blue); font-weight: 900; transition: 0.3s;}
         .section-title span { color: var(--primary-red); }
         .services-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; padding: 0 20px 60px; }
@@ -54,16 +44,12 @@
         .service-content { padding: 20px; }
         .service-content h4 { font-size: 20px; margin: 0 0 10px 0; color: var(--primary-blue); transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;}
         .service-content p { color: #666; margin: 0; font-size: 14px; line-height: 1.6;}
-        
-        /* --- Join Nodes --- */
         .join-section { background: var(--primary-blue); padding: 80px 20px; text-align: center; color: white; position: relative; overflow: hidden;}
         .join-section::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.05) 10%, transparent 10%), radial-gradient(circle, rgba(255,255,255,0.05) 10%, transparent 10%); background-size: 50px 50px; background-position: 0 0, 25px 25px; z-index: 1; opacity: 0.5;}
         .join-content { position: relative; z-index: 2; }
         .join-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; }
         .join-btn { background: white; color: var(--primary-blue); border: none; padding: 18px 30px; border-radius: 12px; font-size: 16px; font-weight: bold; font-family: 'Cairo'; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 10px; width: 100%; max-width: 280px; justify-content: center; box-shadow: 0 10px 20px rgba(0,0,0,0.2);}
         .join-btn:hover { background: var(--primary-red); color: white; transform: translateY(-5px); box-shadow: 0 15px 25px rgba(0,0,0,0.3); }
-
-        /* --- Footer Network --- */
         footer { background: #052238; color: white; padding: 60px 20px 20px; border-top: 5px solid var(--primary-red);}
         .footer-content { display: flex; flex-wrap: wrap; justify-content: space-around; max-width: 1200px; margin: 0 auto 30px; gap: 40px; text-align: right;}
         .footer-col { flex: 1; min-width: 250px; }
@@ -77,16 +63,12 @@
         .social-icons .fb:hover { background: #1877F2; border-color: #1877F2; }
         .social-icons .yt:hover { background: #FF0000; border-color: #FF0000; }
         .social-icons .tk:hover { background: #000000; border-color: #555; }
-        
-        /* --- Command Cluster (Floating Tools) --- */
         .command-cluster { position: fixed; bottom: 20px; left: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; }
         .floating-btn { width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: 0.3s; text-decoration: none;}
         .floating-btn:hover { transform: scale(1.1); }
         .btn-radio { background: var(--white); color: var(--primary-blue); border: 2px solid var(--primary-blue);}
         .btn-whatsapp { background: #25D366; color: white; }
         .btn-chat { background: var(--primary-blue); color: white; }
-        
-        /* --- Chat Terminal --- */
         .chat-widget { display: none; position: fixed; bottom: 85px; left: 20px; width: 320px; background: var(--white); border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 1000; flex-direction: column; overflow: hidden; border: 1px solid var(--border-color); animation: slideUp 0.3s ease-out; transition: 0.3s;}
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .chat-header { background: var(--primary-blue); color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center;}
@@ -97,8 +79,6 @@
         .chat-footer button:hover { opacity: 0.8; transform: scale(1.05);}
         .msg-bot { background: #e0eaf5; color: var(--primary-blue); padding: 10px 15px; border-radius: 15px 15px 0 15px; margin-bottom: 10px; display: inline-block; max-width: 85%; font-weight: bold;}
         .msg-user { background: var(--primary-blue); color: white; padding: 10px 15px; border-radius: 15px 15px 15px 0; margin-bottom: 10px; display: inline-block; max-width: 85%; align-self: flex-end;}
-        
-        /* --- Tracking Dashboard Styles --- */
         .timeline { display: flex; justify-content: space-between; align-items: center; margin: 30px 0; position: relative; }
         .timeline::before { content: ''; position: absolute; top: 15px; left: 0; width: 100%; height: 4px; background: #eee; z-index: 1; }
         .timeline-step { position: relative; z-index: 2; text-align: center; flex: 1; }
@@ -107,14 +87,11 @@
         .timeline-step.done .timeline-icon { background: #28a745; color: white; }
         .timeline-text { font-size: 12px; font-weight: bold; color: #888; }
         .timeline-step.active .timeline-text, .timeline-step.done .timeline-text { color: var(--primary-blue); }
-        
         .dash-action-btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-family: 'Cairo'; font-weight: bold; font-size: 14px; cursor: pointer; margin-bottom: 10px; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;}
         .btn-gps { background: var(--primary-blue); color: white; }
         .btn-gps:hover { background: #082d49; }
         .btn-delay { background: #f39c12; color: white; }
         .btn-support { background: var(--light-bg); color: var(--primary-blue); border: 1px solid var(--primary-blue); }
-
-        /* --- Modals --- */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; z-index: 2000; padding: 15px; backdrop-filter: blur(5px);}
         .modal-content { background: var(--white); padding: 30px; border-radius: 15px; width: 100%; max-width: 450px; text-align: center; position: relative; max-height: 90vh; overflow-y: auto; transition: 0.3s; border: 1px solid var(--border-color);}
         .modal-content input, .modal-content select, .modal-content textarea { width: 100%; padding: 12px; margin-bottom: 15px; background: var(--light-bg); border: 1px solid #ddd; border-radius: 8px; font-family: 'Cairo'; outline: none; transition: 0.3s; color: var(--dark-text);}
@@ -123,8 +100,6 @@
         .submit-btn:hover { background: #991c22; }
         .close-modal { position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--primary-red); transition: 0.3s;}
         .close-modal:hover { transform: scale(1.2); }
-
-        /* --- Dark Mode Matrix --- */
         body.dark-mode { --white: #1e1e1e; --light-bg: #121212; --dark-text: #e0e0e0; --border-color: #333; }
         body.dark-mode header { background: #1e1e1e; border-bottom: 3px solid var(--primary-red); }
         body.dark-mode .calc-box, body.dark-mode .service-card { background: #1e1e1e; border-color: #333; }
@@ -273,7 +248,6 @@
         </div>
     </div>
 
-    <!-- Modals الأصلية -->
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <button onclick="document.getElementById('loginModal').style.display='none'" class="close-modal">✖</button>
@@ -326,8 +300,6 @@
             <button id="btnFranchise" class="submit-btn" onclick="window.submitFranchise()">تسجيل طلب الفرنشايز</button>
         </div>
     </div>
-
-    <!-- Modals التتبع وخدمة العملاء -->
     
     <div id="verifyPhoneModal" class="modal">
         <div class="modal-content">
@@ -367,264 +339,7 @@
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, getDocs, onSnapshot, collection, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-
-        const app = initializeApp({
-            apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
-            authDomain: "axon-express-2f534.firebaseapp.com",
-            projectId: "axon-express-2f534",
-            storageBucket: "axon-express-2f534.firebasestorage.app",
-            messagingSenderId: "958528400260",
-            appId: "1:958528400260:web:504ae94f3ef2225b928bd1"
-        });
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        AOS.init({ duration: 800, once: true });
-
-        // --- دوال اللوجستيات الأصلية + استدعاء الغرامة ---
-        window.livePrices = { alex: 0, cairo: 0, beheira: 0, delta: 0, saeed: 0, penalty: 30 };
-        
-        onSnapshot(doc(db, "settings", "shipping_prices"), (docSnap) => {
-            if (docSnap.exists()) { 
-                window.livePrices = docSnap.data(); 
-                window.calculateRate(); 
-            }
-        });
-
-        window.calculateRate = () => {
-            const val = document.getElementById('calcSelect').value;
-            if (val === "0") { document.getElementById('calcResult').innerText = "0 EGP"; return; }
-            const finalPrice = window.livePrices[val] || 0;
-            document.getElementById('calcResult').innerText = `${finalPrice} EGP`;
-        };
-
-        window.showService = (type) => {
-            let title = "", text = "";
-            if(type === 'ecommerce') { title = "مستودعات التجارة الإلكترونية"; text = "نستلم البضائع دفعة واحدة ونخزنها. فور وصول طلب من عملائك، نقوم نحن بتغليفه وطباعة بوليصته وإرساله مباشرة دون تدخلك."; } 
-            else if(type === 'coverage') { title = "الرادار اللوجستي"; text = "خطوط سير يومية لا تنقطع. أسطولنا يتحرك بين الإسكندرية والقاهرة والمحافظات بجدولة دقيقة تضمن عدم تكدس الشحنات."; } 
-            else if(type === 'cod') { title = "دورة رأس مال صاروخية"; text = "أكبر مشكلة تواجه التجار هي تأخر أموال الـ COD. في أكسون، نقوم بتسوية حساباتك فور استلام الشحنة بأسرع دورة مالية في السوق."; }
-            Swal.fire({ title: title, text: text, icon: 'info', confirmButtonText: 'علم', confirmButtonColor: '#0A3D62' });
-        };
-
-        window.submitCareer = async () => { 
-            const name = document.getElementById('carName').value.trim(), phone = document.getElementById('carPhone').value.trim(), city = document.getElementById('carCity').value.trim(), position = document.getElementById('carPosition').value, notes = document.getElementById('carNotes').value.trim();
-            if(!name || !phone || !city || !position) return Swal.fire('خطأ إدخال', 'يرجى استكمال البيانات المطلوبة.', 'warning');
-            const btn = document.getElementById('btnCareer'); btn.disabled = true; btn.innerHTML = "جاري تشفير البيانات...";
-            try { await addDoc(collection(db, "careers"), { name, phone, city, position, notes, timestamp: new Date() }); document.getElementById('careerModal').style.display = 'none'; Swal.fire('تم الإرسال', 'تم توجيه ملفك لإدارة الموارد البشرية. استعد للتحرك.', 'success'); document.querySelectorAll('#careerModal input, #careerModal select, #careerModal textarea').forEach(el => el.value = ''); } catch(e) { Swal.fire('فشل الاتصال', e.message, 'error'); }
-            btn.disabled = false; btn.innerHTML = "إرسال بياناتك للقيادة";
-        };
-
-        window.submitFranchise = async () => { 
-            const name = document.getElementById('franName').value.trim(), phone = document.getElementById('franPhone').value.trim(), city = document.getElementById('franCity').value, office = document.getElementById('franOffice').value, notes = document.getElementById('franNotes').value.trim();
-            if(!name || !phone || !city || !office) return Swal.fire('خطأ إدخال', 'جميع الحقول الأساسية مطلوبة.', 'warning');
-            const btn = document.getElementById('btnFranchise'); btn.disabled = true; btn.innerHTML = "جاري الإرسال للقيادة العليا...";
-            try { await addDoc(collection(db, "franchises"), { name, phone, city, office, notes, timestamp: new Date() }); document.getElementById('franchiseModal').style.display = 'none'; Swal.fire('نجاح', 'تم تسجيل طلب الوكالة.', 'success'); document.querySelectorAll('#franchiseModal input, #franchiseModal select, #franchiseModal textarea').forEach(el => el.value = ''); } catch(e) { Swal.fire('فشل الاتصال', e.message, 'error'); }
-            btn.disabled = false; btn.innerHTML = "تسجيل طلب الفرنشايز";
-        };
-
-        window.handleLogin = async () => { 
-            let user = document.getElementById('merchantEmail').value.trim().toLowerCase(), pass = document.getElementById('merchantPassword').value;
-            if(!user || !pass) return Swal.fire('رفض الوصول', 'يجب إدخال كود التاجر وشفرة المرور.', 'error');
-            const email = user + "@axon.com", btn = document.getElementById('btnLogin'); btn.disabled = true; btn.innerHTML = "جاري مطابقة الحمض النووي الرقمي...";
-            try { await signInWithEmailAndPassword(auth, email, pass); if (email === "admin@axon.com") { window.location.href = "admin.html"; } else { const docSnap = await getDoc(doc(db, "admins", auth.currentUser.uid)); if (docSnap.exists()) window.location.href = "admin.html"; else window.location.href = "merchant.html"; } } catch (error) { Swal.fire('اختراق فاشل', 'شفرة الدخول أو كود التاجر غير صحيح.', 'error'); btn.disabled = false; btn.innerHTML = "دخول المحطة"; }
-        };
-
-        window.toggleChat = () => { const widget = document.getElementById('chatWidget'); widget.style.display = (widget.style.display === 'flex') ? 'none' : 'flex'; };
-        window.sendToChat = async () => {
-            const input = document.getElementById('chatInput'), body = document.getElementById('chatBody'), msg = input.value.trim();
-            if(msg) {
-                body.innerHTML += `<div class="msg-user">${msg}</div>`; input.value = ''; body.scrollTop = body.scrollHeight;
-                try { await addDoc(collection(db, "web_inquiries"), { message: msg, timestamp: new Date(), status: "new" }); setTimeout(() => { body.innerHTML += `<div class="msg-bot">تم استلام طلبك وتوجيهه لمركز العمليات. اترك رقم هاتفك إذا لم تكن قد كتبته وسنتصل بك.</div>`; body.scrollTop = body.scrollHeight; }, 800); } catch(e) { console.error("Chat Error:", e); }
-            }
-        };
-
-        const radioPlayer = document.getElementById('axonRadioPlayer');
-        window.toggleAudio = () => {
-            const icon = document.getElementById('musicIcon');
-            if (radioPlayer.paused) { radioPlayer.src = "http://37.157.242.101:17317/stream?cb=" + new Date().getTime(); radioPlayer.play().catch(e => console.log(e)); icon.style.color = '#28a745'; icon.classList.add('fa-beat'); } else { radioPlayer.pause(); radioPlayer.src = ""; icon.style.color = 'var(--primary-blue)'; icon.classList.remove('fa-beat'); }
-        };
-
-        window.toggleTheme = () => {
-            document.body.classList.toggle('dark-mode'); const icon = document.getElementById('themeIcon');
-            if (document.body.classList.contains('dark-mode')) { localStorage.setItem('axon_main_theme', 'dark'); icon.className = 'fa-solid fa-sun'; } else { localStorage.setItem('axon_main_theme', 'light'); icon.className = 'fa-solid fa-moon'; }
-        };
-        if(localStorage.getItem('axon_main_theme') === 'dark') { document.body.classList.add('dark-mode'); setTimeout(() => { const icon = document.getElementById('themeIcon'); if(icon) icon.className = 'fa-solid fa-sun'; }, 100); }
-
-        // ==========================================
-        // 🚀 نظام التتبع وخدمة العملاء الجديد (Core)
-        // ==========================================
-        
-        let currentTrackedDoc = null;
-
-        window.initiateTracking = async () => {
-            const awbInput = document.getElementById('trackAwbInput').value.trim().toUpperCase();
-            if(!awbInput || !awbInput.startsWith('AXN')) return Swal.fire('بوليصة غير صحيحة', 'يرجى إدخال رقم البوليصة الصحيح (يبدأ بـ AXN).', 'error');
-
-            Swal.fire({ title: 'جاري البحث في الرادار...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
-
-            try {
-                const snap = await getDocs(collection(db, "shipments"));
-                let foundDoc = null;
-                snap.forEach(d => {
-                    const docAwb = "AXN" + d.id.substring(0,5).toUpperCase();
-                    if(docAwb === awbInput && !d.data().deleted) foundDoc = { id: d.id, ...d.data(), awb: docAwb };
-                });
-
-                if(foundDoc) {
-                    currentTrackedDoc = foundDoc;
-                    Swal.close();
-                    document.getElementById('verifyPhoneModal').style.display = 'flex';
-                } else {
-                    Swal.fire('غير موجود', 'لم يتم العثور على شحنة بهذا الرقم.', 'error');
-                }
-            } catch (e) {
-                Swal.fire('خطأ اتصال', 'حدث خطأ أثناء فحص السيرفر.', 'error');
-            }
-        };
-
-        window.verifyTrackingPhone = () => {
-            const phoneInput = document.getElementById('verifyPhoneInput').value.trim();
-            if(phoneInput === currentTrackedDoc.phone || phoneInput === currentTrackedDoc.phone2) {
-                document.getElementById('verifyPhoneModal').style.display = 'none';
-                openDashboard();
-            } else {
-                Swal.fire('تأكيد فاشل', 'رقم الهاتف لا يتطابق مع المسجل في البوليصة.', 'error');
-            }
-        };
-
-        function openDashboard() {
-            document.getElementById('trackingDashboardModal').style.display = 'flex';
-            document.getElementById('dashAwbTitle').innerText = currentTrackedDoc.awb;
-            document.getElementById('dashCustName').innerText = currentTrackedDoc.name.split(' ')[0];
-            document.getElementById('dashAmount').innerText = currentTrackedDoc.amount + " ج.م";
-            document.getElementById('dashAddress').innerText = currentTrackedDoc.city + " - " + currentTrackedDoc.address;
-
-            const status = currentTrackedDoc.status;
-            document.querySelectorAll('.timeline-step').forEach(el => { el.classList.remove('active'); el.classList.remove('done'); });
-            document.getElementById('step1').classList.add('done'); 
-            
-            if(status === 'قيد التوصيل') {
-                document.getElementById('step2').classList.add('active');
-            } else if(status === 'مذاع للرادار' || status.includes('مندوب')) {
-                document.getElementById('step2').classList.add('done');
-                document.getElementById('step3').classList.add('active');
-            } else if(status === 'تم التسليم' || status === 'تمت التسوية') {
-                document.getElementById('step2').classList.add('done');
-                document.getElementById('step3').classList.add('done');
-                document.getElementById('step4').classList.add('done'); 
-            } else {
-                document.getElementById('step2').classList.add('active');
-            }
-        }
-
-        // التعديل: قراءة الغرامة من البورصة وتطبيقها عند تغيير العنوان
-        window.openLocationFineModal = async () => {
-            if(currentTrackedDoc.status === 'تم التسليم' || currentTrackedDoc.status === 'تمت التسوية') return Swal.fire('مغلق', 'لا يمكن تعديل مسار شحنة تم تسليمها.', 'info');
-
-            document.getElementById('trackingDashboardModal').style.display = 'none';
-            const fixedFine = Number(window.livePrices.penalty) || 30; // سحب الغرامة من الداتا
-
-            const { value: formValues } = await Swal.fire({
-                title: 'تعديل مسار الشحنة',
-                html: `
-                    <p style="font-size:13px; color:#666;">سيتم إضافة <b>رسوم تغيير مسار (${fixedFine} ج.م)</b> على إجمالي الشحنة.</p>
-                    <input id="new-address-input" class="swal2-input" placeholder="اكتب العنوان الجديد بالتفصيل...">
-                `,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'موافق، تأكيد العنوان',
-                cancelButtonText: 'تراجع',
-                confirmButtonColor: '#b82329',
-                preConfirm: () => {
-                    const newAddr = document.getElementById('new-address-input').value.trim();
-                    if (!newAddr) Swal.showValidationMessage('الرجاء كتابة العنوان الجديد');
-                    return newAddr;
-                }
-            });
-
-            if (formValues) {
-                try {
-                    const newAmount = Number(currentTrackedDoc.amount) + fixedFine;
-                    await updateDoc(doc(db, "shipments", currentTrackedDoc.id), {
-                        amount: newAmount,
-                        address: formValues + " (معدل)",
-                        fineAdded: (currentTrackedDoc.fineAdded || 0) + fixedFine,
-                        status: "قيد التوصيل" 
-                    });
-                    currentTrackedDoc.amount = newAmount; 
-                    currentTrackedDoc.address = formValues + " (معدل)";
-                    Swal.fire('تم التعديل', 'تم تغيير المسار وإضافة الرسوم بنجاح.', 'success').then(() => openDashboard());
-                } catch (e) { 
-                    Swal.fire('خطأ', 'حدثت مشكلة أثناء تحديث البيانات.', 'error').then(() => openDashboard()); 
-                }
-            } else { 
-                openDashboard(); 
-            }
-        };
-
-        // التعديل: تطبيق الغرامة على التأجيل فقط في حالة (قيد التوصيل أو مؤجل أو مرتجع)
-        window.rescheduleDelivery = async () => {
-            if(currentTrackedDoc.status === 'تم التسليم' || currentTrackedDoc.status === 'تمت التسوية') return Swal.fire('مغلق', 'لا يمكن تأجيل شحنة تم تسليمها.', 'info');
-            
-            document.getElementById('trackingDashboardModal').style.display = 'none';
-
-            // التحقق من حالة الشحنة لتطبيق الغرامة
-            const isLateChange = (currentTrackedDoc.status === 'قيد التوصيل' || currentTrackedDoc.status === 'مؤجل' || currentTrackedDoc.status === 'مرتجع');
-            const penaltyFee = isLateChange ? (Number(window.livePrices.penalty) || 30) : 0;
-            
-            let textMsg = isLateChange 
-                ? `لقد تحرك المندوب بالفعل أو جرت محاولة تسليم. تأجيل الموعد الآن سيضيف غرامة قدرها (${penaltyFee} ج.م) لتعويض وقت ومجهود الكابتن. هل توافق؟` 
-                : `تأجيل الاستلام مجاني لأن المندوب لم يتحرك بعد. هل تود تأجيل استلام الشحنة للغد؟`;
-
-            const result = await Swal.fire({ 
-                title: 'تأجيل الاستلام', 
-                text: textMsg, 
-                icon: isLateChange ? 'warning' : 'question', 
-                showCancelButton: true, 
-                confirmButtonText: 'نعم، قم بالتأجيل', 
-                cancelButtonText: 'إلغاء' 
-            });
-
-            if(result.isConfirmed) {
-                try {
-                    let updates = { status: "مؤجل", rescheduleRequest: true };
-                    let newAmount = Number(currentTrackedDoc.amount);
-                    
-                    if (isLateChange) {
-                        newAmount += penaltyFee;
-                        updates.amount = newAmount;
-                        updates.fineAdded = (currentTrackedDoc.fineAdded || 0) + penaltyFee;
-                        updates.address = currentTrackedDoc.address + " | ⚠️ (غرامة تأجيل)";
-                    }
-
-                    await updateDoc(doc(db, "shipments", currentTrackedDoc.id), updates);
-                    
-                    currentTrackedDoc.amount = newAmount;
-                    if(isLateChange) currentTrackedDoc.address += " | ⚠️ (غرامة تأجيل)";
-
-                    Swal.fire('تم التأجيل', 'تم إبلاغ الأسطول بتأجيل موعد التوصيل.', 'success').then(() => openDashboard());
-                } catch(e) { Swal.fire('خطأ', 'فشل الاتصال.', 'error').then(() => openDashboard()); }
-            } else { openDashboard(); }
-        };
-
-        window.openSupportTicket = async () => {
-            document.getElementById('trackingDashboardModal').style.display = 'none';
-
-            const { value: problem } = await Swal.fire({ title: 'التواصل مع القيادة', input: 'textarea', inputLabel: 'اشرح مشكلتك بالتفصيل بخصوص هذه الشحنة', inputPlaceholder: 'اكتب هنا...', showCancelButton: true, confirmButtonText: 'إرسال التذكرة', cancelButtonText: 'إلغاء' });
-            if (problem) {
-                try {
-                    await addDoc(collection(db, "web_inquiries"), {
-                        message: `تذكرة تتبع (بوليصة: ${currentTrackedDoc.awb}): ${problem}`,
-                        phone: currentTrackedDoc.phone,
-                        status: "new", timestamp: new Date()
-                    });
-                    Swal.fire('تم الإرسال', 'تم فتح تذكرة لخدمة العملاء وسيتم حل المشكلة في أسرع وقت.', 'success').then(() => openDashboard());
-                } catch(e) { Swal.fire('خطأ', 'لم يتم إرسال التذكرة.', 'error').then(() => openDashboard()); }
-            } else { openDashboard(); }
-        };
+        import{initializeApp as a}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";import{getAuth as b,signInWithEmailAndPassword as c}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";import{getFirestore as d,doc as e,getDoc as f,getDocs as g,onSnapshot as h,collection as i,addDoc as j,updateDoc as k}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";const app=a({apiKey:"AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",authDomain:"axon-express-2f534.firebaseapp.com",projectId:"axon-express-2f534",storageBucket:"axon-express-2f534.firebasestorage.app",messagingSenderId:"958528400260",appId:"1:958528400260:web:504ae94f3ef2225b928bd1"});const auth=b(app);const db=d(app);AOS.init({duration:800,once:true});window.livePrices={alex:0,cairo:0,beheira:0,delta:0,saeed:0,penalty:30};h(e(db,"settings","shipping_prices"),z=>{if(z.exists()){window.livePrices=z.data();window.calculateRate();}});window.calculateRate=()=>{const z=document.getElementById('calcSelect').value;if(z==="0"){document.getElementById('calcResult').innerText="0 EGP";return;}document.getElementById('calcResult').innerText=`${window.livePrices[z]||0} EGP`;};window.showService=z=>{let y="",x="";if(z==='ecommerce'){y="مستودعات التجارة الإلكترونية";x="نستلم البضائع دفعة واحدة ونخزنها. فور وصول طلب من عملائك، نقوم نحن بتغليفه وطباعة بوليصته وإرساله مباشرة دون تدخلك.";}else if(z==='coverage'){y="الرادار اللوجستي";x="خطوط سير يومية لا تنقطع. أسطولنا يتحرك بين الإسكندرية والقاهرة والمحافظات بجدولة دقيقة تضمن عدم تكدس الشحنات.";}else if(z==='cod'){y="دورة رأس مال صاروخية";x="أكبر مشكلة تواجه التجار هي تأخر أموال الـ COD. في أكسون، نقوم بتسوية حساباتك فور استلام الشحنة بأسرع دورة مالية في السوق.";}Swal.fire({title:y,text:x,icon:'info',confirmButtonText:'علم',confirmButtonColor:'#0A3D62'});};window.submitCareer=async()=>{const z=document.getElementById('carName').value.trim(),y=document.getElementById('carPhone').value.trim(),x=document.getElementById('carCity').value.trim(),w=document.getElementById('carPosition').value,v=document.getElementById('carNotes').value.trim();if(!z||!y||!x||!w)return Swal.fire('خطأ إدخال','يرجى استكمال البيانات المطلوبة.','warning');const u=document.getElementById('btnCareer');u.disabled=true;u.innerHTML="جاري تشفير البيانات...";try{await j(i(db,"careers"),{name:z,phone:y,city:x,position:w,notes:v,timestamp:new Date()});document.getElementById('careerModal').style.display='none';Swal.fire('تم الإرسال','تم توجيه ملفك لإدارة الموارد البشرية. استعد للتحرك.','success');document.querySelectorAll('#careerModal input, #careerModal select, #careerModal textarea').forEach(t=>t.value='');}catch(t){Swal.fire('فشل الاتصال',t.message,'error');}u.disabled=false;u.innerHTML="إرسال بياناتك للقيادة";};window.submitFranchise=async()=>{const z=document.getElementById('franName').value.trim(),y=document.getElementById('franPhone').value.trim(),x=document.getElementById('franCity').value,w=document.getElementById('franOffice').value,v=document.getElementById('franNotes').value.trim();if(!z||!y||!x||!w)return Swal.fire('خطأ إدخال','جميع الحقول الأساسية مطلوبة.','warning');const u=document.getElementById('btnFranchise');u.disabled=true;u.innerHTML="جاري الإرسال للقيادة العليا...";try{await j(i(db,"franchises"),{name:z,phone:y,city:x,office:w,notes:v,timestamp:new Date()});document.getElementById('franchiseModal').style.display='none';Swal.fire('نجاح','تم تسجيل طلب الوكالة.','success');document.querySelectorAll('#franchiseModal input, #franchiseModal select, #franchiseModal textarea').forEach(t=>t.value='');}catch(t){Swal.fire('فشل الاتصال',t.message,'error');}u.disabled=false;u.innerHTML="تسجيل طلب الفرنشايز";};window.handleLogin=async()=>{let z=document.getElementById('merchantEmail').value.trim().toLowerCase(),y=document.getElementById('merchantPassword').value;if(!z||!y)return Swal.fire('رفض الوصول','يجب إدخال كود التاجر وشفرة المرور.','error');const x=z+"@axon.com",w=document.getElementById('btnLogin');w.disabled=true;w.innerHTML="جاري مطابقة الحمض النووي الرقمي...";try{await c(auth,x,y);if(x==="admin@axon.com"){window.location.href="admin.html";}else{const v=await f(e(db,"admins",auth.currentUser.uid));if(v.exists())window.location.href="admin.html";else window.location.href="merchant.html";}}catch(v){Swal.fire('اختراق فاشل','شفرة الدخول أو كود التاجر غير صحيح.','error');w.disabled=false;w.innerHTML="دخول المحطة";}};window.toggleChat=()=>{const z=document.getElementById('chatWidget');z.style.display=(z.style.display==='flex')?'none':'flex';};window.sendToChat=async()=>{const z=document.getElementById('chatInput'),y=document.getElementById('chatBody'),x=z.value.trim();if(x){y.innerHTML+=`<div class="msg-user">${x}</div>`;z.value='';y.scrollTop=y.scrollHeight;try{await j(i(db,"web_inquiries"),{message:x,timestamp:new Date(),status:"new"});setTimeout(()=>{y.innerHTML+=`<div class="msg-bot">تم استلام طلبك وتوجيهه لمركز العمليات. اترك رقم هاتفك إذا لم تكن قد كتبته وسنتصل بك.</div>`;y.scrollTop=y.scrollHeight;},800);}catch(w){console.error("Chat Error:",w);}}};const radioPlayer=document.getElementById('axonRadioPlayer');window.toggleAudio=()=>{const z=document.getElementById('musicIcon');if(radioPlayer.paused){radioPlayer.src="http://37.157.242.101:17317/stream?cb="+new Date().getTime();radioPlayer.play().catch(y=>{});z.style.color='#28a745';z.classList.add('fa-beat');}else{radioPlayer.pause();radioPlayer.src="";z.style.color='var(--primary-blue)';z.classList.remove('fa-beat');}};window.toggleTheme=()=>{document.body.classList.toggle('dark-mode');const z=document.getElementById('themeIcon');if(document.body.classList.contains('dark-mode')){localStorage.setItem('axon_main_theme','dark');z.className='fa-solid fa-sun';}else{localStorage.setItem('axon_main_theme','light');z.className='fa-solid fa-moon';}};if(localStorage.getItem('axon_main_theme')==='dark'){document.body.classList.add('dark-mode');setTimeout(()=>{const z=document.getElementById('themeIcon');if(z)z.className='fa-solid fa-sun';},100);}let currentTrackedDoc=null;window.initiateTracking=async()=>{const z=document.getElementById('trackAwbInput').value.trim().toUpperCase();if(!z||!z.startsWith('AXN'))return Swal.fire('بوليصة غير صحيحة','يرجى إدخال رقم البوليصة الصحيح (يبدأ بـ AXN).','error');Swal.fire({title:'جاري البحث في الرادار...',allowOutsideClick:false,didOpen:()=>{Swal.showLoading();}});try{const y=await g(i(db,"shipments"));let x=null;y.forEach(w=>{const v="AXN"+w.id.substring(0,5).toUpperCase();if(v===z&&!w.data().deleted)x={id:w.id,...w.data(),awb:v};});if(x){currentTrackedDoc=x;Swal.close();document.getElementById('verifyPhoneModal').style.display='flex';}else{Swal.fire('غير موجود','لم يتم العثور على شحنة بهذا الرقم.','error');}}catch(y){Swal.fire('خطأ اتصال','حدث خطأ أثناء فحص السيرفر.','error');}};window.verifyTrackingPhone=()=>{const z=document.getElementById('verifyPhoneInput').value.trim();if(z===currentTrackedDoc.phone||z===currentTrackedDoc.phone2){document.getElementById('verifyPhoneModal').style.display='none';openDashboard();}else{Swal.fire('تأكيد فاشل','رقم الهاتف لا يتطابق مع المسجل في البوليصة.','error');}};function openDashboard(){document.getElementById('trackingDashboardModal').style.display='flex';document.getElementById('dashAwbTitle').innerText=currentTrackedDoc.awb;document.getElementById('dashCustName').innerText=currentTrackedDoc.name.split(' ')[0];document.getElementById('dashAmount').innerText=currentTrackedDoc.amount+" ج.م";document.getElementById('dashAddress').innerText=currentTrackedDoc.city+" - "+currentTrackedDoc.address;const z=currentTrackedDoc.status;document.querySelectorAll('.timeline-step').forEach(y=>{y.classList.remove('active');y.classList.remove('done');});document.getElementById('step1').classList.add('done');if(z==='قيد التوصيل'){document.getElementById('step2').classList.add('active');}else if(z==='مذاع للرادار'||z.includes('مندوب')){document.getElementById('step2').classList.add('done');document.getElementById('step3').classList.add('active');}else if(z==='تم التسليم'||z==='تمت التسوية'){document.getElementById('step2').classList.add('done');document.getElementById('step3').classList.add('done');document.getElementById('step4').classList.add('done');}else{document.getElementById('step2').classList.add('active');}}window.openLocationFineModal=async()=>{if(currentTrackedDoc.status==='تم التسليم'||currentTrackedDoc.status==='تمت التسوية')return Swal.fire('مغلق','لا يمكن تعديل مسار شحنة تم تسليمها.','info');document.getElementById('trackingDashboardModal').style.display='none';const z=Number(window.livePrices.penalty)||30;const{value:y}=await Swal.fire({title:'تعديل مسار الشحنة',html:`<p style="font-size:13px; color:#666;">سيتم إضافة <b>رسوم تغيير مسار (${z} ج.م)</b> على إجمالي الشحنة.</p><input id="new-address-input" class="swal2-input" placeholder="اكتب العنوان الجديد بالتفصيل...">`,icon:'warning',showCancelButton:true,confirmButtonText:'موافق، تأكيد العنوان',cancelButtonText:'تراجع',confirmButtonColor:'#b82329',preConfirm:()=>{const x=document.getElementById('new-address-input').value.trim();if(!x)Swal.showValidationMessage('الرجاء كتابة العنوان الجديد');return x;}});if(y){try{const x=Number(currentTrackedDoc.amount)+z;await k(e(db,"shipments",currentTrackedDoc.id),{amount:x,address:y+" (معدل)",fineAdded:(currentTrackedDoc.fineAdded||0)+z,status:"قيد التوصيل"});currentTrackedDoc.amount=x;currentTrackedDoc.address=y+" (معدل)";Swal.fire('تم التعديل','تم تغيير المسار وإضافة الرسوم بنجاح.','success').then(()=>openDashboard());}catch(x){Swal.fire('خطأ','حدثت مشكلة أثناء تحديث البيانات.','error').then(()=>openDashboard());}}else{openDashboard();}};window.rescheduleDelivery=async()=>{if(currentTrackedDoc.status==='تم التسليم'||currentTrackedDoc.status==='تمت التسوية')return Swal.fire('مغلق','لا يمكن تأجيل شحنة تم تسليمها.','info');document.getElementById('trackingDashboardModal').style.display='none';const z=(currentTrackedDoc.status==='قيد التوصيل'||currentTrackedDoc.status==='مؤجل'||currentTrackedDoc.status==='مرتجع');const y=z?(Number(window.livePrices.penalty)||30):0;let x=z?`لقد تحرك المندوب بالفعل أو جرت محاولة تسليم. تأجيل الموعد الآن سيضيف غرامة قدرها (${y} ج.م) لتعويض وقت ومجهود الكابتن. هل توافق؟`:`تأجيل الاستلام مجاني لأن المندوب لم يتحرك بعد. هل تود تأجيل استلام الشحنة للغد؟`;const w=await Swal.fire({title:'تأجيل الاستلام',text:x,icon:z?'warning':'question',showCancelButton:true,confirmButtonText:'نعم، قم بالتأجيل',cancelButtonText:'إلغاء'});if(w.isConfirmed){try{let v={status:"مؤجل",rescheduleRequest:true};let u=Number(currentTrackedDoc.amount);if(z){u+=y;v.amount=u;v.fineAdded=(currentTrackedDoc.fineAdded||0)+y;v.address=currentTrackedDoc.address+" | ⚠️ (غرامة تأجيل)";}await k(e(db,"shipments",currentTrackedDoc.id),v);currentTrackedDoc.amount=u;if(z)currentTrackedDoc.address+=" | ⚠️ (غرامة تأجيل)";Swal.fire('تم التأجيل','تم إبلاغ الأسطول بتأجيل موعد التوصيل.','success').then(()=>openDashboard());}catch(v){Swal.fire('خطأ','فشل الاتصال.','error').then(()=>openDashboard());}}else{openDashboard();}};window.openSupportTicket=async()=>{document.getElementById('trackingDashboardModal').style.display='none';const{value:z}=await Swal.fire({title:'التواصل مع القيادة',input:'textarea',inputLabel:'اشرح مشكلتك بالتفصيل بخصوص هذه الشحنة',inputPlaceholder:'اكتب هنا...',showCancelButton:true,confirmButtonText:'إرسال التذكرة',cancelButtonText:'إلغاء'});if(z){try{await j(i(db,"web_inquiries"),{message:`تذكرة تتبع (بوليصة: ${currentTrackedDoc.awb}): ${z}`,phone:currentTrackedDoc.phone,status:"new",timestamp:new Date()});Swal.fire('تم الإرسال','تم فتح تذكرة لخدمة العملاء وسيتم حل المشكلة في أسرع وقت.','success').then(()=>openDashboard());}catch(y){Swal.fire('خطأ','لم يتم إرسال التذكرة.','error').then(()=>openDashboard());}}else{openDashboard();}};
     </script>
 </body>
 </html>
