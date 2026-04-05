@@ -3,81 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>بوابة التجار | Axon Express</title>
+    <title>بوابة التجار | Axon Express Premium</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         * { box-sizing: border-box; }
-        :root { --primary-blue: #0A3D62; --primary-red: #b82329; --white: #ffffff; --light-bg: #f4f7f6; --dark-text: #2c3e50; --border-color: #eee; }
+        :root { 
+            --primary-blue: #0A3D62; /* Deep Sapphire */
+            --primary-red: #b82329;  /* Brand Crimson */
+            --white: #ffffff; 
+            --light-bg: #f4f7f6; 
+            --dark-text: #2c3e50; 
+            --border-color: #eee; 
+            --gold: #d4af37;
+        }
         html, body { font-family: 'Cairo', sans-serif; margin: 0; background: var(--light-bg); color: var(--dark-text); overflow-x: hidden; scroll-behavior: smooth; transition: background 0.3s, color 0.3s;}
-        header { background: var(--white); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary-red); position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s;}
-        .logo { font-size: 20px; font-weight: 900; color: var(--primary-blue); text-decoration: none;}
+        
+        header { background: var(--white); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--primary-blue); position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: 0.3s;}
+        .logo { font-size: 22px; font-weight: 900; color: var(--primary-blue); text-decoration: none; display: flex; align-items: center; gap: 8px;}
+        .logo i { color: var(--primary-red); }
         .logo span { color: var(--primary-red); }
-        .header-actions { display: flex; align-items: center;}
-        #logoutBtn { background: var(--white); border: 2px solid var(--primary-red); color: var(--primary-red); padding: 6px 15px; border-radius: 5px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; transition: 0.3s;}
+        .header-actions { display: flex; align-items: center; gap: 15px;}
+        
+        #logoutBtn { background: var(--white); border: 2px solid var(--primary-red); color: var(--primary-red); padding: 6px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; transition: 0.3s;}
         #logoutBtn:hover { background: var(--primary-red); color: var(--white); }
-        .container { padding: 15px; max-width: 1200px; margin: 0 auto; min-height: 80vh;}
-        .merchant-badge { background: var(--primary-blue); padding: 6px 15px; border-radius: 20px; font-size: 13px; margin-bottom: 20px; display: inline-block; color: white; font-weight: bold; box-shadow: 0 4px 10px rgba(10, 61, 98, 0.2);}
+        
+        .container { padding: 20px; max-width: 1200px; margin: 0 auto; min-height: 80vh;}
+        
+        .top-panel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;}
+        .merchant-badge { background: var(--primary-blue); padding: 8px 20px; border-radius: 30px; font-size: 14px; color: white; font-weight: bold; box-shadow: 0 4px 10px rgba(10, 61, 98, 0.2);}
+        .upload-logo-btn { background: var(--white); color: var(--primary-blue); border: 2px dashed var(--primary-blue); padding: 6px 15px; border-radius: 8px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; transition: 0.3s; display: flex; align-items: center; gap: 8px;}
+        .upload-logo-btn:hover { background: var(--primary-blue); color: var(--white); }
+        
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .stat-card { background: var(--white); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-blue); transition: 0.3s;}
         .stat-card h3 { font-size: 15px; margin: 0 0 10px 0; color: #666; transition: 0.3s;}
-        .stat-card .value { font-size: 24px; font-weight: 900; color: var(--primary-blue);}
-        .actions-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px; }
-        .btn-core { border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; display: flex; align-items: center; gap: 8px; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
-        .btn-core:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
-        .add-btn { background: var(--primary-red); color: white; }
-        .eshteryly-btn { background: #28a745; color: white; }
-        .search-box { flex: 1; min-width: 250px; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Cairo'; outline: none; transition: 0.3s; background: var(--white); color: var(--dark-text);}
+        .stat-card .value { font-size: 26px; font-weight: 900; color: var(--primary-blue);}
+        
+        /* ---------------- Axon Plus Section ---------------- */
+        .axon-plus-section { background: var(--white); padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--border-color);}
+        .axon-plus-title { font-size: 16px; font-weight: 900; margin-bottom: 15px; color: var(--primary-blue); display: flex; align-items: center; gap: 8px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;}
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+        
+        .btn-service { border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1); color: white;}
+        .btn-service:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+        
+        .btn-main-action { background: var(--primary-blue); grid-column: 1 / -1; font-size: 18px; padding: 18px; } /* Create Label */
+        .btn-eshteryly { background: #28a745; }
+        .btn-home { background: #d39e00; color: #fff;} /* Amber Gold for Furniture */
+        .btn-rescue { background: var(--primary-red); } /* Alert Red for Towing */
+        
+        .search-box { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Cairo'; outline: none; transition: 0.3s; background: var(--white); color: var(--dark-text); margin-bottom: 15px;}
         .search-box:focus { border-color: var(--primary-blue); box-shadow: 0 0 5px rgba(10, 61, 98, 0.3); }
+        
         .table-responsive { width: 100%; overflow-x: auto; background: var(--white); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; border: 1px solid var(--border-color);}
-        table { width: 100%; min-width: 800px; border-collapse: collapse; }
-        th, td { padding: 12px; text-align: right; border-bottom: 1px solid var(--border-color); font-size: 13px; transition: 0.3s;}
-        th { background: var(--primary-blue); color: var(--white); }
-        tr:hover { background-color: rgba(0,0,0,0.02); }
-        .print-btn { background: #333; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-family: 'Cairo'; transition: 0.3s; font-weight: bold;}
-        .print-btn:hover { opacity: 0.8; }
-        .awb-badge { background: #e0eaf5; color: var(--primary-blue); padding: 4px 10px; border-radius: 5px; font-weight: bold; transition: 0.3s; letter-spacing: 1px;}
+        table { width: 100%; min-width: 900px; border-collapse: collapse; }
+        th, td { padding: 15px 12px; text-align: right; border-bottom: 1px solid var(--border-color); font-size: 14px; transition: 0.3s;}
+        th { background: var(--primary-blue); color: var(--white); font-weight: bold;}
+        tr:hover { background-color: rgba(10, 61, 98, 0.03); }
+        
+        .print-btn { background: var(--primary-blue); color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; transition: 0.3s; font-weight: bold;}
+        .print-btn:hover { background: var(--primary-red); }
+        .awb-badge { background: #e0eaf5; color: var(--primary-blue); padding: 5px 12px; border-radius: 6px; font-weight: bold; letter-spacing: 1px;}
+        
+        /* ---------------- Modals ---------------- */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; z-index: 1000; padding: 15px; backdrop-filter: blur(5px);}
-        .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; position: relative; transition: 0.3s;}
-        .input-group label { font-size: 13px; font-weight: bold; color: var(--primary-blue); margin-top: 10px; display: block; }
+        .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.2);}
+        .input-group label { font-size: 14px; font-weight: bold; color: var(--primary-blue); margin-top: 12px; display: block; }
         .input-group input, .input-group select, .modal-content textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo'; background: var(--white); color: var(--dark-text); transition: 0.3s;}
         .input-group input:focus, .input-group select:focus, .modal-content textarea:focus { border-color: var(--primary-blue); outline: none; }
         .close-btn { position: absolute; top: 15px; left: 15px; border: none; background: none; font-size: 24px; cursor: pointer; color: var(--primary-red); transition: 0.3s;}
         .close-btn:hover { transform: scale(1.1); }
+
+        /* الشبكة العصبية للتواصل */
         .social-footer { text-align: center; padding: 20px; margin-top: 30px; border-top: 1px solid var(--border-color); transition: 0.3s; }
         .social-footer p { font-size: 14px; color: #666; margin-bottom: 10px; font-weight: bold; }
         .social-icons { display: flex; justify-content: center; gap: 15px; }
         .social-icons a { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; color: white; text-decoration: none; font-size: 18px; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .social-icons a:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.2); }
-        .icon-fb { background: #1877F2; }
-        .icon-yt { background: #FF0000; }
-        .icon-tk { background: #000000; }
-        body.dark-mode { --white: #1e1e1e; --light-bg: #121212; --dark-text: #e0e0e0; --border-color: #333; }
-        body.dark-mode header { background: #1e1e1e; border-bottom: 3px solid var(--primary-red); }
+        .icon-fb { background: #1877F2; } .icon-yt { background: #FF0000; } .icon-tk { background: #000000; }
+        
+        /* ---------------- Dark Mode ---------------- */
+        body.dark-mode { --white: #1a1a2e; --light-bg: #16213e; --dark-text: #e0e0e0; --border-color: #0f3460; --primary-blue: #4a90e2;}
+        body.dark-mode header { background: #1a1a2e; border-bottom: 4px solid var(--primary-red); }
         body.dark-mode .stat-card h3 { color: #aaa; }
-        body.dark-mode .search-box { background: #2c2c2c; border-color: #444; }
-        body.dark-mode th { background: #062338; border-color: #333; }
+        body.dark-mode .search-box { background: #16213e; border-color: #0f3460; }
+        body.dark-mode th { background: #0f3460; }
         body.dark-mode tr:hover { background-color: rgba(255,255,255,0.05); }
-        body.dark-mode .awb-badge { background: #062338; color: #66b2ff; }
-        body.dark-mode .modal-content { border: 1px solid #333; }
-        body.dark-mode .input-group input, body.dark-mode .input-group select, body.dark-mode .modal-content textarea { background: #2c2c2c; border-color: #444; }
-        body.dark-mode #logoutBtn { background: transparent; }
-        body.dark-mode #instapayDetails { background: #0d233a !important; border-color: #1a4a7a !important; }
-        body.dark-mode #vfcashDetails { background: #3e1919 !important; border-color: #7a2e2e !important; }
-        body.dark-mode #ajelDetails { background: #2c2c2c !important; border-color: #444 !important; }
-        body.dark-mode .icon-tk { background: #333; border: 1px solid #555; }
-        body.dark-mode .social-footer p { color: #aaa; }
+        body.dark-mode .awb-badge { background: #0f3460; color: #4a90e2; }
+        body.dark-mode .axon-plus-section { background: #1a1a2e; border-color: #0f3460; }
+        body.dark-mode .modal-content { border: 1px solid #0f3460; }
+        body.dark-mode .input-group input, body.dark-mode .input-group select, body.dark-mode .modal-content textarea { background: #16213e; border-color: #0f3460; color: white;}
     </style>
 </head>
 <body>
     <header>
         <a href="#" class="logo"><i class="fa-solid fa-truck-fast"></i> AXON <span>EXPRESS</span></a>
         <div class="header-actions">
-            <button onclick="window.toggleRadio()" style="background:none; border:none; color:var(--primary-red); font-size:24px; cursor:pointer; margin-left:15px;" title="راديو أكسون">
-                <i id="radioIcon" class="fa-solid fa-radio"></i>
-            </button>
-            <button onclick="window.toggleTheme()" style="background:none; border:none; color:var(--primary-blue); font-size:24px; cursor:pointer; margin-left:15px;" title="الوضع الليلي">
+            <button onclick="window.toggleTheme()" style="background:none; border:none; color:var(--primary-blue); font-size:24px; cursor:pointer;" title="الوضع الليلي">
                 <i id="themeIcon" class="fa-solid fa-moon"></i>
             </button>
             <button id="logoutBtn" onclick="window.logout()">خروج</button>
@@ -85,20 +109,40 @@
     </header>
 
     <div class="container">
-        <div class="merchant-badge" id="merchantEmailDisplay">تهيئة المحطة...</div>
+        <div class="top-panel">
+            <div class="merchant-badge" id="merchantEmailDisplay">تهيئة المحطة...</div>
+            <label class="upload-logo-btn" title="تفعيل بوليصة السفير">
+                <i class="fa-solid fa-cloud-arrow-up"></i> رفع لوجو البراند الخاص بك
+                <input type="file" id="merchantLogoInput" style="display:none;" accept="image/png, image/jpeg" onchange="window.uploadMerchantLogo(event)">
+            </label>
+        </div>
+
         <div class="stats-grid">
             <div class="stat-card"><h3>إجمالي شحناتك النشطة</h3><div class="value" id="totalShipments">0</div></div>
             <div class="stat-card"><h3>التحصيلات المتوقعة (COD)</h3><div class="value" id="totalMoney" style="color:var(--primary-red);">0 ج.م</div></div>
         </div>
-        <div class="actions-bar">
-            <button class="btn-core add-btn" onclick="document.getElementById('addModal').style.display='flex'">
-                <i class="fa-solid fa-plus"></i> إصدار بوليصة
-            </button>
-            <button class="btn-core eshteryly-btn" onclick="document.getElementById('eshterylyModal').style.display='flex'">
-                <i class="fa-solid fa-cart-shopping"></i> طلب (اشتريلي)
-            </button>
-            <input type="text" id="searchInput" class="search-box" placeholder="🔍 ابحث برقم البوليصة، الاسم، أو المحافظة...">
+
+        <!-- Axon Plus: مركز العمليات والخدمات -->
+        <div class="axon-plus-section">
+            <div class="axon-plus-title"><i class="fa-solid fa-layer-group"></i> مركز العمليات وخدمات أكسون بلس</div>
+            <div class="services-grid">
+                <button class="btn-service btn-main-action" onclick="document.getElementById('addModal').style.display='flex'">
+                    <i class="fa-solid fa-file-invoice"></i> إصدار بوليصة شحن A4 المُحصنة
+                </button>
+                <button class="btn-service btn-eshteryly" onclick="document.getElementById('eshterylyModal').style.display='flex'">
+                    <i class="fa-solid fa-cart-shopping"></i> طلبات تسوق (اشتريلي)
+                </button>
+                <button class="btn-service btn-home" onclick="document.getElementById('homeModal').style.display='flex'">
+                    <i class="fa-solid fa-truck-ramp-box"></i> أكسون هوم (نقل الأثاث)
+                </button>
+                <button class="btn-service btn-rescue" onclick="document.getElementById('rescueModal').style.display='flex'">
+                    <i class="fa-solid fa-truck-pickup"></i> أكسون إنقاذ (ونش سيارات)
+                </button>
+            </div>
         </div>
+
+        <input type="text" id="searchInput" class="search-box" placeholder="🔍 ابحث في سجل شحناتك برقم البوليصة، الاسم، المحافظة...">
+        
         <div class="table-responsive">
             <table>
                 <thead><tr><th>رقم البوليصة</th><th>المستلم</th><th>الموبايل</th><th>المحافظة</th><th>المبلغ</th><th>الحالة</th><th>إجراء</th></tr></thead>
@@ -107,15 +151,17 @@
         </div>
     </div>
 
+    <!-- شبكة التواصل -->
     <div class="social-footer">
         <p>تواصل مع قيادة أكسون إكسبريس</p>
         <div class="social-icons">
-            <a href="https://www.facebook.com/share/1CJDtTPczM/" target="_blank" class="icon-fb" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-            <a href="https://www.tiktok.com/@axon.express?_r=1&_t=ZS-94qcUcPnr64" target="_blank" class="icon-tk" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
-            <a href="https://youtube.com/@axonexpress?si=e0weghiHfY4qXavl" target="_blank" class="icon-yt" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+            <a href="https://www.facebook.com/share/1CJDtTPczM/" target="_blank" class="icon-fb"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="https://www.tiktok.com/@axon.express" target="_blank" class="icon-tk"><i class="fa-brands fa-tiktok"></i></a>
+            <a href="https://youtube.com/@axonexpress" target="_blank" class="icon-yt"><i class="fa-brands fa-youtube"></i></a>
         </div>
     </div>
 
+    <!-- Modal: بوليصة الشحن -->
     <div id="addModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="document.getElementById('addModal').style.display='none'">✖</button>
@@ -125,11 +171,7 @@
                 <div class="input-group" style="flex:1;"><label>الموبايل الأساسي</label><input type="tel" id="recPhone" placeholder="01xxxxxxxxx"></div>
                 <div class="input-group" style="flex:1;"><label>موبايل احتياطي</label><input type="tel" id="recPhone2" placeholder="اختياري"></div>
             </div>
-            
-            <div class="input-group">
-                <label>المحافظة</label>
-                <input type="text" id="recCity" placeholder="مثال: الإسكندرية" onkeyup="window.checkCityFilter()">
-            </div>
+            <div class="input-group"><label>المحافظة</label><input type="text" id="recCity" placeholder="مثال: الإسكندرية" onkeyup="window.checkCityFilter()"></div>
             
             <div class="input-group" id="paymentTypeGroup" style="display:none; background:#e0eaf5; padding:12px; border-radius:8px; border:1px solid var(--primary-blue); margin-top:10px;">
                 <label style="color:var(--primary-red); font-size: 14px;"><i class="fa-solid fa-bolt"></i> نظام التحصيل (متاح للداخل فقط)</label>
@@ -144,61 +186,344 @@
                 <div class="input-group" style="flex:1;"><label>الوزن (كجم)</label><input type="number" id="recWeight" value="1" min="1"></div>
                 <div class="input-group" style="flex:1;"><label>المبلغ المطلوب (COD)</label><input type="number" id="codAmount" placeholder="ج.م"></div>
             </div>
-            <button class="btn-core add-btn" id="btnSave" style="width:100%; margin-top:15px; justify-content:center; padding:12px;" onclick="window.saveShipment()">حفظ وتوليد البوليصة</button>
+            <button class="btn-service btn-main-action" id="btnSave" style="width:100%; margin-top:20px; justify-content:center;" onclick="window.saveShipment()">حفظ وتوليد البوليصة (A4)</button>
         </div>
     </div>
 
+    <!-- Modal: اشتريلي -->
     <div id="eshterylyModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="document.getElementById('eshterylyModal').style.display='none'">✖</button>
             <h3 style="color:var(--primary-blue); border-bottom: 2px solid var(--primary-red); padding-bottom:10px; margin-top:0;">🛒 مهمة تسوق (اشتريلي)</h3>
-            
             <textarea id="eshDetails" placeholder="اكتب طلباتك بالتفصيل الدقيق..." rows="3"></textarea>
-            
             <div class="input-group"><label>عنوان توصيل المشتريات</label><input type="text" id="eshAddress" placeholder="العنوان أو الصق رابط اللوكيشن"></div>
-            
-            <button type="button" id="locationBtn" onclick="window.getLocation()" style="background:#0A3D62; color:white; border:none; padding:10px; border-radius:8px; margin:15px 0 5px 0; width:100%; cursor:pointer; font-family:'Cairo'; font-weight:bold; transition:0.3s;">📍 سحب إحداثيات موقعي الحالي</button>
-            
             <div class="input-group">
                 <label>طريقة دفع قيمة المشتريات</label>
-                <select id="eshPayment" onchange="window.togglePaymentDetails()">
+                <select id="eshPayment">
                     <option value="">-- حدد وسيلة الدفع --</option>
                     <option value="cash">كاش عند الاستلام</option>
                     <option value="balance">خصم من مستحقاتي لدى أكسون</option>
-                    <option value="ajel">دفع آجل (تضاف رسوم الخدمة)</option>
-                    <option value="instapay">تحويل InstaPay</option>
-                    <option value="vfcash">تحويل Vodafone Cash</option>
                 </select>
             </div>
-
-            <div id="instapayDetails" style="display:none; background:#f0f8ff; padding:12px; border-radius:8px; margin-top:10px; border:1px solid #b8daff;">
-                <p style="margin:0; font-weight:bold; color:var(--primary-blue);">حساب InstaPay: <span style="color:red;">01027660260</span></p>
-            </div>
-            <div id="vfcashDetails" style="display:none; background:#ffebeb; padding:12px; border-radius:8px; margin-top:10px; border:1px solid #f5c6cb;">
-                <p style="margin:0; font-weight:bold; color:var(--primary-blue);">محفظة فودافون: <span style="font-size:16px; color:var(--primary-red);">01030013810</span></p>
-            </div>
-            <div id="ajelDetails" style="display:none; background:#f9f9f9; padding:12px; border-radius:8px; margin-top:10px; border:1px solid #ccc;">
-                <label style="font-weight:bold; color:var(--primary-red); display:flex; align-items:center; gap:8px; cursor:pointer;">
-                    <input type="checkbox" id="ajelAgree" style="width:18px; height:18px; margin:0;"> 
-                    أوافق على إضافة رسوم خدمة الدفع الآجل
-                </label>
-            </div>
-            
-            <div style="margin:15px 0; padding:12px; background:#fff3cd; border-radius:8px; border:1px solid #ffeeba;">
-                <label style="font-weight:bold; color:#856404; display:flex; align-items:flex-start; gap:8px; cursor:pointer;">
-                    <input type="checkbox" id="legalAgree" style="width:18px; height:18px; margin-top:2px;"> 
-                    أقر بمسؤوليتي عن هذا الطلب وموافقتي على سياسة أكسون اللوجستية
-                </label>
-            </div>
-
-            <button class="btn-core eshteryly-btn" style="width:100%; justify-content:center; padding:12px;" onclick="window.submitEshteryly()">بث الطلب للإدارة</button>
+            <button class="btn-service btn-eshteryly" style="width:100%; justify-content:center; margin-top:15px;" onclick="window.submitEshteryly()">إرسال الطلب</button>
         </div>
     </div>
 
-    <audio id="axonRadioPlayer" src="http://37.157.242.101:17317/stream" preload="none"></audio>
+    <!-- Modal: أكسون هوم (عفش) -->
+    <div id="homeModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="document.getElementById('homeModal').style.display='none'">✖</button>
+            <h3 style="color:#d39e00; border-bottom: 2px solid var(--primary-blue); padding-bottom:10px; margin-top:0;">🚚 أكسون هوم (نقل الأثاث)</h3>
+            <div class="input-group"><label>نقل من (المنطقة والدور)</label><input type="text" id="homeFrom" placeholder="مثال: سموحة - الدور الرابع"></div>
+            <div class="input-group"><label>نقل إلى (المنطقة والدور)</label><input type="text" id="homeTo" placeholder="مثال: العجمي - الدور الثاني"></div>
+            <div class="input-group">
+                <label>الخدمة المطلوبة</label>
+                <select id="homeService">
+                    <option value="سيارة وعمال">سيارة نقل + عمال</option>
+                    <option value="سيارة وونش وعمال">سيارة نقل + ونش رفع + عمال</option>
+                    <option value="سيارة فقط">سيارة نقل فقط</option>
+                </select>
+            </div>
+            <div class="input-group"><label>رقم التواصل</label><input type="tel" id="homePhone" placeholder="01xxxxxxxxx"></div>
+            <button class="btn-service btn-home" style="width:100%; justify-content:center; margin-top:15px;" onclick="window.submitHomeOrder()">طلب معاينة وتسعير</button>
+        </div>
+    </div>
+
+    <!-- Modal: أكسون إنقاذ (ونش) -->
+    <div id="rescueModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="document.getElementById('rescueModal').style.display='none'">✖</button>
+            <h3 style="color:var(--primary-red); border-bottom: 2px solid var(--primary-blue); padding-bottom:10px; margin-top:0;">🚨 طوارئ: أكسون إنقاذ</h3>
+            <p style="font-size:14px; color:#666; font-weight:bold;">سيتم إرسال موقعك الجغرافي الحالي لسيارات الإنقاذ التابعة لنا للوصول إليك في أسرع وقت.</p>
+            <div class="input-group"><label>رقم التليفون للتواصل</label><input type="tel" id="rescuePhone" placeholder="01xxxxxxxxx"></div>
+            <div class="input-group"><label>نوع السيارة (اختياري)</label><input type="text" id="rescueCar" placeholder="مثال: كيا سيراتو"></div>
+            <button type="button" id="rescueLocationBtn" onclick="window.getRescueLocation()" style="background:#333; color:white; border:none; padding:12px; border-radius:8px; margin:15px 0 5px 0; width:100%; cursor:pointer; font-weight:bold;"><i class="fa-solid fa-location-dot"></i> 1. سحب موقعي الحالي أولاً</button>
+            <input type="hidden" id="rescueGPS" value="">
+            <button class="btn-service btn-rescue" style="width:100%; justify-content:center; margin-top:10px;" onclick="window.submitRescueOrder()"><i class="fa-solid fa-truck-pickup"></i> 2. اطلب الونش الآن</button>
+        </div>
+    </div>
 
     <script type="module">
-        import{initializeApp as a}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";import{getAuth as b,onAuthStateChanged as c,signOut as d}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";import{getFirestore as e,collection as f,addDoc as g,onSnapshot as h,query as i,where as j,orderBy as k}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";const app=a({apiKey:"AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",authDomain:"axon-express-2f534.firebaseapp.com",projectId:"axon-express-2f534",storageBucket:"axon-express-2f534.firebasestorage.app",messagingSenderId:"958528400260",appId:"1:958528400260:web:504ae94f3ef2225b928bd1"});const auth=b(app);const db=e(app);let mE="",mN="";c(auth,z=>{if(z){mE=z.email;mN=mE.split('@')[0];document.getElementById('merchantEmailDisplay').innerHTML=`مرحباً بك: ${mN} <i class="fa-solid fa-bolt" style="color:#ffc107;"></i>`;lS();}else{window.location.href="index.html";}});window.logout=()=>d(auth).then(()=>window.location.href="index.html");window.checkCityFilter=()=>{const z=document.getElementById('recCity').value.trim().toLowerCase(),y=document.getElementById('paymentTypeGroup'),x=document.getElementById('shipmentPaymentType'),w=['اسكندرية','الاسكندرية','إسكندرية','الإسكندرية','اسكندريه','الاسكندريه'],v=w.some(u=>z.includes(u));if(v){y.style.display='block';}else{y.style.display='none';x.value='normal';}};window.saveShipment=async()=>{const z=document.getElementById('recName').value,y=document.getElementById('recPhone').value.trim(),x=document.getElementById('recCity').value,w=document.getElementById('recAddress').value,v=document.getElementById('codAmount').value,u=document.getElementById('shipmentPaymentType').value;if(!z||!y||!x||!w||!v)return Swal.fire('نقص بيانات','لا يمكن توليد البوليصة ببيانات مفقودة.','warning');if(!/^01[0125][0-9]{8}$/.test(y))return Swal.fire('خطأ هيكلي','رقم الموبايل غير صحيح.','error');const t=document.getElementById('btnSave');t.disabled=true;t.innerHTML="جاري التشفير...";try{await g(f(db,"shipments"),{merchantEmail:mE,name:z,phone:y,phone2:document.getElementById('recPhone2').value||"لا يوجد",city:x,address:w,weight:Number(document.getElementById('recWeight').value||1),amount:Number(v),paymentType:u,status:"قيد التوصيل",deleted:false,timestamp:new Date()});document.getElementById('addModal').style.display='none';Swal.fire({toast:true,position:'top-end',icon:'success',title:'تم إصدار البوليصة',showConfirmButton:false,timer:2000});document.querySelectorAll('#addModal input').forEach(s=>s.value='');document.getElementById('paymentTypeGroup').style.display='none';document.getElementById('shipmentPaymentType').value='normal';}catch(s){Swal.fire('خطأ بالشبكة',s.message,'error');}t.disabled=false;t.innerHTML="حفظ وتوليد البوليصة";};function lS(){h(i(f(db,"shipments"),j("merchantEmail","==",mE)),z=>{let y=0,x="",w=0,v=[];z.forEach(u=>v.push({id:u.id,...u.data()}));v.sort((a,b)=>b.timestamp-a.timestamp);v.forEach(u=>{if(u.deleted)return;y+=Number(u.amount)||0;w++;const t="AXN"+u.id.substring(0,5).toUpperCase();x+=`<tr><td><span class="awb-badge">${t}</span></td><td><b>${u.name}</b></td><td dir="ltr">${u.phone}</td><td>${u.city}</td><td style="color:var(--primary-red); font-weight:bold;">${u.amount}</td><td style="font-weight:bold; color:${u.status==='تم التسليم'?'#28a745':(u.status==='مرتجع'?'#dc3545':'#f39c12')}">${u.status}</td><td><button class="print-btn" onclick="window.printWB('${t}', '${u.name}', '${u.phone}', '${u.phone2}', '${u.city}', '${u.address}', '${u.weight}', '${u.amount}')"><i class="fa-solid fa-print"></i> طباعة A5</button></td></tr>`;});document.getElementById('tableBody').innerHTML=x;document.getElementById('totalShipments').innerText=w;document.getElementById('totalMoney').innerText=y+" ج.م";});}window.printWB=(z,y,x,w,v,u,t,s)=>{const r=`<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>AWB: ${z}</title><style>@media print { @page { size: A5 portrait; margin: 0mm; } body { margin: 0; padding: 0; background: #fff; display: block; } .strict-a5-wrapper { width: 148mm; height: 195mm; padding: 10mm; box-sizing: border-box; border: 2px solid #000; overflow: hidden; margin: 0 auto; } } body { font-family: sans-serif; background: #eee; display: flex; justify-content: center; padding: 20px; } .strict-a5-wrapper { background: white; width: 148mm; min-height: 195mm; padding: 10mm; box-sizing: border-box; border: 2px solid #000; } .header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 5mm; margin-bottom: 5mm; } .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; margin-bottom: 5mm; border: 1px solid #000; padding: 5mm; } .cod { text-align: center; border: 2px solid #000; padding: 5mm; background: #f9f9f9; } p { margin: 5px 0; font-size: 14px; } h3 { margin: 0 0 10px 0; font-size: 16px;}</style><script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"><\/script></head><body><div class="strict-a5-wrapper"><div class="header"><div><h2 style="margin:0;">AXON EXPRESS</h2><p style="margin:0;color:#666;">الإسكندرية - المنشية</p></div><div style="text-align:center;"><svg id="bc"></svg><br><b style="font-size:18px;">${z}</b></div></div><div class="grid"><div><h3>بيانات المرسل</h3><p>التاجر: <b>${mN}</b></p><p>الوزن: <b>${t} كجم</b></p></div><div style="border-right:1px solid #000; padding-right:5mm;"><h3>بيانات المستلم</h3><p>الاسم: <b>${y}</b></p><p>الهاتف: <b dir="ltr">${x}</b></p>${w&&w!=='undefined'&&w!=='لا يوجد'?`<p>بديل: <b dir="ltr">${w}</b></p>`:''}<p>المحافظة: <b>${v}</b></p><p>العنوان: <b>${u}</b></p></div></div><div class="cod"><h3>المبلغ المطلوب تحصيله (COD)</h3><h1 style="margin:0; font-size: 32px;">${s} EGP</h1></div><div style="text-align:center; font-size:12px; margin-top:10mm; font-weight:bold;">تم الإصدار إلكترونياً من بوابة التجار | خدمة العملاء: 01147000882</div></div><script>JsBarcode("#bc", "${z}", {format:"CODE128", width:2, height:45, displayValue:false}); setTimeout(window.print, 500);<\/script></body></html>`;const q=window.open('','_blank');q.document.write(r);q.document.close();};window.togglePaymentDetails=()=>{const z=document.getElementById('eshPayment').value;document.getElementById('instapayDetails').style.display=z==='instapay'?'block':'none';document.getElementById('vfcashDetails').style.display=z==='vfcash'?'block':'none';document.getElementById('ajelDetails').style.display=z==='ajel'?'block':'none';};window.submitEshteryly=async()=>{const z=document.getElementById('eshDetails').value.trim(),y=document.getElementById('eshAddress').value.trim(),x=document.getElementById('eshPayment').value;if(!z||!y||!x)return Swal.fire('تنبيه','البيانات غير مكتملة.','warning');if(x==='ajel'&&!document.getElementById('ajelAgree').checked)return Swal.fire('خطأ','يلزم الموافقة على شروط الدفع الآجل.','error');if(!document.getElementById('legalAgree').checked)return Swal.fire('رفض العملية','يجب إقرار المسؤولية قبل الإرسال.','error');try{await g(f(db,"eshteryly_orders"),{merchantEmail:mE,details:z,address:y,paymentMethod:x,status:"قيد المراجعة",timestamp:new Date()});document.getElementById('eshterylyModal').style.display='none';Swal.fire({icon:'success',title:'تم الاستلام',text:'مهمتك الآن على رادار الإدارة',timer:2000});document.getElementById('eshDetails').value='';document.getElementById('eshAddress').value='';document.getElementById('eshPayment').value='';document.getElementById('legalAgree').checked=false;window.togglePaymentDetails();}catch(w){Swal.fire('خطأ',w.message,'error');}};window.getLocation=()=>{const z=document.getElementById('locationBtn');if(navigator.geolocation){z.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> جاري قراءة الأقمار الصناعية...';navigator.geolocation.getCurrentPosition(y=>{const x=`https://maps.google.com/?q=${y.coords.latitude},${y.coords.longitude}`,w=document.getElementById('eshAddress');w.value=w.value?w.value+` \n📍 ${x}`:`📍 ${x}`;z.innerHTML='✅ تم التقاط الإحداثيات';setTimeout(()=>z.innerHTML='📍 سحب إحداثيات موقعي الحالي',3000);},y=>{z.innerHTML='📍 سحب إحداثيات موقعي الحالي';Swal.fire('تم الحجب','الرجاء تفعيل إذن الـ GPS في المتصفح.','error');},{enableHighAccuracy:true});}};document.getElementById('searchInput').addEventListener('keyup',function(){const z=this.value.toLowerCase();document.querySelectorAll('#tableBody tr').forEach(y=>y.style.display=y.innerText.toLowerCase().includes(z)?'':'none');});const radioPlayer=document.getElementById('axonRadioPlayer'),radioIcon=document.getElementById('radioIcon'),themeIcon=document.getElementById('themeIcon');window.toggleRadio=()=>{if(radioPlayer.paused){radioPlayer.src="http://37.157.242.101:17317/stream?cb="+new Date().getTime();radioPlayer.play().catch(z=>{});radioIcon.style.color='#28a745';radioIcon.classList.add('fa-beat');}else{radioPlayer.pause();radioPlayer.src="";radioIcon.style.color='var(--primary-red)';radioIcon.classList.remove('fa-beat');}};window.toggleTheme=()=>{document.body.classList.toggle('dark-mode');const z=document.body.classList.contains('dark-mode');localStorage.setItem('axon_merchant_theme',z?'dark':'light');themeIcon.className=z?'fa-solid fa-sun':'fa-solid fa-moon';};if(localStorage.getItem('axon_merchant_theme')==='dark'){document.body.classList.add('dark-mode');setTimeout(()=>{if(themeIcon)themeIcon.className='fa-solid fa-sun';},100);}
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, where, setDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
+
+        const app = initializeApp({
+            apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
+            authDomain: "axon-express-2f534.firebaseapp.com",
+            projectId: "axon-express-2f534",
+            storageBucket: "axon-express-2f534.firebasestorage.app",
+            messagingSenderId: "958528400260",
+            appId: "1:958528400260:web:504ae94f3ef2225b928bd1"
+        });
+        
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+        
+        let merchantEmail = "", merchantName = "", merchantLogoURL = "", merchantIP = "جاري التحقق...";
+
+        // --- جلب الـ IP للبصمة الرقمية ---
+        fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ merchantIP = d.ip; }).catch(e=>{ merchantIP = "غير معروف"; });
+        const deviceInfo = navigator.userAgent.substring(0, 40) + "..."; // تقصير نوع الجهاز
+
+        // --- المصادقة وجلب البيانات ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                merchantEmail = user.email;
+                merchantName = merchantEmail.split('@')[0];
+                document.getElementById('merchantEmailDisplay').innerHTML = `مرحباً بك: ${merchantName} <i class="fa-solid fa-bolt" style="color:#ffc107;"></i>`;
+                loadShipments();
+                
+                // محاولة جلب لوجو التاجر من قاعدة البيانات
+                const profileSnap = await getDoc(doc(db, "merchant_profiles", merchantEmail));
+                if(profileSnap.exists() && profileSnap.data().logoURL) {
+                    merchantLogoURL = profileSnap.data().logoURL;
+                }
+            } else { window.location.href = "index.html"; }
+        });
+
+        window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
+
+        // --- رفع لوجو السفير ---
+        window.uploadMerchantLogo = async (event) => {
+            const file = event.target.files[0];
+            if(!file) return;
+            Swal.fire({title: 'جاري رفع اللوجو...', allowOutsideClick: false, didOpen: () => {Swal.showLoading()}});
+            try {
+                const storageRef = ref(storage, `merchant_logos/${merchantEmail}_${Date.now()}`);
+                await uploadBytes(storageRef, file);
+                merchantLogoURL = await getDownloadURL(storageRef);
+                await setDoc(doc(db, "merchant_profiles", merchantEmail), { logoURL: merchantLogoURL }, { merge: true });
+                Swal.fire('ممتاز!', 'تم تفعيل بوليصة السفير بنجاح.', 'success');
+            } catch(e) { Swal.fire('خطأ', 'فشل رفع الصورة: ' + e.message, 'error'); }
+        };
+
+        window.checkCityFilter = () => {
+            const cityValue = document.getElementById('recCity').value.trim().toLowerCase();
+            const paymentGroup = document.getElementById('paymentTypeGroup');
+            const isAlex = ['اسكندرية', 'الاسكندرية', 'إسكندرية', 'الإسكندرية'].some(k => cityValue.includes(k));
+            if (isAlex) paymentGroup.style.display = 'block';
+            else { paymentGroup.style.display = 'none'; document.getElementById('shipmentPaymentType').value = 'normal'; }
+        };
+
+        window.saveShipment = async () => {
+            const name = document.getElementById('recName').value;
+            const phone = document.getElementById('recPhone').value.trim();
+            const city = document.getElementById('recCity').value;
+            const address = document.getElementById('recAddress').value;
+            const amount = document.getElementById('codAmount').value;
+            const paymentType = document.getElementById('shipmentPaymentType').value;
+
+            if(!name || !phone || !city || !address || !amount) return Swal.fire('نقص بيانات', 'لا يمكن توليد البوليصة.', 'warning');
+            const btn = document.getElementById('btnSave'); btn.disabled = true; btn.innerHTML = "جاري التشفير...";
+            
+            try {
+                const docRef = await addDoc(collection(db, "shipments"), {
+                    merchantEmail, name, phone, phone2: document.getElementById('recPhone2').value || "لا يوجد",
+                    city, address, weight: Number(document.getElementById('recWeight').value||1),
+                    amount: Number(amount), paymentType: paymentType, status: "قيد التوصيل", deleted: false, timestamp: new Date()
+                });
+                document.getElementById('addModal').style.display='none';
+                Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم إصدار البوليصة', showConfirmButton:false, timer:2000});
+                document.querySelectorAll('#addModal input').forEach(inp => inp.value = '');
+                
+                // طباعة فورية بعد الحفظ
+                const awb = "AXN" + docRef.id.substring(0,5).toUpperCase();
+                window.printWB(awb, name, phone, document.getElementById('recPhone2').value, city, address, document.getElementById('recWeight').value||1, amount);
+
+            } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
+            btn.disabled = false; btn.innerHTML = "حفظ وتوليد البوليصة (A4)";
+        };
+
+        function loadShipments() {
+            onSnapshot(query(collection(db, "shipments"), where("merchantEmail", "==", merchantEmail)), (snap) => {
+                let total = 0, html = "", count = 0;
+                let docs = [];
+                snap.forEach(doc => docs.push({id: doc.id, ...doc.data()}));
+                docs.sort((a, b) => b.timestamp - a.timestamp);
+
+                docs.forEach(d => {
+                    if(d.deleted) return;
+                    total += Number(d.amount) || 0; count++;
+                    const awb = "AXN" + d.id.substring(0,5).toUpperCase();
+                    html += `<tr><td><span class="awb-badge">${awb}</span></td><td><b>${d.name}</b></td>
+                        <td dir="ltr">${d.phone}</td><td>${d.city}</td><td style="color:var(--primary-red); font-weight:bold;">${d.amount}</td>
+                        <td style="font-weight:bold;">${d.status}</td>
+                        <td><button class="print-btn" onclick="window.printWB('${awb}', '${d.name}', '${d.phone}', '${d.phone2}', '${d.city}', '${d.address}', '${d.weight}', '${d.amount}')"><i class="fa-solid fa-print"></i> طباعة A4</button></td></tr>`;
+                });
+                document.getElementById('tableBody').innerHTML = html;
+                document.getElementById('totalShipments').innerText = count;
+                document.getElementById('totalMoney').innerText = total + " ج.م";
+            });
+        }
+
+        // --- هندسة الطباعة (A4 المُحصنة) ---
+        window.printWB = (awb, name, p1, p2, city, addr, w, amt) => {
+            const timestampStr = new Date().toLocaleString('en-GB'); // بصمة الوقت
+            const digitalSignature = `[Merchant: ${merchantName}] | [IP: ${merchantIP}] | [Device: ${deviceInfo}] | [Time: ${timestampStr}]`;
+            
+            // اللوجوهات
+            const axonLogo = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Truck_icon.svg/1024px-Truck_icon.svg.png"; // استبدله بلينك اللوجو بتاعك الفعلي
+            const safeerLogoHTML = merchantLogoURL ? `<img src="${merchantLogoURL}" style="max-height:60px; max-width:120px;">` : `<h3 style="margin:0; color:#0A3D62;">${merchantName}</h3>`;
+            const qrCode = "https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"; // استبدله بـ QR Code الفعلي بتاعك
+
+            const printContent = `
+            <!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>AWB: ${awb}</title>
+            <style>
+                @media print {
+                    @page { size: A4 portrait; margin: 5mm; }
+                    body { margin: 0; padding: 0; background: #fff; -webkit-print-color-adjust: exact; }
+                }
+                body { font-family: sans-serif; background: #fff; padding: 10mm; font-size: 13px; color: #000; }
+                .a4-wrapper { width: 100%; border: 2px solid #0A3D62; padding: 15px; box-sizing: border-box; position: relative;}
+                .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #b82329; padding-bottom: 10px; margin-bottom: 15px; }
+                .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+                .box { border: 1px solid #ccc; padding: 10px; border-radius: 5px; }
+                .box h3 { margin: 0 0 8px 0; background: #0A3D62; color: #fff; padding: 5px; font-size: 14px; text-align: center;}
+                .cod-box { background: #fdf5f5; border: 2px solid #b82329; text-align: center; padding: 10px; border-radius: 5px; margin-bottom:15px;}
+                .constitution { border: 1px solid #000; padding: 10px; font-size: 11px; margin-bottom: 15px; line-height: 1.4;}
+                .constitution h4 { color: #b82329; margin: 0 0 5px 0; font-size: 13px; border-bottom: 1px solid #ccc; padding-bottom:3px;}
+                .footer-grid { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+                .digital-sig { text-align: center; font-size: 10px; font-family: monospace; color: #444; border-top: 1px dashed #000; padding-top: 5px;}
+            </style>
+            <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"><\/script>
+            </head><body>
+                <div class="a4-wrapper">
+                    <!-- الرأس واللوجوهات -->
+                    <div class="header">
+                        <div style="text-align:center;">${safeerLogoHTML}<br><small>لوجو التاجر (السفير)</small></div>
+                        <div style="text-align:center;"><svg id="bc"></svg><br><b style="font-size:16px;">${awb}</b></div>
+                        <div style="text-align:center;"><h2 style="margin:0; color:#0A3D62;">AXON <span style="color:#b82329;">EXPRESS</span></h2><p style="margin:0;">بوليصة شحن</p></div>
+                    </div>
+                    
+                    <!-- البيانات -->
+                    <div class="info-grid">
+                        <div class="box">
+                            <h3>بيانات المرسل (من)</h3>
+                            <p>الاسم/التاجر: <b>${merchantName}</b></p>
+                            <p>الوزن: <b>${w} كجم</b></p>
+                            <p>التاريخ: <b>${timestampStr.split(',')[0]}</b></p>
+                        </div>
+                        <div class="box">
+                            <h3>بيانات المستلم (إلى)</h3>
+                            <p>الاسم: <b>${name}</b></p>
+                            <p>الموبايل: <b dir="ltr">${p1}</b> ${p2 && p2 !== 'undefined' ? `| <b dir="ltr">${p2}</b>` : ''}</p>
+                            <p>المحافظة: <b>${city}</b></p>
+                            <p>العنوان: <b>${addr}</b></p>
+                        </div>
+                    </div>
+                    
+                    <!-- قيمة التحصيل -->
+                    <div class="cod-box">
+                        <h2 style="margin:0; color:#b82329; font-size:24px;">المبلغ المطلوب تحصيله (COD): ${amt} ج.م</h2>
+                    </div>
+
+                    <!-- الدستور والشروط -->
+                    <div class="constitution">
+                        <h4>شروط وأحكام الناقل (Axon Express)</h4>
+                        <p><b>1. إقرار الاستلام:</b> استلام البضاعة بحالة ظاهرية سليمة، والناقل غير مسؤول عن الفحص الفني. <br>
+                        <b>2. حدود التعويض:</b> في حالة ثبوت خطأ الناقل، لا يتجاوز التعويض قيمة أجرة النقل × 3، أو بحد أقصى (500 جنيه) أيهما أقل، ما لم يتم التأمين عليها. الشحنات القابلة للكسر تنقل على مسؤولية الراسل بالكامل ما لم يُدفع تأمين 10%. <br>
+                        <b>3. مهلة الشكاوى:</b> يُعتبر التسليم نافياً للمسؤولية ما لم يُخطر الناقل خلال <b>48 ساعة</b> كحد أقصى للشكاوى الخفية. <br>
+                        <b>4. المرتجعات:</b> في حالة رفض المستلم، يلتزم المرسل (التاجر) بسداد رسوم الشحن (ذهاباً وإياباً).</p>
+                        
+                        <h4>إقرارات ومحظورات مطلقة</h4>
+                        <p>أتعهد بصحة البيانات، وأتحمل المسؤولية الجنائية الكاملة عن محتوى الطرد. <b>يحظر قطعياً شحن:</b> المواد الخطرة، الأسلحة، المخدرات، البضائع المهربة، والأموال. يحق للشركة تفتيش أي شحنة مشبوهة وإبلاغ السلطات فوراً.</p>
+                        
+                        <h4 style="color:#b82329; font-size:14px;">تعليمات إلزامية للعملاء (المستلم)</h4>
+                        <p style="font-weight:bold; color:#b82329; font-size:13px;">يُمنع منعاً باتاً فتح الشحنة أو العبث بتغليفها قبل سداد كامل قيمتها (COD) ومصاريف الشحن لمندوب الشركة. وفي حالة رفض الاستلام بعد الفتح (بإذن التاجر)، يلتزم العميل بدفع مصاريف الشحن كاملة.</p>
+                    </div>
+
+                    <!-- التذييل والروابط -->
+                    <div class="footer-grid">
+                        <div style="font-size:12px; line-height:1.6;">
+                            <b>تواصل معنا:</b><br>
+                            FB: fb.com/share/1CJDtTPczM<br>
+                            YT: youtube.com/@axonexpress<br>
+                            TK: tiktok.com/@axon.express<br>
+                            <i style="color:#b82329; font-weight:bold;">خدمة العملاء (واتساب): 01147000882</i>
+                        </div>
+                        <div style="text-align:center;">
+                            <img src="${qrCode}" style="width:70px; height:70px;"><br>
+                            <small>امسح الكود لروابطنا</small>
+                        </div>
+                    </div>
+
+                    <!-- التوقيع الرقمي للموبايل -->
+                    <div class="digital-sig">
+                        هذه البوليصة إلكترونية ومُصدرة مباشرة عبر نظام (أكسون إكسبريس) من حساب التاجر. يُعد إنشاؤها إقراراً نهائياً وملزماً بصحة البيانات وموافقة تامة على الشروط والأحكام والمسؤولية الجنائية.<br>
+                        <b>البيانات الرقمية أدناه تُعد بمثابة توقيع إلكتروني موثق للمُرسل:</b><br>
+                        ${digitalSignature}
+                    </div>
+                </div>
+                <script>JsBarcode("#bc", "${awb}", {format:"CODE128", width:1.5, height:40, displayValue:false}); setTimeout(window.print, 800);<\/script>
+            </body></html>`;
+            const win = window.open('', '_blank');
+            win.document.write(printContent); win.document.close();
+        };
+
+        // --- خدمات Axon Plus ---
+        window.submitEshteryly = async () => {
+            const details = document.getElementById('eshDetails').value.trim();
+            const address = document.getElementById('eshAddress').value.trim();
+            if(!details || !address) return Swal.fire('تنبيه', 'البيانات غير مكتملة.', 'warning');
+            try {
+                await addDoc(collection(db, "eshteryly_orders"), { merchantEmail, details, address, status: "مطلوب", timestamp: new Date() });
+                document.getElementById('eshterylyModal').style.display='none';
+                Swal.fire('تم!', 'طلب المشتريات وصل للإدارة.', 'success');
+            } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
+        };
+
+        window.submitHomeOrder = async () => {
+            const from = document.getElementById('homeFrom').value;
+            const to = document.getElementById('homeTo').value;
+            const phone = document.getElementById('homePhone').value;
+            const service = document.getElementById('homeService').value;
+            if(!from || !to || !phone) return Swal.fire('نقص بيانات', 'برجاء إكمال حقول النقل.', 'warning');
+            try {
+                await addDoc(collection(db, "axon_home_orders"), { merchantEmail, from, to, phone, service, status: "قيد التسعير", timestamp: new Date() });
+                document.getElementById('homeModal').style.display='none';
+                Swal.fire('ممتاز!', 'تم استلام طلب نقل الأثاث، سنتواصل معك فوراً للتسعير.', 'success');
+            } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
+        };
+
+        window.getRescueLocation = () => {
+            const btn = document.getElementById('rescueLocationBtn');
+            if(navigator.geolocation) {
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري تحديد موقعك...';
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        document.getElementById('rescueGPS').value = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                        btn.innerHTML = '✅ تم تحديد الموقع بدقة';
+                    },
+                    (err) => { btn.innerHTML = 'خطأ! فعل الـ GPS أولاً'; }
+                );
+            }
+        };
+
+        window.submitRescueOrder = async () => {
+            const phone = document.getElementById('rescuePhone').value;
+            const car = document.getElementById('rescueCar').value || 'غير محدد';
+            const gps = document.getElementById('rescueGPS').value;
+            if(!phone || !gps) return Swal.fire('تحذير طوارئ', 'يجب إدخال رقم التليفون وسحب الموقع الحالي أولاً!', 'error');
+            try {
+                await addDoc(collection(db, "axon_rescue_orders"), { merchantEmail, phone, car, gps, status: "نداء استغاثة", timestamp: new Date() });
+                document.getElementById('rescueModal').style.display='none';
+                Swal.fire('تم إرسال الاستغاثة!', 'الونش في الطريق إليك، خلي تليفونك متاح.', 'success');
+            } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
+        };
+
+        window.toggleTheme = () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('axon_merchant_theme', isDark ? 'dark' : 'light');
+            document.getElementById('themeIcon').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        };
+        if(localStorage.getItem('axon_merchant_theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            setTimeout(() => { document.getElementById('themeIcon').className = 'fa-solid fa-sun'; }, 100);
+        }
     </script>
 </body>
 </html>
