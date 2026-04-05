@@ -10,19 +10,17 @@
     <style>
         * { box-sizing: border-box; }
         :root { 
-            --primary-blue: #0A3D62; /* Deep Sapphire */
-            --primary-red: #b82329;  /* Brand Crimson */
+            --primary-blue: #0A3D62; 
+            --primary-red: #b82329;  
             --white: #ffffff; 
             --light-bg: #f4f7f6; 
             --dark-text: #2c3e50; 
             --border-color: #eee; 
-            --gold: #d4af37;
         }
-        html, body { font-family: 'Cairo', sans-serif; margin: 0; background: var(--light-bg); color: var(--dark-text); overflow-x: hidden; scroll-behavior: smooth; transition: background 0.3s, color 0.3s;}
+        html, body { font-family: 'Cairo', sans-serif; margin: 0; background: var(--light-bg); color: var(--dark-text); overflow-x: hidden; scroll-behavior: smooth; transition: 0.3s;}
         
-        header { background: var(--white); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--primary-blue); position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: 0.3s;}
+        header { background: var(--white); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--primary-blue); position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.08);}
         .logo { font-size: 22px; font-weight: 900; color: var(--primary-blue); text-decoration: none; display: flex; align-items: center; gap: 8px;}
-        .logo i { color: var(--primary-red); }
         .logo span { color: var(--primary-red); }
         .header-actions { display: flex; align-items: center; gap: 15px;}
         
@@ -32,68 +30,59 @@
         .container { padding: 20px; max-width: 1200px; margin: 0 auto; min-height: 80vh;}
         
         .top-panel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;}
-        .merchant-badge { background: var(--primary-blue); padding: 8px 20px; border-radius: 30px; font-size: 14px; color: white; font-weight: bold; box-shadow: 0 4px 10px rgba(10, 61, 98, 0.2);}
-        .upload-logo-btn { background: var(--white); color: var(--primary-blue); border: 2px dashed var(--primary-blue); padding: 6px 15px; border-radius: 8px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; transition: 0.3s; display: flex; align-items: center; gap: 8px;}
+        .merchant-badge { background: var(--primary-blue); padding: 8px 20px; border-radius: 30px; font-size: 14px; color: white; font-weight: bold;}
+        .upload-logo-btn { background: var(--white); color: var(--primary-blue); border: 2px dashed var(--primary-blue); padding: 6px 15px; border-radius: 8px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; transition: 0.3s;}
         .upload-logo-btn:hover { background: var(--primary-blue); color: var(--white); }
         
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: var(--white); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-blue); transition: 0.3s;}
-        .stat-card h3 { font-size: 15px; margin: 0 0 10px 0; color: #666; transition: 0.3s;}
+        .stat-card { background: var(--white); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-blue);}
+        .stat-card h3 { font-size: 15px; margin: 0 0 10px 0; color: #666;}
         .stat-card .value { font-size: 26px; font-weight: 900; color: var(--primary-blue);}
         
-        /* ---------------- Axon Plus Section ---------------- */
+        /* Axon Plus Section */
         .axon-plus-section { background: var(--white); padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--border-color);}
         .axon-plus-title { font-size: 16px; font-weight: 900; margin-bottom: 15px; color: var(--primary-blue); display: flex; align-items: center; gap: 8px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;}
         .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
         
-        .btn-service { border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1); color: white;}
+        .btn-service { border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; color: white;}
         .btn-service:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
         
-        .btn-main-action { background: var(--primary-blue); grid-column: 1 / -1; font-size: 18px; padding: 18px; } /* Create Label */
+        .btn-main-action { background: var(--primary-blue); grid-column: 1 / -1; font-size: 18px; padding: 18px; } 
         .btn-eshteryly { background: #28a745; }
-        .btn-home { background: #d39e00; color: #fff;} /* Amber Gold for Furniture */
-        .btn-rescue { background: var(--primary-red); } /* Alert Red for Towing */
+        .btn-home { background: #d39e00; } 
+        .btn-rescue { background: var(--primary-red); } 
         
-        .search-box { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Cairo'; outline: none; transition: 0.3s; background: var(--white); color: var(--dark-text); margin-bottom: 15px;}
-        .search-box:focus { border-color: var(--primary-blue); box-shadow: 0 0 5px rgba(10, 61, 98, 0.3); }
+        .search-box { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Cairo'; outline: none; margin-bottom: 15px;}
+        .search-box:focus { border-color: var(--primary-blue); }
         
-        .table-responsive { width: 100%; overflow-x: auto; background: var(--white); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; border: 1px solid var(--border-color);}
+        .table-responsive { width: 100%; overflow-x: auto; background: var(--white); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--border-color);}
         table { width: 100%; min-width: 900px; border-collapse: collapse; }
-        th, td { padding: 15px 12px; text-align: right; border-bottom: 1px solid var(--border-color); font-size: 14px; transition: 0.3s;}
+        th, td { padding: 15px 12px; text-align: right; border-bottom: 1px solid var(--border-color); font-size: 14px;}
         th { background: var(--primary-blue); color: var(--white); font-weight: bold;}
-        tr:hover { background-color: rgba(10, 61, 98, 0.03); }
         
-        .print-btn { background: var(--primary-blue); color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; transition: 0.3s; font-weight: bold;}
-        .print-btn:hover { background: var(--primary-red); }
+        .print-btn { background: var(--primary-blue); color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold;}
         .awb-badge { background: #e0eaf5; color: var(--primary-blue); padding: 5px 12px; border-radius: 6px; font-weight: bold; letter-spacing: 1px;}
         
-        /* ---------------- Modals ---------------- */
+        /* Modals */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; z-index: 1000; padding: 15px; backdrop-filter: blur(5px);}
-        .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.2);}
+        .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto; position: relative;}
         .input-group label { font-size: 14px; font-weight: bold; color: var(--primary-blue); margin-top: 12px; display: block; }
-        .input-group input, .input-group select, .modal-content textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo'; background: var(--white); color: var(--dark-text); transition: 0.3s;}
+        .input-group input, .input-group select, .modal-content textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo'; background: var(--white); color: var(--dark-text);}
         .input-group input:focus, .input-group select:focus, .modal-content textarea:focus { border-color: var(--primary-blue); outline: none; }
-        .close-btn { position: absolute; top: 15px; left: 15px; border: none; background: none; font-size: 24px; cursor: pointer; color: var(--primary-red); transition: 0.3s;}
-        .close-btn:hover { transform: scale(1.1); }
+        .close-btn { position: absolute; top: 15px; left: 15px; border: none; background: none; font-size: 24px; cursor: pointer; color: var(--primary-red);}
 
-        /* الشبكة العصبية للتواصل */
-        .social-footer { text-align: center; padding: 20px; margin-top: 30px; border-top: 1px solid var(--border-color); transition: 0.3s; }
-        .social-footer p { font-size: 14px; color: #666; margin-bottom: 10px; font-weight: bold; }
-        .social-icons { display: flex; justify-content: center; gap: 15px; }
-        .social-icons a { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; color: white; text-decoration: none; font-size: 18px; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .social-icons a:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.2); }
+        /* Chatbot & Social */
+        .floating-chat { position: fixed; bottom: 20px; right: 20px; background: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999; transition: 0.3s; text-decoration: none;}
+        .floating-chat:hover { transform: scale(1.1); }
+
+        .social-footer { text-align: center; padding: 20px; margin-top: 30px; border-top: 1px solid var(--border-color); }
+        .social-icons { display: flex; justify-content: center; gap: 15px; margin-top: 10px;}
+        .social-icons a { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; color: white; text-decoration: none; font-size: 18px;}
         .icon-fb { background: #1877F2; } .icon-yt { background: #FF0000; } .icon-tk { background: #000000; }
         
-        /* ---------------- Dark Mode ---------------- */
+        /* Dark Mode */
         body.dark-mode { --white: #1a1a2e; --light-bg: #16213e; --dark-text: #e0e0e0; --border-color: #0f3460; --primary-blue: #4a90e2;}
         body.dark-mode header { background: #1a1a2e; border-bottom: 4px solid var(--primary-red); }
-        body.dark-mode .stat-card h3 { color: #aaa; }
-        body.dark-mode .search-box { background: #16213e; border-color: #0f3460; }
-        body.dark-mode th { background: #0f3460; }
-        body.dark-mode tr:hover { background-color: rgba(255,255,255,0.05); }
-        body.dark-mode .awb-badge { background: #0f3460; color: #4a90e2; }
-        body.dark-mode .axon-plus-section { background: #1a1a2e; border-color: #0f3460; }
-        body.dark-mode .modal-content { border: 1px solid #0f3460; }
         body.dark-mode .input-group input, body.dark-mode .input-group select, body.dark-mode .modal-content textarea { background: #16213e; border-color: #0f3460; color: white;}
     </style>
 </head>
@@ -112,7 +101,7 @@
         <div class="top-panel">
             <div class="merchant-badge" id="merchantEmailDisplay">تهيئة المحطة...</div>
             <label class="upload-logo-btn" title="تفعيل بوليصة السفير">
-                <i class="fa-solid fa-cloud-arrow-up"></i> رفع لوجو البراند الخاص بك
+                <i class="fa-solid fa-cloud-arrow-up"></i> رفع اللوجو الخاص بك
                 <input type="file" id="merchantLogoInput" style="display:none;" accept="image/png, image/jpeg" onchange="window.uploadMerchantLogo(event)">
             </label>
         </div>
@@ -122,7 +111,7 @@
             <div class="stat-card"><h3>التحصيلات المتوقعة (COD)</h3><div class="value" id="totalMoney" style="color:var(--primary-red);">0 ج.م</div></div>
         </div>
 
-        <!-- Axon Plus: مركز العمليات والخدمات -->
+        <!-- Axon Plus -->
         <div class="axon-plus-section">
             <div class="axon-plus-title"><i class="fa-solid fa-layer-group"></i> مركز العمليات وخدمات أكسون بلس</div>
             <div class="services-grid">
@@ -151,7 +140,11 @@
         </div>
     </div>
 
-    <!-- شبكة التواصل -->
+    <!-- زرار الشات بوت العائم -->
+    <a href="https://wa.me/201147000882" class="floating-chat" target="_blank" title="تواصل مع خدمة العملاء">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
     <div class="social-footer">
         <p>تواصل مع قيادة أكسون إكسبريس</p>
         <div class="social-icons">
@@ -161,7 +154,7 @@
         </div>
     </div>
 
-    <!-- Modal: بوليصة الشحن -->
+    <!-- Modal: إصدار بوليصة شحن -->
     <div id="addModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="document.getElementById('addModal').style.display='none'">✖</button>
@@ -190,26 +183,44 @@
         </div>
     </div>
 
-    <!-- Modal: اشتريلي -->
+    <!-- Modal: اشتريلي (مع الدفع المتكامل) -->
     <div id="eshterylyModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="document.getElementById('eshterylyModal').style.display='none'">✖</button>
             <h3 style="color:var(--primary-blue); border-bottom: 2px solid var(--primary-red); padding-bottom:10px; margin-top:0;">🛒 مهمة تسوق (اشتريلي)</h3>
             <textarea id="eshDetails" placeholder="اكتب طلباتك بالتفصيل الدقيق..." rows="3"></textarea>
             <div class="input-group"><label>عنوان توصيل المشتريات</label><input type="text" id="eshAddress" placeholder="العنوان أو الصق رابط اللوكيشن"></div>
+            
             <div class="input-group">
                 <label>طريقة دفع قيمة المشتريات</label>
-                <select id="eshPayment">
+                <select id="eshPayment" onchange="window.togglePaymentDetails()">
                     <option value="">-- حدد وسيلة الدفع --</option>
                     <option value="cash">كاش عند الاستلام</option>
                     <option value="balance">خصم من مستحقاتي لدى أكسون</option>
+                    <option value="ajel">دفع آجل (تضاف رسوم الخدمة)</option>
+                    <option value="instapay">تحويل InstaPay</option>
+                    <option value="vfcash">تحويل Vodafone Cash</option>
                 </select>
             </div>
+
+            <div id="instapayDetails" style="display:none; background:#f0f8ff; padding:12px; border-radius:8px; margin-top:10px; border:1px solid #b8daff;">
+                <p style="margin:0; font-weight:bold; color:var(--primary-blue);">حساب InstaPay: <span style="color:red;">01027660260</span></p>
+            </div>
+            <div id="vfcashDetails" style="display:none; background:#ffebeb; padding:12px; border-radius:8px; margin-top:10px; border:1px solid #f5c6cb;">
+                <p style="margin:0; font-weight:bold; color:var(--primary-blue);">محفظة فودافون: <span style="font-size:16px; color:var(--primary-red);">01030013810</span></p>
+            </div>
+            <div id="ajelDetails" style="display:none; background:#f9f9f9; padding:12px; border-radius:8px; margin-top:10px; border:1px solid #ccc;">
+                <label style="font-weight:bold; color:var(--primary-red); display:flex; align-items:center; gap:8px; cursor:pointer;">
+                    <input type="checkbox" id="ajelAgree" style="width:18px; height:18px; margin:0;"> 
+                    أوافق على إضافة رسوم خدمة الدفع الآجل
+                </label>
+            </div>
+
             <button class="btn-service btn-eshteryly" style="width:100%; justify-content:center; margin-top:15px;" onclick="window.submitEshteryly()">إرسال الطلب</button>
         </div>
     </div>
 
-    <!-- Modal: أكسون هوم (عفش) -->
+    <!-- Modal: أكسون هوم -->
     <div id="homeModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="document.getElementById('homeModal').style.display='none'">✖</button>
@@ -229,17 +240,22 @@
         </div>
     </div>
 
-    <!-- Modal: أكسون إنقاذ (ونش) -->
+    <!-- Modal: أكسون إنقاذ (تم حل مشكلة الـ GPS) -->
     <div id="rescueModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="document.getElementById('rescueModal').style.display='none'">✖</button>
             <h3 style="color:var(--primary-red); border-bottom: 2px solid var(--primary-blue); padding-bottom:10px; margin-top:0;">🚨 طوارئ: أكسون إنقاذ</h3>
-            <p style="font-size:14px; color:#666; font-weight:bold;">سيتم إرسال موقعك الجغرافي الحالي لسيارات الإنقاذ التابعة لنا للوصول إليك في أسرع وقت.</p>
+            <p style="font-size:14px; color:#666; font-weight:bold;">الونش هيجيلك في أسرع وقت، اسحب اللوكيشن أو اكتب عنوانك بدقة.</p>
             <div class="input-group"><label>رقم التليفون للتواصل</label><input type="tel" id="rescuePhone" placeholder="01xxxxxxxxx"></div>
             <div class="input-group"><label>نوع السيارة (اختياري)</label><input type="text" id="rescueCar" placeholder="مثال: كيا سيراتو"></div>
-            <button type="button" id="rescueLocationBtn" onclick="window.getRescueLocation()" style="background:#333; color:white; border:none; padding:12px; border-radius:8px; margin:15px 0 5px 0; width:100%; cursor:pointer; font-weight:bold;"><i class="fa-solid fa-location-dot"></i> 1. سحب موقعي الحالي أولاً</button>
-            <input type="hidden" id="rescueGPS" value="">
-            <button class="btn-service btn-rescue" style="width:100%; justify-content:center; margin-top:10px;" onclick="window.submitRescueOrder()"><i class="fa-solid fa-truck-pickup"></i> 2. اطلب الونش الآن</button>
+            
+            <div class="input-group">
+                <label>موقعك الحالي (العنوان أو اللوكيشن)</label>
+                <input type="text" id="rescueGPS" placeholder="اضغط زر سحب الموقع أو اكتب عنوانك هنا...">
+            </div>
+            <button type="button" id="rescueLocationBtn" onclick="window.getRescueLocation()" style="background:#333; color:white; border:none; padding:12px; border-radius:8px; margin:10px 0; width:100%; cursor:pointer; font-weight:bold;"><i class="fa-solid fa-location-dot"></i> سحب موقعي أوتوماتيك (GPS)</button>
+            
+            <button class="btn-service btn-rescue" style="width:100%; justify-content:center; margin-top:10px;" onclick="window.submitRescueOrder()"><i class="fa-solid fa-truck-pickup"></i> اطلب الونش الآن</button>
         </div>
     </div>
 
@@ -264,11 +280,10 @@
         
         let merchantEmail = "", merchantName = "", merchantLogoURL = "", merchantIP = "جاري التحقق...";
 
-        // --- جلب الـ IP للبصمة الرقمية ---
+        // جلب الـ IP
         fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ merchantIP = d.ip; }).catch(e=>{ merchantIP = "غير معروف"; });
-        const deviceInfo = navigator.userAgent.substring(0, 40) + "..."; // تقصير نوع الجهاز
+        const deviceInfo = navigator.userAgent.substring(0, 40) + "..."; 
 
-        // --- المصادقة وجلب البيانات ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 merchantEmail = user.email;
@@ -276,7 +291,7 @@
                 document.getElementById('merchantEmailDisplay').innerHTML = `مرحباً بك: ${merchantName} <i class="fa-solid fa-bolt" style="color:#ffc107;"></i>`;
                 loadShipments();
                 
-                // محاولة جلب لوجو التاجر من قاعدة البيانات
+                // جلب لوجو التاجر
                 const profileSnap = await getDoc(doc(db, "merchant_profiles", merchantEmail));
                 if(profileSnap.exists() && profileSnap.data().logoURL) {
                     merchantLogoURL = profileSnap.data().logoURL;
@@ -286,7 +301,6 @@
 
         window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
 
-        // --- رفع لوجو السفير ---
         window.uploadMerchantLogo = async (event) => {
             const file = event.target.files[0];
             if(!file) return;
@@ -296,8 +310,8 @@
                 await uploadBytes(storageRef, file);
                 merchantLogoURL = await getDownloadURL(storageRef);
                 await setDoc(doc(db, "merchant_profiles", merchantEmail), { logoURL: merchantLogoURL }, { merge: true });
-                Swal.fire('ممتاز!', 'تم تفعيل بوليصة السفير بنجاح.', 'success');
-            } catch(e) { Swal.fire('خطأ', 'فشل رفع الصورة: ' + e.message, 'error'); }
+                Swal.fire('ممتاز!', 'تم رفع اللوجو، هيظهر جوه البوليصة مباشرة.', 'success');
+            } catch(e) { Swal.fire('خطأ', 'فشل الرفع: ' + e.message, 'error'); }
         };
 
         window.checkCityFilter = () => {
@@ -308,20 +322,26 @@
             else { paymentGroup.style.display = 'none'; document.getElementById('shipmentPaymentType').value = 'normal'; }
         };
 
+        // --- إصدار البوليصة بعد تصليح الخوارزمية ---
         window.saveShipment = async () => {
-            const name = document.getElementById('recName').value;
+            // استخدام trim للتخلص من أي مسافات خفية
+            const name = document.getElementById('recName').value.trim();
             const phone = document.getElementById('recPhone').value.trim();
-            const city = document.getElementById('recCity').value;
-            const address = document.getElementById('recAddress').value;
-            const amount = document.getElementById('codAmount').value;
+            const city = document.getElementById('recCity').value.trim();
+            const address = document.getElementById('recAddress').value.trim();
+            const amount = document.getElementById('codAmount').value.trim();
             const paymentType = document.getElementById('shipmentPaymentType').value;
 
-            if(!name || !phone || !city || !address || !amount) return Swal.fire('نقص بيانات', 'لا يمكن توليد البوليصة.', 'warning');
+            // فحص صارم ودقيق
+            if(name === "" || phone === "" || city === "" || address === "" || amount === "") {
+                return Swal.fire('نقص بيانات', 'يوجد حقل أو أكثر فارغ، برجاء المراجعة!', 'warning');
+            }
+
             const btn = document.getElementById('btnSave'); btn.disabled = true; btn.innerHTML = "جاري التشفير...";
             
             try {
                 const docRef = await addDoc(collection(db, "shipments"), {
-                    merchantEmail, name, phone, phone2: document.getElementById('recPhone2').value || "لا يوجد",
+                    merchantEmail, name, phone, phone2: document.getElementById('recPhone2').value.trim() || "لا يوجد",
                     city, address, weight: Number(document.getElementById('recWeight').value||1),
                     amount: Number(amount), paymentType: paymentType, status: "قيد التوصيل", deleted: false, timestamp: new Date()
                 });
@@ -329,7 +349,6 @@
                 Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم إصدار البوليصة', showConfirmButton:false, timer:2000});
                 document.querySelectorAll('#addModal input').forEach(inp => inp.value = '');
                 
-                // طباعة فورية بعد الحفظ
                 const awb = "AXN" + docRef.id.substring(0,5).toUpperCase();
                 window.printWB(awb, name, phone, document.getElementById('recPhone2').value, city, address, document.getElementById('recWeight').value||1, amount);
 
@@ -359,15 +378,14 @@
             });
         }
 
-        // --- هندسة الطباعة (A4 المُحصنة) ---
+        // --- طباعة البوليصة وتأكيد وجود اللوجو ---
         window.printWB = (awb, name, p1, p2, city, addr, w, amt) => {
-            const timestampStr = new Date().toLocaleString('en-GB'); // بصمة الوقت
+            const timestampStr = new Date().toLocaleString('en-GB'); 
             const digitalSignature = `[Merchant: ${merchantName}] | [IP: ${merchantIP}] | [Device: ${deviceInfo}] | [Time: ${timestampStr}]`;
             
-            // اللوجوهات
-            const axonLogo = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Truck_icon.svg/1024px-Truck_icon.svg.png"; // استبدله بلينك اللوجو بتاعك الفعلي
-            const safeerLogoHTML = merchantLogoURL ? `<img src="${merchantLogoURL}" style="max-height:60px; max-width:120px;">` : `<h3 style="margin:0; color:#0A3D62;">${merchantName}</h3>`;
-            const qrCode = "https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"; // استبدله بـ QR Code الفعلي بتاعك
+            // سحب لوجو التاجر جوه البوليصة (وإلا يكتب اسمه)
+            const safeerLogoHTML = merchantLogoURL ? `<img src="${merchantLogoURL}" style="max-height:80px; max-width:150px; object-fit:contain;">` : `<h3 style="margin:0; color:#0A3D62;">${merchantName}</h3>`;
+            const qrCode = "https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"; 
 
             const printContent = `
             <!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>AWB: ${awb}</title>
@@ -398,7 +416,6 @@
                         <div style="text-align:center;"><h2 style="margin:0; color:#0A3D62;">AXON <span style="color:#b82329;">EXPRESS</span></h2><p style="margin:0;">بوليصة شحن</p></div>
                     </div>
                     
-                    <!-- البيانات -->
                     <div class="info-grid">
                         <div class="box">
                             <h3>بيانات المرسل (من)</h3>
@@ -409,18 +426,16 @@
                         <div class="box">
                             <h3>بيانات المستلم (إلى)</h3>
                             <p>الاسم: <b>${name}</b></p>
-                            <p>الموبايل: <b dir="ltr">${p1}</b> ${p2 && p2 !== 'undefined' ? `| <b dir="ltr">${p2}</b>` : ''}</p>
+                            <p>الموبايل: <b dir="ltr">${p1}</b> ${p2 && p2 !== 'undefined' && p2 !== 'لا يوجد' ? `| <b dir="ltr">${p2}</b>` : ''}</p>
                             <p>المحافظة: <b>${city}</b></p>
                             <p>العنوان: <b>${addr}</b></p>
                         </div>
                     </div>
                     
-                    <!-- قيمة التحصيل -->
                     <div class="cod-box">
                         <h2 style="margin:0; color:#b82329; font-size:24px;">المبلغ المطلوب تحصيله (COD): ${amt} ج.م</h2>
                     </div>
 
-                    <!-- الدستور والشروط -->
                     <div class="constitution">
                         <h4>شروط وأحكام الناقل (Axon Express)</h4>
                         <p><b>1. إقرار الاستلام:</b> استلام البضاعة بحالة ظاهرية سليمة، والناقل غير مسؤول عن الفحص الفني. <br>
@@ -435,7 +450,6 @@
                         <p style="font-weight:bold; color:#b82329; font-size:13px;">يُمنع منعاً باتاً فتح الشحنة أو العبث بتغليفها قبل سداد كامل قيمتها (COD) ومصاريف الشحن لمندوب الشركة. وفي حالة رفض الاستلام بعد الفتح (بإذن التاجر)، يلتزم العميل بدفع مصاريف الشحن كاملة.</p>
                     </div>
 
-                    <!-- التذييل والروابط -->
                     <div class="footer-grid">
                         <div style="font-size:12px; line-height:1.6;">
                             <b>تواصل معنا:</b><br>
@@ -450,7 +464,6 @@
                         </div>
                     </div>
 
-                    <!-- التوقيع الرقمي للموبايل -->
                     <div class="digital-sig">
                         هذه البوليصة إلكترونية ومُصدرة مباشرة عبر نظام (أكسون إكسبريس) من حساب التاجر. يُعد إنشاؤها إقراراً نهائياً وملزماً بصحة البيانات وموافقة تامة على الشروط والأحكام والمسؤولية الجنائية.<br>
                         <b>البيانات الرقمية أدناه تُعد بمثابة توقيع إلكتروني موثق للمُرسل:</b><br>
@@ -463,22 +476,33 @@
             win.document.write(printContent); win.document.close();
         };
 
-        // --- خدمات Axon Plus ---
+        // --- اشتريلي (استرجاع طرق الدفع المخفية) ---
+        window.togglePaymentDetails = () => {
+            const val = document.getElementById('eshPayment').value;
+            document.getElementById('instapayDetails').style.display = val === 'instapay' ? 'block' : 'none';
+            document.getElementById('vfcashDetails').style.display = val === 'vfcash' ? 'block' : 'none';
+            document.getElementById('ajelDetails').style.display = val === 'ajel' ? 'block' : 'none';
+        };
+
         window.submitEshteryly = async () => {
             const details = document.getElementById('eshDetails').value.trim();
             const address = document.getElementById('eshAddress').value.trim();
-            if(!details || !address) return Swal.fire('تنبيه', 'البيانات غير مكتملة.', 'warning');
+            const payment = document.getElementById('eshPayment').value;
+            
+            if(!details || !address || !payment) return Swal.fire('تنبيه', 'برجاء إكمال البيانات واختيار طريقة الدفع.', 'warning');
+            if(payment === 'ajel' && !document.getElementById('ajelAgree').checked) return Swal.fire('خطأ', 'يلزم الموافقة على شروط الدفع الآجل.', 'error');
+            
             try {
-                await addDoc(collection(db, "eshteryly_orders"), { merchantEmail, details, address, status: "مطلوب", timestamp: new Date() });
+                await addDoc(collection(db, "eshteryly_orders"), { merchantEmail, details, address, paymentMethod: payment, status: "مطلوب", timestamp: new Date() });
                 document.getElementById('eshterylyModal').style.display='none';
                 Swal.fire('تم!', 'طلب المشتريات وصل للإدارة.', 'success');
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
         };
 
         window.submitHomeOrder = async () => {
-            const from = document.getElementById('homeFrom').value;
-            const to = document.getElementById('homeTo').value;
-            const phone = document.getElementById('homePhone').value;
+            const from = document.getElementById('homeFrom').value.trim();
+            const to = document.getElementById('homeTo').value.trim();
+            const phone = document.getElementById('homePhone').value.trim();
             const service = document.getElementById('homeService').value;
             if(!from || !to || !phone) return Swal.fire('نقص بيانات', 'برجاء إكمال حقول النقل.', 'warning');
             try {
@@ -488,25 +512,35 @@
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
         };
 
+        // --- إصلاح الونش (السماح بالكتابة اليدوية لو الـ GPS معلق) ---
         window.getRescueLocation = () => {
             const btn = document.getElementById('rescueLocationBtn');
+            const inputField = document.getElementById('rescueGPS');
             if(navigator.geolocation) {
                 btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري تحديد موقعك...';
                 navigator.geolocation.getCurrentPosition(
                     (pos) => {
-                        document.getElementById('rescueGPS').value = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                        inputField.value = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
                         btn.innerHTML = '✅ تم تحديد الموقع بدقة';
                     },
-                    (err) => { btn.innerHTML = 'خطأ! فعل الـ GPS أولاً'; }
+                    (err) => { 
+                        btn.innerHTML = 'خطأ! اكتب عنوانك بإيدك في المربع'; 
+                        inputField.focus(); // يوجهه يكتب بإيده
+                    }
                 );
+            } else {
+                Swal.fire('تنبيه', 'المتصفح لا يدعم الـ GPS، برجاء كتابة العنوان يدوياً', 'warning');
             }
         };
 
         window.submitRescueOrder = async () => {
-            const phone = document.getElementById('rescuePhone').value;
-            const car = document.getElementById('rescueCar').value || 'غير محدد';
-            const gps = document.getElementById('rescueGPS').value;
-            if(!phone || !gps) return Swal.fire('تحذير طوارئ', 'يجب إدخال رقم التليفون وسحب الموقع الحالي أولاً!', 'error');
+            const phone = document.getElementById('rescuePhone').value.trim();
+            const car = document.getElementById('rescueCar').value.trim() || 'غير محدد';
+            const gps = document.getElementById('rescueGPS').value.trim();
+            
+            // لو الـ GPS مجابش، هو يقدر يكون كاتب العنوان بإيده في الحقل
+            if(!phone || !gps) return Swal.fire('تحذير طوارئ', 'يجب إدخال التليفون وسحب الموقع أو كتابة العنوان!', 'error');
+            
             try {
                 await addDoc(collection(db, "axon_rescue_orders"), { merchantEmail, phone, car, gps, status: "نداء استغاثة", timestamp: new Date() });
                 document.getElementById('rescueModal').style.display='none';
