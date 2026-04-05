@@ -25,7 +25,9 @@
         
         .top-panel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;}
         .merchant-badge { background: var(--primary-blue); padding: 8px 20px; border-radius: 30px; font-size: 14px; color: white; font-weight: bold;}
-        .business-phone-wrapper { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: var(--white); padding: 5px 10px; border-radius: 8px; border: 1px solid var(--border-color);}
+        .business-info-wrapper { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: var(--white); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
+        .business-info-wrapper input { padding: 8px 12px; border-radius: 5px; border: 1px solid #ccc; font-family: 'Cairo'; outline: none; flex: 1; min-width: 150px;}
+        .business-info-wrapper input:focus { border-color: var(--primary-blue); }
         
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .stat-card { background: var(--white); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-blue);}
@@ -65,6 +67,8 @@
         body.dark-mode { --white: #1a1a2e; --light-bg: #16213e; --dark-text: #e0e0e0; --border-color: #0f3460; --primary-blue: #4a90e2;}
         body.dark-mode header { background: #1a1a2e; border-bottom: 4px solid var(--primary-red); }
         body.dark-mode .input-group input, body.dark-mode .input-group select, body.dark-mode .modal-content textarea { background: #16213e; border-color: #0f3460; color: white;}
+        body.dark-mode .business-info-wrapper { background: #16213e; border-color: #0f3460; }
+        body.dark-mode .business-info-wrapper input { background: #1a1a2e; color: white; border-color: #333; }
 
         /* الطباعة */
         @media print {
@@ -110,10 +114,12 @@
     <div class="container" id="mainContainer">
         <div class="top-panel">
             <div class="merchant-badge" id="merchantEmailDisplay">تهيئة المحطة...</div>
-            <div class="business-phone-wrapper">
+            <div class="business-info-wrapper">
+                <i class="fa-solid fa-store" style="color:var(--primary-blue);"></i>
+                <input type="text" id="merchantBusinessAddress" placeholder="عنوان المتجر (لاستلام الشحنات)">
                 <i class="fa-solid fa-phone" style="color:var(--primary-blue);"></i>
-                <input type="tel" id="merchantBusinessPhone" placeholder="رقم تليفون متجرك للعملاء" style="padding:6px 10px; border-radius:5px; border:1px solid #ccc; font-family:'Cairo'; outline:none;">
-                <button id="savePhoneBtn" style="background:var(--primary-red); color:white; border:none; padding:6px 15px; border-radius:5px; cursor:pointer; font-family:'Cairo'; font-weight:bold;" onclick="window.saveBusinessPhone()"><i class="fa-solid fa-floppy-disk"></i> حفظ الرقم</button>
+                <input type="tel" id="merchantBusinessPhone" placeholder="رقم المتجر (للتواصل)">
+                <button id="saveInfoBtn" style="background:var(--primary-red); color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-family:'Cairo'; font-weight:bold;" onclick="window.saveBusinessInfo()"><i class="fa-solid fa-floppy-disk"></i> حفظ</button>
             </div>
         </div>
 
@@ -265,7 +271,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         
-        let merchantEmail = "", merchantName = "", merchantIP = "جاري التحقق...", merchantPhone = "غير مسجل";
+        let merchantEmail = "", merchantName = "", merchantIP = "جاري التحقق...", merchantPhone = "غير مسجل", merchantAddress = "غير مسجل";
 
         fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ merchantIP = d.ip; }).catch(e=>{ merchantIP = "غير معروف"; });
         const deviceInfo = navigator.userAgent.substring(0, 40) + "..."; 
@@ -278,23 +284,31 @@
                 loadShipments();
                 
                 const profileSnap = await getDoc(doc(db, "merchant_profiles", merchantEmail));
-                if(profileSnap.exists() && profileSnap.data().businessPhone) {
-                    merchantPhone = profileSnap.data().businessPhone;
-                    document.getElementById('merchantBusinessPhone').value = merchantPhone;
+                if(profileSnap.exists()) {
+                    if(profileSnap.data().businessPhone) {
+                        merchantPhone = profileSnap.data().businessPhone;
+                        document.getElementById('merchantBusinessPhone').value = merchantPhone;
+                    }
+                    if(profileSnap.data().businessAddress) {
+                        merchantAddress = profileSnap.data().businessAddress;
+                        document.getElementById('merchantBusinessAddress').value = merchantAddress;
+                    }
                 }
             } else { window.location.href = "index.html"; }
         });
 
         window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
 
-        window.saveBusinessPhone = async () => {
+        window.saveBusinessInfo = async () => {
             const phone = document.getElementById('merchantBusinessPhone').value.trim();
-            if(!phone) return Swal.fire('تنبيه', 'يرجى إدخال رقم تليفون البزنس ليتم طباعته على البوليصة.', 'warning');
+            const address = document.getElementById('merchantBusinessAddress').value.trim();
+            if(!phone || !address) return Swal.fire('تنبيه', 'يرجى إدخال رقم التليفون وعنوان الاستلام.', 'warning');
             
             try {
-                await setDoc(doc(db, "merchant_profiles", merchantEmail), { businessPhone: phone }, { merge: true });
+                await setDoc(doc(db, "merchant_profiles", merchantEmail), { businessPhone: phone, businessAddress: address }, { merge: true });
                 merchantPhone = phone; 
-                Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم حفظ الرقم', showConfirmButton:false, timer:2000});
+                merchantAddress = address;
+                Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم حفظ بيانات المتجر', showConfirmButton:false, timer:2000});
             } catch(e) { Swal.fire('خطأ', 'فشل الحفظ: ' + e.message, 'error'); }
         };
 
@@ -318,6 +332,10 @@
             if(name === "" || phone === "" || city === "" || address === "" || amount === "") {
                 return Swal.fire('نقص بيانات', 'يوجد حقل أو أكثر فارغ، برجاء المراجعة!', 'warning');
             }
+            
+            if(merchantAddress === "غير مسجل") {
+                return Swal.fire('عنوان الاستلام مفقود', 'برجاء كتابة عنوان متجرك في الخانة العلوية وحفظه أولاً عشان المندوب يعرف هيستلم منين!', 'warning');
+            }
 
             const btn = document.getElementById('btnSave'); btn.disabled = true; btn.innerHTML = "جاري الإرسال...";
             
@@ -325,11 +343,13 @@
                 const docRef = await addDoc(collection(db, "shipments"), {
                     merchantEmail, name, phone, phone2: document.getElementById('recPhone2').value.trim() || "لا يوجد",
                     city, address, weight: Number(document.getElementById('recWeight').value||1),
-                    amount: Number(amount), paymentType: paymentType, fragile: isFragile, status: "قيد التوصيل", deleted: false, timestamp: new Date()
+                    amount: Number(amount), paymentType: paymentType, fragile: isFragile, 
+                    merchantAddress: merchantAddress, // تم إضافة عنوان البيك أب هنا للأدمن
+                    status: "قيد التوصيل", deleted: false, timestamp: new Date()
                 });
                 document.getElementById('addModal').style.display='none';
                 
-                document.querySelectorAll('#addModal input[type="text"], #addModal input[type="tel"], #addModal input[type="number"]').forEach(inp => inp.value = '');
+                document.querySelectorAll('#addModal input[type="text"], #addModal input[type="tel"], #addModal input[type="number"]').forEach(inp => { if(inp.id !== 'merchantBusinessAddress' && inp.id !== 'merchantBusinessPhone') inp.value = ''; });
                 document.getElementById('recFragile').checked = false;
                 
                 const awb = "AXN" + docRef.id.substring(0,5).toUpperCase();
@@ -371,7 +391,6 @@
             const timestampStr = new Date().toLocaleString('en-GB'); 
             const digitalSignature = `[Merchant: ${merchantName}] | [IP: ${merchantIP}] | [Device: ${deviceInfo}] | [Time: ${timestampStr}]`;
             
-            // يافطة السفير الجميلة بدل اللوجو
             const safeerLogoHTML = `<div class="safeer-name-badge"><h2>${merchantName}</h2></div>`;
             const qrCode = "https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"; 
 
@@ -397,6 +416,7 @@
                             <h3>بيانات المرسل (من)</h3>
                             <p style="margin:2px 0;">الاسم/التاجر: <b>${merchantName}</b></p>
                             <p style="margin:2px 0;">الموبايل: <b dir="ltr">${merchantPhone}</b></p>
+                            <p style="margin:2px 0;">العنوان: <b>${merchantAddress}</b></p>
                             <p style="margin:2px 0;">الوزن: <b>${w} كجم</b></p>
                             <p style="margin:2px 0;">التاريخ: <b>${timestampStr.split(',')[0]}</b></p>
                         </div>
