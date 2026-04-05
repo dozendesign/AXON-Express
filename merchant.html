@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- استدعاء مكتبة الباركود في الصفحة الرئيسية -->
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
     <style>
         * { box-sizing: border-box; }
@@ -28,7 +27,7 @@
         
         .top-panel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;}
         .merchant-badge { background: var(--primary-blue); padding: 8px 20px; border-radius: 30px; font-size: 14px; color: white; font-weight: bold;}
-        .upload-logo-wrapper { display: flex; align-items: center; gap: 10px;}
+        .upload-logo-wrapper { display: flex; align-items: center; gap: 10px; flex-wrap: wrap;}
         .upload-logo-btn { background: var(--white); color: var(--primary-blue); border: 2px dashed var(--primary-blue); padding: 6px 15px; border-radius: 8px; cursor: pointer; font-family: 'Cairo'; font-weight: bold;}
         #merchantLogoPreview { height: 40px; border-radius: 5px; display: none; border: 1px solid #ccc; object-fit: contain;}
         
@@ -84,7 +83,6 @@
         .a4-wrapper { width: 100%; max-width: 800px; margin: 0 auto; background: #fff; border: 2px solid #0A3D62; padding: 10px; box-sizing: border-box; }
         .print-controls { text-align: center; margin-bottom: 20px; padding: 15px; background: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
         .print-controls button { cursor: pointer; padding: 12px 25px; margin: 5px; font-size: 16px; font-weight: bold; border: none; border-radius: 5px; color: white;}
-        /* هندسة الرأس عشان الباركود ميهربش */
         .print-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #b82329; padding-bottom: 5px; margin-bottom: 10px; flex-wrap: nowrap; gap: 10px;}
         .print-header > div { flex: 1; text-align: center; overflow: hidden; }
         .print-header img { max-width: 100px; max-height: 50px; object-fit: contain; }
@@ -120,10 +118,12 @@
             <div class="merchant-badge" id="merchantEmailDisplay">تهيئة المحطة...</div>
             <div class="upload-logo-wrapper">
                 <img id="merchantLogoPreview" src="" alt="لوجو السفير">
+                <input type="tel" id="merchantBusinessPhone" placeholder="رقم البزنس (للبوليصة)" style="padding:6px 10px; border-radius:5px; border:1px solid var(--primary-blue); font-family:'Cairo'; display:none; max-width:180px;">
                 <label class="upload-logo-btn" title="تفعيل بوليصة السفير">
                     <i class="fa-solid fa-cloud-arrow-up"></i> رفع لوجو التاجر
                     <input type="file" id="merchantLogoInput" style="display:none;" accept="image/png, image/jpeg" onchange="window.uploadMerchantLogo(event)">
                 </label>
+                <button id="saveLogoAndPhoneBtn" style="display:none; background:var(--primary-red); color:white; border:none; padding:6px 15px; border-radius:5px; cursor:pointer; font-family:'Cairo'; font-weight:bold;" onclick="window.saveLogoAndPhone()"><i class="fa-solid fa-floppy-disk"></i> حفظ</button>
             </div>
         </div>
 
@@ -160,14 +160,12 @@
         </div>
     </div>
 
-    <!-- منطقة الطباعة الداخلية (مخفية بشكل افتراضي) -->
     <div id="printArea"></div>
 
     <a href="https://wa.me/201147000882" class="floating-chat" id="floatingChatBtn" target="_blank" title="تواصل مع خدمة العملاء">
         <i class="fa-brands fa-whatsapp"></i>
     </a>
 
-    <!-- Modal: إصدار بوليصة شحن -->
     <div id="addModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="document.getElementById('addModal').style.display='none'">✖</button>
@@ -193,7 +191,6 @@
                 <div class="input-group" style="flex:1;"><label>المبلغ المطلوب (COD)</label><input type="number" id="codAmount" placeholder="ج.م"></div>
             </div>
 
-            <!-- زرار الشحنة القابلة للكسر -->
             <div class="input-group" style="background:#fff0f0; padding:10px; border-radius:8px; border:1px solid var(--primary-red); margin-top:10px;">
                 <label style="color:var(--primary-red); margin:0; display:flex; align-items:center; gap:10px; cursor:pointer;">
                     <input type="checkbox" id="recFragile" style="width:20px; height:20px; margin:0;">
@@ -207,7 +204,6 @@
         </div>
     </div>
 
-    <!-- Modal: اشتريلي -->
     <div id="eshterylyModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="document.getElementById('eshterylyModal').style.display='none'">✖</button>
@@ -234,7 +230,6 @@
         </div>
     </div>
 
-    <!-- Modal: أكسون هوم -->
     <div id="homeModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="document.getElementById('homeModal').style.display='none'">✖</button>
@@ -247,7 +242,6 @@
         </div>
     </div>
 
-    <!-- Modal: أكسون إنقاذ -->
     <div id="rescueModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="document.getElementById('rescueModal').style.display='none'">✖</button>
@@ -287,7 +281,7 @@
         const db = getFirestore(app);
         const storage = getStorage(app);
         
-        let merchantEmail = "", merchantName = "", merchantLogoURL = "", merchantIP = "جاري التحقق...";
+        let merchantEmail = "", merchantName = "", merchantLogoURL = "", merchantIP = "جاري التحقق...", merchantPhone = "غير مسجل";
 
         fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ merchantIP = d.ip; }).catch(e=>{ merchantIP = "غير معروف"; });
         const deviceInfo = navigator.userAgent.substring(0, 40) + "..."; 
@@ -296,33 +290,60 @@
             if (user) {
                 merchantEmail = user.email;
                 merchantName = merchantEmail.split('@')[0];
-                document.getElementById('merchantEmailDisplay').innerHTML = `مرحباً بك: ${merchantName}`;
+                document.getElementById('merchantEmailDisplay').innerHTML = `مرحباً بك: ${merchantName} <i class="fa-solid fa-bolt" style="color:#ffc107;"></i>`;
                 loadShipments();
                 
                 const profileSnap = await getDoc(doc(db, "merchant_profiles", merchantEmail));
-                if(profileSnap.exists() && profileSnap.data().logoURL) {
-                    merchantLogoURL = profileSnap.data().logoURL;
-                    document.getElementById('merchantLogoPreview').src = merchantLogoURL;
-                    document.getElementById('merchantLogoPreview').style.display = 'block';
+                if(profileSnap.exists()) {
+                    if(profileSnap.data().logoURL) {
+                        merchantLogoURL = profileSnap.data().logoURL;
+                        document.getElementById('merchantLogoPreview').src = merchantLogoURL;
+                        document.getElementById('merchantLogoPreview').style.display = 'block';
+                    }
+                    if(profileSnap.data().businessPhone) {
+                        merchantPhone = profileSnap.data().businessPhone;
+                        document.getElementById('merchantBusinessPhone').value = merchantPhone;
+                    }
                 }
             } else { window.location.href = "index.html"; }
         });
 
         window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
 
-        window.uploadMerchantLogo = async (event) => {
+        window.uploadMerchantLogo = (event) => {
             const file = event.target.files[0];
             if(!file) return;
             document.getElementById('merchantLogoPreview').src = URL.createObjectURL(file);
             document.getElementById('merchantLogoPreview').style.display = 'block';
+            document.getElementById('merchantBusinessPhone').style.display = 'inline-block';
+            document.getElementById('saveLogoAndPhoneBtn').style.display = 'inline-block';
+            window.tempLogoFile = file; 
+        };
+
+        window.saveLogoAndPhone = async () => {
+            const phone = document.getElementById('merchantBusinessPhone').value.trim();
+            if(!phone) return Swal.fire('تنبيه', 'يرجى إدخال رقم تليفون البزنس ليتم طباعته على البوليصة.', 'warning');
+            
             Swal.fire({title: 'جاري الحفظ في السيرفر...', allowOutsideClick: false, didOpen: () => {Swal.showLoading()}});
             try {
-                const storageRef = ref(storage, `merchant_logos/${merchantEmail}_${Date.now()}`);
-                await uploadBytes(storageRef, file);
-                merchantLogoURL = await getDownloadURL(storageRef);
-                await setDoc(doc(db, "merchant_profiles", merchantEmail), { logoURL: merchantLogoURL }, { merge: true });
-                Swal.fire('ممتاز!', 'تم تثبيت اللوجو بنجاح.', 'success');
-            } catch(e) { Swal.fire('خطأ', 'فشل الرفع! يرجى فتح Storage Rules في الفايربيز', 'error'); }
+                let newData = { businessPhone: phone };
+                
+                if (window.tempLogoFile) {
+                    const storageRef = ref(storage, `merchant_logos/${merchantEmail}_${Date.now()}`);
+                    await uploadBytes(storageRef, window.tempLogoFile);
+                    merchantLogoURL = await getDownloadURL(storageRef);
+                    newData.logoURL = merchantLogoURL;
+                    window.tempLogoFile = null; 
+                }
+                
+                await setDoc(doc(db, "merchant_profiles", merchantEmail), newData, { merge: true });
+                merchantPhone = phone; 
+                
+                document.getElementById('merchantBusinessPhone').style.display = 'none';
+                document.getElementById('saveLogoAndPhoneBtn').style.display = 'none';
+                
+                Swal.fire('ممتاز!', 'تم حفظ اللوجو وتليفون البزنس بنجاح، هيظهروا على البوليصة.', 'success');
+            } catch(e) { Swal.fire('خطأ', 'فشل الحفظ: ' + e.message, 'error'); }
         };
 
         window.checkCityFilter = () => {
@@ -340,7 +361,7 @@
             const address = document.getElementById('recAddress').value.trim();
             const amount = document.getElementById('codAmount').value.trim();
             const paymentType = document.getElementById('shipmentPaymentType').value;
-            const isFragile = document.getElementById('recFragile').checked; // سحب قيمة القابل للكسر
+            const isFragile = document.getElementById('recFragile').checked; 
 
             if(name === "" || phone === "" || city === "" || address === "" || amount === "") {
                 return Swal.fire('نقص بيانات', 'يوجد حقل أو أكثر فارغ، برجاء المراجعة!', 'warning');
@@ -356,12 +377,10 @@
                 });
                 document.getElementById('addModal').style.display='none';
                 
-                // تصفير الحقول بعد الإرسال
                 document.querySelectorAll('#addModal input[type="text"], #addModal input[type="tel"], #addModal input[type="number"]').forEach(inp => inp.value = '');
                 document.getElementById('recFragile').checked = false;
                 
                 const awb = "AXN" + docRef.id.substring(0,5).toUpperCase();
-                // تشغيل الطباعة الداخلية
                 window.printWB(awb, name, phone, document.getElementById('recPhone2').value, city, address, document.getElementById('recWeight').value||1, amount, isFragile);
 
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
@@ -379,7 +398,7 @@
                     if(d.deleted) return;
                     total += Number(d.amount) || 0; count++;
                     const awb = "AXN" + d.id.substring(0,5).toUpperCase();
-                    const isFragile = d.fragile ? true : false; // جلب حالة الكسر القديمة أو الجديدة
+                    const isFragile = d.fragile ? true : false; 
                     
                     html += `<tr><td><span class="awb-badge">${awb}</span></td><td><b>${d.name}</b></td>
                         <td dir="ltr">${d.phone}</td><td>${d.city}</td><td style="color:var(--primary-red); font-weight:bold;">${d.amount}</td>
@@ -392,9 +411,7 @@
             });
         }
 
-        // --- نظام الطباعة الداخلي الجديد (يمنع تعليق الموبايل ويظبط الأبعاد) ---
         window.printWB = (awb, name, p1, p2, city, addr, w, amt, isFragile) => {
-            // إخفاء السيستم الأساسي
             document.getElementById('mainHeader').style.display = 'none';
             document.getElementById('mainContainer').style.display = 'none';
             document.getElementById('floatingChatBtn').style.display = 'none';
@@ -404,7 +421,6 @@
             const safeerLogoHTML = merchantLogoURL ? `<img src="${merchantLogoURL}" alt="Logo">` : `<h3 style="margin:0; color:#0A3D62;">${merchantName}</h3>`;
             const qrCode = "https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"; 
 
-            // بنر القابل للكسر
             const fragileBannerHTML = isFragile ? `<div class="fragile-banner"><i class="fa-solid fa-wine-glass"></i> شحنة قابلة للكسر - تعامل بحذر شديد <i class="fa-solid fa-wine-glass"></i></div>` : '';
 
             const printHTML = `
@@ -426,6 +442,7 @@
                         <div class="box">
                             <h3>بيانات المرسل (من)</h3>
                             <p style="margin:2px 0;">الاسم/التاجر: <b>${merchantName}</b></p>
+                            <p style="margin:2px 0;">الموبايل: <b dir="ltr">${merchantPhone}</b></p>
                             <p style="margin:2px 0;">الوزن: <b>${w} كجم</b></p>
                             <p style="margin:2px 0;">التاريخ: <b>${timestampStr.split(',')[0]}</b></p>
                         </div>
@@ -479,16 +496,14 @@
             printArea.innerHTML = printHTML;
             printArea.style.display = 'block';
 
-            // تفعيل الباركود بعد رسمه في الصفحة
             setTimeout(() => {
                 JsBarcode("#bc", awb, {format:"CODE128", width:1.5, height:35, displayValue:false});
             }, 100);
         };
 
-        // زرار الرجوع للسيستم
         window.closePrintView = () => {
             document.getElementById('printArea').style.display = 'none';
-            document.getElementById('printArea').innerHTML = ''; // تنظيف الشاشة
+            document.getElementById('printArea').innerHTML = ''; 
             document.getElementById('mainHeader').style.display = 'flex';
             document.getElementById('mainContainer').style.display = 'block';
             document.getElementById('floatingChatBtn').style.display = 'flex';
