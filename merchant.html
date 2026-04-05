@@ -31,8 +31,10 @@
         
         .top-panel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;}
         .merchant-badge { background: var(--primary-blue); padding: 8px 20px; border-radius: 30px; font-size: 14px; color: white; font-weight: bold;}
+        .upload-logo-wrapper { display: flex; align-items: center; gap: 10px;}
         .upload-logo-btn { background: var(--white); color: var(--primary-blue); border: 2px dashed var(--primary-blue); padding: 6px 15px; border-radius: 8px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; transition: 0.3s;}
         .upload-logo-btn:hover { background: var(--primary-blue); color: var(--white); }
+        #merchantLogoPreview { height: 40px; border-radius: 5px; display: none; border: 1px solid #ccc; object-fit: contain;}
         
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .stat-card { background: var(--white); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-blue);}
@@ -60,7 +62,7 @@
         th, td { padding: 15px 12px; text-align: right; border-bottom: 1px solid var(--border-color); font-size: 14px;}
         th { background: var(--primary-blue); color: var(--white); font-weight: bold;}
         
-        .print-btn { background: var(--primary-blue); color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold;}
+        .print-btn { background: #333; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold;}
         .awb-badge { background: #e0eaf5; color: var(--primary-blue); padding: 5px 12px; border-radius: 6px; font-weight: bold; letter-spacing: 1px;}
         
         /* Modals */
@@ -100,10 +102,13 @@
     <div class="container">
         <div class="top-panel">
             <div class="merchant-badge" id="merchantEmailDisplay">تهيئة المحطة...</div>
-            <label class="upload-logo-btn" title="تفعيل بوليصة السفير">
-                <i class="fa-solid fa-cloud-arrow-up"></i> رفع اللوجو الخاص بك
-                <input type="file" id="merchantLogoInput" style="display:none;" accept="image/png, image/jpeg" onchange="window.uploadMerchantLogo(event)">
-            </label>
+            <div class="upload-logo-wrapper">
+                <img id="merchantLogoPreview" src="" alt="لوجو السفير">
+                <label class="upload-logo-btn" title="تفعيل بوليصة السفير">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> رفع لوجو التاجر
+                    <input type="file" id="merchantLogoInput" style="display:none;" accept="image/png, image/jpeg" onchange="window.uploadMerchantLogo(event)">
+                </label>
+            </div>
         </div>
 
         <div class="stats-grid">
@@ -179,11 +184,15 @@
                 <div class="input-group" style="flex:1;"><label>الوزن (كجم)</label><input type="number" id="recWeight" value="1" min="1"></div>
                 <div class="input-group" style="flex:1;"><label>المبلغ المطلوب (COD)</label><input type="number" id="codAmount" placeholder="ج.م"></div>
             </div>
-            <button class="btn-service btn-main-action" id="btnSave" style="width:100%; margin-top:20px; justify-content:center;" onclick="window.saveShipment()">حفظ وتوليد البوليصة (A4)</button>
+            
+            <!-- زر الإرسال المحدث والواضح -->
+            <button class="btn-service btn-main-action" id="btnSave" style="width:100%; margin-top:20px; justify-content:center; background: var(--primary-blue);" onclick="window.saveShipment()">
+                <i class="fa-solid fa-paper-plane"></i> إرسال الشحنة للشركة وتوليد البوليصة
+            </button>
         </div>
     </div>
 
-    <!-- Modal: اشتريلي (مع الدفع المتكامل) -->
+    <!-- Modal: اشتريلي -->
     <div id="eshterylyModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="document.getElementById('eshterylyModal').style.display='none'">✖</button>
@@ -240,22 +249,29 @@
         </div>
     </div>
 
-    <!-- Modal: أكسون إنقاذ (تم حل مشكلة الـ GPS) -->
+    <!-- Modal: أكسون إنقاذ (مع الكاميرا واللوكيشن الإجباري) -->
     <div id="rescueModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="document.getElementById('rescueModal').style.display='none'">✖</button>
             <h3 style="color:var(--primary-red); border-bottom: 2px solid var(--primary-blue); padding-bottom:10px; margin-top:0;">🚨 طوارئ: أكسون إنقاذ</h3>
-            <p style="font-size:14px; color:#666; font-weight:bold;">الونش هيجيلك في أسرع وقت، اسحب اللوكيشن أو اكتب عنوانك بدقة.</p>
-            <div class="input-group"><label>رقم التليفون للتواصل</label><input type="tel" id="rescuePhone" placeholder="01xxxxxxxxx"></div>
+            <p style="font-size:14px; color:#666; font-weight:bold;">لمنع التحايل، يرجى إرفاق صورة للسيارة وسحب موقعك بدقة.</p>
+            
+            <div class="input-group"><label>رقم التليفون للتواصل (إلزامي)</label><input type="tel" id="rescuePhone" placeholder="01xxxxxxxxx"></div>
             <div class="input-group"><label>نوع السيارة (اختياري)</label><input type="text" id="rescueCar" placeholder="مثال: كيا سيراتو"></div>
             
+            <!-- زرار الكاميرا لإلتقاط صورة السيارة -->
             <div class="input-group">
-                <label>موقعك الحالي (العنوان أو اللوكيشن)</label>
-                <input type="text" id="rescueGPS" placeholder="اضغط زر سحب الموقع أو اكتب عنوانك هنا...">
+                <label style="color:var(--primary-red);"><i class="fa-solid fa-camera"></i> التقط صورة للسيارة (إلزامي)</label>
+                <input type="file" id="rescueCarImage" accept="image/*" capture="environment" style="background:#fff; border:2px dashed var(--primary-red);">
             </div>
-            <button type="button" id="rescueLocationBtn" onclick="window.getRescueLocation()" style="background:#333; color:white; border:none; padding:12px; border-radius:8px; margin:10px 0; width:100%; cursor:pointer; font-weight:bold;"><i class="fa-solid fa-location-dot"></i> سحب موقعي أوتوماتيك (GPS)</button>
+
+            <div class="input-group">
+                <label><i class="fa-solid fa-location-dot"></i> موقعك الحالي (إلزامي)</label>
+                <input type="text" id="rescueGPS" placeholder="اضغط الزر الأسفل أو اكتب عنوانك بدقة...">
+            </div>
+            <button type="button" id="rescueLocationBtn" onclick="window.getRescueLocation()" style="background:#333; color:white; border:none; padding:12px; border-radius:8px; margin:10px 0; width:100%; cursor:pointer; font-weight:bold;"><i class="fa-solid fa-satellite-dish"></i> سحب موقعي آلياً عبر (GPS)</button>
             
-            <button class="btn-service btn-rescue" style="width:100%; justify-content:center; margin-top:10px;" onclick="window.submitRescueOrder()"><i class="fa-solid fa-truck-pickup"></i> اطلب الونش الآن</button>
+            <button class="btn-service btn-rescue" id="rescueSubmitBtn" style="width:100%; justify-content:center; margin-top:10px;" onclick="window.submitRescueOrder()"><i class="fa-solid fa-truck-pickup"></i> إرسال نداء الاستغاثة للشركة</button>
         </div>
     </div>
 
@@ -280,7 +296,6 @@
         
         let merchantEmail = "", merchantName = "", merchantLogoURL = "", merchantIP = "جاري التحقق...";
 
-        // جلب الـ IP
         fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ merchantIP = d.ip; }).catch(e=>{ merchantIP = "غير معروف"; });
         const deviceInfo = navigator.userAgent.substring(0, 40) + "..."; 
 
@@ -291,16 +306,19 @@
                 document.getElementById('merchantEmailDisplay').innerHTML = `مرحباً بك: ${merchantName} <i class="fa-solid fa-bolt" style="color:#ffc107;"></i>`;
                 loadShipments();
                 
-                // جلب لوجو التاجر
+                // جلب اللوجو وعرضه
                 const profileSnap = await getDoc(doc(db, "merchant_profiles", merchantEmail));
                 if(profileSnap.exists() && profileSnap.data().logoURL) {
                     merchantLogoURL = profileSnap.data().logoURL;
+                    document.getElementById('merchantLogoPreview').src = merchantLogoURL;
+                    document.getElementById('merchantLogoPreview').style.display = 'block';
                 }
             } else { window.location.href = "index.html"; }
         });
 
         window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
 
+        // رفع اللوجو وإظهاره فوراً
         window.uploadMerchantLogo = async (event) => {
             const file = event.target.files[0];
             if(!file) return;
@@ -310,7 +328,10 @@
                 await uploadBytes(storageRef, file);
                 merchantLogoURL = await getDownloadURL(storageRef);
                 await setDoc(doc(db, "merchant_profiles", merchantEmail), { logoURL: merchantLogoURL }, { merge: true });
-                Swal.fire('ممتاز!', 'تم رفع اللوجو، هيظهر جوه البوليصة مباشرة.', 'success');
+                
+                document.getElementById('merchantLogoPreview').src = merchantLogoURL;
+                document.getElementById('merchantLogoPreview').style.display = 'block';
+                Swal.fire('ممتاز!', 'تم رفع اللوجو بنجاح، هيظهر جوه البوليصة.', 'success');
             } catch(e) { Swal.fire('خطأ', 'فشل الرفع: ' + e.message, 'error'); }
         };
 
@@ -322,9 +343,7 @@
             else { paymentGroup.style.display = 'none'; document.getElementById('shipmentPaymentType').value = 'normal'; }
         };
 
-        // --- إصدار البوليصة بعد تصليح الخوارزمية ---
         window.saveShipment = async () => {
-            // استخدام trim للتخلص من أي مسافات خفية
             const name = document.getElementById('recName').value.trim();
             const phone = document.getElementById('recPhone').value.trim();
             const city = document.getElementById('recCity').value.trim();
@@ -332,12 +351,11 @@
             const amount = document.getElementById('codAmount').value.trim();
             const paymentType = document.getElementById('shipmentPaymentType').value;
 
-            // فحص صارم ودقيق
             if(name === "" || phone === "" || city === "" || address === "" || amount === "") {
                 return Swal.fire('نقص بيانات', 'يوجد حقل أو أكثر فارغ، برجاء المراجعة!', 'warning');
             }
 
-            const btn = document.getElementById('btnSave'); btn.disabled = true; btn.innerHTML = "جاري التشفير...";
+            const btn = document.getElementById('btnSave'); btn.disabled = true; btn.innerHTML = "جاري الإرسال للشركة...";
             
             try {
                 const docRef = await addDoc(collection(db, "shipments"), {
@@ -346,14 +364,14 @@
                     amount: Number(amount), paymentType: paymentType, status: "قيد التوصيل", deleted: false, timestamp: new Date()
                 });
                 document.getElementById('addModal').style.display='none';
-                Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم إصدار البوليصة', showConfirmButton:false, timer:2000});
+                Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم إرسال الشحنة لـ أكسون', showConfirmButton:false, timer:2000});
                 document.querySelectorAll('#addModal input').forEach(inp => inp.value = '');
                 
                 const awb = "AXN" + docRef.id.substring(0,5).toUpperCase();
                 window.printWB(awb, name, phone, document.getElementById('recPhone2').value, city, address, document.getElementById('recWeight').value||1, amount);
 
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
-            btn.disabled = false; btn.innerHTML = "حفظ وتوليد البوليصة (A4)";
+            btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> إرسال الشحنة للشركة وتوليد البوليصة';
         };
 
         function loadShipments() {
@@ -370,7 +388,7 @@
                     html += `<tr><td><span class="awb-badge">${awb}</span></td><td><b>${d.name}</b></td>
                         <td dir="ltr">${d.phone}</td><td>${d.city}</td><td style="color:var(--primary-red); font-weight:bold;">${d.amount}</td>
                         <td style="font-weight:bold;">${d.status}</td>
-                        <td><button class="print-btn" onclick="window.printWB('${awb}', '${d.name}', '${d.phone}', '${d.phone2}', '${d.city}', '${d.address}', '${d.weight}', '${d.amount}')"><i class="fa-solid fa-print"></i> طباعة A4</button></td></tr>`;
+                        <td><button class="print-btn" onclick="window.printWB('${awb}', '${d.name}', '${d.phone}', '${d.phone2}', '${d.city}', '${d.address}', '${d.weight}', '${d.amount}')"><i class="fa-solid fa-print"></i> طباعة البوليصة</button></td></tr>`;
                 });
                 document.getElementById('tableBody').innerHTML = html;
                 document.getElementById('totalShipments').innerText = count;
@@ -378,13 +396,12 @@
             });
         }
 
-        // --- طباعة البوليصة وتأكيد وجود اللوجو ---
+        // --- الطباعة والدستور الكامل الحرفي ---
         window.printWB = (awb, name, p1, p2, city, addr, w, amt) => {
             const timestampStr = new Date().toLocaleString('en-GB'); 
             const digitalSignature = `[Merchant: ${merchantName}] | [IP: ${merchantIP}] | [Device: ${deviceInfo}] | [Time: ${timestampStr}]`;
             
-            // سحب لوجو التاجر جوه البوليصة (وإلا يكتب اسمه)
-            const safeerLogoHTML = merchantLogoURL ? `<img src="${merchantLogoURL}" style="max-height:80px; max-width:150px; object-fit:contain;">` : `<h3 style="margin:0; color:#0A3D62;">${merchantName}</h3>`;
+            const safeerLogoHTML = merchantLogoURL ? `<img src="${merchantLogoURL}" style="max-height:60px; max-width:120px; object-fit:contain;">` : `<h3 style="margin:0; color:#0A3D62;">${merchantName}</h3>`;
             const qrCode = "https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"; 
 
             const printContent = `
@@ -394,73 +411,80 @@
                     @page { size: A4 portrait; margin: 5mm; }
                     body { margin: 0; padding: 0; background: #fff; -webkit-print-color-adjust: exact; }
                 }
-                body { font-family: sans-serif; background: #fff; padding: 10mm; font-size: 13px; color: #000; }
-                .a4-wrapper { width: 100%; border: 2px solid #0A3D62; padding: 15px; box-sizing: border-box; position: relative;}
-                .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #b82329; padding-bottom: 10px; margin-bottom: 15px; }
-                .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-                .box { border: 1px solid #ccc; padding: 10px; border-radius: 5px; }
-                .box h3 { margin: 0 0 8px 0; background: #0A3D62; color: #fff; padding: 5px; font-size: 14px; text-align: center;}
-                .cod-box { background: #fdf5f5; border: 2px solid #b82329; text-align: center; padding: 10px; border-radius: 5px; margin-bottom:15px;}
-                .constitution { border: 1px solid #000; padding: 10px; font-size: 11px; margin-bottom: 15px; line-height: 1.4;}
-                .constitution h4 { color: #b82329; margin: 0 0 5px 0; font-size: 13px; border-bottom: 1px solid #ccc; padding-bottom:3px;}
-                .footer-grid { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-                .digital-sig { text-align: center; font-size: 10px; font-family: monospace; color: #444; border-top: 1px dashed #000; padding-top: 5px;}
+                body { font-family: sans-serif; background: #fff; padding: 5mm; color: #000; }
+                .a4-wrapper { width: 100%; border: 2px solid #0A3D62; padding: 10px; box-sizing: border-box; }
+                .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #b82329; padding-bottom: 5px; margin-bottom: 10px; }
+                .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+                .box { border: 1px solid #ccc; padding: 5px; border-radius: 5px; font-size: 13px;}
+                .box h3 { margin: 0 0 5px 0; background: #0A3D62; color: #fff; padding: 3px; font-size: 13px; text-align: center;}
+                .cod-box { background: #fdf5f5; border: 2px solid #b82329; text-align: center; padding: 5px; border-radius: 5px; margin-bottom:10px;}
+                
+                /* تنسيق الأعمدة عشان الدستور كله يكفي من غير ما يبوظ الورقة */
+                .constitution-columns { column-count: 2; column-gap: 15px; font-size: 9px; line-height: 1.3; text-align: justify; border: 1px solid #000; padding: 10px; margin-bottom: 10px; background: #fdfdfd;}
+                .constitution-columns h4 { margin: 5px 0 3px 0; font-size: 10px; color: #b82329; border-bottom: 1px solid #ccc; padding-bottom:2px;}
+                .constitution-columns p { margin: 0 0 4px 0; break-inside: avoid;}
+                
+                .footer-grid { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; font-size: 11px;}
+                .digital-sig { text-align: center; font-size: 9px; font-family: monospace; color: #444; border-top: 1px dashed #000; padding-top: 5px;}
             </style>
             <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"><\/script>
             </head><body>
                 <div class="a4-wrapper">
-                    <!-- الرأس واللوجوهات -->
                     <div class="header">
-                        <div style="text-align:center;">${safeerLogoHTML}<br><small>لوجو التاجر (السفير)</small></div>
-                        <div style="text-align:center;"><svg id="bc"></svg><br><b style="font-size:16px;">${awb}</b></div>
-                        <div style="text-align:center;"><h2 style="margin:0; color:#0A3D62;">AXON <span style="color:#b82329;">EXPRESS</span></h2><p style="margin:0;">بوليصة شحن</p></div>
+                        <div style="text-align:center;">${safeerLogoHTML}<br><small style="font-size:10px;">لوجو التاجر (السفير)</small></div>
+                        <div style="text-align:center;"><svg id="bc"></svg><br><b style="font-size:14px;">${awb}</b></div>
+                        <div style="text-align:center;"><h2 style="margin:0; color:#0A3D62; font-size:20px;">AXON <span style="color:#b82329;">EXPRESS</span></h2><p style="margin:0; font-size:12px;">بوليصة شحن</p></div>
                     </div>
                     
                     <div class="info-grid">
                         <div class="box">
                             <h3>بيانات المرسل (من)</h3>
-                            <p>الاسم/التاجر: <b>${merchantName}</b></p>
-                            <p>الوزن: <b>${w} كجم</b></p>
-                            <p>التاريخ: <b>${timestampStr.split(',')[0]}</b></p>
+                            <p style="margin:2px 0;">الاسم/التاجر: <b>${merchantName}</b></p>
+                            <p style="margin:2px 0;">الوزن: <b>${w} كجم</b></p>
+                            <p style="margin:2px 0;">التاريخ: <b>${timestampStr.split(',')[0]}</b></p>
                         </div>
                         <div class="box">
                             <h3>بيانات المستلم (إلى)</h3>
-                            <p>الاسم: <b>${name}</b></p>
-                            <p>الموبايل: <b dir="ltr">${p1}</b> ${p2 && p2 !== 'undefined' && p2 !== 'لا يوجد' ? `| <b dir="ltr">${p2}</b>` : ''}</p>
-                            <p>المحافظة: <b>${city}</b></p>
-                            <p>العنوان: <b>${addr}</b></p>
+                            <p style="margin:2px 0;">الاسم: <b>${name}</b></p>
+                            <p style="margin:2px 0;">الموبايل: <b dir="ltr">${p1}</b> ${p2 && p2 !== 'undefined' && p2 !== 'لا يوجد' ? `| <b dir="ltr">${p2}</b>` : ''}</p>
+                            <p style="margin:2px 0;">المحافظة: <b>${city}</b></p>
+                            <p style="margin:2px 0;">العنوان: <b>${addr}</b></p>
                         </div>
                     </div>
                     
                     <div class="cod-box">
-                        <h2 style="margin:0; color:#b82329; font-size:24px;">المبلغ المطلوب تحصيله (COD): ${amt} ج.م</h2>
+                        <h2 style="margin:0; color:#b82329; font-size:20px;">المبلغ المطلوب تحصيله (COD): ${amt} ج.م</h2>
                     </div>
 
-                    <div class="constitution">
-                        <h4>شروط وأحكام الناقل (Axon Express)</h4>
-                        <p><b>1. إقرار الاستلام:</b> استلام البضاعة بحالة ظاهرية سليمة، والناقل غير مسؤول عن الفحص الفني. <br>
-                        <b>2. حدود التعويض:</b> في حالة ثبوت خطأ الناقل، لا يتجاوز التعويض قيمة أجرة النقل × 3، أو بحد أقصى (500 جنيه) أيهما أقل، ما لم يتم التأمين عليها. الشحنات القابلة للكسر تنقل على مسؤولية الراسل بالكامل ما لم يُدفع تأمين 10%. <br>
-                        <b>3. مهلة الشكاوى:</b> يُعتبر التسليم نافياً للمسؤولية ما لم يُخطر الناقل خلال <b>48 ساعة</b> كحد أقصى للشكاوى الخفية. <br>
-                        <b>4. المرتجعات:</b> في حالة رفض المستلم، يلتزم المرسل (التاجر) بسداد رسوم الشحن (ذهاباً وإياباً).</p>
+                    <div class="constitution-columns">
+                        <h4 style="text-align:center; column-span: all; font-size:12px;">شروط وأحكام الناقل (Axon Express)</h4>
                         
-                        <h4>إقرارات ومحظورات مطلقة</h4>
-                        <p>أتعهد بصحة البيانات، وأتحمل المسؤولية الجنائية الكاملة عن محتوى الطرد. <b>يحظر قطعياً شحن:</b> المواد الخطرة، الأسلحة، المخدرات، البضائع المهربة، والأموال. يحق للشركة تفتيش أي شحنة مشبوهة وإبلاغ السلطات فوراً.</p>
+                        <p><b>أولاً: إقرار باستلام البضاعة بحالة ظاهرية سليمة:</b> يستلم الناقل البضاعة بناءً على الإقرار الصادر من المرسل بأنها بحالة ظاهرية سليمة، وخالية من أي عيوب أو تلف، ومعبأة تعبئة مناسبة تتناسب مع طبيعة البضاعة ومتطلبات النقل البري، ويكون الناقل غير مسؤول عن الفحص الفني للبضاعة أو مكوناتها الداخلية.</p>
                         
-                        <h4 style="color:#b82329; font-size:14px;">تعليمات إلزامية للعملاء (المستلم)</h4>
-                        <p style="font-weight:bold; color:#b82329; font-size:13px;">يُمنع منعاً باتاً فتح الشحنة أو العبث بتغليفها قبل سداد كامل قيمتها (COD) ومصاريف الشحن لمندوب الشركة. وفي حالة رفض الاستلام بعد الفتح (بإذن التاجر)، يلتزم العميل بدفع مصاريف الشحن كاملة.</p>
+                        <p><b>ثانياً: تحديد نطاق مسؤولية الناقل:</b> يلتزم الناقل ببذل العناية المعتادة في نقل البضاعة والحفاظ عليها. ومع ذلك، لا يكون الناقل مسؤولاً عن أي تلف أو ضياع أو تأخير ينشأ نتيجة لأي من الأسباب التالية: 1. قوة قاهرة أو حادث لا يمكن توقعه. 2. طبيعة البضاعة من حيث قابليتها للكسر أو التلف. 3. التغليف غير الملائم من قبل المرسل. 4. خطأ من قبل المرسل أو المرسل إليه. 5. أي نقص في الوزن أو العدد لا يتوافق مع مستندات المرسل. 6. التأخير الناتج عن إجراءات تفتيش الجهات الحكومية أو القيود المرورية. 7. لا تتجاوز قيمة تعويض الناقل عن أي ضرر يثبت خطؤه فيه قيمة أجرة النقل المتفق عليها لهذه الشحنة، ما لم يثبت المرسل قيمة البضاعة الحقيقية ويعلنها كتابةً عند الشحن.</p>
+                        
+                        <p><b>ثالثاً: حدود التعويض واشتراط الإعلان بالقيمة:</b> يكون الناقل ملتزماً بالتعويض في حالة ثبوت خطئه بما لا يتجاوز قيمة أجرة النقل × 3، أو بحد أقصى مبلغ (500 جنيه)، أيهما أقل، وذلك ما لم يقم المرسل بالإعلان عن القيمة الحقيقية للبضاعة كتابةً على البوليصة وسداد نسبة إضافية مقابل ذلك كتأمين غير مسترد. في حال الشحنات القابلة للكسر فهي إما أن تنقل على مسؤولية الراسل ولا تلتزم الشركة بأي تعويض في حال التلف، أو أن يقوم بدفع قيمة تأمين مبلغ 10% من قيمة الطرد الفعلية وبذلك تتعهد الشركة بتعويض الراسل بكامل قيمة الطرد حيث أن الشركة تعيد تغليف الطرد.</p>
+                        
+                        <p><b>رابعاً: مهلة الإخطار بالشكاوى:</b> يُعتبر التسليم نافياً للمسؤولية ما لم يقم المرسل إليه بإخطار الناقل كتابةً بأي تحفظ أو اعتراض على البضاعة فور استلامها، أو خلال <b>48 ساعة كحد أقصى</b> من تاريخ التسليم للشكاوى الخفية، وإلا سقط حقه في أي مطالبة.</p>
+
+                        <h4>📝 إقرارات وتعهدات المرسل</h4>
+                        <p><b>1. صحة البيانات:</b> أتعهد بموجب هذا بأن جميع البيانات المذكورة في هذه البوليصة صحيحة وكاملة، وأتحمل وحدي المسؤولية عن عدم دقتها.<br><b>2. سلامة التغليف:</b> أقر بأن البضاعة معبأة بشكل مناسب يضمن سلامتها.<br><b>3. التراخيص:</b> أتعهد بتوفير جميع التراخيص والموافقات المطلوبة قانوناً لنقل هذه البضاعة.</p>
+
+                        <h4>🚫 المحظورات المطلقة</h4>
+                        <p>يحظر بشكل قاطع شحن أو قبول أي من البضائع التالية: المواد شديدة الخطورة والاشتعال، الأسلحة والذخائر، المواد المخدرة، البضائع المهربة والمزورة، المواد سريعة التلف، الحيوانات، النقود والأحجار الكريمة.<br><b>. قد يخضع الطرد للتفتيش داخلياً بمعرفة الشركة وإذا تم العثور بداخل الطرد على أي مواد مخالفة للقانون سيتم على الفور إبلاغ السلطات المعنية لاتخاذ اللازم تجاه الراسل والمستلم.<br>. جميع ما سبق هو بمثابة إخلاء مسؤولية كاملة عن محتوى الطرود التي لم يتم الكشف عليها من طرف الشركة وأن المسؤولية الجنائية تقع كاملة على عاتق الراسل.</b></p>
+
+                        <h4>📋 تعليمات إلزامية للعملاء</h4>
+                        <p>1. يتحمل المرسل مسؤولية التعبئة الآمنة وكتابة عنوان المستلم بوضوح. 2. يلتزم المرسل بتسليم الشحنة والحصول على إيصال. 3. يلتزم المرسل إليه باستلام الشحنة فور وصولها ويتحمل تكاليف التخزين حال التأخير. 4. لا تُقبل مطالبات بعد توقيع المرسل إليه بدون تحفظات.<br><span style="color:#b82329; font-weight:bold; font-size:10px;">5. يُمنع منعاً باتاً فتح الشحنة أو العبث بتغليفها قبل سداد كامل قيمتها (COD) ومصاريف الشحن למندوب الشركة. وفي حالة رفض الاستلام بعد الفتح (بإذن التاجر)، يلتزم العميل بدفع مصاريف الشحن كاملة. وفي حالة رفض المستلم استلام الشحنة، يلتزم التاجر بسداد رسوم الشحن (ذهاباً وإياباً).</span></p>
                     </div>
 
                     <div class="footer-grid">
-                        <div style="font-size:12px; line-height:1.6;">
+                        <div style="line-height:1.4;">
                             <b>تواصل معنا:</b><br>
-                            FB: fb.com/share/1CJDtTPczM<br>
-                            YT: youtube.com/@axonexpress<br>
-                            TK: tiktok.com/@axon.express<br>
+                            FB: fb.com/share/1CJDtTPczM | YT: youtube.com/@axonexpress | TK: tiktok.com/@axon.express<br>
                             <i style="color:#b82329; font-weight:bold;">خدمة العملاء (واتساب): 01147000882</i>
                         </div>
                         <div style="text-align:center;">
-                            <img src="${qrCode}" style="width:70px; height:70px;"><br>
-                            <small>امسح الكود لروابطنا</small>
+                            <img src="${qrCode}" style="width:50px; height:50px;"><br>
                         </div>
                     </div>
 
@@ -470,13 +494,12 @@
                         ${digitalSignature}
                     </div>
                 </div>
-                <script>JsBarcode("#bc", "${awb}", {format:"CODE128", width:1.5, height:40, displayValue:false}); setTimeout(window.print, 800);<\/script>
+                <script>JsBarcode("#bc", "${awb}", {format:"CODE128", width:1.5, height:35, displayValue:false}); setTimeout(window.print, 800);<\/script>
             </body></html>`;
             const win = window.open('', '_blank');
             win.document.write(printContent); win.document.close();
         };
 
-        // --- اشتريلي (استرجاع طرق الدفع المخفية) ---
         window.togglePaymentDetails = () => {
             const val = document.getElementById('eshPayment').value;
             document.getElementById('instapayDetails').style.display = val === 'instapay' ? 'block' : 'none';
@@ -512,21 +535,22 @@
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
         };
 
-        // --- إصلاح الونش (السماح بالكتابة اليدوية لو الـ GPS معلق) ---
+        // --- إصلاح الونش: الكاميرا وسحب اللوكيشن الآلي الإجباري ---
         window.getRescueLocation = () => {
             const btn = document.getElementById('rescueLocationBtn');
             const inputField = document.getElementById('rescueGPS');
             if(navigator.geolocation) {
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري تحديد موقعك...';
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري سحب موقعك من الأقمار الصناعية...';
                 navigator.geolocation.getCurrentPosition(
                     (pos) => {
                         inputField.value = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
-                        btn.innerHTML = '✅ تم تحديد الموقع بدقة';
+                        btn.innerHTML = '✅ تم تحديد الموقع بدقة تامة';
                     },
                     (err) => { 
-                        btn.innerHTML = 'خطأ! اكتب عنوانك بإيدك في المربع'; 
-                        inputField.focus(); // يوجهه يكتب بإيده
-                    }
+                        btn.innerHTML = '⚠️ فشل سحب الموقع الآلي! اكتب عنوانك بالتفصيل هنا'; 
+                        inputField.focus(); 
+                    },
+                    { enableHighAccuracy: true, timeout: 10000 }
                 );
             } else {
                 Swal.fire('تنبيه', 'المتصفح لا يدعم الـ GPS، برجاء كتابة العنوان يدوياً', 'warning');
@@ -537,15 +561,30 @@
             const phone = document.getElementById('rescuePhone').value.trim();
             const car = document.getElementById('rescueCar').value.trim() || 'غير محدد';
             const gps = document.getElementById('rescueGPS').value.trim();
+            const imageFile = document.getElementById('rescueCarImage').files[0];
             
-            // لو الـ GPS مجابش، هو يقدر يكون كاتب العنوان بإيده في الحقل
-            if(!phone || !gps) return Swal.fire('تحذير طوارئ', 'يجب إدخال التليفون وسحب الموقع أو كتابة العنوان!', 'error');
+            if(!phone || !gps || !imageFile) {
+                return Swal.fire('طوارئ أكسون', 'حمايةً لك، يرجى إدخال التليفون وسحب الموقع وإرفاق صورة السيارة!', 'error');
+            }
+
+            const btn = document.getElementById('rescueSubmitBtn'); 
+            btn.disabled = true; btn.innerHTML = "جاري رفع الصورة وإرسال الاستغاثة...";
             
             try {
-                await addDoc(collection(db, "axon_rescue_orders"), { merchantEmail, phone, car, gps, status: "نداء استغاثة", timestamp: new Date() });
+                // رفع صورة العربية للفايربيز
+                const storageRef = ref(storage, `rescue_cars/${merchantEmail}_${Date.now()}`);
+                await uploadBytes(storageRef, imageFile);
+                const imageURL = await getDownloadURL(storageRef);
+
+                await addDoc(collection(db, "axon_rescue_orders"), { 
+                    merchantEmail, phone, car, gps, carImageURL: imageURL, status: "نداء استغاثة", timestamp: new Date() 
+                });
+                
                 document.getElementById('rescueModal').style.display='none';
-                Swal.fire('تم إرسال الاستغاثة!', 'الونش في الطريق إليك، خلي تليفونك متاح.', 'success');
-            } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
+                Swal.fire('تم استلام الاستغاثة!', 'الونش في الطريق إليك، خلي تليفونك متاح.', 'success');
+            } catch(e) { Swal.fire('خطأ شبكة', e.message, 'error'); }
+            
+            btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-truck-pickup"></i> إرسال نداء الاستغاثة للشركة';
         };
 
         window.toggleTheme = () => {
