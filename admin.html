@@ -95,7 +95,7 @@
         body.dark-mode .filter-btn { background: #2c2c2c; border-color: #444; color: #fff;}
         body.dark-mode .filter-btn.active { background: var(--primary-blue); }
 
-        /* ---------------- CSS الطباعة (نفس اللي في التاجر بالظبط) ---------------- */
+        /* ---------------- CSS الطباعة ---------------- */
         @media print {
             body { background: #fff; margin: 0; padding: 0; -webkit-print-color-adjust: exact; }
             header, .container, .print-controls { display: none !important; }
@@ -323,7 +323,7 @@
         const secondaryApp = initializeApp(firebaseConfig, "SecondaryApp");
         const secondaryAuth = getAuth(secondaryApp);
 
-        // جلب الـ IP للإقرار الرقمي
+        // جلب الـ IP للإقرار الرقمي (للأدمن نفسه كاحتياطي)
         let adminIP = "جاري التحقق...";
         fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ adminIP = d.ip; }).catch(e=>{ adminIP = "غير معروف"; });
         const deviceInfo = navigator.userAgent.substring(0, 40) + "...";
@@ -476,6 +476,9 @@
                     let alertBadge = d.fineAdded ? `<span style="color:red; font-size:10px; display:block;">⚠️ غرامة: ${d.fineAdded}</span>` : '';
                     let delayBadge = d.rescheduleRequest ? `<span style="color:#f39c12; font-size:10px; display:block;">⚠️ مؤجلة</span>` : '';
                     
+                    // تمرير بيانات جهاز التاجر لو موجودة لدالة الطباعة بأمان
+                    let cleanDevice = (d.deviceInfo || 'غير مسجل').replace(/'/g, "");
+                    
                     let rowClass = "";
                     let filterCategory = "all";
                     if(d.status === 'قيد التوصيل') { rowClass = "status-danger"; filterCategory = "danger"; }
@@ -483,7 +486,7 @@
                     else if(d.status === 'تم التسليم' || d.status === 'تمت التسوية') { rowClass = "status-success"; filterCategory = "success"; }
                     else if(d.status === 'مرتجع' || d.status === 'مؤجل') { rowClass = "status-archived"; filterCategory = "archived"; }
 
-                    // تمرير داتا التاجر في زر الحفظ
+                    // تم تحديث زرار الطباعة ليمرر بيانات جهاز التاجر والـ IP
                     html += `<tr class="shipment-row ${rowClass}" data-category="${filterCategory}">
                         <td><b>${merchant}</b></td> 
                         <td>${awb}<br><span style="font-size:10px;color:gray;">${d.name}</span></td> 
@@ -499,9 +502,9 @@
                             <option value="مؤجل" ${d.status==='مؤجل'?'selected':''}>مؤجل</option>
                         </select>${delayBadge}</td>
                         <td style="white-space:nowrap;">
-                            <button class="btn-action btn-save" onclick="window.updateStatus('${id}', '${d.merchantEmail||''}', '${awb}', '${d.amount}', '${d.city}', '${d.address}')">حفظ</button>
+                            <button class="btn-action btn-save" onclick="window.updateStatus('${id}')">حفظ</button>
                             <button class="btn-action btn-broadcast" onclick="window.broadcastShipmentToRadar('${id}', '${merchant}', '${d.city}', '${d.address}', '${d.amount}', '${d.paymentType || 'normal'}', '${awb}')" title="إسناد للرادار"><i class="fa-solid fa-satellite-dish"></i></button>
-                            <button class="btn-action btn-print" onclick="window.printWaybill('${awb}','${d.name}','${d.phone}','${d.phone2}','${d.city}','${d.address}','${d.weight}','${d.amount}', ${isFragile}, '${d.merchantEmail||''}')" title="طباعة البوليصة"><i class="fa-solid fa-print"></i></button>
+                            <button class="btn-action btn-print" onclick="window.printWaybill('${awb}','${d.name}','${d.phone}','${d.phone2}','${d.city}','${d.address}','${d.weight}','${d.amount}', ${isFragile}, '${d.merchantEmail||''}', '${d.merchantIP || 'غير مسجل'}', '${cleanDevice}')" title="طباعة البوليصة"><i class="fa-solid fa-print"></i></button>
                             <button class="btn-action btn-edit" onclick="window.openEditModal('${id}','${d.name}','${d.phone}','${d.phone2}','${d.city}','${d.address}','${d.weight}','${d.amount}')"><i class="fa-solid fa-pen"></i></button>
                             <button class="btn-action btn-delete" onclick="window.deleteShipment('${id}')"><i class="fa-solid fa-trash"></i></button>
                         </td>
@@ -526,31 +529,7 @@
 
         document.getElementById('searchInput').addEventListener('keyup', function() { let filter = this.value.toLowerCase(); document.querySelectorAll('.shipment-row').forEach(row => { if(row.style.display !== 'none') row.style.display = row.innerText.toLowerCase().includes(filter) ? '' : 'none'; }); });
 
-        // تعديل دالة الحفظ لترمي أمر بيكب أوتوماتيك
-        window.updateStatus = async (id, merchantEmail, awb, amount, city, address) => { 
-            const val = document.getElementById(`st-${id}`).value; 
-            await updateDoc(doc(db, "shipments", id), { status: val }); 
-            
-            if (val === "مذاع للرادار") {
-                try {
-                    await addDoc(collection(db, "eshteryly_orders"), { 
-                        merchantEmail: merchantEmail || "إدارة", 
-                        details: `توصيل واستلام بوليصة رقم: ${awb} - تحصيل: ${amount} ج.م`, 
-                        address: `${city} - ${address}`, 
-                        paymentMethod: "pickup", 
-                        status: "جاري البحث عن مندوب", 
-                        timestamp: new Date(), 
-                        linkedShipmentId: id 
-                    });
-                    Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم تحديث الحالة وإرسال أمر بيكب للمندوب', showConfirmButton:false, timer:2500});
-                } catch(e) {
-                    console.error(e);
-                }
-            } else {
-                Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم حفظ الحالة', showConfirmButton:false, timer:2000}); 
-            }
-        };
-
+        window.updateStatus = async (id) => { const val = document.getElementById(`st-${id}`).value; await updateDoc(doc(db, "shipments", id), { status: val }); Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم حفظ الحالة', showConfirmButton:false, timer:2000}); };
         window.deleteShipment = async (id) => { if(confirm('متأكد من الإعدام الرقمي لهذه الشحنة؟')) await updateDoc(doc(db, "shipments", id), { deleted: true }); };
         window.openEditModal = (id, name, p1, p2, city, addr, w, amt) => { document.getElementById('editDocId').value = id; document.getElementById('editName').value = name; document.getElementById('editPhone').value = p1; document.getElementById('editPhone2').value = (p2 !== 'undefined' && p2 !== 'null') ? p2 : ''; document.getElementById('editCity').value = city; document.getElementById('editAddress').value = addr; document.getElementById('editWeight').value = (w !== 'undefined' && w !== 'null') ? w : '1'; document.getElementById('editAmount').value = amt; document.getElementById('editModal').style.display = 'flex'; };
         window.closeModal = (id) => document.getElementById(id).style.display = 'none';
@@ -572,7 +551,8 @@
         });
 
         // ---------------- دالة الطباعة المركزية المطابقة للتاجر 100% ----------------
-        window.printWaybill = async (awb, name, p1, p2, city, addr, w, amt, isFragile, merchantEmail) => {
+        // تم تحديث الدالة لاستقبال mIP و mDevice المبعوثين من زر الطباعة
+        window.printWaybill = async (awb, name, p1, p2, city, addr, w, amt, isFragile, merchantEmail, mIP, mDevice) => {
             Swal.fire({title: 'جاري تحضير البوليصة...', allowOutsideClick: false, didOpen: () => {Swal.showLoading()}});
             
             let mNameForPrint = merchantEmail ? merchantEmail.split('@')[0] : "إدارة أكسون";
@@ -596,7 +576,9 @@
             document.getElementById('mainContainer').style.display = 'none';
 
             const timestampStr = new Date().toLocaleString('en-GB'); 
-            const digitalSignature = `[Issuer: Admin] | [IP: ${adminIP}] | [Device: ${deviceInfo}] | [Time: ${timestampStr}]`;
+            
+            // سحب بصمة جهاز التاجر للطباعة (زي ما طلبت)
+            const digitalSignature = `[Merchant: ${mNameForPrint}] | [IP: ${mIP}] | [Device: ${mDevice}] | [Time: ${timestampStr}]`;
             
             // يافطة السفير بدل اللوجو
             const safeerLogoHTML = `<div class="safeer-name-badge"><h2>${mNameForPrint}</h2></div>`;
@@ -755,7 +737,15 @@
                 snap.forEach(doc => {
                     const d = doc.data(); count++;
                     const dateStr = d.timestamp ? (d.timestamp.toDate ? d.timestamp.toDate().toLocaleString('ar-EG') : new Date(d.timestamp).toLocaleString('ar-EG')) : '-';
-                    html += `<tr><td><span style="font-size:11px;">${dateStr}</span></td><td><div style="max-width:250px; white-space:normal;">${d.message}</div></td><td dir="ltr"><b>${d.phone || 'لا يوجد'}</b></td><td><button class="btn-action btn-delete" onclick="window.deleteTicket('web_inquiries', '${doc.id}')">إغلاق التذكرة ✖</button></td></tr>`;
+                    
+                    // التعديل الخاص بمسكن تذاكر الدعم الفني: إضافة زر الواتساب لو لقينا رقم
+                    let contactInfo = `<b>${d.phone || 'لا يوجد'}</b>`;
+                    if(d.phone && d.phone.length >= 10) {
+                        let waPhone = d.phone.startsWith('0') ? '2' + d.phone : d.phone;
+                        contactInfo += `<br><a href="https://wa.me/${waPhone}" target="_blank" style="background:#25D366; color:white; padding:4px 8px; border-radius:5px; text-decoration:none; font-size:11px; margin-top:5px; display:inline-block;"><i class="fa-brands fa-whatsapp"></i> رد واتساب</a>`;
+                    }
+
+                    html += `<tr><td><span style="font-size:11px;">${dateStr}</span></td><td><div style="max-width:250px; white-space:normal;">${d.message}</div></td><td dir="ltr">${contactInfo}</td><td><button class="btn-action btn-delete" onclick="window.deleteTicket('web_inquiries', '${doc.id}')">إغلاق التذكرة ✖</button></td></tr>`;
                 });
                 document.getElementById('ticketsBody').innerHTML = html || "<tr><td colspan='4'>لا توجد رسائل حالياً.</td></tr>"; updateBadge(count);
             });
