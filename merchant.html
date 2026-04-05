@@ -13,23 +13,19 @@
         :root { --primary-blue: #0A3D62; --primary-red: #b82329; --white: #ffffff; --light-bg: #f4f7f6; --dark-text: #2c3e50; --border-color: #eee; }
         html, body { font-family: 'Cairo', sans-serif; margin: 0; background: var(--light-bg); color: var(--dark-text); overflow-x: hidden; scroll-behavior: smooth; transition: 0.3s;}
         
-        /* إخفاء منطقة الطباعة في الوضع العادي */
         #printArea { display: none; }
 
         header { background: var(--white); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--primary-blue); position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.08);}
         .logo { font-size: 22px; font-weight: 900; color: var(--primary-blue); text-decoration: none; display: flex; align-items: center; gap: 8px;}
         .logo span { color: var(--primary-red); }
         .header-actions { display: flex; align-items: center; gap: 15px;}
-        
         #logoutBtn { background: var(--white); border: 2px solid var(--primary-red); color: var(--primary-red); padding: 6px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; transition: 0.3s;}
         
         .container { padding: 20px; max-width: 1200px; margin: 0 auto; min-height: 80vh;}
         
         .top-panel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;}
         .merchant-badge { background: var(--primary-blue); padding: 8px 20px; border-radius: 30px; font-size: 14px; color: white; font-weight: bold;}
-        .upload-logo-wrapper { display: flex; align-items: center; gap: 10px; flex-wrap: wrap;}
-        .upload-logo-btn { background: var(--white); color: var(--primary-blue); border: 2px dashed var(--primary-blue); padding: 6px 15px; border-radius: 8px; cursor: pointer; font-family: 'Cairo'; font-weight: bold;}
-        #merchantLogoPreview { height: 40px; border-radius: 5px; display: none; border: 1px solid #ccc; object-fit: contain;}
+        .business-phone-wrapper { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: var(--white); padding: 5px 10px; border-radius: 8px; border: 1px solid var(--border-color);}
         
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .stat-card { background: var(--white); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-blue);}
@@ -70,36 +66,34 @@
         body.dark-mode header { background: #1a1a2e; border-bottom: 4px solid var(--primary-red); }
         body.dark-mode .input-group input, body.dark-mode .input-group select, body.dark-mode .modal-content textarea { background: #16213e; border-color: #0f3460; color: white;}
 
-        /* ---------------- CSS الخاص بالطباعة فقط ---------------- */
+        /* الطباعة */
         @media print {
             body { background: #fff; margin: 0; padding: 0; -webkit-print-color-adjust: exact; }
-            /* إخفاء كل حاجة ما عدا البوليصة */
             header, .container, .floating-chat, .social-footer, .print-controls { display: none !important; }
             #printArea { display: block !important; width: 100%; margin: 0; padding: 0; }
             @page { margin: 5mm; }
         }
 
-        /* تنسيقات البوليصة الداخلية */
         .a4-wrapper { width: 100%; max-width: 800px; margin: 0 auto; background: #fff; border: 2px solid #0A3D62; padding: 10px; box-sizing: border-box; }
         .print-controls { text-align: center; margin-bottom: 20px; padding: 15px; background: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
         .print-controls button { cursor: pointer; padding: 12px 25px; margin: 5px; font-size: 16px; font-weight: bold; border: none; border-radius: 5px; color: white;}
         .print-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #b82329; padding-bottom: 5px; margin-bottom: 10px; flex-wrap: nowrap; gap: 10px;}
         .print-header > div { flex: 1; text-align: center; overflow: hidden; }
-        .print-header img { max-width: 100px; max-height: 50px; object-fit: contain; }
         .barcode-svg { max-width: 100%; height: auto; }
-
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
         .box { border: 1px solid #ccc; padding: 5px; border-radius: 5px; font-size: 13px;}
         .box h3 { margin: 0 0 5px 0; background: #0A3D62; color: #fff; padding: 3px; font-size: 13px; text-align: center;}
         .cod-box { background: #fdf5f5; border: 2px solid #b82329; text-align: center; padding: 5px; border-radius: 5px; margin-bottom:10px;}
-        
         .constitution-columns { column-count: 2; column-gap: 15px; font-size: 9px; line-height: 1.3; text-align: justify; border: 1px solid #000; padding: 10px; margin-bottom: 10px; background: #fdfdfd;}
         .constitution-columns h4 { margin: 5px 0 3px 0; font-size: 10px; color: #b82329; border-bottom: 1px solid #ccc; padding-bottom:2px;}
         .constitution-columns p { margin: 0 0 4px 0; break-inside: avoid;}
-        
         .footer-grid { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; font-size: 11px;}
         .digital-sig { text-align: center; font-size: 9px; font-family: monospace; color: #444; border-top: 1px dashed #000; padding-top: 5px;}
         .fragile-banner { background: #b82329; color: white; text-align: center; font-size: 16px; font-weight: bold; padding: 8px; border-radius: 5px; margin-bottom: 10px; border: 2px dashed #000;}
+        
+        /* يافطة السفير الجميلة بدل اللوجو */
+        .safeer-name-badge { background: #0A3D62; color: white; padding: 8px 15px; border-radius: 8px; display: inline-block; font-family: 'Cairo'; margin-bottom: 5px; border: 2px solid #b82329;}
+        .safeer-name-badge h2 { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 1px;}
     </style>
 </head>
 <body>
@@ -116,14 +110,10 @@
     <div class="container" id="mainContainer">
         <div class="top-panel">
             <div class="merchant-badge" id="merchantEmailDisplay">تهيئة المحطة...</div>
-            <div class="upload-logo-wrapper">
-                <img id="merchantLogoPreview" src="" alt="لوجو السفير">
-                <input type="tel" id="merchantBusinessPhone" placeholder="رقم البزنس (للبوليصة)" style="padding:6px 10px; border-radius:5px; border:1px solid var(--primary-blue); font-family:'Cairo'; display:none; max-width:180px;">
-                <label class="upload-logo-btn" title="تفعيل بوليصة السفير">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> رفع لوجو التاجر
-                    <input type="file" id="merchantLogoInput" style="display:none;" accept="image/png, image/jpeg" onchange="window.uploadMerchantLogo(event)">
-                </label>
-                <button id="saveLogoAndPhoneBtn" style="display:none; background:var(--primary-red); color:white; border:none; padding:6px 15px; border-radius:5px; cursor:pointer; font-family:'Cairo'; font-weight:bold;" onclick="window.saveLogoAndPhone()"><i class="fa-solid fa-floppy-disk"></i> حفظ</button>
+            <div class="business-phone-wrapper">
+                <i class="fa-solid fa-phone" style="color:var(--primary-blue);"></i>
+                <input type="tel" id="merchantBusinessPhone" placeholder="رقم تليفون متجرك للعملاء" style="padding:6px 10px; border-radius:5px; border:1px solid #ccc; font-family:'Cairo'; outline:none;">
+                <button id="savePhoneBtn" style="background:var(--primary-red); color:white; border:none; padding:6px 15px; border-radius:5px; cursor:pointer; font-family:'Cairo'; font-weight:bold;" onclick="window.saveBusinessPhone()"><i class="fa-solid fa-floppy-disk"></i> حفظ الرقم</button>
             </div>
         </div>
 
@@ -166,6 +156,7 @@
         <i class="fa-brands fa-whatsapp"></i>
     </a>
 
+    <!-- الموديلز (النوافذ المنبثقة) -->
     <div id="addModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="document.getElementById('addModal').style.display='none'">✖</button>
@@ -249,12 +240,7 @@
             <div class="input-group"><label>رقم التليفون للتواصل (إلزامي)</label><input type="tel" id="rescuePhone" placeholder="01xxxxxxxxx"></div>
             <div class="input-group"><label>نوع السيارة (اختياري)</label><input type="text" id="rescueCar" placeholder="مثال: كيا سيراتو"></div>
             <div class="input-group">
-                <label style="color:var(--primary-red);"><i class="fa-solid fa-camera"></i> التقط صورة للسيارة (إلزامي)</label>
-                <img id="rescueCarPreview" src="" style="width: 100%; max-height: 150px; object-fit: contain; display: none; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;">
-                <input type="file" id="rescueCarImage" accept="image/*" capture="environment" style="background:#fff; border:2px dashed var(--primary-red);" onchange="window.previewRescueImage(event)">
-            </div>
-            <div class="input-group">
-                <label><i class="fa-solid fa-location-dot"></i> موقعك الحالي (إلزامي)</label>
+                <label><i class="fa-solid fa-location-dot"></i> موقعك الحالي (إلزامي للونش)</label>
                 <input type="text" id="rescueGPS" placeholder="اضغط الزر الأسفل أو اكتب عنوانك بدقة...">
             </div>
             <button type="button" id="rescueLocationBtn" onclick="window.getRescueLocation()" style="background:#333; color:white; border:none; padding:12px; border-radius:8px; margin:10px 0; width:100%; cursor:pointer; font-weight:bold;"><i class="fa-solid fa-satellite-dish"></i> سحب موقعي آلياً</button>
@@ -266,7 +252,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, where, setDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
 
         const app = initializeApp({
             apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
@@ -279,9 +264,8 @@
         
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const storage = getStorage(app);
         
-        let merchantEmail = "", merchantName = "", merchantLogoURL = "", merchantIP = "جاري التحقق...", merchantPhone = "غير مسجل";
+        let merchantEmail = "", merchantName = "", merchantIP = "جاري التحقق...", merchantPhone = "غير مسجل";
 
         fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ merchantIP = d.ip; }).catch(e=>{ merchantIP = "غير معروف"; });
         const deviceInfo = navigator.userAgent.substring(0, 40) + "..."; 
@@ -294,55 +278,23 @@
                 loadShipments();
                 
                 const profileSnap = await getDoc(doc(db, "merchant_profiles", merchantEmail));
-                if(profileSnap.exists()) {
-                    if(profileSnap.data().logoURL) {
-                        merchantLogoURL = profileSnap.data().logoURL;
-                        document.getElementById('merchantLogoPreview').src = merchantLogoURL;
-                        document.getElementById('merchantLogoPreview').style.display = 'block';
-                    }
-                    if(profileSnap.data().businessPhone) {
-                        merchantPhone = profileSnap.data().businessPhone;
-                        document.getElementById('merchantBusinessPhone').value = merchantPhone;
-                    }
+                if(profileSnap.exists() && profileSnap.data().businessPhone) {
+                    merchantPhone = profileSnap.data().businessPhone;
+                    document.getElementById('merchantBusinessPhone').value = merchantPhone;
                 }
             } else { window.location.href = "index.html"; }
         });
 
         window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
 
-        window.uploadMerchantLogo = (event) => {
-            const file = event.target.files[0];
-            if(!file) return;
-            document.getElementById('merchantLogoPreview').src = URL.createObjectURL(file);
-            document.getElementById('merchantLogoPreview').style.display = 'block';
-            document.getElementById('merchantBusinessPhone').style.display = 'inline-block';
-            document.getElementById('saveLogoAndPhoneBtn').style.display = 'inline-block';
-            window.tempLogoFile = file; 
-        };
-
-        window.saveLogoAndPhone = async () => {
+        window.saveBusinessPhone = async () => {
             const phone = document.getElementById('merchantBusinessPhone').value.trim();
             if(!phone) return Swal.fire('تنبيه', 'يرجى إدخال رقم تليفون البزنس ليتم طباعته على البوليصة.', 'warning');
             
-            Swal.fire({title: 'جاري الحفظ في السيرفر...', allowOutsideClick: false, didOpen: () => {Swal.showLoading()}});
             try {
-                let newData = { businessPhone: phone };
-                
-                if (window.tempLogoFile) {
-                    const storageRef = ref(storage, `merchant_logos/${merchantEmail}_${Date.now()}`);
-                    await uploadBytes(storageRef, window.tempLogoFile);
-                    merchantLogoURL = await getDownloadURL(storageRef);
-                    newData.logoURL = merchantLogoURL;
-                    window.tempLogoFile = null; 
-                }
-                
-                await setDoc(doc(db, "merchant_profiles", merchantEmail), newData, { merge: true });
+                await setDoc(doc(db, "merchant_profiles", merchantEmail), { businessPhone: phone }, { merge: true });
                 merchantPhone = phone; 
-                
-                document.getElementById('merchantBusinessPhone').style.display = 'none';
-                document.getElementById('saveLogoAndPhoneBtn').style.display = 'none';
-                
-                Swal.fire('ممتاز!', 'تم حفظ اللوجو وتليفون البزنس بنجاح، هيظهروا على البوليصة.', 'success');
+                Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم حفظ الرقم', showConfirmButton:false, timer:2000});
             } catch(e) { Swal.fire('خطأ', 'فشل الحفظ: ' + e.message, 'error'); }
         };
 
@@ -418,7 +370,9 @@
 
             const timestampStr = new Date().toLocaleString('en-GB'); 
             const digitalSignature = `[Merchant: ${merchantName}] | [IP: ${merchantIP}] | [Device: ${deviceInfo}] | [Time: ${timestampStr}]`;
-            const safeerLogoHTML = merchantLogoURL ? `<img src="${merchantLogoURL}" alt="Logo">` : `<h3 style="margin:0; color:#0A3D62;">${merchantName}</h3>`;
+            
+            // يافطة السفير الجميلة بدل اللوجو
+            const safeerLogoHTML = `<div class="safeer-name-badge"><h2>${merchantName}</h2></div>`;
             const qrCode = "https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"; 
 
             const fragileBannerHTML = isFragile ? `<div class="fragile-banner"><i class="fa-solid fa-wine-glass"></i> شحنة قابلة للكسر - تعامل بحذر شديد <i class="fa-solid fa-wine-glass"></i></div>` : '';
@@ -431,7 +385,7 @@
 
                 <div class="a4-wrapper">
                     <div class="print-header">
-                        <div>${safeerLogoHTML}<br><small style="font-size:10px;">لوجو التاجر (السفير)</small></div>
+                        <div>${safeerLogoHTML}<br><small style="font-size:10px;">متجر السفير</small></div>
                         <div><svg id="bc" class="barcode-svg"></svg><br><b style="font-size:14px;">${awb}</b></div>
                         <div><h2 style="margin:0; color:#0A3D62; font-size:20px;">AXON <span style="color:#b82329;">EXPRESS</span></h2><p style="margin:0; font-size:12px;">بوليصة شحن</p></div>
                     </div>
@@ -541,14 +495,6 @@
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
         };
 
-        window.previewRescueImage = (event) => {
-            const file = event.target.files[0];
-            if(file) {
-                document.getElementById('rescueCarPreview').src = URL.createObjectURL(file);
-                document.getElementById('rescueCarPreview').style.display = 'block';
-            }
-        };
-
         window.getRescueLocation = () => {
             const btn = document.getElementById('rescueLocationBtn');
             const inputField = document.getElementById('rescueGPS');
@@ -577,27 +523,22 @@
             const phone = document.getElementById('rescuePhone').value.trim();
             const car = document.getElementById('rescueCar').value.trim() || 'غير محدد';
             const gps = document.getElementById('rescueGPS').value.trim();
-            const imageFile = document.getElementById('rescueCarImage').files[0];
             
-            if(!phone || !gps || !imageFile) {
-                return Swal.fire('طوارئ أكسون', 'يرجى إدخال التليفون وسحب الموقع وإرفاق صورة السيارة!', 'error');
+            if(!phone || !gps) {
+                return Swal.fire('طوارئ أكسون', 'يرجى إدخال التليفون وسحب الموقع لإرسال الونش!', 'error');
             }
 
             const btn = document.getElementById('rescueSubmitBtn'); 
             btn.disabled = true; btn.innerHTML = "جاري الإرسال...";
             
             try {
-                const storageRef = ref(storage, `rescue_cars/${merchantEmail}_${Date.now()}`);
-                await uploadBytes(storageRef, imageFile);
-                const imageURL = await getDownloadURL(storageRef);
-
                 await addDoc(collection(db, "axon_rescue_orders"), { 
-                    merchantEmail, phone, car, gps, carImageURL: imageURL, status: "نداء استغاثة", timestamp: new Date() 
+                    merchantEmail, phone, car, gps, status: "نداء استغاثة", timestamp: new Date() 
                 });
                 
                 document.getElementById('rescueModal').style.display='none';
                 Swal.fire('تم استلام الاستغاثة!', 'الونش في الطريق إليك.', 'success');
-            } catch(e) { Swal.fire('خطأ', 'تأكد من تعديل قواعد Storage: ' + e.message, 'error'); }
+            } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
             
             btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-truck-pickup"></i> إرسال نداء الاستغاثة';
         };
