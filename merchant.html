@@ -344,7 +344,7 @@
                     merchantEmail, name, phone, phone2: document.getElementById('recPhone2').value.trim() || "لا يوجد",
                     city, address, weight: Number(document.getElementById('recWeight').value||1),
                     amount: Number(amount), paymentType: paymentType, fragile: isFragile, 
-                    merchantAddress: merchantAddress, // تم إضافة عنوان البيك أب هنا للأدمن
+                    merchantAddress: merchantAddress,
                     status: "قيد التوصيل", deleted: false, timestamp: new Date()
                 });
                 document.getElementById('addModal').style.display='none';
@@ -392,7 +392,9 @@
             const digitalSignature = `[Merchant: ${merchantName}] | [IP: ${merchantIP}] | [Device: ${deviceInfo}] | [Time: ${timestampStr}]`;
             
             const safeerLogoHTML = `<div class="safeer-name-badge"><h2>${merchantName}</h2></div>`;
-            const qrCode = "https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"; 
+            
+            // توليد الـ QR Code أوتوماتيك من لينك Taplink (مقاس 3x3 سم)
+            const qrCode = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://axonexpress.taplink.ws"; 
 
             const fragileBannerHTML = isFragile ? `<div class="fragile-banner"><i class="fa-solid fa-wine-glass"></i> شحنة قابلة للكسر - تعامل بحذر شديد <i class="fa-solid fa-wine-glass"></i></div>` : '';
 
@@ -450,11 +452,12 @@
                     <div class="footer-grid">
                         <div style="line-height:1.4;">
                             <b>تواصل معنا:</b><br>
-                            FB: fb.com/share/1CJDtTPczM | YT: youtube.com/@axonexpress | TK: tiktok.com/@axon.express<br>
+                            مسح الكود المجاور يوجهك لجميع روابط الشركة وحساباتنا.<br>
                             <i style="color:#b82329; font-weight:bold;">خدمة العملاء (واتساب): 01147000882</i>
                         </div>
                         <div style="text-align:center;">
-                            <img src="${qrCode}" style="width:50px; height:50px;"><br>
+                            <!-- الـ QR Code الجديد مقاس 3x3 سم -->
+                            <img src="${qrCode}" style="width:3cm; height:3cm; object-fit:contain; border: 1px solid #ccc; padding:2px;"><br>
                         </div>
                     </div>
 
