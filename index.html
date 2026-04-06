@@ -104,7 +104,7 @@
         .btn-whatsapp { background: linear-gradient(45deg, #25D366, #128C7E); color: white; }
         .btn-chat { background: linear-gradient(45deg, var(--primary-blue), var(--secondary-blue)); color: white; }
 
-        /* Chat Widget (Updated for mandatory phone) */
+        /* Chat Widget */
         .chat-widget { display: none; position: fixed; bottom: 105px; left: 30px; width: 350px; background: var(--white); border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.25); z-index: 1000; flex-direction: column; overflow: hidden; border: 1px solid var(--border-color); animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); transition: 0.3s;}
         @keyframes slideUp { from { transform: translateY(50px) scale(0.9); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
         .chat-header { background: linear-gradient(45deg, var(--primary-blue), var(--secondary-blue)); color: white; padding: 20px; font-weight: 900; font-size: 16px; display: flex; justify-content: space-between; align-items: center;}
@@ -145,6 +145,7 @@
         .submit-btn:hover { background: #b31741; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(214,28,78,0.4);}
         .close-modal { position: absolute; top: 20px; left: 20px; background: rgba(214,28,78,0.1); border: none; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--primary-red); transition: 0.3s; font-size: 18px;}
         .close-modal:hover { background: var(--primary-red); color: white; transform: rotate(90deg); }
+        .legal-warning { background: #fff3cd; color: #856404; padding: 15px; border-radius: 12px; font-size: 13px; margin-bottom: 20px; border: 1px solid #ffeeba; text-align: justify; line-height: 1.6;}
 
         /* Dark Mode Overrides */
         body.dark-mode { --white: #161B22; --light-bg: #0D1117; --dark-text: #E2E8F0; --border-color: #30363D; }
@@ -165,6 +166,7 @@
         body.dark-mode .timeline::before { background: #30363D; }
         body.dark-mode .timeline-icon { background: #30363D; border-color: #161B22; color: #666;}
         body.dark-mode .about-icon { background: #30363D; color: #66b2ff;}
+        body.dark-mode .legal-warning { background: #4a3f15; color: #f39c12; border-color: #66591d; }
     </style>
 </head>
 <body>
@@ -235,7 +237,6 @@
     <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">كل ما تحتاجه لنقل بضائعك، أموالك، وحتى أثاث بيتك في مكان واحد.</p>
     
     <div class="services-grid">
-        <!-- الخدمات الأصلية -->
         <div class="service-card" data-aos="fade-up" data-aos-delay="100" onclick="window.showService('ecommerce')">
             <img src="1.jpg" alt="تجهيز الطلبات" class="service-img" onerror="this.src='https://images.unsplash.com/photo-1553413077-190dd305871c?q=80&w=600&auto=format&fit=crop'">
             <div class="service-content">
@@ -260,30 +261,30 @@
             </div>
         </div>
 
-        <!-- الخدمات الجديدة -->
+        <!-- التعديل هنا: صورة وسوبر ماركت وجملة داخل التطبيق -->
         <div class="service-card" data-aos="fade-up" data-aos-delay="400" onclick="window.showService('eshteryly')">
-            <div class="badge-new">خدمة جديدة</div>
-            <img src="4.jpg" alt="اشتريلي" class="service-img" onerror="this.src='https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?q=80&w=600&auto=format&fit=crop'">
+            <div class="badge-new" style="background: var(--primary-blue);">خاص بالتجار</div>
+            <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=600&auto=format&fit=crop" alt="اشتريلي" class="service-img">
             <div class="service-content">
-                <h4><i class="fa-solid fa-cart-shopping" style="color: #28a745;"></i> خدمة اشتريلي</h4>
-                <p>عايز تشتري حاجة ومش فاضي؟ مندوبنا بيشتريلك طلباتك من أي مكان وبيوصلهالك لحد باب البيت بكل أمان.</p>
+                <h4><i class="fa-solid fa-cart-shopping" style="color: var(--primary-red);"></i> خدمة اشتريلي</h4>
+                <p>مندوبنا يشتري طلباتك من السوبر ماركت أو خامات الإنتاج. هذه الخدمة متاحة <b>حصرياً داخل تطبيق أكسون إكسبريس للتجار</b>.</p>
             </div>
         </div>
 
-        <div class="service-card" data-aos="fade-up" data-aos-delay="500" onclick="window.showService('rescue')">
-            <div class="badge-new" style="background: #f39c12;">طوارئ 24/7</div>
+        <div class="service-card" data-aos="fade-up" data-aos-delay="500" onclick="document.getElementById('publicRescueModal').style.display='flex'">
+            <div class="badge-new" style="background: var(--primary-red);">طوارئ 24/7</div>
             <img src="5.jpg" alt="إنقاذ سيارات" class="service-img" onerror="this.src='https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=600&auto=format&fit=crop'">
             <div class="service-content">
-                <h4><i class="fa-solid fa-truck-pickup" style="color: #f39c12;"></i> أكسون إنقاذ (أوناش)</h4>
-                <p>عربيتك عطلت؟ أوناش أكسون جاهزة للتحرك فوراً بناءً على إحداثيات الـ GPS الخاصة بك لإنقاذ سيارتك.</p>
+                <h4><i class="fa-solid fa-truck-pickup" style="color: var(--primary-red);"></i> أكسون إنقاذ (أوناش)</h4>
+                <p>عربيتك عطلت؟ أوناش أكسون جاهزة للتحرك فوراً بناءً على إحداثيات الـ GPS الخاصة بك لإنقاذ سيارتك. اضغط للطلب الآن.</p>
             </div>
         </div>
 
-        <div class="service-card" data-aos="fade-up" data-aos-delay="600" onclick="window.showService('home')">
+        <div class="service-card" data-aos="fade-up" data-aos-delay="600" onclick="document.getElementById('publicHomeModal').style.display='flex'">
             <img src="6.jpg" alt="نقل أثاث" class="service-img" onerror="this.src='https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=600&auto=format&fit=crop'">
             <div class="service-content">
-                <h4><i class="fa-solid fa-couch" style="color: #8e44ad;"></i> أكسون هوم (نقل عفش)</h4>
-                <p>نقل، فك، تركيب، وتغليف الأثاث بعمالة محترفة وسيارات مغلقة وأوناش رفع هيدروليكية لأدوار عالية.</p>
+                <h4><i class="fa-solid fa-couch" style="color: var(--primary-blue);"></i> أكسون هوم (نقل عفش)</h4>
+                <p>نقل، فك، تركيب، وتغليف الأثاث بعمالة محترفة وسيارات مغلقة وأوناش رفع. اضغط لطلب معاينة أو تسعير الآن.</p>
             </div>
         </div>
     </div>
@@ -338,7 +339,7 @@
         <a href="https://wa.me/201147000882" target="_blank" class="floating-btn btn-whatsapp" title="التواصل عبر الواتساب"><i class="fa-brands fa-whatsapp"></i></a>
     </div>
 
-    <!-- Chat Widget (تم تعديله لإجبار العميل على كتابة رقمه) -->
+    <!-- Chat Widget -->
     <div class="chat-widget" id="chatWidget">
         <div class="chat-header">
             <span><i class="fa-solid fa-robot"></i> أكسون بوت للمساعدة</span>
@@ -356,7 +357,48 @@
         </div>
     </div>
 
-    <!-- Modals -->
+    <!-- موديل طلب الإنقاذ للعميل العام -->
+    <div id="publicRescueModal" class="modal">
+        <div class="modal-content">
+            <button onclick="document.getElementById('publicRescueModal').style.display='none'" class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+            <h3 style="color:var(--primary-red); border-bottom: 2px solid var(--primary-blue); padding-bottom:15px; margin-top:0;"><i class="fa-solid fa-truck-pickup"></i> طلب ونش إنقاذ فوري</h3>
+            <input type="tel" id="pRescuePhone" placeholder="رقم التليفون للتواصل (إلزامي)">
+            <input type="text" id="pRescueCar" placeholder="نوع السيارة ولونها (اختياري)">
+            <input type="text" id="pRescueGPS" placeholder="اضغط الزر الأسفل أو اكتب عنوانك بدقة...">
+            <button type="button" id="pRescueLocationBtn" onclick="window.getPublicRescueLocation()" style="background:#0A3D62; color:white; border:none; padding:15px; border-radius:12px; margin-bottom:15px; width:100%; cursor:pointer; font-weight:bold; font-family:'Cairo'; font-size: 15px;"><i class="fa-solid fa-satellite-dish"></i> سحب موقعي للإرسال للونش</button>
+            
+            <div class="legal-warning">
+                <b><i class="fa-solid fa-triangle-exclamation"></i> إقرار بالمسؤولية القانونية:</b> 
+                النظام يقوم بتسجيل بصمة جهازك الرقمية بشكل آلي. الضغط على (تأكيد) يُعد إقراراً بجدية طلبك للإنقاذ. في حال ثبوت أن الطلب وهمي أو بغرض العبث وتشتيت الموارد، يحق لشركة أكسون إكسبريس اتخاذ كافة الإجراءات القانونية الصارمة ضد مقدم الطلب.
+            </div>
+
+            <button class="submit-btn" style="background:var(--primary-blue);" onclick="window.submitPublicRescueOrder()"><i class="fa-solid fa-bell-concierge"></i> تأكيد وإرسال نداء الاستغاثة</button>
+        </div>
+    </div>
+
+    <!-- موديل طلب نقل الأثاث للعميل العام -->
+    <div id="publicHomeModal" class="modal">
+        <div class="modal-content">
+            <button onclick="document.getElementById('publicHomeModal').style.display='none'" class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+            <h3 style="color:var(--primary-blue); border-bottom: 2px solid var(--primary-blue); padding-bottom:15px; margin-top:0;"><i class="fa-solid fa-couch"></i> حجز أكسون هوم (نقل عفش)</h3>
+            <input type="text" id="pHomeFrom" placeholder="نقل من (المنطقة والدور)">
+            <input type="text" id="pHomeTo" placeholder="نقل إلى (المنطقة والدور)">
+            <select id="pHomeService">
+                <option value="سيارة وعمال">نقل + عمالة مدربة</option>
+                <option value="سيارة وونش وعمال">نقل + ونش رفع + عمالة</option>
+            </select>
+            <input type="tel" id="pHomePhone" placeholder="رقم الموبايل للتواصل (إجباري)">
+            
+            <div class="legal-warning">
+                <b><i class="fa-solid fa-triangle-exclamation"></i> إقرار جدية الطلب:</b> 
+                يتم سحب التوقيع الرقمي للشبكة التي تستخدمها الآن. هذا الإجراء لحمايتنا من الطلبات الوهمية، وإرسالك للطلب يُعد إقراراً بجدية رغبتك في حجز الخدمة أو طلب معاينة وتخضع للمساءلة في حال العبث.
+            </div>
+
+            <button class="submit-btn" style="background:var(--primary-red);" onclick="window.submitPublicHomeOrder()"><i class="fa-solid fa-clipboard-check"></i> تأكيد وطلب التسعير/المعاينة</button>
+        </div>
+    </div>
+
+    <!-- Modals (القديمة) -->
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <button onclick="document.getElementById('loginModal').style.display='none'" class="close-modal"><i class="fa-solid fa-xmark"></i></button>
@@ -448,7 +490,7 @@
     <script type="module">
         import{initializeApp as a}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";import{getAuth as b,signInWithEmailAndPassword as c}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";import{getFirestore as d,doc as e,getDoc as f,getDocs as g,onSnapshot as h,collection as i,addDoc as j,updateDoc as k}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";const app=a({apiKey:"AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",authDomain:"axon-express-2f534.firebaseapp.com",projectId:"axon-express-2f534",storageBucket:"axon-express-2f534.firebasestorage.app",messagingSenderId:"958528400260",appId:"1:958528400260:web:504ae94f3ef2225b928bd1"});const auth=b(app);const db=d(app);AOS.init({duration:1000,once:true});window.livePrices={alex:0,cairo:0,beheira:0,delta:0,saeed:0,penalty:30};h(e(db,"settings","shipping_prices"),z=>{if(z.exists()){window.livePrices=z.data();window.calculateRate();}});window.calculateRate=()=>{const z=document.getElementById('calcSelect').value;if(z==="0"){document.getElementById('calcResult').innerText="0 EGP";return;}document.getElementById('calcResult').innerText=`${window.livePrices[z]||0} EGP`;};
         
-        window.showService=z=>{let y="",x="";if(z==='ecommerce'){y="مستودعات وتجهيز";x="نستلم البضائع دفعة واحدة ونخزنها. فور وصول طلب من عملائك، نقوم نحن بتغليفه وطباعة بوليصته وإرساله مباشرة دون تدخلك.";}else if(z==='coverage'){y="الرادار اللوجستي";x="خطوط سير يومية لا تنقطع. أسطولنا يتحرك بين الإسكندرية والقاهرة والمحافظات بجدولة دقيقة تضمن عدم تكدس الشحنات.";}else if(z==='cod'){y="دورة مالية صاروخية";x="أكبر مشكلة تواجه التجار هي تأخر أموال الـ COD. في أكسون، نقوم بتسوية حساباتك فور استلام الشحنة بأسرع دورة مالية في السوق.";}else if(z==='eshteryly'){y="خدمة اشتريلي";x="خدمة تسوق شخصية. اطلب ما تحتاجه وسيقوم الكابتن الخاص بنا بشرائه وتوصيله لك مع خيارات دفع مرنة.";}else if(z==='rescue'){y="أكسون إنقاذ";x="خدمة طوارئ على مدار الساعة لإنقاذ السيارات المعطلة باستخدام أوناش مجهزة تصلك أينما كنت عبر الـ GPS.";}else if(z==='home'){y="أكسون هوم";x="خدمات فك، نقل، تركيب، وتغليف الأثاث بعمالة مدربة وسيارات مغلقة لضمان سلامة منقولاتك.";}Swal.fire({title:y,text:x,icon:'info',confirmButtonText:'علم',confirmButtonColor:'#0A3D62'});};
+        window.showService=z=>{let y="",x="";if(z==='ecommerce'){y="مستودعات وتجهيز";x="نستلم البضائع دفعة واحدة ونخزنها. فور وصول طلب من عملائك، نقوم نحن بتغليفه وطباعة بوليصته وإرساله مباشرة دون تدخلك.";}else if(z==='coverage'){y="الرادار اللوجستي";x="خطوط سير يومية لا تنقطع. أسطولنا يتحرك بين الإسكندرية والقاهرة والمحافظات بجدولة دقيقة تضمن عدم تكدس الشحنات.";}else if(z==='cod'){y="دورة مالية صاروخية";x="أكبر مشكلة تواجه التجار هي تأخر أموال الـ COD. في أكسون، نقوم بتسوية حساباتك فور استلام الشحنة بأسرع دورة مالية في السوق.";}else if(z==='eshteryly'){y="خدمة اشتريلي";x="تنبيه: هذه الخدمة الحصرية (لتسوق المشتريات من خامات إنتاج أو سوبر ماركت) متاحة فقط للتجار المسجلين من داخل محطة التاجر الخاصة بهم.";}Swal.fire({title:y,text:x,icon:'info',confirmButtonText:'علم',confirmButtonColor:'#0A3D62'});};
         
         window.submitCareer=async()=>{const z=document.getElementById('carName').value.trim(),y=document.getElementById('carPhone').value.trim(),x=document.getElementById('carCity').value.trim(),w=document.getElementById('carPosition').value,v=document.getElementById('carNotes').value.trim();if(!z||!y||!x||!w)return Swal.fire('خطأ إدخال','يرجى استكمال البيانات المطلوبة.','warning');const u=document.getElementById('btnCareer');u.disabled=true;u.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> جاري التشفير...';try{await j(i(db,"careers"),{name:z,phone:y,city:x,position:w,notes:v,timestamp:new Date()});document.getElementById('careerModal').style.display='none';Swal.fire('تم الإرسال','تم توجيه ملفك لإدارة الموارد البشرية. استعد للتحرك.','success');document.querySelectorAll('#careerModal input, #careerModal select, #careerModal textarea').forEach(t=>t.value='');}catch(t){Swal.fire('فشل الاتصال',t.message,'error');}u.disabled=false;u.innerHTML="إرسال بياناتك للقيادة";};
         
@@ -458,7 +500,6 @@
         
         window.toggleChat=()=>{const z=document.getElementById('chatWidget');z.style.display=(z.style.display==='flex')?'none':'flex';};
         
-        /* دالة الشات الجديدة بالهاتف الإجباري */
         window.sendToChat=async()=>{
             const phone = document.getElementById('chatPhone').value.trim();
             const input = document.getElementById('chatInput');
@@ -494,6 +535,90 @@
         window.rescheduleDelivery=async()=>{if(currentTrackedDoc.status==='تم التسليم'||currentTrackedDoc.status==='تمت التسوية')return Swal.fire('مغلق','لا يمكن تأجيل شحنة تم تسليمها.','info');document.getElementById('trackingDashboardModal').style.display='none';const z=(currentTrackedDoc.status==='قيد التوصيل'||currentTrackedDoc.status==='مؤجل'||currentTrackedDoc.status==='مرتجع');const y=z?(Number(window.livePrices.penalty)||30):0;let x=z?`لقد تحرك المندوب بالفعل أو جرت محاولة تسليم. تأجيل الموعد الآن سيضيف غرامة قدرها (${y} ج.م) لتعويض وقت ومجهود الكابتن. هل توافق؟`:`تأجيل الاستلام مجاني لأن المندوب لم يتحرك بعد. هل تود تأجيل استلام الشحنة للغد؟`;const w=await Swal.fire({title:'تأجيل الاستلام',text:x,icon:z?'warning':'question',showCancelButton:true,confirmButtonText:'نعم، قم بالتأجيل',cancelButtonText:'إلغاء'});if(w.isConfirmed){try{let v={status:"مؤجل",rescheduleRequest:true};let u=Number(currentTrackedDoc.amount);if(z){u+=y;v.amount=u;v.fineAdded=(currentTrackedDoc.fineAdded||0)+y;v.address=currentTrackedDoc.address+" | ⚠️ (غرامة تأجيل)";}await k(e(db,"shipments",currentTrackedDoc.id),v);currentTrackedDoc.amount=u;if(z)currentTrackedDoc.address+=" | ⚠️ (غرامة تأجيل)";Swal.fire('تم التأجيل','تم إبلاغ الأسطول بتأجيل موعد التوصيل.','success').then(()=>openDashboard());}catch(v){Swal.fire('خطأ','فشل الاتصال.','error').then(()=>openDashboard());}}else{openDashboard();}};
         
         window.openSupportTicket=async()=>{document.getElementById('trackingDashboardModal').style.display='none';const{value:z}=await Swal.fire({title:'التواصل مع القيادة',input:'textarea',inputLabel:'اشرح مشكلتك بالتفصيل بخصوص هذه الشحنة وسنتواصل معك',inputPlaceholder:'اكتب هنا...',showCancelButton:true,confirmButtonText:'إرسال التذكرة',cancelButtonText:'إلغاء'});if(z){try{await j(i(db,"web_inquiries"),{message:`تذكرة دعم (بوليصة: ${currentTrackedDoc.awb}): ${z}`,phone:currentTrackedDoc.phone,status:"new",timestamp:new Date()});Swal.fire('تم الإرسال','تم رفع التذكرة لخدمة العملاء وسيتم حل المشكلة فوراً.','success').then(()=>openDashboard());}catch(y){Swal.fire('خطأ','لم يتم إرسال التذكرة.','error').then(()=>openDashboard());}}else{openDashboard();}};
+
+        /* -- أكواد الموديلز الجديدة (إنقاذ و هوم) مع سحب البصمة -- */
+        let publicIP = "جاري التحقق...";
+        fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ publicIP = d.ip; }).catch(e=>{ publicIP = "غير معروف"; });
+        const publicDeviceInfo = navigator.userAgent.substring(0, 50) + "...";
+
+        window.getPublicRescueLocation = () => {
+            const btn = document.getElementById('pRescueLocationBtn');
+            const inputField = document.getElementById('pRescueGPS');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري السحب...';
+            
+            if(navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        inputField.value = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                        btn.innerHTML = '✅ تم تحديد الموقع بدقة تامة';
+                    },
+                    (err) => { 
+                        fetch('https://ipapi.co/json/').then(r=>r.json()).then(data => {
+                            inputField.value = `تقريبي: ${data.city}, ${data.region}`;
+                            btn.innerHTML = '⚠️ تم السحب التقريبي (أكمل العنوان يدوياً)';
+                        }).catch(e => {
+                            btn.innerHTML = '❌ فشل السحب تماماً، اكتب عنوانك بإيدك';
+                        });
+                    },
+                    { enableHighAccuracy: true, timeout: 5000 }
+                );
+            }
+        };
+
+        window.submitPublicRescueOrder = async () => {
+            const phone = document.getElementById('pRescuePhone').value.trim();
+            const car = document.getElementById('pRescueCar').value.trim() || 'غير محدد';
+            const gps = document.getElementById('pRescueGPS').value.trim();
+            
+            if(!phone || !gps) return Swal.fire('تنبيه', 'رقم الهاتف والموقع إلزاميان لتوجيه الونش لك!', 'warning');
+            
+            const w = await Swal.fire({
+                title: 'إقرار بالمسؤولية القانونية',
+                text: `هل تؤكد أن هذا الطلب حقيقي؟ سيتم تسجيل بيانات جهازك (${publicIP}) كدليل قاطع.`,
+                icon: 'warning', showCancelButton: true, confirmButtonText: 'نعم، أؤكد الطلب للإنقاذ', cancelButtonText: 'تراجع', confirmButtonColor: '#b82329'
+            });
+
+            if(w.isConfirmed) {
+                try {
+                    await j(i(db, "axon_rescue_orders"), {
+                        merchantEmail: "عميل عام (موقع)", phone, car, gps,
+                        userIP: publicIP, deviceInfo: publicDeviceInfo,
+                        status: "نداء استغاثة", timestamp: new Date()
+                    });
+                    document.getElementById('publicRescueModal').style.display='none';
+                    Swal.fire('تم استلام النداء', 'الونش يتحرك إليك الآن. سيتم الاتصال بك فوراً.', 'success');
+                    document.getElementById('pRescuePhone').value = ''; document.getElementById('pRescueGPS').value = '';
+                } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
+            }
+        };
+
+        window.submitPublicHomeOrder = async () => {
+            const from = document.getElementById('pHomeFrom').value.trim();
+            const to = document.getElementById('pHomeTo').value.trim();
+            const phone = document.getElementById('pHomePhone').value.trim();
+            const service = document.getElementById('pHomeService').value;
+            
+            if(!from || !to || !phone) return Swal.fire('تنبيه', 'رجاء إكمال كافة بيانات النقل للتمكن من التسعير.', 'warning');
+            
+            const w = await Swal.fire({
+                title: 'تأكيد طلب المعاينة',
+                text: `سيتم تسجيل طلبك من جهازك (${publicIP}). هل أنت متأكد من جدية حجز الخدمة؟`,
+                icon: 'info', showCancelButton: true, confirmButtonText: 'نعم، أؤكد الحجز', cancelButtonText: 'تراجع'
+            });
+
+            if(w.isConfirmed) {
+                try {
+                    await j(i(db, "axon_home_orders"), {
+                        merchantEmail: "عميل عام (موقع)", from, to, phone, service,
+                        userIP: publicIP, deviceInfo: publicDeviceInfo,
+                        status: "قيد التسعير", timestamp: new Date()
+                    });
+                    document.getElementById('publicHomeModal').style.display='none';
+                    Swal.fire('ممتاز', 'تم استلام طلبك. فريق التسعير والمعاينات سيتصل بك فوراً.', 'success');
+                    document.getElementById('pHomeFrom').value = ''; document.getElementById('pHomeTo').value = ''; document.getElementById('pHomePhone').value = '';
+                } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
+            }
+        };
     </script>
 </body>
 </html>
