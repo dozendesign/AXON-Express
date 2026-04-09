@@ -23,6 +23,9 @@
         
         body { font-family: 'Cairo', sans-serif; background: var(--bg-color); margin: 0; color: var(--dark-text); overflow-x: hidden; transition: 0.3s; }
         
+        /* تظبيط العرض على الكمبيوتر */
+        .app-container { max-width: 600px; margin: 0 auto; background: var(--bg-color); min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.1); position: relative;}
+        
         /* شاشة الدخول الاحترافية */
         #loginSection { 
             background: linear-gradient(135deg, var(--primary-blue), #000); 
@@ -58,26 +61,33 @@
         .status-badge { display: flex; align-items: center; gap: 8px; font-weight: bold; }
         .pulse-online { width: 12px; height: 12px; background: #10B981; border-radius: 50%; animation: pulse 1.5s infinite; }
         
-        /* الكروت (Uber Style) */
+        /* الكروت المميزة */
         .section-title { padding: 0 25px; font-size: 18px; font-weight: 900; color: var(--primary-blue); margin-top: 25px; }
         .order-card {
-            background: var(--white); margin: 15px 20px; padding: 20px; border-radius: 28px;
-            box-shadow: var(--soft-shadow); border: 1px solid rgba(0,0,0,0.02); position: relative;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--white); margin: 15px 20px; padding: 20px; border-radius: 20px;
+            box-shadow: var(--soft-shadow); position: relative; transition: 0.3s; overflow: hidden;
         }
-        .order-card:active { transform: scale(0.97); }
+        .order-card:active { transform: scale(0.98); }
+        
+        /* شريط اللون الجانبي لكل نوع طرد */
+        .card-border { position: absolute; right: 0; top: 0; bottom: 0; width: 6px; }
+
         .dist-tag {
             position: absolute; top: 20px; left: 20px; background: #F3F4F6; color: var(--primary-blue);
             padding: 6px 12px; border-radius: 12px; font-size: 12px; font-weight: 900;
         }
-        .task-type { font-size: 13px; color: var(--primary-red); font-weight: bold; margin-bottom: 5px; display: block; }
-        .merchant-name { font-size: 17px; font-weight: 900; margin: 0; }
-        .location-text { font-size: 14px; color: #6B7280; margin: 8px 0; display: flex; align-items: center; gap: 5px; }
+        .task-badge { 
+            display: inline-block; padding: 5px 12px; border-radius: 8px; font-size: 12px; 
+            font-weight: bold; margin-bottom: 10px; 
+        }
+        
+        .merchant-name { font-size: 17px; font-weight: 900; margin: 0 0 5px 0; }
+        .location-text { font-size: 14px; color: #6B7280; margin: 5px 0 15px 0; display: flex; align-items: center; gap: 5px; line-height: 1.5; }
 
         /* أزرار الأكشن السلسة */
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .btn-u {
-            padding: 14px; border-radius: 16px; border: none; font-family: 'Cairo'; 
+            padding: 12px; border-radius: 12px; border: none; font-family: 'Cairo'; 
             font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 14px;
         }
         .btn-claim { background: var(--primary-blue); color: white; grid-column: span 2; font-size: 16px; font-weight: 900;}
@@ -85,13 +95,19 @@
         .btn-ignore { background: #FEE2E2; color: var(--primary-red); }
         .btn-nav { background: #E0E7FF; color: var(--primary-blue); }
         .btn-done { background: #D1FAE5; color: #065F46; }
-        .btn-contact { background: #F3F4F6; color: var(--dark-text); grid-column: span 2; }
+        .btn-contact { background: #f3f4f6; color: #374151; grid-column: span 2; }
+        .btn-contact:hover { background: #e5e7eb; }
 
         /* Dark Mode */
         body.dark-mode { --bg-color: #000; --white: #111827; --dark-text: #F9FAFB; --soft-shadow: none; }
+        body.dark-mode .app-container { background: #000; }
         body.dark-mode .app-header, body.dark-mode .order-card, body.dark-mode .status-container { border: 1px solid #1F2937; }
+        body.dark-mode .btn-details, body.dark-mode .btn-contact { background: #1F2937; color: #fff; }
+        body.dark-mode .dist-tag { background: #1F2937; color: #fff; }
 
         @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.7; } 70% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.7; } }
+        
+        .swal2-container { font-family: 'Cairo', sans-serif !important; }
     </style>
 </head>
 <body>
@@ -101,14 +117,14 @@
         <div class="login-card">
             <h1 style="color:white; margin-bottom:5px;">AXON</h1>
             <p style="color:rgba(255,255,255,0.7); font-size:14px; margin-bottom:30px;">تطبيق الكابتن - النسخة التكتيكية</p>
-            <input type="text" id="cUser" placeholder="كود المحارب">
+            <input type="text" id="cUser" placeholder="كود المحارب (مثال: ahmed)">
             <input type="password" id="cPass" placeholder="كلمة السر">
             <button class="login-btn" onclick="window.loginCourier()">تسجيل الدخول</button>
         </div>
     </div>
 
     <!-- المحتوى الرئيسي -->
-    <div id="appContent" style="display:none;">
+    <div class="app-container" id="appContent" style="display:none;">
         <div class="app-header">
             <div class="profile-area">
                 <div class="avatar" id="cInitials">AX</div>
@@ -128,7 +144,7 @@
                 <div id="statusDot" class=""></div>
                 <span id="statusTxt">خارج الوردية</span>
             </div>
-            <button id="shiftBtn" onclick="window.toggleShift()" style="background:var(--primary-blue); color:white; border:none; padding:10px 25px; border-radius:15px; font-weight:bold; font-family:'Cairo';">بدء الوردية</button>
+            <button id="shiftBtn" onclick="window.toggleShift()" style="background:var(--primary-blue); color:white; border:none; padding:10px 25px; border-radius:12px; font-weight:bold; font-family:'Cairo';">بدء الوردية</button>
         </div>
 
         <div class="section-title">القريب منك (الرادار)</div>
@@ -145,104 +161,140 @@
     <audio id="alertSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
     <script type="module">
-        import{initializeApp as a}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import{getAuth as b,signInWithEmailAndPassword as c,onAuthStateChanged as d,signOut as e}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import{getFirestore as f,collection as g,onSnapshot as h,doc as i,updateDoc as j,setDoc as k,addDoc as l,serverTimestamp as m}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, doc, updateDoc, setDoc, addDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         
-        const app=a({apiKey:"AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",authDomain:"axon-express-2f534.firebaseapp.com",projectId:"axon-express-2f534",storageBucket:"axon-express-2f534.firebasestorage.app",messagingSenderId:"958528400260",appId:"1:958528400260:web:504ae94f3ef2225b928bd1"});
-        const auth=b(app), db=f(app);
-        let currentCaptain="", isOnline=false, watchId=null, lat=null, lng=null, ignored=new Set();
+        const app = initializeApp({
+            apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
+            authDomain: "axon-express-2f534.firebaseapp.com",
+            projectId: "axon-express-2f534",
+            storageBucket: "axon-express-2f534.firebasestorage.app",
+            messagingSenderId: "958528400260",
+            appId: "1:958528400260:web:504ae94f3ef2225b928bd1"
+        });
+        
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        let currentCaptain = "", isOnline = false, watchId = null, lat = null, lng = null, ignored = new Set();
 
-        d(auth,(user)=>{
-            if(user && user.email.includes("@courier.axon.com")){
-                currentCaptain=user.email.split('@')[0];
-                document.getElementById('loginSection').style.display='none';
-                document.getElementById('appContent').style.display='block';
+        onAuthStateChanged(auth, (user) => {
+            if (user && user.email.includes("@courier.axon.com")) {
+                currentCaptain = user.email.split('@')[0];
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('appContent').style.display = 'block';
                 document.getElementById('cDisplayName').innerText = currentCaptain;
-                document.getElementById('cInitials').innerText = currentCaptain.substring(0,2).toUpperCase();
+                document.getElementById('cInitials').innerText = currentCaptain.substring(0, 2).toUpperCase();
                 startTracking();
             } else {
-                document.getElementById('loginSection').style.display='flex';
-                document.getElementById('appContent').style.display='none';
+                document.getElementById('loginSection').style.display = 'flex';
+                document.getElementById('appContent').style.display = 'none';
             }
         });
 
-        window.loginCourier=async()=>{
-            const u=document.getElementById('cUser').value.trim().toLowerCase(), p=document.getElementById('cPass').value;
-            if(!u||!p) return Swal.fire('بيانات ناقصة','أدخل الكود والباسورد','warning');
-            try { await c(auth, u+"@courier.axon.com", p); } catch(e) { Swal.fire('خطأ','بيانات غير صحيحة','error'); }
+        window.loginCourier = async () => {
+            const u = document.getElementById('cUser').value.trim().toLowerCase();
+            const p = document.getElementById('cPass').value;
+            if(!u || !p) return Swal.fire('بيانات ناقصة', 'أدخل الكود والباسورد', 'warning');
+            try { 
+                await signInWithEmailAndPassword(auth, u + "@courier.axon.com", p); 
+            } catch(e) { 
+                Swal.fire('خطأ', 'بيانات غير صحيحة', 'error'); 
+            }
         };
 
-        window.toggleShift=()=>{
-            isOnline=!isOnline;
-            const btn=document.getElementById('shiftBtn'), dot=document.getElementById('statusDot'), txt=document.getElementById('statusTxt');
-            if(isOnline){
-                btn.innerText="إنهاء الوردية"; btn.style.background="var(--primary-red)";
-                dot.className="pulse-online"; txt.innerText="متصل بالرادار 🟢";
+        window.toggleShift = () => {
+            isOnline = !isOnline;
+            const btn = document.getElementById('shiftBtn'), dot = document.getElementById('statusDot'), txt = document.getElementById('statusTxt');
+            if(isOnline) {
+                btn.innerText = "إنهاء الوردية"; 
+                btn.style.background = "var(--primary-red)";
+                dot.className = "pulse-online"; 
+                txt.innerText = "متصل بالرادار 🟢";
                 Swal.fire({toast:true, position:'top', icon:'success', title:'وردية سعيدة يا بطل', showConfirmButton:false, timer:2000});
+                
+                // تشغيل الصوت في الخلفية لأول مرة عشان المتصفح يسمح بيه بعدين
+                const audio = document.getElementById('alertSound');
+                audio.volume = 0; audio.play().catch(e=>{}); setTimeout(()=>{audio.pause(); audio.volume = 1;}, 100);
+                
             } else {
-                btn.innerText="بدء الوردية"; btn.style.background="var(--primary-blue)";
-                dot.className=""; txt.innerText="خارج الوردية";
+                btn.innerText = "بدء الوردية"; 
+                btn.style.background = "var(--primary-blue)";
+                dot.className = ""; 
+                txt.innerText = "خارج الوردية";
             }
             loadRadar();
         };
 
         function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R=6371; const dLat=(lat2-lat1)*Math.PI/180; const dLon=(lon2-lon1)*Math.PI/180;
-            const a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
+            const R = 6371; 
+            const dLat = (lat2-lat1) * Math.PI/180; 
+            const dLon = (lon2-lon1) * Math.PI/180;
+            const a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
             return (R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)))).toFixed(1);
         }
 
         function loadRadar() {
-            h(g(db,"eshteryly_orders"),(snap)=>{
-                let radarHtml="", myTasksHtml="", nearbyFound=false;
-                let availableOrders=[];
+            onSnapshot(collection(db, "eshteryly_orders"), (snap) => {
+                let radarHtml = "", myTasksHtml = "", nearbyFound = false;
+                let availableOrders = [];
 
-                snap.forEach(docSnap=>{
-                    const d=docSnap.data(), id=docSnap.id;
-                    let distance="--", distVal=9999;
+                snap.forEach(docSnap => {
+                    const d = docSnap.data(), id = docSnap.id;
+                    let distance = "--", distVal = 9999;
                     
-                    // حساب المسافة لو اللوكيشن موجود
                     if(lat && lng && d.address && d.address.includes('maps.google.com')){
-                        const match=d.address.match(/q=([\d\.-]+),([\d\.-]+)/);
+                        const match = d.address.match(/q=([\d\.-]+),([\d\.-]+)/);
                         if(match){
-                            distVal=parseFloat(calculateDistance(lat,lng,parseFloat(match[1]),parseFloat(match[2])));
-                            distance=distVal+" كم";
-                            if(distVal < 2) nearbyFound=true;
+                            distVal = parseFloat(calculateDistance(lat, lng, parseFloat(match[1]), parseFloat(match[2])));
+                            distance = distVal + " كم";
+                            if(distVal < 2) nearbyFound = true;
                         }
                     }
 
-                    if(d.status==="جاري البحث عن مندوب" && isOnline && !ignored.has(id)){
-                        availableOrders.push({id, ...d, distVal, distance});
+                    // --- تحديد ألوان وأنواع المهام بذكاء ---
+                    let typeIcon = "🛒", typeText = "اشتريلي وتسوق", typeColor = "#10B981", bgColor = "#D1FAE5"; 
+                    if (d.paymentMethod === 'pickup') { 
+                        typeIcon = "📦"; typeText = "أمر بيكب واستلام"; typeColor = "#8B5CF6"; bgColor = "#EDE9FE"; 
+                    } else if (d.type === 'radar' || (d.details && d.details.includes('بوليصة'))) { 
+                        typeIcon = "🚚"; typeText = "توصيل بوليصة مباشر"; typeColor = "#3B82F6"; bgColor = "#DBEAFE"; 
+                    }
+                    if (d.details && d.details.includes('كولد')) { 
+                        typeIcon = "🥶"; typeText = "شحن كولد فريش"; typeColor = "#0EA5E9"; bgColor = "#E0F2FE"; 
                     }
 
-                    if(d.status==="تم الاستلام بواسطة المندوب" && d.courierName===currentCaptain){
-                        myTasksHtml+=`
-                            <div class="order-card" style="border-right: 5px solid var(--primary-blue)">
-                                <span class="task-type">مهمة نشطة</span>
+                    if(d.status === "جاري البحث عن مندوب" && isOnline && !ignored.has(id)){
+                        availableOrders.push({id, ...d, distVal, distance, typeIcon, typeText, typeColor, bgColor});
+                    }
+
+                    if(d.status === "تم الاستلام بواسطة المندوب" && d.courierName === currentCaptain){
+                        myTasksHtml += `
+                            <div class="order-card">
+                                <div class="card-border" style="background: ${typeColor};"></div>
+                                <span class="task-badge" style="background: ${bgColor}; color: ${typeColor};"><i class="fa-solid ${typeIcon === '🛒' ? 'fa-cart-shopping' : typeIcon === '📦' ? 'fa-box' : 'fa-truck-fast'}"></i> ${typeText}</span>
                                 <h4 class="merchant-name">${d.merchantEmail.split('@')[0]}</h4>
                                 <div class="location-text"><i class="fa-solid fa-location-dot"></i> ${d.address.substring(0,40)}...</div>
                                 <div class="btn-grid">
                                     <button class="btn-u btn-nav" onclick="window.openMap('${encodeURIComponent(d.address)}')"><i class="fa-solid fa-location-arrow"></i> ملاحة</button>
-                                    <button class="btn-u btn-done" onclick="window.completeTask('${id}')"><i class="fa-solid fa-check"></i> تسليم</button>
-                                    <button class="btn-u btn-contact" onclick="window.contactMerchant('${d.merchantEmail}')"><i class="fa-solid fa-comments"></i> بيانات التاجر / شات</button>
+                                    <button class="btn-u btn-done" onclick="window.completeTask('${id}', '${d.linkedShipmentId || ''}')"><i class="fa-solid fa-check"></i> تسليم</button>
+                                    <button class="btn-u btn-contact" onclick="window.contactMerchant('${d.merchantEmail}')"><i class="fa-solid fa-comments"></i> بيانات التاجر / محادثة</button>
                                 </div>
                             </div>
                         `;
                     }
                 });
 
-                // ترتيب الرادار حسب المسافة
-                availableOrders.sort((a,b)=>a.distVal - b.distVal);
-                availableOrders.forEach(o=>{
-                    radarHtml+=`
+                availableOrders.sort((a,b) => a.distVal - b.distVal);
+                availableOrders.forEach(o => {
+                    radarHtml += `
                         <div class="order-card">
+                            <div class="card-border" style="background: ${o.typeColor};"></div>
                             <div class="dist-tag">${o.distance}</div>
-                            <span class="task-type">${o.paymentMethod==='pickup'?'📦 استلام طرود':'🛒 مهمة تسوق'}</span>
+                            <span class="task-badge" style="background: ${o.bgColor}; color: ${o.typeColor};">${o.typeIcon} ${o.typeText}</span>
                             <h4 class="merchant-name">${o.merchantEmail.split('@')[0]}</h4>
-                            <p style="font-size:12px; color:gray;">المنطقة: ${o.address.split(',')[0]}</p>
+                            <p style="font-size:13px; color:gray; margin-top:5px; margin-bottom:15px;">المنطقة: ${o.address.split(',')[0]}</p>
                             <div class="btn-grid">
-                                <button class="btn-u btn-claim" onclick="window.claimOrder('${o.id}')">خطف المهمة 🚀</button>
+                                <button class="btn-u btn-claim" onclick="window.claimOrder('${o.id}', '${o.linkedShipmentId || ''}')">خطف المهمة 🚀</button>
                                 <button class="btn-u btn-details" onclick="window.showDetails('${o.details}')">تفاصيل</button>
                                 <button class="btn-u btn-ignore" onclick="window.ignoreOrder('${o.id}')">تجاهل</button>
                             </div>
@@ -253,53 +305,92 @@
                 document.getElementById('radarList').innerHTML = isOnline ? (radarHtml || "<p style='text-align:center; padding:20px; color:gray;'>الرادار خالي.. جاري البحث</p>") : "<p style='text-align:center; padding:20px; color:gray;'>الرادار في وضع السكون.</p>";
                 document.getElementById('myTaskList').innerHTML = myTasksHtml || "<p style='text-align:center; padding:20px; color:gray;'>لا توجد مهام حالياً</p>";
                 
-                if(nearbyFound && isOnline) document.getElementById('alertSound').play();
+                // تشغيل الصوت لو في أوردر جديد والمندوب أونلاين
+                if(nearbyFound && isOnline) {
+                    const audio = document.getElementById('alertSound');
+                    audio.play().catch(e => console.log("المتصفح منع الصوت التلقائي"));
+                }
             });
         }
 
-        window.showDetails=(info)=> Swal.fire({title:'تفاصيل المهمة', text:info, icon:'info', confirmButtonText:'تمام'});
+        window.showDetails = (info) => Swal.fire({title:'تفاصيل المهمة', text:info, icon:'info', confirmButtonText:'علم'});
         
-        window.claimOrder=async(id)=>{
-            try{
-                await j(i(db,"eshteryly_orders",id),{status:"تم الاستلام بواسطة المندوب",courierName:currentCaptain});
+        window.claimOrder = async (id, linkedShipmentId) => {
+            try {
+                await updateDoc(doc(db, "eshteryly_orders", id), {
+                    status: "تم الاستلام بواسطة المندوب", 
+                    courierName: currentCaptain
+                });
+                
+                // لو المهمة دي مربوطة ببوليصة شحن، نحدث البوليصة كمان
+                if(linkedShipmentId) {
+                    await updateDoc(doc(db, "shipments", linkedShipmentId), {
+                        status: "مع المندوب: " + currentCaptain,
+                        courierName: currentCaptain
+                    });
+                }
+                
                 Swal.fire({toast:true, position:'top', icon:'success', title:'تم خطف المهمة بنجاح', showConfirmButton:false, timer:2000});
-            } catch(e){ Swal.fire('سبقك بطل آخر','المهمة مقتنصة بالفعل','error'); }
+            } catch(e) { 
+                Swal.fire('سبقك بطل آخر', 'المهمة مقتنصة بالفعل', 'error'); 
+            }
         };
 
-        window.contactMerchant=async(email)=>{
-            const pSnap = await getDoc(doc(db, "merchant_profiles", email));
-            const phone = pSnap.exists() ? pSnap.data().businessPhone : "غير مسجل";
-            Swal.fire({
-                title: 'تواصل مع التاجر',
-                html: `<b>رقم الهاتف:</b> ${phone}<br><br><button onclick="window.location.href='tel:${phone}'" class="btn-u btn-nav" style="width:100%">اتصال هاتفى</button>`,
-                input: 'textarea',
-                inputPlaceholder: 'اكتب رسالة شات داخلية هنا...',
-                showCancelButton: true,
-                confirmButtonText: 'إرسال شات'
-            }).then(async (res)=>{
-                if(res.isConfirmed && res.value){
-                    await l(g(db,"internal_chats"), { from:currentCaptain, to:email, message:res.value, timestamp:new Date() });
-                    Swal.fire('تم الإرسال','رسالتك وصلت للتاجر','success');
-                }
-            });
+        window.contactMerchant = async (email) => {
+            try {
+                // الكود ده كان ناقص استدعاء getDoc وتم حله
+                const pSnap = await getDoc(doc(db, "merchant_profiles", email));
+                const phone = pSnap.exists() ? (pSnap.data().businessPhone || pSnap.data().phone || "غير مسجل") : "غير مسجل";
+                
+                Swal.fire({
+                    title: 'تواصل مع التاجر',
+                    html: `<b>رقم الهاتف:</b> <span dir="ltr">${phone}</span><br><br><button onclick="window.location.href='tel:${phone}'" class="btn-u btn-nav" style="width:100%; padding:10px; border-radius:10px; border:none; font-weight:bold;">اتصال هاتفى <i class="fa-solid fa-phone"></i></button>`,
+                    input: 'textarea',
+                    inputPlaceholder: 'اكتب رسالة شات داخلية هنا...',
+                    showCancelButton: true,
+                    confirmButtonText: 'إرسال رسالة',
+                    cancelButtonText: 'إلغاء'
+                }).then(async (res) => {
+                    if(res.isConfirmed && res.value){
+                        await addDoc(collection(db, "internal_chats"), { 
+                            from: currentCaptain, 
+                            to: email, 
+                            message: res.value, 
+                            timestamp: new Date() 
+                        });
+                        Swal.fire('تم الإرسال', 'رسالتك وصلت للتاجر', 'success');
+                    }
+                });
+            } catch(err) {
+                console.error(err);
+                Swal.fire('خطأ', 'حدثت مشكلة في سحب بيانات التاجر', 'error');
+            }
         };
 
         function startTracking() {
             if(navigator.geolocation){
-                watchId = navigator.geolocation.watchPosition(pos=>{
-                    lat=pos.coords.latitude; lng=pos.coords.longitude;
+                watchId = navigator.geolocation.watchPosition(pos => {
+                    lat = pos.coords.latitude; 
+                    lng = pos.coords.longitude;
                     loadRadar();
-                }, err=>console.log(err), {enableHighAccuracy:true});
+                }, err => console.log(err), {enableHighAccuracy:true});
             }
         }
 
-        window.openMap=(addr)=> window.open(`https://www.google.com/maps/search/?api=1&query=${addr}`, '_blank');
-        window.logout=()=> e(auth).then(()=>window.location.reload());
-        window.toggleTheme=()=> document.body.classList.toggle('dark-mode');
-        window.ignoreOrder=(id)=>{ ignored.add(id); loadRadar(); };
-        window.completeTask=async(id)=>{
-            const r = await Swal.fire({title:'تأكيد الاستلام؟', text:'هل قمت بتنفيذ المهمة بنجاح؟', icon:'question', showCancelButton:true});
-            if(r.isConfirmed) await j(i(db,"eshteryly_orders",id), {status:"تم التسليم بنجاح"});
+        window.openMap = (addr) => window.open(`https://www.google.com/maps/search/?api=1&query=${addr}`, '_blank');
+        window.logout = () => signOut(auth).then(() => window.location.reload());
+        window.toggleTheme = () => document.body.classList.toggle('dark-mode');
+        window.ignoreOrder = (id) => { ignored.add(id); loadRadar(); };
+        
+        window.completeTask = async (id, linkedShipmentId) => {
+            const r = await Swal.fire({title:'تأكيد الاستلام؟', text:'هل قمت بتنفيذ المهمة بنجاح؟', icon:'question', showCancelButton:true, confirmButtonText:'نعم، تمت', cancelButtonText:'إلغاء'});
+            if(r.isConfirmed) {
+                await updateDoc(doc(db, "eshteryly_orders", id), {status:"تم التسليم بنجاح"});
+                if(linkedShipmentId) {
+                    await updateDoc(doc(db, "shipments", linkedShipmentId), {status: "تم التسليم"});
+                }
+                Swal.fire({toast:true, position:'top', icon:'success', title:'عاش يا بطل', showConfirmButton:false, timer:2000});
+            }
         };
 
     </script>
