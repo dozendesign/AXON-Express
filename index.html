@@ -415,12 +415,12 @@
         </div>
     </div>
 
-    <!-- Modals (القديمة) -->
+    <!-- موديل تسجيل الدخول -->
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <button onclick="document.getElementById('loginModal').style.display='none'" class="close-modal"><i class="fa-solid fa-xmark"></i></button>
             <h3 style="color:var(--primary-blue); border-bottom:2px solid var(--primary-red); padding-bottom:15px; margin-top:0;"><i class="fa-solid fa-fingerprint"></i> بوابة التحقق</h3>
-            <input type="text" id="merchantEmail" placeholder="كود التاجر (البريد الإلكتروني)">
+            <input type="text" id="merchantEmail" placeholder="كود الدخول (البريد الإلكتروني)">
             <input type="password" id="merchantPassword" placeholder="شفرة المرور (الباسورد)">
             <button id="btnLogin" class="submit-btn" onclick="window.handleLogin()">دخول المحطة</button>
         </div>
@@ -503,7 +503,7 @@
         </div>
     </div>
 
-    <!-- قاموس اللغة -->
+    <!-- كود قاموس اللغة -->
     <script>
         const i18nDict = {
             ar: { 
@@ -603,7 +603,14 @@
         }
         document.addEventListener('DOMContentLoaded', () => { applyLang(localStorage.getItem('axon_main_lang') || 'ar'); });
     </script>
+    
+    <!-- تشغيل الأنيميشن أول حاجة عشان الشاشة متفضلش بيضا -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true });
+    </script>
 
+    <!-- كود الفايربيز الأساسي -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
@@ -619,8 +626,6 @@
         });
         const auth = getAuth(app); 
         const db = getFirestore(app); 
-
-        AOS.init({ duration: 1000, once: true });
         
         window.livePrices = { alex: 0, cairo: 0, beheira: 0, delta: 0, saeed: 0, penalty: 30 };
         onSnapshot(doc(db, "settings", "shipping_prices"), z => { 
@@ -669,6 +674,7 @@
             u.disabled = false; u.innerHTML = "تسجيل طلب الفرنشايز"; 
         };
         
+        // 🚀 كود الدخول المتين 🚀
         window.handleLogin = async () => {
             let z = document.getElementById('merchantEmail').value.trim().toLowerCase();
             let y = document.getElementById('merchantPassword').value;
@@ -679,6 +685,7 @@
             w.disabled = true; w.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري المطابقة...';
             
             try {
+                // 1. تسجيل الدخول للفايربيز
                 const userCred = await signInWithEmailAndPassword(auth, x, y);
                 const user = userCred.user;
                 
@@ -690,6 +697,7 @@
                 
                 let isAccountFound = false;
 
+                // 2. فحص هل هو مدير ولا لأ (مع تجنب الكراش)
                 try {
                     const adminDoc = await getDoc(doc(db, "admins", user.uid));
                     if (adminDoc.exists()) {
@@ -700,6 +708,7 @@
                     }
                 } catch(err) { }
 
+                // 3. التحقق هل هو تاجر؟
                 if (!isAccountFound) {
                     try {
                         const merchantDoc = await getDoc(doc(db, "merchant_profiles", x));
@@ -712,6 +721,7 @@
                     } catch(err) { }
                 }
 
+                // 4. التحقق هل هو مندوب؟
                 if (!isAccountFound) {
                     try {
                         const courierDoc = await getDoc(doc(db, "couriers", user.uid));
