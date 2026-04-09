@@ -613,6 +613,9 @@
             
             if(!phone || !gps) return Swal.fire('تنبيه', 'رقم الهاتف والموقع إلزاميان لتوجيه الونش لك!', 'warning');
             
+            // إغلاق المودال قبل الـ SweetAlert عشان ميستخباش وراه
+            document.getElementById('publicRescueModal').style.display='none';
+            
             const w = await Swal.fire({
                 title: 'إقرار بالمسؤولية القانونية',
                 text: `هل تؤكد أن هذا الطلب حقيقي؟ سيتم تسجيل بيانات جهازك (${publicIP}) كدليل قاطع.`,
@@ -620,7 +623,6 @@
             });
 
             if(w.isConfirmed) {
-                document.getElementById('publicRescueModal').style.display='none';
                 try {
                     await j(i(db, "axon_rescue_orders"), {
                         merchantEmail: "عميل عام (موقع)", phone, car, gps,
@@ -641,6 +643,9 @@
             
             if(!from || !to || !phone) return Swal.fire('تنبيه', 'رجاء إكمال كافة بيانات النقل للتمكن من التسعير.', 'warning');
             
+            // إغلاق المودال قبل الـ SweetAlert عشان ميستخباش وراه
+            document.getElementById('publicHomeModal').style.display='none';
+            
             const w = await Swal.fire({
                 title: 'تأكيد طلب المعاينة',
                 text: `سيتم تسجيل طلبك من جهازك (${publicIP}). هل أنت متأكد من جدية حجز الخدمة؟`,
@@ -648,7 +653,6 @@
             });
 
             if(w.isConfirmed) {
-                document.getElementById('publicHomeModal').style.display='none';
                 try {
                     await j(i(db, "axon_home_orders"), {
                         merchantEmail: "عميل عام (موقع)", from, to, phone, service,
