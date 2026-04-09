@@ -21,11 +21,18 @@
         
         html, body { font-family: 'Cairo', sans-serif; margin: 0; padding: 0; background: var(--light-bg); color: var(--dark-text); overflow-x: hidden; scroll-behavior: smooth; transition: background 0.3s, color 0.3s;}
         
+        .swal2-container { z-index: 99999 !important; }
+
         /* Header */
         header { background: var(--white); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--primary-red); position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: 0.3s;}
         .logo { font-size: 26px; font-weight: 900; color: var(--primary-blue); text-decoration: none; display: flex; align-items: center; gap: 8px; letter-spacing: 1px;}
         .logo span { color: var(--primary-red); }
-        .login-btn { background: linear-gradient(45deg, var(--primary-blue), var(--secondary-blue)); color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: 900; font-family: 'Cairo'; font-size: 15px; transition: 0.4s; box-shadow: 0 4px 15px rgba(6, 40, 61, 0.3);}
+        .header-actions { display: flex; align-items: center; gap: 15px;}
+        
+        .lang-btn { background: transparent; border: 2px solid var(--primary-blue); color: var(--primary-blue); padding: 5px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 13px; transition: 0.3s;}
+        .lang-btn:hover { background: var(--primary-blue); color: white; }
+        
+        .login-btn { background: linear-gradient(45deg, var(--primary-blue), var(--secondary-blue)); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 900; font-family: 'Cairo'; font-size: 14px; transition: 0.4s; box-shadow: 0 4px 15px rgba(6, 40, 61, 0.3);}
         .login-btn:hover { background: linear-gradient(45deg, var(--primary-red), #b31741); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(214, 28, 78, 0.4); }
         
         /* Hero Section */
@@ -173,11 +180,12 @@
     <header>
         <a href="#" class="logo"><i class="fa-solid fa-truck-fast"></i> AXON <span>EXPRESS</span></a>
         
-        <div style="display: flex; gap: 15px; align-items: center;">
+        <div class="header-actions">
+            <button onclick="window.toggleLang()" class="lang-btn" id="langBtn">English</button>
             <button onclick="window.toggleTheme()" style="background:none; border:none; color:var(--primary-blue); font-size:24px; cursor:pointer;" title="تغيير البيئة البصرية">
                 <i id="themeIcon" class="fa-solid fa-moon"></i>
             </button>
-            <button class="login-btn" onclick="document.getElementById('loginModal').style.display='flex'">بوابة التجار <i class="fa-solid fa-user-lock" style="margin-right: 5px;"></i></button>
+            <button class="login-btn" onclick="document.getElementById('loginModal').style.display='flex'" data-i18n="merchant_portal">بوابة التجار <i class="fa-solid fa-user-lock" style="margin-right: 5px;"></i></button>
         </div>
     </header>
 
@@ -495,88 +503,131 @@
         </div>
     </div>
 
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- قاموس اللغة -->
+    <script>
+        const i18nDict = {
+            ar: { merchant_portal: "بوابة التجار" },
+            en: { merchant_portal: "Merchant Portal" }
+        };
+
+        window.toggleLang = () => { let lang = document.documentElement.lang === 'ar' ? 'en' : 'ar'; localStorage.setItem('axon_lang', lang); applyLang(lang); };
+        function applyLang(lang) {
+            document.documentElement.lang = lang; document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr'; 
+            document.getElementById('langBtn').innerText = lang === 'ar' ? 'English' : 'العربية';
+            document.querySelectorAll('[data-i18n]').forEach(el => { let key = el.getAttribute('data-i18n'); if(i18nDict[lang] && i18nDict[lang][key]) el.innerHTML = i18nDict[lang][key] + ' <i class="fa-solid fa-user-lock" style="margin-right: 5px;"></i>'; });
+        }
+        document.addEventListener('DOMContentLoaded', () => { applyLang(localStorage.getItem('axon_lang') || 'ar'); });
+    </script>
+
     <script type="module">
-        import{initializeApp as a}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";import{getAuth as b,signInWithEmailAndPassword as c}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";import{getFirestore as d,doc as e,getDoc as f,getDocs as g,onSnapshot as h,collection as i,addDoc as j,updateDoc as k}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";const app=a({apiKey:"AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",authDomain:"axon-express-2f534.firebaseapp.com",projectId:"axon-express-2f534",storageBucket:"axon-express-2f534.firebasestorage.app",messagingSenderId:"958528400260",appId:"1:958528400260:web:504ae94f3ef2225b928bd1"});const auth=b(app);const db=d(app);AOS.init({duration:1000,once:true});window.livePrices={alex:0,cairo:0,beheira:0,delta:0,saeed:0,penalty:30};h(e(db,"settings","shipping_prices"),z=>{if(z.exists()){window.livePrices=z.data();window.calculateRate();}});window.calculateRate=()=>{const z=document.getElementById('calcSelect').value;if(z==="0"){document.getElementById('calcResult').innerText="0 EGP";return;}document.getElementById('calcResult').innerText=`${window.livePrices[z]||0} EGP`;};
+        import { initializeApp as a } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth as b, signInWithEmailAndPassword as c } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore as d, doc as e, getDoc as f, getDocs as g, onSnapshot as h, collection as i, addDoc as j, updateDoc as k } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         
-        window.showService=z=>{let y="",x="";if(z==='ecommerce'){y="مستودعات وتجهيز";x="نستلم البضائع دفعة واحدة ونخزنها. فور وصول طلب من عملائك، نقوم نحن بتغليفه وطباعة بوليصته وإرساله مباشرة دون تدخلك.";}else if(z==='coverage'){y="الرادار اللوجستي";x="خطوط سير يومية لا تنقطع. أسطولنا يتحرك بين الإسكندرية والقاهرة والمحافظات بجدولة دقيقة تضمن عدم تكدس الشحنات.";}else if(z==='cod'){y="دورة مالية صاروخية";x="أكبر مشكلة تواجه التجار هي تأخر أموال الـ COD. في أكسون، نقوم بتسوية حساباتك فور استلام الشحنة بأسرع دورة مالية في السوق.";}else if(z==='eshteryly'){y="خدمة اشتريلي";x="تنبيه: هذه الخدمة الحصرية (لتسوق المشتريات من خامات إنتاج أو سوبر ماركت) متاحة فقط للتجار المسجلين من داخل محطة التاجر الخاصة بهم.";}else if(z==='cold'){y="أكسون كولد / فريش";x="تنبيه: هذه الخدمة الحصرية (للمطابخ السحابية والأكل البيتي المبرد) متاحة فقط للتجار المسجلين من داخل محطة التاجر الخاصة بهم.";}Swal.fire({title:y,text:x,icon:'info',confirmButtonText:'علم',confirmButtonColor:'#06283D'});};
+        const app = a({ apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw", authDomain: "axon-express-2f534.firebaseapp.com", projectId: "axon-express-2f534", storageBucket: "axon-express-2f534.firebasestorage.app", messagingSenderId: "958528400260", appId: "1:958528400260:web:504ae94f3ef2225b928bd1" });
+        const auth = b(app); const db = d(app); AOS.init({ duration: 1000, once: true });
         
-        window.submitCareer=async()=>{const z=document.getElementById('carName').value.trim(),y=document.getElementById('carPhone').value.trim(),x=document.getElementById('carCity').value.trim(),w=document.getElementById('carPosition').value,v=document.getElementById('carNotes').value.trim();if(!z||!y||!x||!w)return Swal.fire('خطأ إدخال','يرجى استكمال البيانات المطلوبة.','warning');const u=document.getElementById('btnCareer');u.disabled=true;u.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> جاري التشفير...';try{await j(i(db,"careers"),{name:z,phone:y,city:x,position:w,notes:v,timestamp:new Date()});document.getElementById('careerModal').style.display='none';Swal.fire('تم الإرسال','تم توجيه ملفك لإدارة الموارد البشرية. استعد للتحرك.','success');document.querySelectorAll('#careerModal input, #careerModal select, #careerModal textarea').forEach(t=>t.value='');}catch(t){Swal.fire('فشل الاتصال',t.message,'error');}u.disabled=false;u.innerHTML="إرسال بياناتك للقيادة";};
+        window.livePrices = { alex: 0, cairo: 0, beheira: 0, delta: 0, saeed: 0, penalty: 30 };
+        h(e(db, "settings", "shipping_prices"), z => { if (z.exists()) { window.livePrices = z.data(); window.calculateRate(); } });
         
-        window.submitFranchise=async()=>{const z=document.getElementById('franName').value.trim(),y=document.getElementById('franPhone').value.trim(),x=document.getElementById('franCity').value,w=document.getElementById('franOffice').value,v=document.getElementById('franNotes').value.trim();if(!z||!y||!x||!w)return Swal.fire('خطأ إدخال','جميع الحقول الأساسية مطلوبة.','warning');const u=document.getElementById('btnFranchise');u.disabled=true;u.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> جاري الإرسال...';try{await j(i(db,"franchises"),{name:z,phone:y,city:x,office:w,notes:v,timestamp:new Date()});document.getElementById('franchiseModal').style.display='none';Swal.fire('نجاح','تم تسجيل طلب الوكالة وسيتم التواصل معك.','success');document.querySelectorAll('#franchiseModal input, #franchiseModal select, #franchiseModal textarea').forEach(t=>t.value='');}catch(t){Swal.fire('فشل الاتصال',t.message,'error');}u.disabled=false;u.innerHTML="تسجيل طلب الفرنشايز";};
+        window.calculateRate = () => { const z = document.getElementById('calcSelect').value; if (z === "0") { document.getElementById('calcResult').innerText = "0 EGP"; return; } document.getElementById('calcResult').innerText = `${window.livePrices[z] || 0} EGP`; };
         
-        window.handleLogin=async()=>{
-            let z=document.getElementById('merchantEmail').value.trim().toLowerCase(),y=document.getElementById('merchantPassword').value;
-            if(!z||!y)return Swal.fire('رفض الوصول','يجب إدخال كود التاجر وشفرة المرور.','error');
-            const x=z.includes('@') ? z : z+"@axon.com";
-            const w=document.getElementById('btnLogin');
-            w.disabled=true;w.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> جاري المطابقة...';
-            try{
-                const userCred = await c(auth,x,y);
+        window.showService = z => { let y = "", x = ""; if (z === 'ecommerce') { y = "مستودعات وتجهيز"; x = "نستلم البضائع دفعة واحدة ونخزنها. فور وصول طلب من عملائك، نقوم نحن بتغليفه وطباعة بوليصته وإرساله مباشرة دون تدخلك."; } else if (z === 'coverage') { y = "الرادار اللوجستي"; x = "خطوط سير يومية لا تنقطع. أسطولنا يتحرك بين الإسكندرية والقاهرة والمحافظات بجدولة دقيقة تضمن عدم تكدس الشحنات."; } else if (z === 'cod') { y = "دورة مالية صاروخية"; x = "أكبر مشكلة تواجه التجار هي تأخر أموال الـ COD. في أكسون، نقوم بتسوية حساباتك فور استلام الشحنة بأسرع دورة مالية في السوق."; } else if (z === 'eshteryly') { y = "خدمة اشتريلي"; x = "تنبيه: هذه الخدمة الحصرية (لتسوق المشتريات من خامات إنتاج أو سوبر ماركت) متاحة فقط للتجار المسجلين من داخل محطة التاجر الخاصة بهم."; } else if (z === 'cold') { y = "أكسون كولد / فريش"; x = "تنبيه: هذه الخدمة الحصرية (للمطابخ السحابية والأكل البيتي المبرد) متاحة فقط للتجار المسجلين من داخل محطة التاجر الخاصة بهم."; } Swal.fire({ title: y, text: x, icon: 'info', confirmButtonText: 'علم', confirmButtonColor: '#06283D' }); };
+        
+        window.submitCareer = async () => { const z = document.getElementById('carName').value.trim(), y = document.getElementById('carPhone').value.trim(), x = document.getElementById('carCity').value.trim(), w = document.getElementById('carPosition').value, v = document.getElementById('carNotes').value.trim(); if (!z || !y || !x || !w) return Swal.fire('خطأ إدخال', 'يرجى استكمال البيانات المطلوبة.', 'warning'); const u = document.getElementById('btnCareer'); u.disabled = true; u.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التشفير...'; try { await j(i(db, "careers"), { name: z, phone: y, city: x, position: w, notes: v, timestamp: new Date() }); document.getElementById('careerModal').style.display = 'none'; Swal.fire('تم الإرسال', 'تم توجيه ملفك لإدارة الموارد البشرية. استعد للتحرك.', 'success'); document.querySelectorAll('#careerModal input, #careerModal select, #careerModal textarea').forEach(t => t.value = ''); } catch (t) { Swal.fire('فشل الاتصال', t.message, 'error'); } u.disabled = false; u.innerHTML = "إرسال بياناتك للقيادة"; };
+        
+        window.submitFranchise = async () => { const z = document.getElementById('franName').value.trim(), y = document.getElementById('franPhone').value.trim(), x = document.getElementById('franCity').value, w = document.getElementById('franOffice').value, v = document.getElementById('franNotes').value.trim(); if (!z || !y || !x || !w) return Swal.fire('خطأ إدخال', 'جميع الحقول الأساسية مطلوبة.', 'warning'); const u = document.getElementById('btnFranchise'); u.disabled = true; u.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الإرسال...'; try { await j(i(db, "franchises"), { name: z, phone: y, city: x, office: w, notes: v, timestamp: new Date() }); document.getElementById('franchiseModal').style.display = 'none'; Swal.fire('نجاح', 'تم تسجيل طلب الوكالة وسيتم التواصل معك.', 'success'); document.querySelectorAll('#franchiseModal input, #franchiseModal select, #franchiseModal textarea').forEach(t => t.value = ''); } catch (t) { Swal.fire('فشل الاتصال', t.message, 'error'); } u.disabled = false; u.innerHTML = "تسجيل طلب الفرنشايز"; };
+        
+        // 🚀 التعديل الجبار لحل مشكلة الدخول لكل أنواع الحسابات 🚀
+        window.handleLogin = async () => {
+            let z = document.getElementById('merchantEmail').value.trim().toLowerCase();
+            let y = document.getElementById('merchantPassword').value;
+            if (!z || !y) return Swal.fire('رفض الوصول', 'يجب إدخال كود التاجر وشفرة المرور.', 'error');
+            
+            const x = z.includes('@') ? z : z + "@axon.com";
+            const w = document.getElementById('btnLogin');
+            w.disabled = true; w.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري المطابقة...';
+            
+            try {
+                // 1. تسجيل الدخول للفايربيز
+                const userCred = await c(auth, x, y);
                 const user = userCred.user;
                 
-                if(x==="admin@axon.com"){
+                // 2. التحقق من السوبر أدمن
+                if (x === "admin@axon.com") {
                     localStorage.setItem('axon_user_role', 'super_admin');
                     localStorage.setItem('axon_branch', 'all');
-                    window.location.href="admin.html"; return;
+                    window.location.href = "admin.html"; return;
                 }
                 
-                const adminDoc = await f(e(db,"admins",user.uid));
-                if(adminDoc.exists()){
-                    localStorage.setItem('axon_user_role', 'branch_admin');
-                    localStorage.setItem('axon_branch', adminDoc.data().branchName || 'غير محدد');
-                    window.location.href="admin.html"; return;
+                let isAccountFound = false;
+
+                // 3. التحقق هل هو مدير فرع؟ (بدون ما نضرب Error لو اترفض)
+                try {
+                    const adminDoc = await f(e(db, "admins", user.uid));
+                    if (adminDoc.exists()) {
+                        isAccountFound = true;
+                        localStorage.setItem('axon_user_role', 'branch_admin');
+                        localStorage.setItem('axon_branch', adminDoc.data().branchName || 'غير محدد');
+                        window.location.href = "admin.html"; return;
+                    }
+                } catch(err) { /* يتجاهل الـ Error بسلام */ }
+
+                // 4. التحقق هل هو تاجر؟
+                if (!isAccountFound) {
+                    try {
+                        const merchantDoc = await f(e(db, "merchant_profiles", x));
+                        if (merchantDoc.exists()) {
+                            isAccountFound = true;
+                            localStorage.setItem('axon_user_role', 'merchant');
+                            localStorage.setItem('axon_branch', merchantDoc.data().branchName || 'المركز الرئيسي');
+                            window.location.href = "merchant.html"; return;
+                        }
+                    } catch(err) { }
+                }
+
+                // 5. التحقق هل هو مندوب؟
+                if (!isAccountFound) {
+                    try {
+                        const courierDoc = await f(e(db, "couriers", user.uid));
+                        if (courierDoc.exists()) {
+                            isAccountFound = true;
+                            localStorage.setItem('axon_user_role', 'courier');
+                            window.location.href = "courier.html"; return;
+                        }
+                    } catch(err) { }
+                }
+
+                // لو ملقاش أي حاجة من دول (حالة نادرة)
+                if(!isAccountFound) {
+                    Swal.fire('خطأ', 'الحساب غير مسجل في أي قسم من أقسام الشركة', 'error');
+                    w.disabled = false; w.innerHTML = "دخول المحطة";
                 }
                 
-                localStorage.setItem('axon_user_role', 'merchant');
-                const merchantDoc = await f(e(db,"merchant_profiles", x));
-                if(merchantDoc.exists()) {
-                    localStorage.setItem('axon_branch', merchantDoc.data().city || 'غير محدد');
-                }
-                window.location.href="merchant.html";
-            }catch(v){
-                Swal.fire('اختراق فاشل','شفرة الدخول أو كود التاجر غير صحيح.','error');
-                w.disabled=false;w.innerHTML="دخول المحطة";
+            } catch (v) {
+                Swal.fire('اختراق فاشل', 'شفرة الدخول أو كود التاجر غير صحيح.', 'error');
+                w.disabled = false; w.innerHTML = "دخول المحطة";
             }
         };
         
-        window.toggleChat=()=>{const z=document.getElementById('chatWidget');z.style.display=(z.style.display==='flex')?'none':'flex';};
+        window.toggleChat = () => { const z = document.getElementById('chatWidget'); z.style.display = (z.style.display === 'flex') ? 'none' : 'flex'; };
         
-        window.sendToChat=async()=>{
-            const phone = document.getElementById('chatPhone').value.trim();
-            const input = document.getElementById('chatInput');
-            const chatBody = document.getElementById('chatBody');
-            const msg = input.value.trim();
-            
-            if(!phone || phone.length < 10) return Swal.fire('تنبيه', 'رجاء إدخال رقم هاتف صحيح في الخانة المخصصة لنتمكن من الرد عليك ومتابعتك عبر الواتساب.', 'warning');
-            if(!msg) return;
+        window.sendToChat = async () => { const phone = document.getElementById('chatPhone').value.trim(); const input = document.getElementById('chatInput'); const chatBody = document.getElementById('chatBody'); const msg = input.value.trim(); if (!phone || phone.length < 10) return Swal.fire('تنبيه', 'رجاء إدخال رقم هاتف صحيح في الخانة المخصصة لنتمكن من الرد عليك ومتابعتك عبر الواتساب.', 'warning'); if (!msg) return; chatBody.innerHTML += `<div class="msg-user">${msg}</div>`; input.value = ''; chatBody.scrollTop = chatBody.scrollHeight; try { await j(i(db, "web_inquiries"), { message: msg, phone: phone, timestamp: new Date(), status: "new" }); setTimeout(() => { chatBody.innerHTML += `<div class="msg-bot">تم استلام طلبك وتوجيهه لمركز العمليات. سنتواصل معك على الواتساب قريباً على الرقم (${phone}).</div>`; chatBody.scrollTop = chatBody.scrollHeight; }, 800); } catch (w) { console.error("Chat Error:", w); } };
 
-            chatBody.innerHTML+=`<div class="msg-user">${msg}</div>`;
-            input.value='';
-            chatBody.scrollTop=chatBody.scrollHeight;
-            try{
-                await j(i(db,"web_inquiries"),{message:msg, phone:phone, timestamp:new Date(), status:"new"});
-                setTimeout(()=>{
-                    chatBody.innerHTML+=`<div class="msg-bot">تم استلام طلبك وتوجيهه لمركز العمليات. سنتواصل معك على الواتساب قريباً على الرقم (${phone}).</div>`;
-                    chatBody.scrollTop=chatBody.scrollHeight;
-                },800);
-            }catch(w){console.error("Chat Error:",w);}
-        };
-
-        window.toggleTheme=()=>{document.body.classList.toggle('dark-mode');const z=document.getElementById('themeIcon');if(document.body.classList.contains('dark-mode')){localStorage.setItem('axon_main_theme','dark');z.className='fa-solid fa-sun';}else{localStorage.setItem('axon_main_theme','light');z.className='fa-solid fa-moon';}};if(localStorage.getItem('axon_main_theme')==='dark'){document.body.classList.add('dark-mode');setTimeout(()=>{const z=document.getElementById('themeIcon');if(z)z.className='fa-solid fa-sun';},100);}
+        window.toggleTheme = () => { document.body.classList.toggle('dark-mode'); const z = document.getElementById('themeIcon'); if (document.body.classList.contains('dark-mode')) { localStorage.setItem('axon_main_theme', 'dark'); z.className = 'fa-solid fa-sun'; } else { localStorage.setItem('axon_main_theme', 'light'); z.className = 'fa-solid fa-moon'; } }; if (localStorage.getItem('axon_main_theme') === 'dark') { document.body.classList.add('dark-mode'); setTimeout(() => { const z = document.getElementById('themeIcon'); if (z) z.className = 'fa-solid fa-sun'; }, 100); }
         
-        let currentTrackedDoc=null;
-        window.initiateTracking=async()=>{const z=document.getElementById('trackAwbInput').value.trim().toUpperCase();if(!z||!z.startsWith('AXN'))return Swal.fire('بوليصة غير صحيحة','يرجى إدخال رقم البوليصة الصحيح (يبدأ بـ AXN).','error');Swal.fire({title:'جاري المسح الراداري...',allowOutsideClick:false,didOpen:()=>{Swal.showLoading();}});try{const y=await g(i(db,"shipments"));let x=null;y.forEach(w=>{const v="AXN"+w.id.substring(0,5).toUpperCase();if(v===z&&!w.data().deleted)x={id:w.id,...w.data(),awb:v};});if(x){currentTrackedDoc=x;Swal.close();document.getElementById('verifyPhoneModal').style.display='flex';}else{Swal.fire('غير موجود','لم يتم العثور على شحنة بهذا الرقم.','error');}}catch(y){Swal.fire('خطأ اتصال','حدث خطأ أثناء فحص السيرفر.','error');}};
+        let currentTrackedDoc = null;
+        window.initiateTracking = async () => { const z = document.getElementById('trackAwbInput').value.trim().toUpperCase(); if (!z || !z.startsWith('AXN')) return Swal.fire('بوليصة غير صحيحة', 'يرجى إدخال رقم البوليصة الصحيح (يبدأ بـ AXN).', 'error'); Swal.fire({ title: 'جاري المسح الراداري...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } }); try { const y = await g(i(db, "shipments")); let x = null; y.forEach(w => { const v = "AXN" + w.id.substring(0, 5).toUpperCase(); if (v === z && !w.data().deleted) x = { id: w.id, ...w.data(), awb: v }; }); if (x) { currentTrackedDoc = x; Swal.close(); document.getElementById('verifyPhoneModal').style.display = 'flex'; } else { Swal.fire('غير موجود', 'لم يتم العثور على شحنة بهذا الرقم.', 'error'); } } catch (y) { Swal.fire('خطأ اتصال', 'حدث خطأ أثناء فحص السيرفر.', 'error'); } };
         
-        window.verifyTrackingPhone=()=>{const z=document.getElementById('verifyPhoneInput').value.trim();if(z===currentTrackedDoc.phone||z===currentTrackedDoc.phone2){document.getElementById('verifyPhoneModal').style.display='none';openDashboard();}else{Swal.fire('تأكيد فاشل','رقم الهاتف لا يتطابق مع المسجل في البوليصة.','error');}};
+        window.verifyTrackingPhone = () => { const z = document.getElementById('verifyPhoneInput').value.trim(); if (z === currentTrackedDoc.phone || z === currentTrackedDoc.phone2) { document.getElementById('verifyPhoneModal').style.display = 'none'; openDashboard(); } else { Swal.fire('تأكيد فاشل', 'رقم الهاتف لا يتطابق مع المسجل في البوليصة.', 'error'); } };
         
-        function openDashboard(){document.getElementById('trackingDashboardModal').style.display='flex';document.getElementById('dashAwbTitle').innerText=currentTrackedDoc.awb;document.getElementById('dashCustName').innerText=currentTrackedDoc.name.split(' ')[0];document.getElementById('dashAmount').innerText=currentTrackedDoc.amount+" ج.م";document.getElementById('dashAddress').innerText=currentTrackedDoc.city+" - "+currentTrackedDoc.address;const z=currentTrackedDoc.status;document.querySelectorAll('.timeline-step').forEach(y=>{y.classList.remove('active');y.classList.remove('done');});document.getElementById('step1').classList.add('done');if(z==='قيد التوصيل'){document.getElementById('step2').classList.add('active');}else if(z==='مذاع للرادار'||z.includes('مندوب')){document.getElementById('step2').classList.add('done');document.getElementById('step3').classList.add('active');}else if(z==='تم التسليم'||z==='تمت التسوية'){document.getElementById('step2').classList.add('done');document.getElementById('step3').classList.add('done');document.getElementById('step4').classList.add('done');}else{document.getElementById('step2').classList.add('active');}}
+        function openDashboard() { document.getElementById('trackingDashboardModal').style.display = 'flex'; document.getElementById('dashAwbTitle').innerText = currentTrackedDoc.awb; document.getElementById('dashCustName').innerText = currentTrackedDoc.name.split(' ')[0]; document.getElementById('dashAmount').innerText = currentTrackedDoc.amount + " ج.م"; document.getElementById('dashAddress').innerText = currentTrackedDoc.city + " - " + currentTrackedDoc.address; const z = currentTrackedDoc.status; document.querySelectorAll('.timeline-step').forEach(y => { y.classList.remove('active'); y.classList.remove('done'); }); document.getElementById('step1').classList.add('done'); if (z === 'قيد التوصيل') { document.getElementById('step2').classList.add('active'); } else if (z === 'مذاع للرادار' || z.includes('مندوب')) { document.getElementById('step2').classList.add('done'); document.getElementById('step3').classList.add('active'); } else if (z === 'تم التسليم' || z === 'تمت التسوية') { document.getElementById('step2').classList.add('done'); document.getElementById('step3').classList.add('done'); document.getElementById('step4').classList.add('done'); } else { document.getElementById('step2').classList.add('active'); } }
         
-        window.openLocationFineModal=async()=>{if(currentTrackedDoc.status==='تم التسليم'||currentTrackedDoc.status==='تمت التسوية')return Swal.fire('مغلق','لا يمكن تعديل مسار شحنة تم تسليمها.','info');document.getElementById('trackingDashboardModal').style.display='none';const z=Number(window.livePrices.penalty)||30;const{value:y}=await Swal.fire({title:'تعديل مسار الشحنة',html:`<p style="font-size:14px; color:#666;">سيتم إضافة <b>رسوم تغيير مسار (${z} ج.م)</b> على إجمالي الشحنة لتعويض وقت وتوجيه المندوب.</p><input id="new-address-input" class="swal2-input" placeholder="اكتب العنوان الجديد بالتفصيل...">`,icon:'warning',showCancelButton:true,confirmButtonText:'موافق، تأكيد العنوان',cancelButtonText:'تراجع',confirmButtonColor:'#D61C4E',preConfirm:()=>{const x=document.getElementById('new-address-input').value.trim();if(!x)Swal.showValidationMessage('الرجاء كتابة العنوان الجديد');return x;}});if(y){try{const x=Number(currentTrackedDoc.amount)+z;await k(e(db,"shipments",currentTrackedDoc.id),{amount:x,address:y+" (معدل)",fineAdded:(currentTrackedDoc.fineAdded||0)+z,status:"قيد التوصيل"});currentTrackedDoc.amount=x;currentTrackedDoc.address=y+" (معدل)";Swal.fire('تم التعديل','تم تغيير المسار وإضافة الرسوم بنجاح.','success').then(()=>openDashboard());}catch(x){Swal.fire('خطأ','حدثت مشكلة أثناء تحديث البيانات.','error').then(()=>openDashboard());}}else{openDashboard();}};
+        window.openLocationFineModal = async () => { if (currentTrackedDoc.status === 'تم التسليم' || currentTrackedDoc.status === 'تمت التسوية') return Swal.fire('مغلق', 'لا يمكن تعديل مسار شحنة تم تسليمها.', 'info'); document.getElementById('trackingDashboardModal').style.display = 'none'; const z = Number(window.livePrices.penalty) || 30; const { value: y } = await Swal.fire({ title: 'تعديل مسار الشحنة', html: `<p style="font-size:14px; color:#666;">سيتم إضافة <b>رسوم تغيير مسار (${z} ج.م)</b> على إجمالي الشحنة لتعويض وقت وتوجيه المندوب.</p><input id="new-address-input" class="swal2-input" placeholder="اكتب العنوان الجديد بالتفصيل...">`, icon: 'warning', showCancelButton: true, confirmButtonText: 'موافق، تأكيد العنوان', cancelButtonText: 'تراجع', confirmButtonColor: '#D61C4E', preConfirm: () => { const x = document.getElementById('new-address-input').value.trim(); if (!x) Swal.showValidationMessage('الرجاء كتابة العنوان الجديد'); return x; } }); if (y) { try { const x = Number(currentTrackedDoc.amount) + z; await k(e(db, "shipments", currentTrackedDoc.id), { amount: x, address: y + " (معدل)", fineAdded: (currentTrackedDoc.fineAdded || 0) + z, status: "قيد التوصيل" }); currentTrackedDoc.amount = x; currentTrackedDoc.address = y + " (معدل)"; Swal.fire('تم التعديل', 'تم تغيير المسار وإضافة الرسوم بنجاح.', 'success').then(() => openDashboard()); } catch (x) { Swal.fire('خطأ', 'حدثت مشكلة أثناء تحديث البيانات.', 'error').then(() => openDashboard()); } } else { openDashboard(); } };
         
-        window.rescheduleDelivery=async()=>{if(currentTrackedDoc.status==='تم التسليم'||currentTrackedDoc.status==='تمت التسوية')return Swal.fire('مغلق','لا يمكن تأجيل شحنة تم تسليمها.','info');document.getElementById('trackingDashboardModal').style.display='none';const z=(currentTrackedDoc.status==='قيد التوصيل'||currentTrackedDoc.status==='مؤجل'||currentTrackedDoc.status==='مرتجع');const y=z?(Number(window.livePrices.penalty)||30):0;let x=z?`لقد تحرك المندوب بالفعل أو جرت محاولة تسليم. تأجيل الموعد الآن سيضيف غرامة قدرها (${y} ج.م) لتعويض وقت ومجهود الكابتن. هل توافق؟`:`تأجيل الاستلام مجاني لأن المندوب لم يتحرك بعد. هل تود تأجيل استلام الشحنة للغد؟`;const w=await Swal.fire({title:'تأجيل الاستلام',text:x,icon:z?'warning':'question',showCancelButton:true,confirmButtonText:'نعم، قم بالتأجيل',cancelButtonText:'إلغاء'});if(w.isConfirmed){try{let v={status:"مؤجل",rescheduleRequest:true};let u=Number(currentTrackedDoc.amount);if(z){u+=y;v.amount=u;v.fineAdded=(currentTrackedDoc.fineAdded||0)+y;v.address=currentTrackedDoc.address+" | ⚠️ (غرامة تأجيل)";}await k(e(db,"shipments",currentTrackedDoc.id),v);currentTrackedDoc.amount=u;if(z)currentTrackedDoc.address+=" | ⚠️ (غرامة تأجيل)";Swal.fire('تم التأجيل','تم إبلاغ الأسطول بتأجيل موعد التوصيل.','success').then(()=>openDashboard());}catch(v){Swal.fire('خطأ','فشل الاتصال.','error').then(()=>openDashboard());}}else{openDashboard();}};
+        window.rescheduleDelivery = async () => { if (currentTrackedDoc.status === 'تم التسليم' || currentTrackedDoc.status === 'تمت التسوية') return Swal.fire('مغلق', 'لا يمكن تأجيل شحنة تم تسليمها.', 'info'); document.getElementById('trackingDashboardModal').style.display = 'none'; const z = (currentTrackedDoc.status === 'قيد التوصيل' || currentTrackedDoc.status === 'مؤجل' || currentTrackedDoc.status === 'مرتجع'); const y = z ? (Number(window.livePrices.penalty) || 30) : 0; let x = z ? `لقد تحرك المندوب بالفعل أو جرت محاولة تسليم. تأجيل الموعد الآن سيضيف غرامة قدرها (${y} ج.م) لتعويض وقت ومجهود الكابتن. هل توافق؟` : `تأجيل الاستلام مجاني لأن المندوب لم يتحرك بعد. هل تود تأجيل استلام الشحنة للغد؟`; const w = await Swal.fire({ title: 'تأجيل الاستلام', text: x, icon: z ? 'warning' : 'question', showCancelButton: true, confirmButtonText: 'نعم، قم بالتأجيل', cancelButtonText: 'إلغاء' }); if (w.isConfirmed) { try { let v = { status: "مؤجل", rescheduleRequest: true }; let u = Number(currentTrackedDoc.amount); if (z) { u += y; v.amount = u; v.fineAdded = (currentTrackedDoc.fineAdded || 0) + y; v.address = currentTrackedDoc.address + " | ⚠️ (غرامة تأجيل)"; } await k(e(db, "shipments", currentTrackedDoc.id), v); currentTrackedDoc.amount = u; if (z) currentTrackedDoc.address += " | ⚠️ (غرامة تأجيل)"; Swal.fire('تم التأجيل', 'تم إبلاغ الأسطول بتأجيل موعد التوصيل.', 'success').then(() => openDashboard()); } catch (v) { Swal.fire('خطأ', 'فشل الاتصال.', 'error').then(() => openDashboard()); } } else { openDashboard(); } };
         
-        window.openSupportTicket=async()=>{document.getElementById('trackingDashboardModal').style.display='none';const{value:z}=await Swal.fire({title:'التواصل مع القيادة',input:'textarea',inputLabel:'اشرح مشكلتك بالتفصيل بخصوص هذه الشحنة وسنتواصل معك',inputPlaceholder:'اكتب هنا...',showCancelButton:true,confirmButtonText:'إرسال التذكرة',cancelButtonText:'إلغاء'});if(z){try{await j(i(db,"web_inquiries"),{message:`تذكرة دعم (بوليصة: ${currentTrackedDoc.awb}): ${z}`,phone:currentTrackedDoc.phone,status:"new",timestamp:new Date()});Swal.fire('تم الإرسال','تم رفع التذكرة لخدمة العملاء وسيتم حل المشكلة فوراً.','success').then(()=>openDashboard());}catch(y){Swal.fire('خطأ','لم يتم إرسال التذكرة.','error').then(()=>openDashboard());}}else{openDashboard();}};
+        window.openSupportTicket = async () => { document.getElementById('trackingDashboardModal').style.display = 'none'; const { value: z } = await Swal.fire({ title: 'التواصل مع القيادة', input: 'textarea', inputLabel: 'اشرح مشكلتك بالتفصيل بخصوص هذه الشحنة وسنتواصل معك', inputPlaceholder: 'اكتب هنا...', showCancelButton: true, confirmButtonText: 'إرسال التذكرة', cancelButtonText: 'إلغاء' }); if (z) { try { await j(i(db, "web_inquiries"), { message: `تذكرة دعم (بوليصة: ${currentTrackedDoc.awb}): ${z}`, phone: currentTrackedDoc.phone, status: "new", timestamp: new Date() }); Swal.fire('تم الإرسال', 'تم رفع التذكرة لخدمة العملاء وسيتم حل المشكلة فوراً.', 'success').then(() => openDashboard()); } catch (y) { Swal.fire('خطأ', 'لم يتم إرسال التذكرة.', 'error').then(() => openDashboard()); } } else { openDashboard(); } };
 
         let publicIP = "جاري التحقق...";
         fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ publicIP = d.ip; }).catch(e=>{ publicIP = "غير معروف"; });
@@ -613,7 +664,6 @@
             
             if(!phone || !gps) return Swal.fire('تنبيه', 'رقم الهاتف والموقع إلزاميان لتوجيه الونش لك!', 'warning');
             
-            // إغلاق المودال قبل الـ SweetAlert عشان ميستخباش وراه
             document.getElementById('publicRescueModal').style.display='none';
             
             const w = await Swal.fire({
@@ -643,7 +693,6 @@
             
             if(!from || !to || !phone) return Swal.fire('تنبيه', 'رجاء إكمال كافة بيانات النقل للتمكن من التسعير.', 'warning');
             
-            // إغلاق المودال قبل الـ SweetAlert عشان ميستخباش وراه
             document.getElementById('publicHomeModal').style.display='none';
             
             const w = await Swal.fire({
