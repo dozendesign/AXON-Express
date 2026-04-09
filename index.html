@@ -21,23 +21,21 @@
         
         html, body { font-family: 'Cairo', sans-serif; margin: 0; padding: 0; background: var(--light-bg); color: var(--dark-text); overflow-x: hidden; scroll-behavior: smooth; transition: background 0.3s, color 0.3s;}
         
-        .swal2-container { z-index: 99999 !important; }
-
         /* Header */
         header { background: var(--white); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--primary-red); position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: 0.3s;}
         .logo { font-size: 26px; font-weight: 900; color: var(--primary-blue); text-decoration: none; display: flex; align-items: center; gap: 8px; letter-spacing: 1px;}
         .logo span { color: var(--primary-red); }
-        .header-actions { display: flex; align-items: center; gap: 15px;}
         
-        .lang-btn { background: transparent; border: 2px solid var(--primary-blue); color: var(--primary-blue); padding: 5px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 13px; transition: 0.3s;}
+        .header-actions { display: flex; align-items: center; gap: 15px;}
+        .lang-btn { background: transparent; border: 2px solid var(--primary-blue); color: var(--primary-blue); padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: 900; font-family: 'Cairo'; font-size: 14px; transition: 0.4s;}
         .lang-btn:hover { background: var(--primary-blue); color: white; }
         
-        .login-btn { background: linear-gradient(45deg, var(--primary-blue), var(--secondary-blue)); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 900; font-family: 'Cairo'; font-size: 14px; transition: 0.4s; box-shadow: 0 4px 15px rgba(6, 40, 61, 0.3);}
+        .login-btn { background: linear-gradient(45deg, var(--primary-blue), var(--secondary-blue)); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 900; font-family: 'Cairo'; font-size: 15px; transition: 0.4s; box-shadow: 0 4px 15px rgba(6, 40, 61, 0.3);}
         .login-btn:hover { background: linear-gradient(45deg, var(--primary-red), #b31741); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(214, 28, 78, 0.4); }
         
         /* Hero Section */
         .hero { background: linear-gradient(135deg, rgba(6, 40, 61, 0.95), rgba(20, 66, 114, 0.85)), url('https://images.unsplash.com/photo-1580674285054-bed31e145f59?q=80&w=2070&auto=format&fit=crop') center/cover; text-align: center; padding: 120px 20px 160px; color: var(--white); position: relative; clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);}
-        .hero h1 { font-size: 52px; font-weight: 900; margin-bottom: 20px; color: var(--white); line-height: 1.3; animation: fadeInDown 1s ease;}
+        .hero h1 { font-size: 52px; font-weight: 900; margin-bottom: 20px; color: var(--white); line-height: 1.3;}
         .hero h1 span { color: var(--primary-red); }
         .hero p { font-size: 20px; max-width: 700px; margin: 0 auto 40px; line-height: 1.8; color: #e0e0e0;}
         
@@ -153,6 +151,7 @@
         .close-modal { position: absolute; top: 20px; left: 20px; background: rgba(214, 28, 78, 0.1); border: none; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--primary-red); transition: 0.3s; font-size: 18px;}
         .close-modal:hover { background: var(--primary-red); color: white; transform: rotate(90deg); }
         .legal-warning { background: #fff3cd; color: #856404; padding: 15px; border-radius: 12px; font-size: 13px; margin-bottom: 20px; border: 1px solid #ffeeba; text-align: justify; line-height: 1.6;}
+        .swal2-container { z-index: 99999 !important; }
 
         /* Dark Mode Overrides */
         body.dark-mode { --white: #161B22; --light-bg: #0D1117; --dark-text: #E2E8F0; --border-color: #30363D; }
@@ -178,7 +177,7 @@
 </head>
 <body>
     <header>
-        <a href="#" class="logo"><i class="fa-solid fa-truck-fast"></i> AXON <span>EXPRESS</span></a>
+        <a href="#" class="logo"><i class="fa-solid fa-truck-fast"></i> AXON <span data-i18n="logo_span">EXPRESS</span></a>
         
         <div class="header-actions">
             <button onclick="window.toggleLang()" class="lang-btn" id="langBtn">English</button>
@@ -190,132 +189,131 @@
     </header>
 
     <div class="hero">
-        <h1 data-aos="fade-down">شريكك الأسرع <span>للنجاح</span></h1>
-        <p data-aos="fade-up" data-aos-delay="100">نحن لا ننقل الصناديق، نحن ننقل الثقة. شبكة لوجستية تغطي جميع محافظات مصر بأمان، سرعة، وأنظمة تتبع حية لخدمة تجارتك الإلكترونية.</p>
+        <h1 data-aos="fade-down" data-i18n="hero_title">شريكك الأسرع <span>للنجاح</span></h1>
+        <p data-aos="fade-up" data-aos-delay="100" data-i18n="hero_desc">نحن لا ننقل الصناديق، نحن ننقل الثقة. شبكة لوجستية تغطي جميع محافظات مصر بأمان، سرعة، وأنظمة تتبع حية لخدمة تجارتك الإلكترونية.</p>
         
         <div class="tracking-box" data-aos="fade-up" data-aos-delay="200">
-            <input type="text" id="trackAwbInput" placeholder="أدخل رقم البوليصة (مثال: AXN12345)">
-            <button onclick="window.initiateTracking()"><i class="fa-solid fa-magnifying-glass"></i> تتبع</button>
+            <input type="text" id="trackAwbInput" data-i18n-placeholder="track_placeholder" placeholder="أدخل رقم البوليصة (مثال: AXN12345)">
+            <button onclick="window.initiateTracking()"><i class="fa-solid fa-magnifying-glass"></i> <span data-i18n="btn_track">تتبع</span></button>
         </div>
     </div>
 
     <div class="calc-box" data-aos="zoom-in" data-aos-delay="300">
-        <h3 style="color:var(--primary-blue); margin-top:0; font-size:22px; display: flex; justify-content: center; align-items: center; gap: 10px;"><i class="fa-solid fa-calculator" style="color:var(--primary-red);"></i> تسعير الشحن الفوري</h3>
-        <p style="font-size:14px; color:#888; margin-bottom:20px; font-weight:600;">متصل مباشرة بـ "بورصة أكسون" للحصول على التحديثات اللحظية</p>
+        <h3 style="color:var(--primary-blue); margin-top:0; font-size:22px; display: flex; justify-content: center; align-items: center; gap: 10px;" data-i18n="calc_title"><i class="fa-solid fa-calculator" style="color:var(--primary-red);"></i> تسعير الشحن الفوري</h3>
+        <p style="font-size:14px; color:#888; margin-bottom:20px; font-weight:600;" data-i18n="calc_desc">متصل مباشرة بـ "بورصة أكسون" للحصول على التحديثات اللحظية</p>
         <select class="calc-select" id="calcSelect" onchange="window.calculateRate()">
-            <option value="0">-- حدد وجهة الشحنة --</option>
-            <option value="alex">الإسكندرية (والساحل)</option>
-            <option value="cairo">القاهرة والجيزة</option>
-            <option value="beheira">البحيرة</option>
-            <option value="delta">الدلتا والقناة</option>
-            <option value="saeed">الصعيد</option>
+            <option value="0" data-i18n="calc_opt_0">-- حدد وجهة الشحنة --</option>
+            <option value="alex" data-i18n="calc_opt_1">الإسكندرية (والساحل)</option>
+            <option value="cairo" data-i18n="calc_opt_2">القاهرة والجيزة</option>
+            <option value="beheira" data-i18n="calc_opt_3">البحيرة</option>
+            <option value="delta" data-i18n="calc_opt_4">الدلتا والقناة</option>
+            <option value="saeed" data-i18n="calc_opt_5">الصعيد</option>
         </select>
         <div class="calc-result" id="calcResult">0 EGP</div>
     </div>
 
     <div class="about-section">
-        <h2 class="section-title" data-aos="fade-up" style="margin-top: 0;">من نحن؟ <span>قدرات أكسون</span></h2>
-        <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">نحن لسنا مجرد شركة شحن تقليدية، بل نحن منظومة تقنية متكاملة تدير عمليات التجارة الإلكترونية الخاصة بك من الألف إلى الياء لتتفرغ أنت للتسويق والبيع.</p>
+        <h2 class="section-title" data-aos="fade-up" style="margin-top: 0;" data-i18n="about_title">من نحن؟ <span>قدرات أكسون</span></h2>
+        <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100" data-i18n="about_desc">نحن لسنا مجرد شركة شحن تقليدية، بل نحن منظومة تقنية متكاملة تدير عمليات التجارة الإلكترونية الخاصة بك من الألف إلى الياء لتتفرغ أنت للتسويق والبيع.</p>
         
         <div class="about-grid">
             <div class="about-item" data-aos="fade-up" data-aos-delay="200">
                 <div class="about-icon"><i class="fa-solid fa-microchip"></i></div>
-                <h4>تقنية متطورة</h4>
-                <p>نعتمد على سيرفرات سحابية وأنظمة تتبع GPS لحظية لضمان عدم ضياع أي شحنة وتحديث حالات التسليم في أجزاء من الثانية.</p>
+                <h4 data-i18n="about_1_title">تقنية متطورة</h4>
+                <p data-i18n="about_1_desc">نعتمد على سيرفرات سحابية وأنظمة تتبع GPS لحظية لضمان عدم ضياع أي شحنة وتحديث حالات التسليم في أجزاء من الثانية.</p>
             </div>
             <div class="about-item" data-aos="fade-up" data-aos-delay="300">
                 <div class="about-icon"><i class="fa-solid fa-truck-moving"></i></div>
-                <h4>أسطول مجهز</h4>
-                <p>نمتلك أسطولاً من السيارات وعربات الإنقاذ والمناديب المدربين على التعامل مع كافة أنواع البضائع، من أصغر الطرود وحتى الأثاث.</p>
+                <h4 data-i18n="about_2_title">أسطول مجهز</h4>
+                <p data-i18n="about_2_desc">نمتلك أسطولاً من السيارات وعربات الإنقاذ والمناديب المدربين على التعامل مع كافة أنواع البضائع، من أصغر الطرود وحتى الأثاث.</p>
             </div>
             <div class="about-item" data-aos="fade-up" data-aos-delay="400">
                 <div class="about-icon"><i class="fa-solid fa-handshake"></i></div>
-                <h4>شراكة حقيقية</h4>
-                <p>نحن نعتبر أنفسنا شركاء في نجاحك، ولذلك نوفر أسرع دورة رأس مال في السوق لدعم تدفق السيولة النقدية لمشروعك.</p>
+                <h4 data-i18n="about_3_title">شراكة حقيقية</h4>
+                <p data-i18n="about_3_desc">نحن نعتبر أنفسنا شركاء في نجاحك، ولذلك نوفر أسرع دورة رأس مال في السوق لدعم تدفق السيولة النقدية لمشروعك.</p>
             </div>
         </div>
     </div>
 
     <div class="vip-banner" data-aos="zoom-in">
-        <h2><i class="fa-solid fa-crown" style="color: var(--primary-red);"></i> تجربة الـ VIP لكل تاجر في أكسون</h2>
-        <p>تطبيق موبايل مخصص لمتابعة شحناتك في أي وقت + جروب متابعة على الواتساب بمدير حساب (Account Manager) مخصص لخدمتك لحظة بلحظة!</p>
+        <h2 data-i18n="vip_title"><i class="fa-solid fa-crown" style="color: var(--primary-red);"></i> تجربة الـ VIP لكل تاجر في أكسون</h2>
+        <p data-i18n="vip_desc">تطبيق موبايل مخصص لمتابعة شحناتك في أي وقت + جروب متابعة على الواتساب بمدير حساب (Account Manager) مخصص لخدمتك لحظة بلحظة!</p>
     </div>
 
-    <h2 class="section-title" data-aos="fade-up">عالم من <span>الخدمات اللوجستية</span></h2>
-    <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">كل ما تحتاجه لنقل بضائعك، أموالك، وحتى أثاث بيتك في مكان واحد.</p>
+    <h2 class="section-title" data-aos="fade-up" data-i18n="srv_main_title">عالم من <span>الخدمات اللوجستية</span></h2>
+    <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100" data-i18n="srv_main_desc">كل ما تحتاجه لنقل بضائعك، أموالك، وحتى أثاث بيتك في مكان واحد.</p>
     
     <div class="services-grid">
         <div class="service-card" data-aos="fade-up" data-aos-delay="100" onclick="document.getElementById('publicRescueModal').style.display='flex'">
-            <div class="badge-new" style="background: var(--primary-red);">طوارئ 24/7</div>
+            <div class="badge-new" style="background: var(--primary-red);" data-i18n="badge_emergency">طوارئ 24/7</div>
             <img src="5.jpg" alt="إنقاذ سيارات" class="service-img" onerror="this.src='https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=600&auto=format&fit=crop'">
             <div class="service-content">
-                <h4><i class="fa-solid fa-truck-pickup" style="color: var(--primary-red);"></i> أكسون إنقاذ (أوناش)</h4>
-                <p>عربيتك عطلت؟ أوناش أكسون جاهزة للتحرك فوراً بناءً على إحداثيات الـ GPS الخاصة بك لإنقاذ سيارتك. اضغط للطلب الآن.</p>
+                <h4 data-i18n="srv_rescue_title"><i class="fa-solid fa-truck-pickup" style="color: var(--primary-red);"></i> أكسون إنقاذ (أوناش)</h4>
+                <p data-i18n="srv_rescue_desc">عربيتك عطلت؟ أوناش أكسون جاهزة للتحرك فوراً بناءً على إحداثيات الـ GPS الخاصة بك لإنقاذ سيارتك. اضغط للطلب الآن.</p>
             </div>
         </div>
 
         <div class="service-card" data-aos="fade-up" data-aos-delay="200" onclick="document.getElementById('publicHomeModal').style.display='flex'">
             <img src="6.jpg" alt="نقل أثاث" class="service-img" onerror="this.src='https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=600&auto=format&fit=crop'">
             <div class="service-content">
-                <h4><i class="fa-solid fa-couch" style="color: var(--primary-blue);"></i> أكسون هوم (نقل عفش)</h4>
-                <p>نقل، فك، تركيب، وتغليف الأثاث بعمالة محترفة وسيارات مغلقة وأوناش رفع. اضغط لطلب معاينة أو تسعير الآن.</p>
+                <h4 data-i18n="srv_home_title"><i class="fa-solid fa-couch" style="color: var(--primary-blue);"></i> أكسون هوم (نقل عفش)</h4>
+                <p data-i18n="srv_home_desc">نقل، فك، تركيب، وتغليف الأثاث بعمالة محترفة وسيارات مغلقة وأوناش رفع. اضغط لطلب معاينة أو تسعير الآن.</p>
             </div>
         </div>
 
         <div class="service-card" data-aos="fade-up" data-aos-delay="300" onclick="window.showService('eshteryly')">
-            <div class="badge-new" style="background: var(--primary-blue);">خاص بالتجار</div>
+            <div class="badge-new" style="background: var(--primary-blue);" data-i18n="badge_merchant">خاص بالتجار</div>
             <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=600&auto=format&fit=crop" alt="اشتريلي" class="service-img">
             <div class="service-content">
-                <h4><i class="fa-solid fa-cart-shopping" style="color: var(--primary-red);"></i> خدمة اشتريلي</h4>
-                <p>مندوبنا يشتري طلباتك من السوبر ماركت أو خامات الإنتاج. هذه الخدمة متاحة <b>حصرياً داخل تطبيق أكسون إكسبريس للتجار</b>.</p>
+                <h4 data-i18n="srv_buy_title"><i class="fa-solid fa-cart-shopping" style="color: var(--primary-red);"></i> خدمة اشتريلي</h4>
+                <p data-i18n="srv_buy_desc">مندوبنا يشتري طلباتك من السوبر ماركت أو خامات الإنتاج. هذه الخدمة متاحة <b>حصرياً داخل تطبيق أكسون إكسبريس للتجار</b>.</p>
             </div>
         </div>
 
-        <!-- إضافة كارت أكسون كولد فريش -->
         <div class="service-card" data-aos="fade-up" data-aos-delay="400" onclick="window.showService('cold')">
-            <div class="badge-new" style="background: var(--primary-blue);">حصري للتجار</div>
+            <div class="badge-new" style="background: var(--primary-blue);" data-i18n="badge_merchant">حصري للتجار</div>
             <img src="https://images.unsplash.com/photo-1654922207993-2952fec328ae?q=80&w=600&auto=format&fit=crop" alt="أكسون كولد" class="service-img">
             <div class="service-content">
-                <h4><i class="fa-solid fa-temperature-arrow-down" style="color: var(--primary-red);"></i> خدمة أكسون كولد</h4>
-                <p>شحن مبرد وسريع للمطابخ السحابية والأكل البيتي. توصيل آمن من الباب للباب.</p>
+                <h4 data-i18n="srv_cold_title"><i class="fa-solid fa-temperature-arrow-down" style="color: var(--primary-red);"></i> خدمة أكسون كولد</h4>
+                <p data-i18n="srv_cold_desc">شحن مبرد وسريع للمطابخ السحابية والأكل البيتي. توصيل آمن من الباب للباب.</p>
             </div>
         </div>
 
         <div class="service-card" data-aos="fade-up" data-aos-delay="500" onclick="window.showService('ecommerce')">
             <img src="1.jpg" alt="تجهيز الطلبات" class="service-img" onerror="this.src='https://images.unsplash.com/photo-1553413077-190dd305871c?q=80&w=600&auto=format&fit=crop'">
             <div class="service-content">
-                <h4><i class="fa-solid fa-box-open" style="color:var(--primary-red);"></i> تجهيز ومستودعات</h4>
-                <p>تخزين، تغليف ذكي، وتجهيز احترافي لطلباتك. نحن ندير الجانب المادي لتتفرغ أنت للتسويق.</p>
+                <h4 data-i18n="srv_ecom_title"><i class="fa-solid fa-box-open" style="color:var(--primary-red);"></i> تجهيز ومستودعات</h4>
+                <p data-i18n="srv_ecom_desc">تخزين، تغليف ذكي، وتجهيز احترافي لطلباتك. نحن ندير الجانب المادي لتتفرغ أنت للتسويق.</p>
             </div>
         </div>
         
         <div class="service-card" data-aos="fade-up" data-aos-delay="600" onclick="window.showService('coverage')">
             <img src="2.jpg" alt="تغطية شاملة" class="service-img" onerror="this.src='https://images.unsplash.com/photo-1580674285054-bed31e145f59?q=80&w=600&auto=format&fit=crop'">
             <div class="service-content">
-                <h4><i class="fa-solid fa-radar" style="color:var(--primary-red);"></i> رادار لوجستي</h4>
-                <p>أسطول يتحرك بين الإسكندرية، الدلتا، القاهرة، والصعيد بجدولة دقيقة تضمن عدم التكدس.</p>
+                <h4 data-i18n="srv_radar_title"><i class="fa-solid fa-radar" style="color:var(--primary-red);"></i> رادار لوجستي</h4>
+                <p data-i18n="srv_radar_desc">أسطول يتحرك بين الإسكندرية، الدلتا، القاهرة، والصعيد بجدولة دقيقة تضمن عدم التكدس.</p>
             </div>
         </div>
 
         <div class="service-card" data-aos="fade-up" data-aos-delay="700" onclick="window.showService('cod')">
             <img src="3.jpg" alt="تحصيل الأموال" class="service-img" onerror="this.src='https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=600&auto=format&fit=crop'">
             <div class="service-content">
-                <h4><i class="fa-solid fa-money-bill-transfer" style="color:var(--primary-red);"></i> دورة مالية صاروخية</h4>
-                <p>أنظمة تحصيل (COD) مرنة وسريعة تضمن استلام أموالك عبر تحويلات بنكية ومحافظ إلكترونية.</p>
+                <h4 data-i18n="srv_cod_title"><i class="fa-solid fa-money-bill-transfer" style="color:var(--primary-red);"></i> دورة مالية صاروخية</h4>
+                <p data-i18n="srv_cod_desc">أنظمة تحصيل (COD) مرنة وسريعة تضمن استلام أموالك عبر تحويلات بنكية ومحافظ إلكترونية.</p>
             </div>
         </div>
     </div>
 
     <div class="join-section" data-aos="fade-in">
         <div style="position: relative; z-index: 2; max-width: 800px; margin: 0 auto;">
-            <h2 style="font-size: 42px; margin-top:0; font-weight: 900;">كن جزءاً من <span style="color:var(--primary-red);">الكيان</span></h2>
-            <p style="font-size: 18px; color: #e0e0e0; line-height: 1.8;">نحن لا نوظف أفراداً، نحن نبني قادة. سواء كنت كابتن شحن تبحث عن دخل مجزٍ، أو مستثمراً يطمح لامتلاك فرع أكسون الخاص به بقوة شبكتنا التقنية.</p>
+            <h2 style="font-size: 42px; margin-top:0; font-weight: 900;" data-i18n="join_title">كن جزءاً من <span style="color:var(--primary-red);">الكيان</span></h2>
+            <p style="font-size: 18px; color: #e0e0e0; line-height: 1.8;" data-i18n="join_desc">نحن لا نوظف أفراداً، نحن نبني قادة. سواء كنت كابتن شحن تبحث عن دخل مجزٍ، أو مستثمراً يطمح لامتلاك فرع أكسون الخاص به بقوة شبكتنا التقنية.</p>
             <div class="join-grid">
                 <button class="join-btn" onclick="document.getElementById('careerModal').style.display='flex'" data-aos="zoom-in" data-aos-delay="100">
-                    <i class="fa-solid fa-id-badge" style="color: var(--primary-red);"></i> التقدم لوظيفة
+                    <i class="fa-solid fa-id-badge" style="color: var(--primary-red);"></i> <span data-i18n="btn_career">التقدم لوظيفة</span>
                 </button>
                 <button class="join-btn" onclick="document.getElementById('franchiseModal').style.display='flex'" data-aos="zoom-in" data-aos-delay="200">
-                    <i class="fa-solid fa-code-branch" style="color: var(--primary-red);"></i> طلب وكالة (فرنشايز)
+                    <i class="fa-solid fa-code-branch" style="color: var(--primary-red);"></i> <span data-i18n="btn_franchise">طلب وكالة (فرنشايز)</span>
                 </button>
             </div>
         </div>
@@ -324,8 +322,8 @@
     <footer>
         <div class="footer-content">
             <div class="footer-col" data-aos="fade-up" data-aos-delay="100">
-                <h3>عن أكسون إكسبريس</h3>
-                <p>شريان اللوجستيات الذكي في مصر. ندمج التكنولوجيا بحركة النقل لضمان أمان، سرعة، وموثوقية لا تقارن.</p>
+                <h3 data-i18n="ft_about_title">عن أكسون إكسبريس</h3>
+                <p data-i18n="ft_about_desc">شريان اللوجستيات الذكي في مصر. ندمج التكنولوجيا بحركة النقل لضمان أمان، سرعة، وموثوقية لا تقارن.</p>
                 <div class="social-icons">
                     <a href="https://www.facebook.com/share/1CJDtTPczM/" target="_blank" class="fb" title="فيسبوك"><i class="fa-brands fa-facebook-f"></i></a>
                     <a href="https://www.tiktok.com/@axon.express?_r=1&_t=ZS-94qcUcPnr64" target="_blank" class="tk" title="تيك توك"><i class="fa-brands fa-tiktok"></i></a>
@@ -333,21 +331,21 @@
                 </div>
             </div>
             <div class="footer-col" data-aos="fade-up" data-aos-delay="200">
-                <h3>روابط التوجيه</h3>
-                <a href="#"><i class="fa-solid fa-angle-left" style="font-size:12px; margin-left:8px; color:var(--primary-red);"></i> الصفحة الرئيسية</a>
-                <a href="#" onclick="document.getElementById('careerModal').style.display='flex'"><i class="fa-solid fa-angle-left" style="font-size:12px; margin-left:8px; color:var(--primary-red);"></i> الانضمام للأسطول</a>
-                <a href="#" onclick="document.getElementById('franchiseModal').style.display='flex'"><i class="fa-solid fa-angle-left" style="font-size:12px; margin-left:8px; color:var(--primary-red);"></i> فتح فرع جديد</a>
-                <a href="#" onclick="document.getElementById('loginModal').style.display='flex'"><i class="fa-solid fa-angle-left" style="font-size:12px; margin-left:8px; color:var(--primary-red);"></i> محطة التجار</a>
+                <h3 data-i18n="ft_links_title">روابط التوجيه</h3>
+                <a href="#"><i class="fa-solid fa-angle-left" style="font-size:12px; margin-left:8px; color:var(--primary-red);"></i> <span data-i18n="ft_link_1">الصفحة الرئيسية</span></a>
+                <a href="#" onclick="document.getElementById('careerModal').style.display='flex'"><i class="fa-solid fa-angle-left" style="font-size:12px; margin-left:8px; color:var(--primary-red);"></i> <span data-i18n="ft_link_2">الانضمام للأسطول</span></a>
+                <a href="#" onclick="document.getElementById('franchiseModal').style.display='flex'"><i class="fa-solid fa-angle-left" style="font-size:12px; margin-left:8px; color:var(--primary-red);"></i> <span data-i18n="ft_link_3">فتح فرع جديد</span></a>
+                <a href="#" onclick="document.getElementById('loginModal').style.display='flex'"><i class="fa-solid fa-angle-left" style="font-size:12px; margin-left:8px; color:var(--primary-red);"></i> <span data-i18n="ft_link_4">محطة التجار</span></a>
             </div>
             <div class="footer-col" data-aos="fade-up" data-aos-delay="300">
-                <h3>نقاط الاتصال المباشر</h3>
-                <p><i class="fa-solid fa-location-dot contact-icon"></i> المقر الرئيسي: الإسكندرية - المنشية - شارع النصر</p>
-                <p><i class="fa-solid fa-phone contact-icon"></i> خدمة العملاء: 01147000882</p>
-                <p><i class="fa-solid fa-envelope contact-icon"></i> البريد: info@axonexpress.com</p>
+                <h3 data-i18n="ft_contact_title">نقاط الاتصال المباشر</h3>
+                <p><i class="fa-solid fa-location-dot contact-icon"></i> <span data-i18n="ft_address">المقر الرئيسي: الإسكندرية - المنشية - شارع النصر</span></p>
+                <p><i class="fa-solid fa-phone contact-icon"></i> <span data-i18n="ft_phone">خدمة العملاء: 01147000882</span></p>
+                <p><i class="fa-solid fa-envelope contact-icon"></i> <span data-i18n="ft_email">البريد: info@axonexpress.com</span></p>
             </div>
         </div>
         <p style="text-align:center; color:#5c6b7a; border-top:1px solid rgba(255,255,255,0.05); padding-top:25px; margin:0; font-size: 14px; font-weight: bold; letter-spacing: 1px;">
-            AXON EXPRESS &copy; 2026 | تم بناء النظام بواسطة التكنولوجيا المتقدمة.
+            AXON EXPRESS &copy; 2026 | <span data-i18n="ft_copy">تم بناء النظام بواسطة التكنولوجيا المتقدمة.</span>
         </p>
     </footer>
 
@@ -503,57 +501,190 @@
         </div>
     </div>
 
-    <!-- قاموس اللغة -->
+    <!-- كود تغيير اللغة المظبوط -->
     <script>
         const i18nDict = {
-            ar: { merchant_portal: "بوابة التجار" },
-            en: { merchant_portal: "Merchant Portal" }
+            ar: { 
+                merchant_portal: "بوابة التجار",
+                logo_span: "EXPRESS",
+                hero_title: "شريكك الأسرع <span>للنجاح</span>",
+                hero_desc: "نحن لا ننقل الصناديق، نحن ننقل الثقة. شبكة لوجستية تغطي جميع محافظات مصر بأمان، سرعة، وأنظمة تتبع حية لخدمة تجارتك الإلكترونية.",
+                track_placeholder: "أدخل رقم البوليصة (مثال: AXN12345)",
+                btn_track: "تتبع",
+                calc_title: "تسعير الشحن الفوري",
+                calc_desc: "متصل مباشرة بـ 'بورصة أكسون' للحصول على التحديثات اللحظية",
+                calc_opt_0: "-- حدد وجهة الشحنة --", calc_opt_1: "الإسكندرية (والساحل)", calc_opt_2: "القاهرة والجيزة", calc_opt_3: "البحيرة", calc_opt_4: "الدلتا والقناة", calc_opt_5: "الصعيد",
+                about_title: "من نحن؟ <span>قدرات أكسون</span>",
+                about_desc: "نحن لسنا مجرد شركة شحن تقليدية، بل نحن منظومة تقنية متكاملة تدير عمليات التجارة الإلكترونية الخاصة بك من الألف إلى الياء لتتفرغ أنت للتسويق والبيع.",
+                about_1_title: "تقنية متطورة", about_1_desc: "نعتمد على سيرفرات سحابية وأنظمة تتبع GPS لحظية لضمان عدم ضياع أي شحنة وتحديث حالات التسليم في أجزاء من الثانية.",
+                about_2_title: "أسطول مجهز", about_2_desc: "نمتلك أسطولاً من السيارات وعربات الإنقاذ والمناديب المدربين على التعامل مع كافة أنواع البضائع، من أصغر الطرود وحتى الأثاث.",
+                about_3_title: "شراكة حقيقية", about_3_desc: "نحن نعتبر أنفسنا شركاء في نجاحك، ولذلك نوفر أسرع دورة رأس مال في السوق لدعم تدفق السيولة النقدية لمشروعك.",
+                vip_title: "تجربة الـ VIP لكل تاجر في أكسون",
+                vip_desc: "تطبيق موبايل مخصص لمتابعة شحناتك في أي وقت + جروب متابعة على الواتساب بمدير حساب (Account Manager) مخصص لخدمتك لحظة بلحظة!",
+                srv_main_title: "عالم من <span>الخدمات اللوجستية</span>",
+                srv_main_desc: "كل ما تحتاجه لنقل بضائعك، أموالك، وحتى أثاث بيتك في مكان واحد.",
+                badge_emergency: "طوارئ 24/7", badge_merchant: "خاص بالتجار",
+                srv_rescue_title: "أكسون إنقاذ (أوناش)", srv_rescue_desc: "عربيتك عطلت؟ أوناش أكسون جاهزة للتحرك فوراً بناءً على إحداثيات الـ GPS الخاصة بك لإنقاذ سيارتك. اضغط للطلب الآن.",
+                srv_home_title: "أكسون هوم (نقل عفش)", srv_home_desc: "نقل، فك، تركيب، وتغليف الأثاث بعمالة محترفة وسيارات مغلقة وأوناش رفع. اضغط لطلب معاينة أو تسعير الآن.",
+                srv_buy_title: "خدمة اشتريلي", srv_buy_desc: "مندوبنا يشتري طلباتك من السوبر ماركت أو خامات الإنتاج. هذه الخدمة متاحة <b>حصرياً داخل تطبيق أكسون إكسبريس للتجار</b>.",
+                srv_cold_title: "خدمة أكسون كولد", srv_cold_desc: "شحن مبرد وسريع للمطابخ السحابية والأكل البيتي. توصيل آمن من الباب للباب.",
+                srv_ecom_title: "تجهيز ومستودعات", srv_ecom_desc: "تخزين، تغليف ذكي، وتجهيز احترافي لطلباتك. نحن ندير الجانب المادي لتتفرغ أنت للتسويق.",
+                srv_radar_title: "رادار لوجستي", srv_radar_desc: "أسطول يتحرك بين الإسكندرية، الدلتا، القاهرة، والصعيد بجدولة دقيقة تضمن عدم التكدس.",
+                srv_cod_title: "دورة مالية صاروخية", srv_cod_desc: "أنظمة تحصيل (COD) مرنة وسريعة تضمن استلام أموالك عبر تحويلات بنكية ومحافظ إلكترونية.",
+                join_title: "كن جزءاً من <span>الكيان</span>",
+                join_desc: "نحن لا نوظف أفراداً، نحن نبني قادة. سواء كنت كابتن شحن تبحث عن دخل مجزٍ، أو مستثمراً يطمح لامتلاك فرع أكسون الخاص به بقوة شبكتنا التقنية.",
+                btn_career: "التقدم لوظيفة", btn_franchise: "طلب وكالة (فرنشايز)",
+                ft_about_title: "عن أكسون إكسبريس", ft_about_desc: "شريان اللوجستيات الذكي في مصر. ندمج التكنولوجيا بحركة النقل لضمان أمان، سرعة، وموثوقية لا تقارن.",
+                ft_links_title: "روابط التوجيه", ft_link_1: "الصفحة الرئيسية", ft_link_2: "الانضمام للأسطول", ft_link_3: "فتح فرع جديد", ft_link_4: "محطة التجار",
+                ft_contact_title: "نقاط الاتصال المباشر", ft_address: "المقر الرئيسي: الإسكندرية - المنشية - شارع النصر", ft_phone: "خدمة العملاء: 01147000882", ft_email: "البريد: info@axonexpress.com",
+                ft_copy: "تم بناء النظام بواسطة التكنولوجيا المتقدمة."
+            },
+            en: { 
+                merchant_portal: "Merchant Portal",
+                logo_span: "EXPRESS",
+                hero_title: "Your Fastest Partner to <span>Success</span>",
+                hero_desc: "We don't just move boxes, we deliver trust. A logistics network covering all of Egypt with safety, speed, and live tracking systems for your e-commerce.",
+                track_placeholder: "Enter AWB (e.g., AXN12345)",
+                btn_track: "Track",
+                calc_title: "Instant Shipping Quote",
+                calc_desc: "Directly connected to 'Axon Exchange' for live updates",
+                calc_opt_0: "-- Select Destination --", calc_opt_1: "Alexandria (& North Coast)", calc_opt_2: "Cairo & Giza", calc_opt_3: "Beheira", calc_opt_4: "Delta & Canal", calc_opt_5: "Upper Egypt",
+                about_title: "Who Are We? <span>Axon Capabilities</span>",
+                about_desc: "We are not just a traditional shipping company, we are an integrated tech ecosystem managing your e-commerce operations from A to Z.",
+                about_1_title: "Advanced Tech", about_1_desc: "We rely on cloud servers and live GPS tracking to ensure no shipment is lost, updating statuses in milliseconds.",
+                about_2_title: "Equipped Fleet", about_2_desc: "We own a fleet of vehicles, rescue trucks, and trained couriers to handle all cargo, from tiny parcels to furniture.",
+                about_3_title: "True Partnership", about_3_desc: "We consider ourselves partners in your success, offering the fastest capital cycle in the market.",
+                vip_title: "VIP Experience for Every Axon Merchant",
+                vip_desc: "A dedicated mobile app to track your shipments + a WhatsApp follow-up group with a dedicated Account Manager!",
+                srv_main_title: "A World of <span>Logistics Services</span>",
+                srv_main_desc: "Everything you need to move your goods, money, and even your home furniture in one place.",
+                badge_emergency: "24/7 Emergency", badge_merchant: "Merchants Only",
+                srv_rescue_title: "Axon Rescue (Towing)", srv_rescue_desc: "Car broke down? Axon towing trucks are ready to move based on your GPS coordinates.",
+                srv_home_title: "Axon Home (Moving)", srv_home_desc: "Moving, dismantling, installing, and packing furniture with professional labor and closed trucks.",
+                srv_buy_title: "Eshteryly (Buy For Me)", srv_buy_desc: "Our courier buys your requests from supermarkets or raw materials. Available <b>exclusively in the merchant app</b>.",
+                srv_cold_title: "Axon Cold Service", srv_cold_desc: "Fast refrigerated shipping for cloud kitchens and homemade food. Safe door-to-door delivery.",
+                srv_ecom_title: "Fulfillment & Warehousing", srv_ecom_desc: "Storage, smart packing, and professional fulfillment. We manage the physical side so you can focus on marketing.",
+                srv_radar_title: "Logistics Radar", srv_radar_desc: "A fleet moving between Alexandria, Delta, Cairo, and Upper Egypt with precise scheduling to ensure no backlog.",
+                srv_cod_title: "Rocket-Fast Financial Cycle", srv_cod_desc: "Flexible and fast COD collection systems ensuring you receive your money via bank transfers and e-wallets.",
+                join_title: "Be Part of The <span>Entity</span>",
+                join_desc: "We don't hire individuals, we build leaders. Whether you are a courier looking for great income or an investor aiming to own a branch.",
+                btn_career: "Apply for a Job", btn_franchise: "Request a Franchise",
+                ft_about_title: "About Axon Express", ft_about_desc: "The smart logistics artery in Egypt. We merge tech with transport to ensure unparalleled safety, speed, and reliability.",
+                ft_links_title: "Quick Links", ft_link_1: "Home Page", ft_link_2: "Join the Fleet", ft_link_3: "Open a New Branch", ft_link_4: "Merchant Terminal",
+                ft_contact_title: "Direct Contact Points", ft_address: "HQ: Alexandria - Mansheya - El Nasr St.", ft_phone: "Customer Service: 01147000882", ft_email: "Email: info@axonexpress.com",
+                ft_copy: "System built with advanced technology."
+            }
         };
 
-        window.toggleLang = () => { let lang = document.documentElement.lang === 'ar' ? 'en' : 'ar'; localStorage.setItem('axon_lang', lang); applyLang(lang); };
+        window.toggleLang = () => { let lang = document.documentElement.lang === 'ar' ? 'en' : 'ar'; localStorage.setItem('axon_main_lang', lang); applyLang(lang); };
         function applyLang(lang) {
             document.documentElement.lang = lang; document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr'; 
             document.getElementById('langBtn').innerText = lang === 'ar' ? 'English' : 'العربية';
-            document.querySelectorAll('[data-i18n]').forEach(el => { let key = el.getAttribute('data-i18n'); if(i18nDict[lang] && i18nDict[lang][key]) el.innerHTML = i18nDict[lang][key] + ' <i class="fa-solid fa-user-lock" style="margin-right: 5px;"></i>'; });
+            document.querySelectorAll('[data-i18n]').forEach(el => { 
+                let key = el.getAttribute('data-i18n'); 
+                if(i18nDict[lang] && i18nDict[lang][key]) {
+                    if(key === 'merchant_portal') el.innerHTML = i18nDict[lang][key] + ' <i class="fa-solid fa-user-lock" style="margin-right: 5px;"></i>';
+                    else if(key === 'hero_title') el.innerHTML = i18nDict[lang][key];
+                    else if(key === 'about_title') el.innerHTML = i18nDict[lang][key];
+                    else if(key === 'srv_main_title') el.innerHTML = i18nDict[lang][key];
+                    else if(key === 'join_title') el.innerHTML = i18nDict[lang][key];
+                    else if(key === 'srv_buy_desc') el.innerHTML = i18nDict[lang][key];
+                    else if(key === 'btn_career') el.innerHTML = '<i class="fa-solid fa-id-badge" style="color: var(--primary-red);"></i> ' + i18nDict[lang][key];
+                    else if(key === 'btn_franchise') el.innerHTML = '<i class="fa-solid fa-code-branch" style="color: var(--primary-red);"></i> ' + i18nDict[lang][key];
+                    else el.innerText = i18nDict[lang][key];
+                }
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { 
+                let key = el.getAttribute('data-i18n-placeholder'); 
+                if(i18nDict[lang] && i18nDict[lang][key]) el.setAttribute('placeholder', i18nDict[lang][key]); 
+            });
         }
-        document.addEventListener('DOMContentLoaded', () => { applyLang(localStorage.getItem('axon_lang') || 'ar'); });
+        document.addEventListener('DOMContentLoaded', () => { applyLang(localStorage.getItem('axon_main_lang') || 'ar'); });
     </script>
 
+    <!-- الأكواد المفكوكة والواضحة لضمان عدم حدوث أي Crash -->
     <script type="module">
-        import { initializeApp as a } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth as b, signInWithEmailAndPassword as c } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore as d, doc as e, getDoc as f, getDocs as g, onSnapshot as h, collection as i, addDoc as j, updateDoc as k } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, getDocs, onSnapshot, collection, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         
-        const app = a({ apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw", authDomain: "axon-express-2f534.firebaseapp.com", projectId: "axon-express-2f534", storageBucket: "axon-express-2f534.firebasestorage.app", messagingSenderId: "958528400260", appId: "1:958528400260:web:504ae94f3ef2225b928bd1" });
-        const auth = b(app); const db = d(app); AOS.init({ duration: 1000, once: true });
+        // 1. التهيئة الأولية
+        const app = initializeApp({ 
+            apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw", 
+            authDomain: "axon-express-2f534.firebaseapp.com", 
+            projectId: "axon-express-2f534", 
+            storageBucket: "axon-express-2f534.firebasestorage.app", 
+            messagingSenderId: "958528400260", 
+            appId: "1:958528400260:web:504ae94f3ef2225b928bd1" 
+        });
+        const auth = getAuth(app); 
+        const db = getFirestore(app); 
+
+        // 2. تشغيل الأنيميشن بشكل مستقل عشان الصفحة متفضلش بيضا
+        AOS.init({ duration: 1000, once: true });
         
+        // 3. أسعار الشحن اللحظية
         window.livePrices = { alex: 0, cairo: 0, beheira: 0, delta: 0, saeed: 0, penalty: 30 };
-        h(e(db, "settings", "shipping_prices"), z => { if (z.exists()) { window.livePrices = z.data(); window.calculateRate(); } });
+        onSnapshot(doc(db, "settings", "shipping_prices"), z => { 
+            if (z.exists()) { window.livePrices = z.data(); window.calculateRate(); } 
+        });
         
-        window.calculateRate = () => { const z = document.getElementById('calcSelect').value; if (z === "0") { document.getElementById('calcResult').innerText = "0 EGP"; return; } document.getElementById('calcResult').innerText = `${window.livePrices[z] || 0} EGP`; };
+        window.calculateRate = () => { 
+            const z = document.getElementById('calcSelect').value; 
+            if (z === "0") { document.getElementById('calcResult').innerText = "0 EGP"; return; } 
+            document.getElementById('calcResult').innerText = `${window.livePrices[z] || 0} EGP`; 
+        };
         
-        window.showService = z => { let y = "", x = ""; if (z === 'ecommerce') { y = "مستودعات وتجهيز"; x = "نستلم البضائع دفعة واحدة ونخزنها. فور وصول طلب من عملائك، نقوم نحن بتغليفه وطباعة بوليصته وإرساله مباشرة دون تدخلك."; } else if (z === 'coverage') { y = "الرادار اللوجستي"; x = "خطوط سير يومية لا تنقطع. أسطولنا يتحرك بين الإسكندرية والقاهرة والمحافظات بجدولة دقيقة تضمن عدم تكدس الشحنات."; } else if (z === 'cod') { y = "دورة مالية صاروخية"; x = "أكبر مشكلة تواجه التجار هي تأخر أموال الـ COD. في أكسون، نقوم بتسوية حساباتك فور استلام الشحنة بأسرع دورة مالية في السوق."; } else if (z === 'eshteryly') { y = "خدمة اشتريلي"; x = "تنبيه: هذه الخدمة الحصرية (لتسوق المشتريات من خامات إنتاج أو سوبر ماركت) متاحة فقط للتجار المسجلين من داخل محطة التاجر الخاصة بهم."; } else if (z === 'cold') { y = "أكسون كولد / فريش"; x = "تنبيه: هذه الخدمة الحصرية (للمطابخ السحابية والأكل البيتي المبرد) متاحة فقط للتجار المسجلين من داخل محطة التاجر الخاصة بهم."; } Swal.fire({ title: y, text: x, icon: 'info', confirmButtonText: 'علم', confirmButtonColor: '#06283D' }); };
+        window.showService = z => { 
+            let y = "", x = ""; 
+            if (z === 'ecommerce') { y = "مستودعات وتجهيز"; x = "نستلم البضائع دفعة واحدة ونخزنها. فور وصول طلب من عملائك، نقوم نحن بتغليفه وطباعة بوليصته وإرساله مباشرة دون تدخلك."; } 
+            else if (z === 'coverage') { y = "الرادار اللوجستي"; x = "خطوط سير يومية لا تنقطع. أسطولنا يتحرك بين الإسكندرية والقاهرة والمحافظات بجدولة دقيقة تضمن عدم تكدس الشحنات."; } 
+            else if (z === 'cod') { y = "دورة مالية صاروخية"; x = "أكبر مشكلة تواجه التجار هي تأخر أموال الـ COD. في أكسون، نقوم بتسوية حساباتك فور استلام الشحنة بأسرع دورة مالية في السوق."; } 
+            else if (z === 'eshteryly') { y = "خدمة اشتريلي"; x = "تنبيه: هذه الخدمة الحصرية (لتسوق المشتريات من خامات إنتاج أو سوبر ماركت) متاحة فقط للتجار المسجلين من داخل محطة التاجر الخاصة بهم."; } 
+            else if (z === 'cold') { y = "أكسون كولد / فريش"; x = "تنبيه: هذه الخدمة الحصرية (للمطابخ السحابية والأكل البيتي المبرد) متاحة فقط للتجار المسجلين من داخل محطة التاجر الخاصة بهم."; } 
+            Swal.fire({ title: y, text: x, icon: 'info', confirmButtonText: 'علم', confirmButtonColor: '#06283D' }); 
+        };
         
-        window.submitCareer = async () => { const z = document.getElementById('carName').value.trim(), y = document.getElementById('carPhone').value.trim(), x = document.getElementById('carCity').value.trim(), w = document.getElementById('carPosition').value, v = document.getElementById('carNotes').value.trim(); if (!z || !y || !x || !w) return Swal.fire('خطأ إدخال', 'يرجى استكمال البيانات المطلوبة.', 'warning'); const u = document.getElementById('btnCareer'); u.disabled = true; u.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التشفير...'; try { await j(i(db, "careers"), { name: z, phone: y, city: x, position: w, notes: v, timestamp: new Date() }); document.getElementById('careerModal').style.display = 'none'; Swal.fire('تم الإرسال', 'تم توجيه ملفك لإدارة الموارد البشرية. استعد للتحرك.', 'success'); document.querySelectorAll('#careerModal input, #careerModal select, #careerModal textarea').forEach(t => t.value = ''); } catch (t) { Swal.fire('فشل الاتصال', t.message, 'error'); } u.disabled = false; u.innerHTML = "إرسال بياناتك للقيادة"; };
+        window.submitCareer = async () => { 
+            const z = document.getElementById('carName').value.trim(), y = document.getElementById('carPhone').value.trim(), x = document.getElementById('carCity').value.trim(), w = document.getElementById('carPosition').value, v = document.getElementById('carNotes').value.trim(); 
+            if (!z || !y || !x || !w) return Swal.fire('خطأ إدخال', 'يرجى استكمال البيانات المطلوبة.', 'warning'); 
+            const u = document.getElementById('btnCareer'); u.disabled = true; u.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التشفير...'; 
+            try { 
+                await addDoc(collection(db, "careers"), { name: z, phone: y, city: x, position: w, notes: v, timestamp: new Date() }); 
+                document.getElementById('careerModal').style.display = 'none'; 
+                Swal.fire('تم الإرسال', 'تم توجيه ملفك لإدارة الموارد البشرية. استعد للتحرك.', 'success'); 
+                document.querySelectorAll('#careerModal input, #careerModal select, #careerModal textarea').forEach(t => t.value = ''); 
+            } catch (t) { Swal.fire('فشل الاتصال', t.message, 'error'); } 
+            u.disabled = false; u.innerHTML = "إرسال بياناتك للقيادة"; 
+        };
         
-        window.submitFranchise = async () => { const z = document.getElementById('franName').value.trim(), y = document.getElementById('franPhone').value.trim(), x = document.getElementById('franCity').value, w = document.getElementById('franOffice').value, v = document.getElementById('franNotes').value.trim(); if (!z || !y || !x || !w) return Swal.fire('خطأ إدخال', 'جميع الحقول الأساسية مطلوبة.', 'warning'); const u = document.getElementById('btnFranchise'); u.disabled = true; u.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الإرسال...'; try { await j(i(db, "franchises"), { name: z, phone: y, city: x, office: w, notes: v, timestamp: new Date() }); document.getElementById('franchiseModal').style.display = 'none'; Swal.fire('نجاح', 'تم تسجيل طلب الوكالة وسيتم التواصل معك.', 'success'); document.querySelectorAll('#franchiseModal input, #franchiseModal select, #franchiseModal textarea').forEach(t => t.value = ''); } catch (t) { Swal.fire('فشل الاتصال', t.message, 'error'); } u.disabled = false; u.innerHTML = "تسجيل طلب الفرنشايز"; };
+        window.submitFranchise = async () => { 
+            const z = document.getElementById('franName').value.trim(), y = document.getElementById('franPhone').value.trim(), x = document.getElementById('franCity').value, w = document.getElementById('franOffice').value, v = document.getElementById('franNotes').value.trim(); 
+            if (!z || !y || !x || !w) return Swal.fire('خطأ إدخال', 'جميع الحقول الأساسية مطلوبة.', 'warning'); 
+            const u = document.getElementById('btnFranchise'); u.disabled = true; u.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الإرسال...'; 
+            try { 
+                await addDoc(collection(db, "franchises"), { name: z, phone: y, city: x, office: w, notes: v, timestamp: new Date() }); 
+                document.getElementById('franchiseModal').style.display = 'none'; 
+                Swal.fire('نجاح', 'تم تسجيل طلب الوكالة وسيتم التواصل معك.', 'success'); 
+                document.querySelectorAll('#franchiseModal input, #franchiseModal select, #franchiseModal textarea').forEach(t => t.value = ''); 
+            } catch (t) { Swal.fire('فشل الاتصال', t.message, 'error'); } 
+            u.disabled = false; u.innerHTML = "تسجيل طلب الفرنشايز"; 
+        };
         
-        // 🚀 التعديل الجبار لحل مشكلة الدخول لكل أنواع الحسابات 🚀
+        // 🚀 كود الدخول المتين 🚀
         window.handleLogin = async () => {
             let z = document.getElementById('merchantEmail').value.trim().toLowerCase();
             let y = document.getElementById('merchantPassword').value;
-            if (!z || !y) return Swal.fire('رفض الوصول', 'يجب إدخال كود التاجر وشفرة المرور.', 'error');
+            if (!z || !y) return Swal.fire('رفض الوصول', 'يجب إدخال كود الدخول وشفرة المرور.', 'error');
             
             const x = z.includes('@') ? z : z + "@axon.com";
             const w = document.getElementById('btnLogin');
             w.disabled = true; w.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري المطابقة...';
             
             try {
-                // 1. تسجيل الدخول للفايربيز
-                const userCred = await c(auth, x, y);
+                const userCred = await signInWithEmailAndPassword(auth, x, y);
                 const user = userCred.user;
                 
-                // 2. التحقق من السوبر أدمن
                 if (x === "admin@axon.com") {
                     localStorage.setItem('axon_user_role', 'super_admin');
                     localStorage.setItem('axon_branch', 'all');
@@ -562,21 +693,19 @@
                 
                 let isAccountFound = false;
 
-                // 3. التحقق هل هو مدير فرع؟ (بدون ما نضرب Error لو اترفض)
                 try {
-                    const adminDoc = await f(e(db, "admins", user.uid));
+                    const adminDoc = await getDoc(doc(db, "admins", user.uid));
                     if (adminDoc.exists()) {
                         isAccountFound = true;
                         localStorage.setItem('axon_user_role', 'branch_admin');
                         localStorage.setItem('axon_branch', adminDoc.data().branchName || 'غير محدد');
                         window.location.href = "admin.html"; return;
                     }
-                } catch(err) { /* يتجاهل الـ Error بسلام */ }
+                } catch(err) { }
 
-                // 4. التحقق هل هو تاجر؟
                 if (!isAccountFound) {
                     try {
-                        const merchantDoc = await f(e(db, "merchant_profiles", x));
+                        const merchantDoc = await getDoc(doc(db, "merchant_profiles", x));
                         if (merchantDoc.exists()) {
                             isAccountFound = true;
                             localStorage.setItem('axon_user_role', 'merchant');
@@ -586,10 +715,9 @@
                     } catch(err) { }
                 }
 
-                // 5. التحقق هل هو مندوب؟
                 if (!isAccountFound) {
                     try {
-                        const courierDoc = await f(e(db, "couriers", user.uid));
+                        const courierDoc = await getDoc(doc(db, "couriers", user.uid));
                         if (courierDoc.exists()) {
                             isAccountFound = true;
                             localStorage.setItem('axon_user_role', 'courier');
@@ -598,7 +726,6 @@
                     } catch(err) { }
                 }
 
-                // لو ملقاش أي حاجة من دول (حالة نادرة)
                 if(!isAccountFound) {
                     Swal.fire('خطأ', 'الحساب غير مسجل في أي قسم من أقسام الشركة', 'error');
                     w.disabled = false; w.innerHTML = "دخول المحطة";
@@ -612,22 +739,22 @@
         
         window.toggleChat = () => { const z = document.getElementById('chatWidget'); z.style.display = (z.style.display === 'flex') ? 'none' : 'flex'; };
         
-        window.sendToChat = async () => { const phone = document.getElementById('chatPhone').value.trim(); const input = document.getElementById('chatInput'); const chatBody = document.getElementById('chatBody'); const msg = input.value.trim(); if (!phone || phone.length < 10) return Swal.fire('تنبيه', 'رجاء إدخال رقم هاتف صحيح في الخانة المخصصة لنتمكن من الرد عليك ومتابعتك عبر الواتساب.', 'warning'); if (!msg) return; chatBody.innerHTML += `<div class="msg-user">${msg}</div>`; input.value = ''; chatBody.scrollTop = chatBody.scrollHeight; try { await j(i(db, "web_inquiries"), { message: msg, phone: phone, timestamp: new Date(), status: "new" }); setTimeout(() => { chatBody.innerHTML += `<div class="msg-bot">تم استلام طلبك وتوجيهه لمركز العمليات. سنتواصل معك على الواتساب قريباً على الرقم (${phone}).</div>`; chatBody.scrollTop = chatBody.scrollHeight; }, 800); } catch (w) { console.error("Chat Error:", w); } };
+        window.sendToChat = async () => { const phone = document.getElementById('chatPhone').value.trim(); const input = document.getElementById('chatInput'); const chatBody = document.getElementById('chatBody'); const msg = input.value.trim(); if (!phone || phone.length < 10) return Swal.fire('تنبيه', 'رجاء إدخال رقم هاتف صحيح في الخانة المخصصة لنتمكن من الرد عليك ومتابعتك عبر الواتساب.', 'warning'); if (!msg) return; chatBody.innerHTML += `<div class="msg-user">${msg}</div>`; input.value = ''; chatBody.scrollTop = chatBody.scrollHeight; try { await addDoc(collection(db, "web_inquiries"), { message: msg, phone: phone, timestamp: new Date(), status: "new" }); setTimeout(() => { chatBody.innerHTML += `<div class="msg-bot">تم استلام طلبك وتوجيهه لمركز العمليات. سنتواصل معك على الواتساب قريباً على الرقم (${phone}).</div>`; chatBody.scrollTop = chatBody.scrollHeight; }, 800); } catch (w) { console.error("Chat Error:", w); } };
 
         window.toggleTheme = () => { document.body.classList.toggle('dark-mode'); const z = document.getElementById('themeIcon'); if (document.body.classList.contains('dark-mode')) { localStorage.setItem('axon_main_theme', 'dark'); z.className = 'fa-solid fa-sun'; } else { localStorage.setItem('axon_main_theme', 'light'); z.className = 'fa-solid fa-moon'; } }; if (localStorage.getItem('axon_main_theme') === 'dark') { document.body.classList.add('dark-mode'); setTimeout(() => { const z = document.getElementById('themeIcon'); if (z) z.className = 'fa-solid fa-sun'; }, 100); }
         
         let currentTrackedDoc = null;
-        window.initiateTracking = async () => { const z = document.getElementById('trackAwbInput').value.trim().toUpperCase(); if (!z || !z.startsWith('AXN')) return Swal.fire('بوليصة غير صحيحة', 'يرجى إدخال رقم البوليصة الصحيح (يبدأ بـ AXN).', 'error'); Swal.fire({ title: 'جاري المسح الراداري...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } }); try { const y = await g(i(db, "shipments")); let x = null; y.forEach(w => { const v = "AXN" + w.id.substring(0, 5).toUpperCase(); if (v === z && !w.data().deleted) x = { id: w.id, ...w.data(), awb: v }; }); if (x) { currentTrackedDoc = x; Swal.close(); document.getElementById('verifyPhoneModal').style.display = 'flex'; } else { Swal.fire('غير موجود', 'لم يتم العثور على شحنة بهذا الرقم.', 'error'); } } catch (y) { Swal.fire('خطأ اتصال', 'حدث خطأ أثناء فحص السيرفر.', 'error'); } };
+        window.initiateTracking = async () => { const z = document.getElementById('trackAwbInput').value.trim().toUpperCase(); if (!z || !z.startsWith('AXN')) return Swal.fire('بوليصة غير صحيحة', 'يرجى إدخال رقم البوليصة الصحيح (يبدأ بـ AXN).', 'error'); Swal.fire({ title: 'جاري المسح الراداري...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } }); try { const y = await getDocs(collection(db, "shipments")); let x = null; y.forEach(w => { const v = "AXN" + w.id.substring(0, 5).toUpperCase(); if (v === z && !w.data().deleted) x = { id: w.id, ...w.data(), awb: v }; }); if (x) { currentTrackedDoc = x; Swal.close(); document.getElementById('verifyPhoneModal').style.display = 'flex'; } else { Swal.fire('غير موجود', 'لم يتم العثور على شحنة بهذا الرقم.', 'error'); } } catch (y) { Swal.fire('خطأ اتصال', 'حدث خطأ أثناء فحص السيرفر.', 'error'); } };
         
         window.verifyTrackingPhone = () => { const z = document.getElementById('verifyPhoneInput').value.trim(); if (z === currentTrackedDoc.phone || z === currentTrackedDoc.phone2) { document.getElementById('verifyPhoneModal').style.display = 'none'; openDashboard(); } else { Swal.fire('تأكيد فاشل', 'رقم الهاتف لا يتطابق مع المسجل في البوليصة.', 'error'); } };
         
         function openDashboard() { document.getElementById('trackingDashboardModal').style.display = 'flex'; document.getElementById('dashAwbTitle').innerText = currentTrackedDoc.awb; document.getElementById('dashCustName').innerText = currentTrackedDoc.name.split(' ')[0]; document.getElementById('dashAmount').innerText = currentTrackedDoc.amount + " ج.م"; document.getElementById('dashAddress').innerText = currentTrackedDoc.city + " - " + currentTrackedDoc.address; const z = currentTrackedDoc.status; document.querySelectorAll('.timeline-step').forEach(y => { y.classList.remove('active'); y.classList.remove('done'); }); document.getElementById('step1').classList.add('done'); if (z === 'قيد التوصيل') { document.getElementById('step2').classList.add('active'); } else if (z === 'مذاع للرادار' || z.includes('مندوب')) { document.getElementById('step2').classList.add('done'); document.getElementById('step3').classList.add('active'); } else if (z === 'تم التسليم' || z === 'تمت التسوية') { document.getElementById('step2').classList.add('done'); document.getElementById('step3').classList.add('done'); document.getElementById('step4').classList.add('done'); } else { document.getElementById('step2').classList.add('active'); } }
         
-        window.openLocationFineModal = async () => { if (currentTrackedDoc.status === 'تم التسليم' || currentTrackedDoc.status === 'تمت التسوية') return Swal.fire('مغلق', 'لا يمكن تعديل مسار شحنة تم تسليمها.', 'info'); document.getElementById('trackingDashboardModal').style.display = 'none'; const z = Number(window.livePrices.penalty) || 30; const { value: y } = await Swal.fire({ title: 'تعديل مسار الشحنة', html: `<p style="font-size:14px; color:#666;">سيتم إضافة <b>رسوم تغيير مسار (${z} ج.م)</b> على إجمالي الشحنة لتعويض وقت وتوجيه المندوب.</p><input id="new-address-input" class="swal2-input" placeholder="اكتب العنوان الجديد بالتفصيل...">`, icon: 'warning', showCancelButton: true, confirmButtonText: 'موافق، تأكيد العنوان', cancelButtonText: 'تراجع', confirmButtonColor: '#D61C4E', preConfirm: () => { const x = document.getElementById('new-address-input').value.trim(); if (!x) Swal.showValidationMessage('الرجاء كتابة العنوان الجديد'); return x; } }); if (y) { try { const x = Number(currentTrackedDoc.amount) + z; await k(e(db, "shipments", currentTrackedDoc.id), { amount: x, address: y + " (معدل)", fineAdded: (currentTrackedDoc.fineAdded || 0) + z, status: "قيد التوصيل" }); currentTrackedDoc.amount = x; currentTrackedDoc.address = y + " (معدل)"; Swal.fire('تم التعديل', 'تم تغيير المسار وإضافة الرسوم بنجاح.', 'success').then(() => openDashboard()); } catch (x) { Swal.fire('خطأ', 'حدثت مشكلة أثناء تحديث البيانات.', 'error').then(() => openDashboard()); } } else { openDashboard(); } };
+        window.openLocationFineModal = async () => { if (currentTrackedDoc.status === 'تم التسليم' || currentTrackedDoc.status === 'تمت التسوية') return Swal.fire('مغلق', 'لا يمكن تعديل مسار شحنة تم تسليمها.', 'info'); document.getElementById('trackingDashboardModal').style.display = 'none'; const z = Number(window.livePrices.penalty) || 30; const { value: y } = await Swal.fire({ title: 'تعديل مسار الشحنة', html: `<p style="font-size:14px; color:#666;">سيتم إضافة <b>رسوم تغيير مسار (${z} ج.م)</b> على إجمالي الشحنة لتعويض وقت وتوجيه المندوب.</p><input id="new-address-input" class="swal2-input" placeholder="اكتب العنوان الجديد بالتفصيل...">`, icon: 'warning', showCancelButton: true, confirmButtonText: 'موافق، تأكيد العنوان', cancelButtonText: 'تراجع', confirmButtonColor: '#D61C4E', preConfirm: () => { const x = document.getElementById('new-address-input').value.trim(); if (!x) Swal.showValidationMessage('الرجاء كتابة العنوان الجديد'); return x; } }); if (y) { try { const x = Number(currentTrackedDoc.amount) + z; await updateDoc(doc(db, "shipments", currentTrackedDoc.id), { amount: x, address: y + " (معدل)", fineAdded: (currentTrackedDoc.fineAdded || 0) + z, status: "قيد التوصيل" }); currentTrackedDoc.amount = x; currentTrackedDoc.address = y + " (معدل)"; Swal.fire('تم التعديل', 'تم تغيير المسار وإضافة الرسوم بنجاح.', 'success').then(() => openDashboard()); } catch (x) { Swal.fire('خطأ', 'حدثت مشكلة أثناء تحديث البيانات.', 'error').then(() => openDashboard()); } } else { openDashboard(); } };
         
-        window.rescheduleDelivery = async () => { if (currentTrackedDoc.status === 'تم التسليم' || currentTrackedDoc.status === 'تمت التسوية') return Swal.fire('مغلق', 'لا يمكن تأجيل شحنة تم تسليمها.', 'info'); document.getElementById('trackingDashboardModal').style.display = 'none'; const z = (currentTrackedDoc.status === 'قيد التوصيل' || currentTrackedDoc.status === 'مؤجل' || currentTrackedDoc.status === 'مرتجع'); const y = z ? (Number(window.livePrices.penalty) || 30) : 0; let x = z ? `لقد تحرك المندوب بالفعل أو جرت محاولة تسليم. تأجيل الموعد الآن سيضيف غرامة قدرها (${y} ج.م) لتعويض وقت ومجهود الكابتن. هل توافق؟` : `تأجيل الاستلام مجاني لأن المندوب لم يتحرك بعد. هل تود تأجيل استلام الشحنة للغد؟`; const w = await Swal.fire({ title: 'تأجيل الاستلام', text: x, icon: z ? 'warning' : 'question', showCancelButton: true, confirmButtonText: 'نعم، قم بالتأجيل', cancelButtonText: 'إلغاء' }); if (w.isConfirmed) { try { let v = { status: "مؤجل", rescheduleRequest: true }; let u = Number(currentTrackedDoc.amount); if (z) { u += y; v.amount = u; v.fineAdded = (currentTrackedDoc.fineAdded || 0) + y; v.address = currentTrackedDoc.address + " | ⚠️ (غرامة تأجيل)"; } await k(e(db, "shipments", currentTrackedDoc.id), v); currentTrackedDoc.amount = u; if (z) currentTrackedDoc.address += " | ⚠️ (غرامة تأجيل)"; Swal.fire('تم التأجيل', 'تم إبلاغ الأسطول بتأجيل موعد التوصيل.', 'success').then(() => openDashboard()); } catch (v) { Swal.fire('خطأ', 'فشل الاتصال.', 'error').then(() => openDashboard()); } } else { openDashboard(); } };
+        window.rescheduleDelivery = async () => { if (currentTrackedDoc.status === 'تم التسليم' || currentTrackedDoc.status === 'تمت التسوية') return Swal.fire('مغلق', 'لا يمكن تأجيل شحنة تم تسليمها.', 'info'); document.getElementById('trackingDashboardModal').style.display = 'none'; const z = (currentTrackedDoc.status === 'قيد التوصيل' || currentTrackedDoc.status === 'مؤجل' || currentTrackedDoc.status === 'مرتجع'); const y = z ? (Number(window.livePrices.penalty) || 30) : 0; let x = z ? `لقد تحرك المندوب بالفعل أو جرت محاولة تسليم. تأجيل الموعد الآن سيضيف غرامة قدرها (${y} ج.م) لتعويض وقت ومجهود الكابتن. هل توافق؟` : `تأجيل الاستلام مجاني لأن المندوب لم يتحرك بعد. هل تود تأجيل استلام الشحنة للغد؟`; const w = await Swal.fire({ title: 'تأجيل الاستلام', text: x, icon: z ? 'warning' : 'question', showCancelButton: true, confirmButtonText: 'نعم، قم بالتأجيل', cancelButtonText: 'إلغاء' }); if (w.isConfirmed) { try { let v = { status: "مؤجل", rescheduleRequest: true }; let u = Number(currentTrackedDoc.amount); if (z) { u += y; v.amount = u; v.fineAdded = (currentTrackedDoc.fineAdded || 0) + y; v.address = currentTrackedDoc.address + " | ⚠️ (غرامة تأجيل)"; } await updateDoc(doc(db, "shipments", currentTrackedDoc.id), v); currentTrackedDoc.amount = u; if (z) currentTrackedDoc.address += " | ⚠️ (غرامة تأجيل)"; Swal.fire('تم التأجيل', 'تم إبلاغ الأسطول بتأجيل موعد التوصيل.', 'success').then(() => openDashboard()); } catch (v) { Swal.fire('خطأ', 'فشل الاتصال.', 'error').then(() => openDashboard()); } } else { openDashboard(); } };
         
-        window.openSupportTicket = async () => { document.getElementById('trackingDashboardModal').style.display = 'none'; const { value: z } = await Swal.fire({ title: 'التواصل مع القيادة', input: 'textarea', inputLabel: 'اشرح مشكلتك بالتفصيل بخصوص هذه الشحنة وسنتواصل معك', inputPlaceholder: 'اكتب هنا...', showCancelButton: true, confirmButtonText: 'إرسال التذكرة', cancelButtonText: 'إلغاء' }); if (z) { try { await j(i(db, "web_inquiries"), { message: `تذكرة دعم (بوليصة: ${currentTrackedDoc.awb}): ${z}`, phone: currentTrackedDoc.phone, status: "new", timestamp: new Date() }); Swal.fire('تم الإرسال', 'تم رفع التذكرة لخدمة العملاء وسيتم حل المشكلة فوراً.', 'success').then(() => openDashboard()); } catch (y) { Swal.fire('خطأ', 'لم يتم إرسال التذكرة.', 'error').then(() => openDashboard()); } } else { openDashboard(); } };
+        window.openSupportTicket = async () => { document.getElementById('trackingDashboardModal').style.display = 'none'; const { value: z } = await Swal.fire({ title: 'التواصل مع القيادة', input: 'textarea', inputLabel: 'اشرح مشكلتك بالتفصيل بخصوص هذه الشحنة وسنتواصل معك', inputPlaceholder: 'اكتب هنا...', showCancelButton: true, confirmButtonText: 'إرسال التذكرة', cancelButtonText: 'إلغاء' }); if (z) { try { await addDoc(collection(db, "web_inquiries"), { message: `تذكرة دعم (بوليصة: ${currentTrackedDoc.awb}): ${z}`, phone: currentTrackedDoc.phone, status: "new", timestamp: new Date() }); Swal.fire('تم الإرسال', 'تم رفع التذكرة لخدمة العملاء وسيتم حل المشكلة فوراً.', 'success').then(() => openDashboard()); } catch (y) { Swal.fire('خطأ', 'لم يتم إرسال التذكرة.', 'error').then(() => openDashboard()); } } else { openDashboard(); } };
 
         let publicIP = "جاري التحقق...";
         fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ publicIP = d.ip; }).catch(e=>{ publicIP = "غير معروف"; });
@@ -674,7 +801,7 @@
 
             if(w.isConfirmed) {
                 try {
-                    await j(i(db, "axon_rescue_orders"), {
+                    await addDoc(collection(db, "axon_rescue_orders"), {
                         merchantEmail: "عميل عام (موقع)", phone, car, gps,
                         userIP: publicIP, deviceInfo: publicDeviceInfo,
                         status: "نداء استغاثة", timestamp: new Date()
@@ -703,7 +830,7 @@
 
             if(w.isConfirmed) {
                 try {
-                    await j(i(db, "axon_home_orders"), {
+                    await addDoc(collection(db, "axon_home_orders"), {
                         merchantEmail: "عميل عام (موقع)", from, to, phone, service,
                         userIP: publicIP, deviceInfo: publicDeviceInfo,
                         status: "قيد التسعير", timestamp: new Date()
