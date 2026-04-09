@@ -25,6 +25,9 @@
         .logo span { color: var(--primary-red); }
         .container { padding: 20px; max-width: 1400px; margin: 0 auto;}
         
+        .top-badge { background: var(--primary-blue); color: white; padding: 5px 15px; border-radius: 20px; font-size: 13px; font-weight: bold;}
+        .branch-badge { background: var(--primary-red); color: white; padding: 5px 15px; border-radius: 8px; font-size: 14px; font-weight: bold; margin-right: 10px; display: none;}
+
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .stat-card { background: var(--white); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-blue); transition: 0.3s;}
         .stat-card h3 { font-size: 15px; margin: 0 0 10px 0; color: #666; transition: 0.3s;}
@@ -52,7 +55,6 @@
         .status-dropdown { padding: 6px; border-radius: 5px; border: 1px solid #ddd; font-family: 'Cairo'; font-weight: bold; outline: none; transition: 0.3s; background: var(--white); color: var(--dark-text);}
         .logout-btn { background: var(--white); border: 2px solid var(--primary-red); color: var(--primary-red); padding: 6px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; transition: 0.3s;}
         .lang-btn { background: transparent; border: 2px solid var(--primary-blue); color: var(--primary-blue); padding: 6px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 13px; transition: 0.3s;}
-        .lang-btn:hover { background: var(--primary-blue); color: white; }
         
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; z-index: 2000; padding: 15px; backdrop-filter: blur(5px);}
         .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 500px; position: relative; transition: 0.3s; max-height: 90vh; overflow-y: auto;}
@@ -67,7 +69,7 @@
         body.dark-mode .logout-btn { background: transparent; }
         body.dark-mode .bourse-section { background: #2c1a00 !important; border-color: #ff9800 !important; }
         body.dark-mode .bourse-section h2 { color: #ffb74d !important; border-bottom-color: #ff9800 !important; }
-        body.dark-mode input[type="number"], body.dark-mode input[type="text"], body.dark-mode input[type="tel"] { background: #2c2c2c; color: #fff; border: 1px solid #444; }
+        body.dark-mode input[type="number"], body.dark-mode input[type="text"], body.dark-mode input[type="tel"], body.dark-mode input[type="email"] { background: #2c2c2c; color: #fff; border: 1px solid #444; }
         
         .new-acc-section { background: #f0f9fa; border: 2px solid #17a2b8; }
         body.dark-mode .new-acc-section { background: #0b2b30 !important; border-color: #17a2b8 !important; }
@@ -99,35 +101,36 @@
         /* ---------------- CSS الطباعة ---------------- */
         @media print {
             body { background: #fff; margin: 0; padding: 0; -webkit-print-color-adjust: exact; }
-            header, .container, .print-controls { display: none !important; }
+            header, .container, .print-controls-ui, .swal2-container { display: none !important; }
             #printArea { display: block !important; width: 100%; margin: 0; padding: 0; }
             @page { margin: 5mm; }
         }
-        .a4-wrapper { width: 100%; max-width: 800px; margin: 0 auto; background: #fff; border: 2px solid #0A3D62; padding: 10px; box-sizing: border-box; }
-        .print-controls { text-align: center; margin-bottom: 20px; padding: 15px; background: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
-        .print-controls button { cursor: pointer; padding: 12px 25px; margin: 5px; font-size: 16px; font-weight: bold; border: none; border-radius: 5px; color: white;}
+        .a4-wrapper { width: 100%; max-width: 800px; margin: 0 auto; background: #fff; border: 2px solid #0A3D62; padding: 10px; box-sizing: border-box; color: #000; }
+        .print-controls-ui { text-align: center; margin-bottom: 20px; padding: 15px; background: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .print-controls-ui button { cursor: pointer; padding: 12px 25px; margin: 5px; font-size: 16px; font-weight: bold; border: none; border-radius: 5px; color: white; font-family: 'Cairo';}
         .print-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #b82329; padding-bottom: 5px; margin-bottom: 10px; flex-wrap: nowrap; gap: 10px;}
         .print-header > div { flex: 1; text-align: center; overflow: hidden; }
         .barcode-svg { max-width: 100%; height: auto; }
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-        .box { border: 1px solid #ccc; padding: 5px; border-radius: 5px; font-size: 13px;}
+        .box { border: 1px solid #ccc; padding: 5px; border-radius: 5px; font-size: 13px; color: #000;}
         .box h3 { margin: 0 0 5px 0; background: #0A3D62; color: #fff; padding: 3px; font-size: 13px; text-align: center;}
-        .cod-box { background: #fdf5f5; border: 2px solid #b82329; text-align: center; padding: 5px; border-radius: 5px; margin-bottom:10px;}
-        .constitution-columns { column-count: 2; column-gap: 15px; font-size: 9px; line-height: 1.3; text-align: justify; border: 1px solid #000; padding: 10px; margin-bottom: 10px; background: #fdfdfd;}
-        .constitution-columns h4 { margin: 5px 0 3px 0; font-size: 10px; color: #000; border-bottom: 1px solid #000; padding-bottom:2px;}
-        .constitution-columns p { margin: 0 0 4px 0; color:#000; break-inside: avoid;}
+        .cod-box { background: #fff; border: 2px solid #b82329; text-align: center; padding: 5px; border-radius: 5px; margin-bottom:10px; color: #b82329;}
+        .constitution-columns { column-count: 2; column-gap: 15px; font-size: 9px; line-height: 1.4; text-align: justify; border: 1px solid #000; padding: 10px; margin-bottom: 10px; background: #fff;}
+        .constitution-columns * { color: #000 !important; }
+        .constitution-columns h4 { margin: 5px 0 3px 0; font-size: 11px; border-bottom: 1px solid #000; padding-bottom:2px;}
         .footer-grid { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; font-size: 11px;}
-        .digital-sig { text-align: center; font-size: 9px; font-family: monospace; color: #000; border-top: 1px dashed #000; padding-top: 5px; font-weight:bold;}
-        .fragile-banner { background: #b82329; color: white; text-align: center; font-size: 16px; font-weight: bold; padding: 8px; border-radius: 5px; margin-bottom: 10px; border: 2px dashed #000;}
+        .digital-sig { text-align: center; font-size: 9px; font-family: monospace; color: #000; border-top: 1px dashed #000; padding-top: 5px; font-weight: bold;}
         .safeer-name-badge { background: #0A3D62; color: white; padding: 8px 15px; border-radius: 8px; display: inline-block; font-family: 'Cairo'; margin-bottom: 5px; border: 2px solid #b82329;}
         .safeer-name-badge h2 { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 1px;}
         .branch-badge-print { font-weight: bold; font-size: 14px; color: #000; text-transform: uppercase; background: #f0f0f0; border: 2px solid #000; padding: 3px 10px; display: inline-block; margin-bottom: 5px;}
+        .fragile-banner { background: #b82329; color: white; text-align: center; font-size: 16px; font-weight: bold; padding: 8px; border-radius: 5px; margin-bottom: 10px; border: 2px dashed #000;}
     </style>
 </head>
 <body>
     <header id="mainHeader">
         <div class="logo"><i class="fa-solid fa-chess-king"></i> <span data-i18n="admin_title">إدارة</span> | <span style="color:var(--primary-red);">AXON</span></div>
         <div style="display: flex; gap: 10px; align-items: center;">
+            <div class="branch-badge" id="adminBranchDisplay">الفرع: </div>
             <button onclick="window.toggleLang()" class="lang-btn" id="langBtn">English</button>
             <button onclick="window.toggleTheme()" style="background:none; border:none; color:var(--primary-blue); font-size:24px; cursor:pointer;" title="الوضع الليلي">
                 <i id="themeIcon" class="fa-solid fa-moon"></i>
@@ -152,33 +155,48 @@
 
         <div id="mainOps" class="admin-tab-content active">
             <div class="stats-grid">
-                <div class="stat-card"><h3 data-i18n="stat_active">إجمالي الشحنات</h3><div class="value" id="totalShipments">0</div></div>
-                <div class="stat-card"><h3 data-i18n="stat_cod">التحصيلات النقدية</h3><div class="value" id="totalMoney" style="color: #28a745;">0 ج.م</div></div>
+                <div class="stat-card"><h3 data-i18n="stat_active">إجمالي الشحنات المتاحة</h3><div class="value" id="totalShipments">0</div></div>
+                <div class="stat-card"><h3 data-i18n="stat_cod">إجمالي التحصيلات (COD)</h3><div class="value" id="totalMoney" style="color: #28a745;">0 ج.م</div></div>
                 <div class="stat-card"><h3 data-i18n="stat_radar">مهام الرادار النشطة</h3><div class="value" id="activeRadarTasks">0</div></div>
             </div>
 
-            <!-- إنشاء حسابات جديدة -->
-            <div class="admin-section new-acc-section">
+            <!-- إنشاء حسابات جديدة (شغالة فعلياً) -->
+            <div class="admin-section new-acc-section" id="createAccountsSection">
                 <h2><i class="fa-solid fa-user-plus"></i> <span data-i18n="create_acc">إنشاء حسابات جديدة</span></h2>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 15px;">
                     <div><label style="font-size:13px; font-weight:bold;">الاسم / اسم المحل:</label><input type="text" id="newAccName" class="search-box" style="margin-bottom:0; padding:8px;"></div>
                     <div><label style="font-size:13px; font-weight:bold;">الإيميل:</label><input type="email" id="newAccEmail" class="search-box" style="margin-bottom:0; padding:8px;"></div>
-                    <div><label style="font-size:13px; font-weight:bold;">الباسورد:</label><input type="text" id="newAccPass" class="search-box" style="margin-bottom:0; padding:8px;"></div>
+                    <div><label style="font-size:13px; font-weight:bold;">الباسورد (6 أحرف/أرقام للأقل):</label><input type="text" id="newAccPass" class="search-box" style="margin-bottom:0; padding:8px;"></div>
                     <div>
                         <label style="font-size:13px; font-weight:bold;">نوع الحساب:</label>
                         <select id="newAccRole" class="status-dropdown" style="width: 100%; padding: 8px;">
                             <option value="merchant">تاجر</option>
                             <option value="delivery">مندوب</option>
-                            <option value="admin">إدارة (أدمن)</option>
+                            <option value="admin">إدارة (وكيل محافظة)</option>
                         </select>
                     </div>
                 </div>
-                <button id="btnCreateAcc" onclick="Swal.fire('تنبيه', 'هذه الواجهة للتصميم كما طلبت، سيتم ربطها بالـ Auth لاحقاً', 'info')" style="background: #17a2b8; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; font-family: 'Cairo';"><span data-i18n="btn_create">إنشاء الحساب فوراً</span> 🚀</button>
+                <button id="btnCreateAcc" onclick="window.createNewAccount()" style="background: #17a2b8; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; font-family: 'Cairo';"><span data-i18n="btn_create">إنشاء الحساب فوراً</span> 🚀</button>
             </div>
 
+            <!-- خريطة الرادار التكتيكي -->
             <div class="admin-section">
                 <h2 style="color: var(--primary-blue);"><i class="fa-solid fa-map-location-dot"></i> <span data-i18n="radar_map">الرادار التكتيكي (تتبع حي)</span></h2>
                 <div id="adminMap"></div>
+            </div>
+
+            <!-- أهداف الرادار (البيكب واشتريلي) اللي كانت مختفية -->
+            <div class="admin-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary-red); padding-bottom: 10px; margin-bottom: 15px;">
+                    <h2 style="border: none; padding: 0; margin: 0;"><i class="fa-solid fa-satellite-dish"></i> أهداف الرادار (اشتريلي / بيكب / كولد)</h2>
+                    <button onclick="window.issuePickupOrder()" style="background: var(--primary-red); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-family: 'Cairo'; font-weight: bold;"><i class="fa-solid fa-truck-pickup"></i> إصدار أمر بيكب جديد</button>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>النوع والتفاصيل</th><th>العنوان والمبلغ</th><th>الحالة والمتابعة</th></tr></thead>
+                        <tbody id="radarTasksBody"></tbody>
+                    </table>
+                </div>
             </div>
 
             <div class="admin-section bourse-section" style="background: #fffde7; border: 2px dashed #f57f17;" id="exchangeSection">
@@ -250,25 +268,43 @@
                     </table>
                 </div>
             </div>
+            <div class="admin-section">
+                <h2><i class="fa-solid fa-user-plus"></i> طلبات الانضمام للأسطول (توظيف)</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>التاريخ</th><th>الاسم والوظيفة</th><th>المحافظة والموبايل</th><th>ملاحظات وخبرات</th></tr></thead>
+                        <tbody id="careersBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="admin-section">
+                <h2><i class="fa-solid fa-code-branch"></i> طلبات وكالة (فرنشايز)</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>التاريخ</th><th>الاسم/الشركة</th><th>المنطقة المستهدفة</th><th>رقم التواصل</th><th>ملاحظات وتفاصيل</th></tr></thead>
+                        <tbody id="franchiseBody"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
     </div>
 
     <div id="printArea"></div>
 
-    <!-- مودال تعديل الشحنة -->
+    <!-- مودال تعديل الشحنة اللي كان مختفي -->
     <div id="editShipmentModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="document.getElementById('editShipmentModal').style.display='none'">✖</button>
             <h3 style="color:var(--primary-blue); border-bottom:2px solid var(--primary-red); padding-bottom:10px; margin-top:0;">تعديل الشحنة ✏️</h3>
             <input type="hidden" id="editShipId">
-            <label style="font-weight:bold; color:var(--primary-blue);">اسم المستلم:</label>
+            <label style="font-weight:bold; color:var(--primary-blue); display:block; text-align:right;">اسم المستلم:</label>
             <input type="text" id="editShipName">
-            <label style="font-weight:bold; color:var(--primary-blue);">العنوان:</label>
+            <label style="font-weight:bold; color:var(--primary-blue); display:block; text-align:right;">العنوان:</label>
             <input type="text" id="editShipAddress">
-            <label style="font-weight:bold; color:var(--primary-blue);">المبلغ (COD):</label>
+            <label style="font-weight:bold; color:var(--primary-blue); display:block; text-align:right;">المبلغ (COD):</label>
             <input type="number" id="editShipAmount">
-            <label style="font-weight:bold; color:var(--primary-blue);">رقم الهاتف:</label>
+            <label style="font-weight:bold; color:var(--primary-blue); display:block; text-align:right;">رقم الهاتف:</label>
             <input type="tel" id="editShipPhone">
             <button onclick="window.saveShipmentEdits()" style="width:100%; background:var(--primary-blue); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; font-family:'Cairo'; margin-top:15px; cursor:pointer;">حفظ التعديلات</button>
         </div>
@@ -276,8 +312,8 @@
 
     <script>
         const i18nDict = {
-            ar: { admin_title: "إدارة", logout: "خروج", tab_main: "العمليات الرئيسية", tab_emergency: "طوارئ ونقل", tab_support: "الدعم والطلبات", stat_active: "إجمالي الشحنات", stat_cod: "التحصيلات النقدية", stat_radar: "مهام الرادار", create_acc: "إنشاء حسابات جديدة", btn_create: "إنشاء الحساب فوراً", radar_map: "الرادار التكتيكي (تتبع حي)", bourse_title: "بورصة الشحن الحية", bank_title: "بنك الشحنات الرئيسي" },
-            en: { admin_title: "Admin", logout: "Logout", tab_main: "Main Ops", tab_emergency: "Emergency", tab_support: "Support", stat_active: "Total Shipments", stat_cod: "COD Collection", stat_radar: "Radar Tasks", create_acc: "Create Accounts", btn_create: "Create Now", radar_map: "Live Tactical Radar", bourse_title: "Live Shipping Exchange", bank_title: "Main Shipments Bank" }
+            ar: { admin_title: "إدارة", logout: "خروج", tab_main: "العمليات الرئيسية", tab_emergency: "طوارئ ونقل", tab_support: "الدعم والطلبات", stat_active: "إجمالي الشحنات المتاحة", stat_cod: "إجمالي التحصيلات (COD)", stat_radar: "مهام الرادار النشطة", create_acc: "إنشاء حسابات جديدة (موظفين وتجار)", btn_create: "إنشاء الحساب فوراً", radar_map: "الرادار التكتيكي (تتبع حي)", bourse_title: "بورصة الشحن الحية (تحديث مركزي)", bank_title: "الرادار اللوجستي (بنك الشحنات)" },
+            en: { admin_title: "Admin", logout: "Logout", tab_main: "Main Ops", tab_emergency: "Emergency", tab_support: "Support", stat_active: "Available Shipments", stat_cod: "Total COD", stat_radar: "Active Radar Tasks", create_acc: "Create New Accounts", btn_create: "Create Account Now", radar_map: "Tactical Live Radar", bourse_title: "Live Shipping Exchange", bank_title: "Logistics Radar (Shipments Bank)" }
         };
 
         window.toggleLang = () => { let lang = document.documentElement.lang === 'ar' ? 'en' : 'ar'; localStorage.setItem('axon_admin_lang', lang); applyLang(lang); };
@@ -291,11 +327,17 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, setDoc, getDoc, addDoc, deleteDoc, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw", authDomain: "axon-express-2f534.firebaseapp.com", projectId: "axon-express-2f534", storageBucket: "axon-express-2f534.firebasestorage.app", messagingSenderId: "958528400260", appId: "1:958528400260:web:504ae94f3ef2225b928bd1" };
-        const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
+        const app = initializeApp(firebaseConfig); 
+        const auth = getAuth(app); 
+        const db = getFirestore(app);
+
+        // إنشاء نسخة ثانوية لإنشاء الحسابات بدون ما تطلع الأدمن من حسابه الحالي
+        const secondaryApp = initializeApp(firebaseConfig, "SecondaryApp");
+        const secondaryAuth = getAuth(secondaryApp);
 
         let adminRole = "", adminBranch = "all";
         let currentFilter = 'all';
@@ -318,15 +360,59 @@
 
             if (adminRole === 'super_admin') {
                 document.getElementById('exchangeSection').style.display = 'block';
-                loadShipments(); loadLivePrices(); loadEmergencyOps(); loadSupportTickets();
+                document.getElementById('createAccountsSection').style.display = 'block';
+                loadShipments(); loadLivePrices(); loadEmergencyOps(); loadSupportTickets(); loadRadarTasks();
             } else if (adminRole === 'branch_admin') {
                 document.getElementById('exchangeSection').style.display = 'none';
-                loadShipments(adminBranch); loadEmergencyOps(adminBranch); loadSupportTickets(adminBranch);
+                document.getElementById('createAccountsSection').style.display = 'none'; // مدراء الفروع لا ينشئون حسابات
+                document.getElementById('adminBranchDisplay').innerText = "فرع: " + adminBranch;
+                document.getElementById('adminBranchDisplay').style.display = 'inline-block';
+                loadShipments(adminBranch); loadEmergencyOps(adminBranch); loadSupportTickets(adminBranch); loadRadarTasks(adminBranch);
             } else { window.location.href = "index.html"; }
         });
 
         window.logout = () => { localStorage.clear(); signOut(auth).then(() => window.location.href = "index.html"); }
 
+        // --- دالة إنشاء الحسابات الفعلية ---
+        window.createNewAccount = async () => {
+            const name = document.getElementById('newAccName').value.trim();
+            const email = document.getElementById('newAccEmail').value.trim();
+            const pass = document.getElementById('newAccPass').value;
+            const role = document.getElementById('newAccRole').value;
+            const btn = document.getElementById('btnCreateAcc');
+
+            if(!name || !email || !pass) return Swal.fire('بيانات ناقصة', 'رجاءً تعبئة الاسم والإيميل والباسورد', 'error');
+            if(pass.length < 6) return Swal.fire('خطأ', 'الباسورد يجب أن يكون 6 أحرف أو أرقام على الأقل', 'error');
+
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الإنشاء...'; btn.disabled = true;
+
+            try {
+                // استخدام الـ Secondary Auth عشان الأدمن الحالي ميخرجش
+                const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, pass);
+                const uid = userCredential.user.uid;
+                await signOut(secondaryAuth); // الخروج من الحساب الجديد فوراً
+
+                let collectionName = "merchant_profiles"; 
+                if(role === "delivery") collectionName = "couriers";
+                if(role === "admin") collectionName = "admins";
+
+                let userData = { name: name, email: email, role: role, timestamp: new Date() };
+                
+                // تحديد بيانات إضافية حسب نوع الحساب
+                if(role === "delivery") { userData.status = "offline"; userData.currentLocation = {lat: null, lng: null}; }
+                if(role === "admin") { userData.branchName = prompt("أدخل اسم فرع المحافظة لهذا الوكيل (مثال: الإسكندرية):") || "المركز الرئيسي"; }
+                if(role === "merchant") { userData.branchName = prompt("أدخل اسم فرع المحافظة التابع لها التاجر:") || "المركز الرئيسي"; }
+
+                await setDoc(doc(db, collectionName, role === "merchant" ? email : uid), userData);
+                
+                Swal.fire('عاش يا هندسة', `تم إنشاء حساب (${name}) بنجاح كـ (${role})`, 'success');
+                
+                document.getElementById('newAccName').value = ''; document.getElementById('newAccEmail').value = ''; document.getElementById('newAccPass').value = '';
+            } catch (error) { Swal.fire('خطأ في الإنشاء', error.message, 'error'); } 
+            finally { btn.innerHTML = '<span data-i18n="btn_create">إنشاء الحساب فوراً</span> 🚀'; btn.disabled = false; }
+        };
+
+        // --- إعداد الخريطة ---
         let map = L.map('adminMap').setView([31.2001, 29.9187], 12);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
 
@@ -350,6 +436,56 @@
             Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم تحديث البورصة', showConfirmButton:false, timer:2000});
         };
 
+        window.issuePickupOrder = async () => {
+            const { value: vals } = await Swal.fire({ title: 'إصدار أمر بيكب جديد', html: '<input id="swal-merchant" class="swal2-input" placeholder="اسم التاجر أو الشركة"><input id="swal-address" class="swal2-input" placeholder="العنوان بالتفصيل"><input id="swal-notes" class="swal2-input" placeholder="ملاحظات">', preConfirm: () => [document.getElementById('swal-merchant').value, document.getElementById('swal-address').value, document.getElementById('swal-notes').value] });
+            if (vals && vals[0] && vals[1]) { 
+                await addDoc(collection(db, "eshteryly_orders"), { 
+                    merchantEmail: vals[0], 
+                    details: vals[2] || "طلب استلام طرود من التاجر", 
+                    address: vals[1], 
+                    paymentMethod: "pickup", 
+                    status: "جاري البحث عن مندوب", 
+                    timestamp: new Date(), 
+                    branchName: adminBranch === 'all' ? "المركز الرئيسي" : adminBranch,
+                    type: 'radar'
+                }); 
+                Swal.fire('تم', 'تم البث للرادار', 'success'); 
+            }
+        };
+
+        function loadRadarTasks(branchFilter = null) {
+            let q = query(collection(db, "eshteryly_orders"), orderBy("timestamp", "desc"));
+            onSnapshot(q, (snap) => {
+                let html = "", count = 0;
+                snap.forEach(docSnap => {
+                    const d = docSnap.data(), id = docSnap.id;
+                    if(branchFilter && branchFilter !== 'all' && d.branchName !== branchFilter) return;
+                    if(d.status === "تم التسليم بنجاح" || d.status === "مرفوض" || d.status === "تمت التسوية") return;
+                    count++;
+                    
+                    let typeIcon = "🛒 اشتريلي"; let typeColor = "#000";
+                    if(d.paymentMethod === 'pickup') { typeIcon = "📦 أمر بيكب"; typeColor = "#8e44ad"; } 
+                    else if(d.details && d.details.includes('كولد')) { typeIcon = "🥶 كولد / فريش"; typeColor = "#0EA5E9"; }
+
+                    let btns = "";
+                    if(d.status === "جاري البحث عن مندوب") {
+                        btns = `<span style="color:#856404; background:#fff3cd; padding:5px; border-radius:5px; font-size:12px; display:inline-block; font-weight:bold;">مذاع على الرادار 📡</span> <button class="btn-action btn-delete" onclick="window.deleteEsh('${id}')" style="margin-top:5px;">حذف ✖</button>`;
+                    } else {
+                        btns = `<div style="text-align:center;"><span style="color:#155724; background:#d4edda; padding:5px; border-radius:5px; display:block; margin-bottom:5px; font-size:12px;">في عهدة: ${d.courierName || 'المندوب'}</span></div>`;
+                    }
+                    html += `<tr><td><b>${(d.merchantEmail||'مجهول').split('@')[0]}</b><br><span style="font-size:11px; color:${typeColor}; font-weight:bold;">${typeIcon}</span><br><span style="font-size:11px;">${d.details}</span></td><td><span style="font-size:11px;">📍 ${d.address}</span><br><b style="color:var(--primary-red); font-size:11px;">💳 ${d.paymentMethod === 'pickup' ? '-' : d.paymentMethod}</b></td><td>${btns}</td></tr>`;
+                });
+                document.getElementById('radarTasksBody').innerHTML = html || "<tr><td colspan='3' style='text-align:center;'>الرادار خالي حالياً</td></tr>";
+                document.getElementById('activeRadarTasks').innerText = count;
+            });
+        }
+        
+        window.deleteEsh = async (id) => {
+            if(confirm("تأكيد حذف الهدف من الرادار؟")) {
+                await deleteDoc(doc(db, "eshteryly_orders", id));
+            }
+        };
+
         window.applyFilter = (category, btnElement) => { 
             currentFilter = category;
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
@@ -360,14 +496,12 @@
         function loadShipments(branchFilter = null) {
             let q = query(collection(db, "shipments"), orderBy("timestamp", "desc"));
             onSnapshot(q, (snap) => {
-                let html = "", totalM = 0, count = 0, radarCount = 0;
+                let html = "", totalM = 0, count = 0;
                 snap.forEach(docSnap => {
                     const d = docSnap.data(), id = docSnap.id;
                     if(d.deleted) return;
                     if(branchFilter && branchFilter !== 'all' && d.branchName !== branchFilter) return;
                     
-                    if(d.status === 'مذاع للرادار' || d.status.includes('مندوب')) radarCount++;
-
                     if(currentFilter === 'مطلوب تعيين' && d.status !== 'قيد التوصيل' && d.status !== 'Pending') return;
                     if(currentFilter === 'مكتملة' && d.status !== 'تم التسليم' && d.status !== 'تمت التسوية') return;
                     if(currentFilter === 'مع المناديب' && !d.status.includes('مندوب') && d.status !== 'مذاع للرادار') return;
@@ -413,7 +547,6 @@
                 document.getElementById('shipmentsBody').innerHTML = html;
                 document.getElementById('totalShipments').innerText = count;
                 document.getElementById('totalMoney').innerText = totalM + " ج.م";
-                document.getElementById('activeRadarTasks').innerText = radarCount;
             });
         }
 
@@ -429,19 +562,13 @@
         window.updateStatus = async (id) => { const val = document.getElementById(`st-${id}`).value; await updateDoc(doc(db, "shipments", id), { status: val }); Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم تحديث الحالة', showConfirmButton:false, timer:1500}); };
         
         window.deleteShipment = async (id) => {
-            if (adminRole !== 'super_admin') return Swal.fire('مرفوض', 'القيادة العليا فقط تملك صلاحية حذف بوليصة من الرادار.', 'error');
+            if (adminRole !== 'super_admin') return Swal.fire('مرفوض', 'القيادة العليا فقط تملك صلاحية حذف بوليصة.', 'error');
             const res = await Swal.fire({ title: 'تأكيد الحذف الدائم؟', icon: 'warning', showCancelButton: true, confirmButtonText: 'نعم، احذفها', cancelButtonText: 'إلغاء' });
             if(res.isConfirmed) { await updateDoc(doc(db, "shipments", id), { deleted: true }); }
         };
 
-        // دالة التعديل اللي كانت ناقصة
         window.openEditModal = (id, name, address, amount, phone) => {
-            document.getElementById('editShipId').value = id;
-            document.getElementById('editShipName').value = name;
-            document.getElementById('editShipAddress').value = address;
-            document.getElementById('editShipAmount').value = amount;
-            document.getElementById('editShipPhone').value = phone;
-            document.getElementById('editShipmentModal').style.display = 'flex';
+            document.getElementById('editShipId').value = id; document.getElementById('editShipName').value = name; document.getElementById('editShipAddress').value = address; document.getElementById('editShipAmount').value = amount; document.getElementById('editShipPhone').value = phone; document.getElementById('editShipmentModal').style.display = 'flex';
         };
 
         window.saveShipmentEdits = async () => {
@@ -454,23 +581,24 @@
             try {
                 await updateDoc(doc(db, "shipments", id), { name, address, amount: Number(amount), phone });
                 document.getElementById('editShipmentModal').style.display = 'none';
-                Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم حفظ التعديلات', showConfirmButton:false, timer:1500});
+                Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم التعديل', showConfirmButton:false, timer:1500});
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
         };
 
+        // دالة الإذاعة للرادار كاملة
         window.broadcastShipmentToRadar = async (shipmentId, merchantEmail, city, address, amount, paymentType, awb) => {
             if(!confirm("هل تريد بث هذه الشحنة للرادار ليقوم مندوب بتوصيلها الآن؟")) return;
             try { 
                 await addDoc(collection(db, "eshteryly_orders"), { 
                     merchantEmail: merchantEmail, 
-                    details: `توصيل بوليصة رقم: ${awb} - تحصيل: ${amount} ج.م`, 
+                    details: `توصيل مباشر (بوليصة: ${awb}) - تحصيل: ${amount} ج.م`, 
                     address: `${city} - ${address}`, 
                     paymentMethod: paymentType, 
-                    status: "مذاع للرادار", 
+                    status: "جاري البحث عن مندوب", 
                     timestamp: new Date(), 
-                    branchName: adminBranch, 
+                    branchName: adminBranch === 'all' ? "المركز الرئيسي" : adminBranch, 
                     type: 'radar',
-                    linkedShipmentId: shipmentId // عشان نقدر نربط المندوب بالبوليصة الأصلية
+                    linkedShipmentId: shipmentId
                 }); 
                 await updateDoc(doc(db, "shipments", shipmentId), { status: "مذاع للرادار" }); 
                 Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم البث للرادار', showConfirmButton:false, timer:2000}); 
@@ -533,7 +661,7 @@
         window.toggleTheme = () => { document.body.classList.toggle('dark-mode'); const isDark = document.body.classList.contains('dark-mode'); localStorage.setItem('axon_admin_theme', isDark ? 'dark' : 'light'); document.getElementById('themeIcon').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon'; };
         if(localStorage.getItem('axon_admin_theme') === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('themeIcon').className = 'fa-solid fa-sun'; }
 
-        // --- تحميل باقي الأقسام ---
+        // --- باقي الأقسام (طوارئ ودعم) ---
         function loadEmergencyOps(branchFilter = null) {
             onSnapshot(query(collection(db, "axon_rescue_orders"), orderBy("timestamp", "desc")), (snap) => {
                 let html = "", count = 0;
