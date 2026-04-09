@@ -1,1 +1,727 @@
-<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>بوابة التجار | Axon Express Premium</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script><script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script><style>*{box-sizing:border-box}:root{--primary-blue:#0A3D62;--primary-red:#b82329;--white:#ffffff;--light-bg:#f4f7f6;--dark-text:#2c3e50;--border-color:#eee}html,body{font-family:'Cairo',sans-serif;margin:0;background:var(--light-bg);color:var(--dark-text);overflow-x:hidden;scroll-behavior:smooth;transition:.3s}#printArea{display:none}header{background:var(--white);padding:10px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:4px solid var(--primary-blue);position:sticky;top:0;z-index:100;box-shadow:0 4px 15px rgba(0,0,0,.08)}.logo{font-size:22px;font-weight:900;color:var(--primary-blue);text-decoration:none;display:flex;align-items:center;gap:8px}.logo span{color:var(--primary-red)}.header-actions{display:flex;align-items:center;gap:15px}#logoutBtn{background:var(--white);border:2px solid var(--primary-red);color:var(--primary-red);padding:6px 15px;border-radius:6px;cursor:pointer;font-family:'Cairo';font-weight:700;transition:.3s}.container{padding:20px;max-width:1200px;margin:0 auto;min-height:80vh}.top-panel{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}.merchant-badge{background:var(--primary-blue);padding:8px 20px;border-radius:30px;font-size:14px;color:#fff;font-weight:700}.business-info-wrapper{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--white);padding:10px;border-radius:8px;border:1px solid var(--border-color);box-shadow:0 2px 8px rgba(0,0,0,.05)}.business-info-wrapper input{padding:8px 12px;border-radius:5px;border:1px solid #ccc;font-family:'Cairo';outline:none;flex:1;min-width:150px}.business-info-wrapper input:focus{border-color:var(--primary-blue)}.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:25px}.stat-card{background:var(--white);padding:20px;border-radius:12px;text-align:center;box-shadow:0 4px 15px rgba(0,0,0,.05);border-bottom:4px solid var(--primary-blue)}.stat-card h3{font-size:15px;margin:0 0 10px 0;color:#666}.stat-card .value{font-size:26px;font-weight:900;color:var(--primary-blue)}.axon-plus-section{background:var(--white);padding:20px;border-radius:12px;margin-bottom:25px;box-shadow:0 4px 15px rgba(0,0,0,.05);border:1px solid var(--border-color)}.axon-plus-title{font-size:16px;font-weight:900;margin-bottom:15px;color:var(--primary-blue);display:flex;align-items:center;gap:8px;border-bottom:2px solid var(--border-color);padding-bottom:10px}.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px}.btn-service{border:none;padding:15px;border-radius:10px;cursor:pointer;font-family:'Cairo';font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:10px;color:#fff}.btn-main-action{background:var(--primary-blue);grid-column:1 / -1;font-size:18px;padding:18px}.btn-eshteryly{background:#28a745}.btn-home{background:#d39e00}.btn-rescue{background:var(--primary-red)}.search-box{width:100%;padding:12px 15px;border:1px solid #ddd;border-radius:8px;font-family:'Cairo';outline:none;margin-bottom:15px}.table-responsive{width:100%;overflow-x:auto;background:var(--white);border-radius:12px;border:1px solid var(--border-color)}table{width:100%;min-width:900px;border-collapse:collapse}th,td{padding:15px 12px;text-align:right;border-bottom:1px solid var(--border-color);font-size:14px}th{background:var(--primary-blue);color:var(--white);font-weight:700}.print-btn{background:#333;color:#fff;border:none;padding:8px 15px;border-radius:6px;cursor:pointer;font-family:'Cairo';font-weight:700}.awb-badge{background:#e0eaf5;color:var(--primary-blue);padding:5px 12px;border-radius:6px;font-weight:700}.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);align-items:center;justify-content:center;z-index:1000;padding:15px;backdrop-filter:blur(5px)}.modal-content{background:var(--white);padding:25px;border-radius:15px;width:100%;max-width:550px;max-height:90vh;overflow-y:auto;position:relative}.input-group label{font-size:14px;font-weight:700;color:var(--primary-blue);margin-top:12px;display:block}.input-group input,.input-group select,.modal-content textarea{width:100%;padding:12px;margin-top:5px;border:1px solid #ccc;border-radius:8px;font-family:'Cairo';background:var(--white);color:var(--dark-text)}.close-btn{position:absolute;top:15px;left:15px;border:none;background:none;font-size:24px;cursor:pointer;color:var(--primary-red)}.floating-chat{position:fixed;bottom:20px;right:20px;background:#25D366;color:#fff;width:60px;height:60px;border-radius:50%;display:flex;justify-content:center;align-items:center;font-size:30px;box-shadow:0 4px 15px rgba(0,0,0,.2);z-index:999;text-decoration:none}.social-footer{text-align:center;padding:20px;margin-top:30px;border-top:1px solid var(--border-color)}.social-icons{display:flex;justify-content:center;gap:15px;margin-top:10px}.social-icons a{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;color:#fff;text-decoration:none;font-size:18px}.icon-fb{background:#1877F2}.icon-yt{background:#FF0000}.icon-tk{background:#000000}body.dark-mode{--white:#1a1a2e;--light-bg:#16213e;--dark-text:#e0e0e0;--border-color:#0f3460;--primary-blue:#4a90e2}body.dark-mode header{background:#1a1a2e;border-bottom:4px solid var(--primary-red)}body.dark-mode .input-group input,body.dark-mode .input-group select,body.dark-mode .modal-content textarea{background:#16213e;border-color:#0f3460;color:#fff}body.dark-mode .business-info-wrapper{background:#16213e;border-color:#0f3460}body.dark-mode .business-info-wrapper input{background:#1a1a2e;color:#fff;border-color:#333}@media print{body{background:#fff;margin:0;padding:0;-webkit-print-color-adjust:exact}header,.container,.floating-chat,.social-footer,.print-controls{display:none!important}#printArea{display:block!important;width:100%;margin:0;padding:0}@page{margin:5mm}}.a4-wrapper{width:100%;max-width:800px;margin:0 auto;background:#fff;border:2px solid #0A3D62;padding:10px;box-sizing:border-box}.print-controls{text-align:center;margin-bottom:20px;padding:15px;background:#fff;border-radius:8px;box-shadow:0 4px 10px rgba(0,0,0,.1)}.print-controls button{cursor:pointer;padding:12px 25px;margin:5px;font-size:16px;font-weight:700;border:none;border-radius:5px;color:#fff}.print-header{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #b82329;padding-bottom:5px;margin-bottom:10px;flex-wrap:nowrap;gap:10px}.print-header>div{flex:1;text-align:center;overflow:hidden}.barcode-svg{max-width:100%;height:auto}.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}.box{border:1px solid #ccc;padding:5px;border-radius:5px;font-size:13px}.box h3{margin:0 0 5px 0;background:#0A3D62;color:#fff;padding:3px;font-size:13px;text-align:center}.cod-box{background:#fdf5f5;border:2px solid #b82329;text-align:center;padding:5px;border-radius:5px;margin-bottom:10px}.constitution-columns{column-count:2;column-gap:15px;font-size:9px;line-height:1.3;text-align:justify;border:1px solid #000;padding:10px;margin-bottom:10px;background:#fdfdfd}.constitution-columns h4{margin:5px 0 3px 0;font-size:10px;color:#b82329;border-bottom:1px solid #ccc;padding-bottom:2px}.constitution-columns p{margin:0 0 4px 0;break-inside:avoid}.footer-grid{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;font-size:11px}.digital-sig{text-align:center;font-size:9px;font-family:monospace;color:#444;border-top:1px dashed #000;padding-top:5px}.fragile-banner{background:#b82329;color:#fff;text-align:center;font-size:16px;font-weight:700;padding:8px;border-radius:5px;margin-bottom:10px;border:2px dashed #000}.safeer-name-badge{background:#0A3D62;color:#fff;padding:8px 15px;border-radius:8px;display:inline-block;font-family:'Cairo';margin-bottom:5px;border:2px solid #b82329}.safeer-name-badge h2{margin:0;font-size:22px;font-weight:900;letter-spacing:1px}</style></head><body><header id="mainHeader"><a href="#" class="logo"><i class="fa-solid fa-truck-fast"></i> AXON <span>EXPRESS</span></a><div class="header-actions"><button onclick="window.toggleTheme()" style="background:none;border:none;color:var(--primary-blue);font-size:24px;cursor:pointer;" title="الوضع الليلي"><i id="themeIcon" class="fa-solid fa-moon"></i></button> <button id="logoutBtn" onclick="window.logout()">خروج</button></div></header><div class="container" id="mainContainer"><div class="top-panel"><div class="merchant-badge" id="merchantEmailDisplay">تهيئة المحطة...</div><div class="business-info-wrapper"><i class="fa-solid fa-store" style="color:var(--primary-blue);"></i> <input type="text" id="merchantBusinessAddress" placeholder="عنوان المتجر (لاستلام الشحنات)"> <i class="fa-solid fa-phone" style="color:var(--primary-blue);"></i> <input type="tel" id="merchantBusinessPhone" placeholder="رقم المتجر (للتواصل)"> <button id="saveInfoBtn" style="background:var(--primary-red);color:#fff;border:none;padding:8px 15px;border-radius:5px;cursor:pointer;font-family:'Cairo';font-weight:700;" onclick="window.saveBusinessInfo()"><i class="fa-solid fa-floppy-disk"></i> حفظ</button></div></div><div class="stats-grid"><div class="stat-card"><h3>إجمالي شحناتك النشطة</h3><div class="value" id="totalShipments">0</div></div><div class="stat-card"><h3>التحصيلات المتوقعة (COD)</h3><div class="value" id="totalMoney" style="color:var(--primary-red);">0 ج.م</div></div></div><div class="axon-plus-section"><div class="axon-plus-title"><i class="fa-solid fa-layer-group"></i> مركز العمليات وخدمات أكسون بلس</div><div class="services-grid"><button class="btn-service btn-main-action" onclick="document.getElementById('addModal').style.display='flex'"><i class="fa-solid fa-file-invoice"></i> إصدار بوليصة شحن</button> <button class="btn-service btn-eshteryly" onclick="document.getElementById('eshterylyModal').style.display='flex'"><i class="fa-solid fa-cart-shopping"></i> طلبات تسوق (اشتريلي)</button> <button class="btn-service btn-home" onclick="document.getElementById('homeModal').style.display='flex'"><i class="fa-solid fa-truck-ramp-box"></i> أكسون هوم (نقل الأثاث)</button> <button class="btn-service btn-rescue" onclick="document.getElementById('rescueModal').style.display='flex'"><i class="fa-solid fa-truck-pickup"></i> أكسون إنقاذ (ونش سيارات)</button></div></div><input type="text" id="searchInput" class="search-box" placeholder="🔍 ابحث في سجل شحناتك برقم البوليصة، الاسم، المحافظة..."><div class="table-responsive"><table><thead><tr><th>رقم البوليصة</th><th>المستلم</th><th>الموبايل</th><th>المحافظة</th><th>المبلغ</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody id="tableBody"></tbody></table></div></div><div id="printArea"></div><a href="https://wa.me/201147000882" class="floating-chat" id="floatingChatBtn" target="_blank" title="تواصل مع خدمة العملاء"><i class="fa-brands fa-whatsapp"></i></a><div id="addModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('addModal').style.display='none'">✖</button><h3 style="color:var(--primary-blue);border-bottom:2px solid var(--primary-red);padding-bottom:10px;margin-top:0;">إصدار بوليصة شحن</h3><div class="input-group"><label>اسم المستلم</label><input type="text" id="recName" placeholder="الاسم ثلاثي"></div><div style="display:flex;gap:10px;"><div class="input-group" style="flex:1;"><label>الموبايل الأساسي</label><input type="tel" id="recPhone" placeholder="01xxxxxxxxx"></div><div class="input-group" style="flex:1;"><label>موبايل احتياطي</label><input type="tel" id="recPhone2" placeholder="اختياري"></div></div><div class="input-group"><label>المحافظة</label><input type="text" id="recCity" placeholder="مثال: الإسكندرية" onkeyup="window.checkCityFilter()"></div><div class="input-group" id="paymentTypeGroup" style="display:none;background:#e0eaf5;padding:12px;border-radius:8px;border:1px solid var(--primary-blue);margin-top:10px;"><label style="color:var(--primary-red);font-size:14px;"><i class="fa-solid fa-bolt"></i> نظام التحصيل (متاح للداخل فقط)</label><select id="shipmentPaymentType" style="border-color:var(--primary-blue);font-weight:700;"><option value="normal">تحصيل عادي (التسوية مع الشركة)</option><option value="prepaid">دفع مقدم (الكابتن يدفع للتاجر عند الاستلام)</option></select></div><div class="input-group"><label>العنوان بالتفصيل</label><input type="text" id="recAddress" placeholder="الشارع، العمارة، الشقة"></div><div style="display:flex;gap:10px;"><div class="input-group" style="flex:1;"><label>الوزن (كجم)</label><input type="number" id="recWeight" value="1" min="1"></div><div class="input-group" style="flex:1;"><label>المبلغ المطلوب (COD)</label><input type="number" id="codAmount" placeholder="ج.م"></div></div><div class="input-group" style="background:#fff0f0;padding:10px;border-radius:8px;border:1px solid var(--primary-red);margin-top:10px;"><label style="color:var(--primary-red);margin:0;display:flex;align-items:center;gap:10px;cursor:pointer;"><input type="checkbox" id="recFragile" style="width:20px;height:20px;margin:0;"> <span><i class="fa-solid fa-wine-glass" style="font-size:18px;"></i> شحنة قابلة للكسر (عناية فائقة)</span></label></div><button class="btn-service btn-main-action" id="btnSave" style="width:100%;margin-top:20px;justify-content:center;background:var(--primary-blue);" onclick="window.saveShipment()"><i class="fa-solid fa-paper-plane"></i> إرسال الشحنة للشركة وتوليد البوليصة</button></div></div><div id="eshterylyModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('eshterylyModal').style.display='none'">✖</button><h3 style="color:var(--primary-blue);border-bottom:2px solid var(--primary-red);padding-bottom:10px;margin-top:0;">🛒 مهمة تسوق (اشتريلي)</h3><textarea id="eshDetails" placeholder="اكتب طلباتك بالتفصيل الدقيق..." rows="3"></textarea><div class="input-group"><label>عنوان توصيل المشتريات</label><input type="text" id="eshAddress" placeholder="العنوان أو الصق رابط اللوكيشن"></div><div class="input-group"><label>طريقة دفع قيمة المشتريات</label><select id="eshPayment" onchange="window.togglePaymentDetails()"><option value="">-- حدد وسيلة الدفع --</option><option value="cash">كاش عند الاستلام</option><option value="balance">خصم من مستحقاتي لدى أكسون</option><option value="ajel">دفع آجل (تضاف رسوم الخدمة)</option><option value="instapay">تحويل InstaPay</option><option value="vfcash">تحويل Vodafone Cash</option></select></div><div id="instapayDetails" style="display:none;background:#f0f8ff;padding:12px;border-radius:8px;margin-top:10px;"><p style="margin:0;font-weight:700;color:var(--primary-blue);">حساب InstaPay: <span style="color:red;">01027660260</span></p></div><div id="vfcashDetails" style="display:none;background:#ffebeb;padding:12px;border-radius:8px;margin-top:10px;"><p style="margin:0;font-weight:700;color:var(--primary-blue);">محفظة فودافون: <span style="font-size:16px;color:var(--primary-red);">01030013810</span></p></div><div id="ajelDetails" style="display:none;background:#f9f9f9;padding:12px;border-radius:8px;margin-top:10px;"><label style="font-weight:700;color:var(--primary-red);display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="ajelAgree" style="width:18px;height:18px;margin:0;"> أوافق على إضافة رسوم خدمة الدفع الآجل</label></div><button class="btn-service btn-eshteryly" style="width:100%;justify-content:center;margin-top:15px;" onclick="window.submitEshteryly()">إرسال الطلب</button></div></div><div id="homeModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('homeModal').style.display='none'">✖</button><h3 style="color:#d39e00;border-bottom:2px solid var(--primary-blue);padding-bottom:10px;margin-top:0;">🚚 أكسون هوم (نقل الأثاث)</h3><div class="input-group"><label>نقل من</label><input type="text" id="homeFrom" placeholder="المنطقة والدور"></div><div class="input-group"><label>نقل إلى</label><input type="text" id="homeTo" placeholder="المنطقة والدور"></div><div class="input-group"><label>الخدمة</label><select id="homeService"><option value="سيارة وعمال">نقل + عمال</option><option value="سيارة وونش وعمال">نقل + ونش + عمال</option></select></div><div class="input-group"><label>رقم التواصل</label><input type="tel" id="homePhone" placeholder="01xxxxxxxxx"></div><button class="btn-service btn-home" style="width:100%;justify-content:center;margin-top:15px;" onclick="window.submitHomeOrder()">طلب معاينة</button></div></div><div id="rescueModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('rescueModal').style.display='none'">✖</button><h3 style="color:var(--primary-red);border-bottom:2px solid var(--primary-blue);padding-bottom:10px;margin-top:0;">🚨 طوارئ: أكسون إنقاذ</h3><div class="input-group"><label>رقم التليفون للتواصل (إلزامي)</label><input type="tel" id="rescuePhone" placeholder="01xxxxxxxxx"></div><div class="input-group"><label>نوع السيارة (اختياري)</label><input type="text" id="rescueCar" placeholder="مثال: كيا سيراتو"></div><div class="input-group"><label><i class="fa-solid fa-location-dot"></i> موقعك الحالي (إلزامي للونش)</label><input type="text" id="rescueGPS" placeholder="اضغط الزر الأسفل أو اكتب عنوانك بدقة..."></div><button type="button" id="rescueLocationBtn" onclick="window.getRescueLocation()" style="background:#333;color:#fff;border:none;padding:12px;border-radius:8px;margin:10px 0;width:100%;cursor:pointer;font-weight:700;"><i class="fa-solid fa-satellite-dish"></i> سحب موقعي آلياً</button> <button class="btn-service btn-rescue" id="rescueSubmitBtn" style="width:100%;justify-content:center;margin-top:10px;" onclick="window.submitRescueOrder()"><i class="fa-solid fa-truck-pickup"></i> إرسال نداء الاستغاثة للشركة</button></div></div><script type="module">import{initializeApp as a1}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";import{getAuth as b1,onAuthStateChanged as c1,signOut as d1}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";import{getFirestore as e1,collection as f1,addDoc as g1,onSnapshot as h1,query as i1,where as j1,setDoc as k1,doc as l1,getDoc as m1}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";const app=a1({apiKey:"AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",authDomain:"axon-express-2f534.firebaseapp.com",projectId:"axon-express-2f534",storageBucket:"axon-express-2f534.firebasestorage.app",messagingSenderId:"958528400260",appId:"1:958528400260:web:504ae94f3ef2225b928bd1"});const auth=b1(app);const db=e1(app);let mE="",mN="",mIP="جاري التحقق...",mP="غير مسجل",mA="غير مسجل";fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{mIP=d.ip;}).catch(e=>{mIP="غير معروف";});const dI=navigator.userAgent.substring(0,40)+"...";c1(auth,async(u)=>{if(u){mE=u.email;mN=mE.split('@')[0];document.getElementById('merchantEmailDisplay').innerHTML=`مرحباً بك: ${mN} <i class="fa-solid fa-bolt" style="color:#ffc107;"></i>`;lS();const pS=await m1(l1(db,"merchant_profiles",mE));if(pS.exists()){if(pS.data().businessPhone){mP=pS.data().businessPhone;document.getElementById('merchantBusinessPhone').value=mP;}if(pS.data().businessAddress){mA=pS.data().businessAddress;document.getElementById('merchantBusinessAddress').value=mA;}}}else{window.location.href="index.html";}});window.logout=()=>d1(auth).then(()=>window.location.href="index.html");window.saveBusinessInfo=async()=>{const p=document.getElementById('merchantBusinessPhone').value.trim();const a=document.getElementById('merchantBusinessAddress').value.trim();if(!p||!a)return Swal.fire('تنبيه','يرجى إدخال رقم التليفون وعنوان الاستلام.','warning');try{await k1(l1(db,"merchant_profiles",mE),{businessPhone:p,businessAddress:a},{merge:true});mP=p;mA=a;Swal.fire({toast:true,position:'top-end',icon:'success',title:'تم حفظ بيانات المتجر',showConfirmButton:false,timer:2000});}catch(e){Swal.fire('خطأ','فشل الحفظ: '+e.message,'error');}};window.checkCityFilter=()=>{const cV=document.getElementById('recCity').value.trim().toLowerCase();const pG=document.getElementById('paymentTypeGroup');const isA=['اسكندرية','الاسكندرية','إسكندرية','الإسكندرية'].some(k=>cV.includes(k));if(isA)pG.style.display='block';else{pG.style.display='none';document.getElementById('shipmentPaymentType').value='normal';}};window.saveShipment=async()=>{const n=document.getElementById('recName').value.trim();const p=document.getElementById('recPhone').value.trim();const c=document.getElementById('recCity').value.trim();const a=document.getElementById('recAddress').value.trim();const am=document.getElementById('codAmount').value.trim();const pT=document.getElementById('shipmentPaymentType').value;const iF=document.getElementById('recFragile').checked;if(n===""||p===""||c===""||a===""||am===""){return Swal.fire('نقص بيانات','يوجد حقل أو أكثر فارغ، برجاء المراجعة!','warning');}if(mA==="غير مسجل"){return Swal.fire('عنوان الاستلام مفقود','برجاء كتابة عنوان متجرك في الخانة العلوية وحفظه أولاً عشان المندوب يعرف هيستلم منين!','warning');}const btn=document.getElementById('btnSave');btn.disabled=true;btn.innerHTML="جاري الإرسال...";try{const awb="AXN"+Math.random().toString(36).substr(2,5).toUpperCase();await g1(f1(db,"shipments"),{merchantEmail:mE,name:n,phone:p,phone2:document.getElementById('recPhone2').value.trim()||"لا يوجد",city:c,address:a,weight:Number(document.getElementById('recWeight').value||1),amount:Number(am),paymentType:pT,fragile:iF,merchantAddress:mA,merchantIP:mIP,deviceInfo:dI,status:"قيد التوصيل",deleted:false,timestamp:new Date(),awb:awb});document.getElementById('addModal').style.display='none';document.querySelectorAll('#addModal input[type="text"], #addModal input[type="tel"], #addModal input[type="number"]').forEach(i=>{if(i.id!=='merchantBusinessAddress'&&i.id!=='merchantBusinessPhone')i.value='';});document.getElementById('recFragile').checked=false;window.printWB(awb,n,p,document.getElementById('recPhone2').value,c,a,document.getElementById('recWeight').value||1,am,iF);}catch(e){Swal.fire('خطأ',e.message,'error');}btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-paper-plane"></i> إرسال الشحنة وتوليد البوليصة';};function lS(){h1(i1(f1(db,"shipments"),j1("merchantEmail","==",mE)),(s)=>{let t=0,H="",c=0;let ds=[];s.forEach(d=>ds.push({id:d.id,...d.data()}));ds.sort((a,b)=>b.timestamp-a.timestamp);ds.forEach(d=>{if(d.deleted)return;t+=Number(d.amount)||0;c++;const awb=d.awb||("AXN"+d.id.substring(0,5).toUpperCase());const iF=d.fragile?true:false;H+=`<tr><td><span class="awb-badge">${awb}</span></td><td><b>${d.name}</b></td><td dir="ltr">${d.phone}</td><td>${d.city}</td><td style="color:var(--primary-red); font-weight:bold;">${d.amount}</td><td style="font-weight:bold;">${d.status}</td><td><button class="print-btn" onclick="window.printWB('${awb}','${d.name}','${d.phone}','${d.phone2}','${d.city}','${d.address}','${d.weight}','${d.amount}',${iF})"><i class="fa-solid fa-print"></i> طباعة</button></td></tr>`;});document.getElementById('tableBody').innerHTML=H;document.getElementById('totalShipments').innerText=c;document.getElementById('totalMoney').innerText=t+" ج.م";});}window.printWB=(awb,n,p1,p2,c,a,w,am,iF)=>{document.getElementById('mainHeader').style.display='none';document.getElementById('mainContainer').style.display='none';document.getElementById('floatingChatBtn').style.display='none';const tS=new Date().toLocaleString('en-GB');const dS=`[Merchant: ${mN}] | [IP: ${mIP}] | [Device: ${dI}] | [Time: ${tS}]`;const sLH=`<div class="safeer-name-badge"><h2>${mN}</h2></div>`;const qC="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://axonexpress.taplink.ws";const fBH=iF?`<div class="fragile-banner"><i class="fa-solid fa-wine-glass"></i> شحنة قابلة للكسر - تعامل بحذر شديد <i class="fa-solid fa-wine-glass"></i></div>`:'';const pH=`<div class="print-controls no-print"><button style="background: #0A3D62;" onclick="window.print()"><i class="fa-solid fa-print"></i> طباعة أو حفظ PDF</button> <button style="background: #b82329;" onclick="window.closePrintView()"><i class="fa-solid fa-arrow-right"></i> رجوع للسيستم</button></div><div class="a4-wrapper"><div class="print-header"><div>${sLH}<br><small style="font-size:10px;">متجر السفير</small></div><div><svg id="bc" class="barcode-svg"></svg><br><b style="font-size:14px;">${awb}</b></div><div><h2 style="margin:0; color:#0A3D62; font-size:20px;">AXON <span style="color:#b82329;">EXPRESS</span></h2><p style="margin:0; font-size:12px;">بوليصة شحن</p></div></div>${fBH}<div class="info-grid"><div class="box"><h3>بيانات المرسل (من)</h3><p style="margin:2px 0;">الاسم/التاجر: <b>${mN}</b></p><p style="margin:2px 0;">الموبايل: <b dir="ltr">${mP}</b></p><p style="margin:2px 0;">العنوان: <b>${mA}</b></p><p style="margin:2px 0;">الوزن: <b>${w} كجم</b></p><p style="margin:2px 0;">التاريخ: <b>${tS.split(',')[0]}</b></p></div><div class="box"><h3>بيانات المستلم (إلى)</h3><p style="margin:2px 0;">الاسم: <b>${n}</b></p><p style="margin:2px 0;">الموبايل: <b dir="ltr">${p1}</b> ${p2&&p2!=='undefined'&&p2!=='لا يوجد'?`| <b dir="ltr">${p2}</b>`:''}</p><p style="margin:2px 0;">المحافظة: <b>${c}</b></p><p style="margin:2px 0;">العنوان: <b>${a}</b></p></div></div><div class="cod-box"><h2 style="margin:0; color:#b82329; font-size:20px;">المبلغ المطلوب تحصيله (COD): ${am} ج.م</h2></div><div class="constitution-columns"><h4 style="text-align:center; column-span: all; font-size:12px;">شروط وأحكام الناقل (Axon Express)</h4><p><b>أولاً: إقرار باستلام البضاعة بحالة ظاهرية سليمة:</b> يستلم الناقل البضاعة بناءً على الإقرار الصادر من المرسل بأنها بحالة ظاهرية سليمة، وخالية من أي عيوب أو تلف، ومعبأة تعبئة مناسبة تتناسب مع طبيعة البضاعة ومتطلبات النقل البري، ويكون الناقل غير مسؤول عن الفحص الفني للبضاعة أو مكوناتها الداخلية.</p><p><b>ثانياً: تحديد نطاق مسؤولية الناقل:</b> يلتزم الناقل ببذل العناية المعتادة في نقل البضاعة والحفاظ عليها. ومع ذلك، لا يكون الناقل مسؤولاً عن أي تلف أو ضياع أو تأخير ينشأ نتيجة لأي من الأسباب التالية: 1. قوة قاهرة أو حادث لا يمكن توقعه. 2. طبيعة البضاعة من حيث قابليتها للكسر أو التلف. 3. التغليف غير الملائم من قبل المرسل. 4. خطأ من قبل المرسل أو المرسل إليه. 5. أي نقص في الوزن أو العدد لا يتوافق مع مستندات المرسل. 6. التأخير الناتج عن إجراءات تفتيش الجهات الحكومية أو القيود المرورية. 7. لا تتجاوز قيمة تعويض الناقل عن أي ضرر يثبت خطؤه فيه قيمة أجرة النقل المتفق عليها لهذه الشحنة، ما لم يثبت المرسل قيمة البضاعة الحقيقية ويعلنها كتابةً عند الشحن.</p><p><b>ثالثاً: حدود التعويض واشتراط الإعلان بالقيمة:</b> يكون الناقل ملتزماً بالتعويض في حالة ثبوت خطئه بما لا يتجاوز قيمة أجرة النقل × 3، أو بحد أقصى مبلغ (500 جنيه)، أيهما أقل، وذلك ما لم يقم المرسل بالإعلان عن القيمة الحقيقية للبضاعة كتابةً على البوليصة وسداد نسبة إضافية مقابل ذلك كتأمين غير مسترد. في حال الشحنات القابلة للكسر فهي إما أن تنقل على مسؤولية الراسل ولا تلتزم الشركة بأي تعويض في حال التلف، أو أن يقوم بدفع قيمة تأمين مبلغ 10% من قيمة الطرد الفعلية وبذلك تتعهد الشركة بتعويض الراسل بكامل قيمة الطرد حيث أن الشركة تعيد تغليف الطرد.</p><p><b>رابعاً: مهلة الإخطار بالشكاوى:</b> يُعتبر التسليم نافياً للمسؤولية ما لم يقم المرسل إليه بإخطار الناقل كتابةً بأي تحفظ أو اعتراض على البضاعة فور استلامها، أو خلال <b>48 ساعة كحد أقصى</b> من تاريخ التسليم للشكاوى الخفية، وإلا سقط حقه في أي مطالبة.</p><h4>📝 إقرارات وتعهدات المرسل</h4><p><b>1. صحة البيانات:</b> أتعهد بموجب هذا بأن جميع البيانات المذكورة في هذه البوليصة صحيحة وكاملة، وأتحمل وحدي المسؤولية عن عدم دقتها.<br><b>2. سلامة التغليف:</b> أقر بأن البضاعة معبأة بشكل مناسب يضمن سلامتها.<br><b>3. التراخيص:</b> أتعهد بتوفير جميع التراخيص والموافقات المطلوبة قانوناً لنقل هذه البضاعة.</p><h4>🚫 المحظورات المطلقة</h4><p>يحظر بشكل قاطع شحن أو قبول أي من البضائع التالية: المواد شديدة الخطورة والاشتعال، الأسلحة والذخائر، المواد المخدرة، البضائع المهربة والمزورة، المواد سريعة التلف، الحيوانات، النقود والأحجار الكريمة.<br><b>. قد يخضع الطرد للتفتيش داخلياً بمعرفة الشركة وإذا تم العثور بداخل الطرد على أي مواد مخالفة للقانون سيتم على الفور إبلاغ السلطات المعنية لاتخاذ اللازم تجاه الراسل والمستلم.<br>. جميع ما سبق هو بمثابة إخلاء مسؤولية كاملة عن محتوى الطرود التي لم يتم الكشف عليها من طرف الشركة وأن المسؤولية الجنائية تقع كاملة على عاتق الراسل.</b></p><h4>📋 تعليمات إلزامية للعملاء</h4><p>1. يتحمل المرسل مسؤولية التعبئة الآمنة وكتابة عنوان المستلم بوضوح. 2. يلتزم المرسل بتسليم الشحنة والحصول على إيصال. 3. يلتزم المرسل إليه باستلام الشحنة فور وصولها ويتحمل تكاليف التخزين حال التأخير. 4. لا تُقبل مطالبات بعد توقيع المرسل إليه بدون تحفظات.<br><span style="color:#b82329; font-weight:bold; font-size:10px;">5. يُمنع منعاً باتاً فتح الشحنة أو العبث بتغليفها قبل سداد كامل قيمتها (COD) ومصاريف الشحن لمندوب الشركة. وفي حالة رفض الاستلام بعد الفتح (بإذن التاجر)، يلتزم العميل بدفع مصاريف الشحن كاملة. وفي حالة رفض المستلم استلام الشحنة، يلتزم التاجر بسداد رسوم الشحن (ذهاباً وإياباً).</span></p></div><div class="footer-grid"><div style="line-height:1.4;"><b>تواصل معنا:</b><br>مسح الكود المجاور يوجهك لجميع روابط الشركة وحساباتنا.<br><i style="color:#b82329; font-weight:bold;">خدمة العملاء (واتساب): 01147000882</i></div><div style="text-align:center;"><img src="${qC}" style="width:3cm; height:3cm; object-fit:contain; border: 1px solid #ccc; padding:2px;"><br></div></div><div class="digital-sig">هذه البوليصة إلكترونية ومُصدرة مباشرة عبر نظام (أكسون إكسبريس) من حساب التاجر. يُعد إنشاؤها إقراراً نهائياً وملزماً بصحة البيانات وموافقة تامة على الشروط والأحكام والمسؤولية الجنائية.<br><b>البيانات الرقمية أدناه تُعد بمثابة توقيع إلكتروني موثق للمُرسل:</b><br>${dS}</div></div>`;const pA=document.getElementById('printArea');pA.innerHTML=pH;pA.style.display='block';setTimeout(()=>{JsBarcode("#bc",awb,{format:"CODE128",width:1.5,height:35,displayValue:false});},100);};window.closePrintView=()=>{document.getElementById('printArea').style.display='none';document.getElementById('printArea').innerHTML='';document.getElementById('mainHeader').style.display='flex';document.getElementById('mainContainer').style.display='block';document.getElementById('floatingChatBtn').style.display='flex';};window.togglePaymentDetails=()=>{const val=document.getElementById('eshPayment').value;document.getElementById('instapayDetails').style.display=val==='instapay'?'block':'none';document.getElementById('vfcashDetails').style.display=val==='vfcash'?'block':'none';document.getElementById('ajelDetails').style.display=val==='ajel'?'block':'none';};window.submitEshteryly=async()=>{const details=document.getElementById('eshDetails').value.trim();const address=document.getElementById('eshAddress').value.trim();const payment=document.getElementById('eshPayment').value;if(!details||!address||!payment)return Swal.fire('تنبيه','برجاء إكمال البيانات واختيار طريقة الدفع.','warning');try{await g1(f1(db,"eshteryly_orders"),{merchantEmail:mE,details:details,address:address,paymentMethod:payment,status:"مطلوب",timestamp:new Date()});document.getElementById('eshterylyModal').style.display='none';Swal.fire('تم!','طلب المشتريات وصل للإدارة.','success');}catch(e){Swal.fire('خطأ',e.message,'error');}};window.submitHomeOrder=async()=>{const from=document.getElementById('homeFrom').value.trim();const to=document.getElementById('homeTo').value.trim();const phone=document.getElementById('homePhone').value.trim();const service=document.getElementById('homeService').value;if(!from||!to||!phone)return Swal.fire('نقص بيانات','برجاء إكمال حقول النقل.','warning');try{await g1(f1(db,"axon_home_orders"),{merchantEmail:mE,from:from,to:to,phone:phone,service:service,status:"قيد التسعير",timestamp:new Date()});document.getElementById('homeModal').style.display='none';Swal.fire('ممتاز!','سنتواصل معك فوراً للتسعير.','success');}catch(e){Swal.fire('خطأ',e.message,'error');}};window.getRescueLocation=()=>{const btn=document.getElementById('rescueLocationBtn');const inputField=document.getElementById('rescueGPS');btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> جاري السحب...';if(navigator.geolocation){navigator.geolocation.getCurrentPosition((pos)=>{inputField.value=`https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;btn.innerHTML='✅ تم تحديد الموقع بدقة تامة';},(err)=>{fetch('https://ipapi.co/json/').then(r=>r.json()).then(data=>{inputField.value=`تقريبي: ${data.city}, ${data.region}`;btn.innerHTML='⚠️ تم السحب التقريبي (أكمل العنوان يدوياً)';}).catch(e=>{btn.innerHTML='❌ فشل السحب تماماً، اكتب عنوانك بإيدك';});},{enableHighAccuracy:true,timeout:5000});}};window.submitRescueOrder=async()=>{const phone=document.getElementById('rescuePhone').value.trim();const car=document.getElementById('rescueCar').value.trim()||'غير محدد';const gps=document.getElementById('rescueGPS').value.trim();if(!phone||!gps){return Swal.fire('طوارئ أكسون','يرجى إدخال التليفون وسحب الموقع لإرسال الونش!','error');}const btn=document.getElementById('rescueSubmitBtn');btn.disabled=true;btn.innerHTML="جاري الإرسال...";try{await g1(f1(db,"axon_rescue_orders"),{merchantEmail:mE,phone:phone,car:car,gps:gps,status:"نداء استغاثة",timestamp:new Date()});document.getElementById('rescueModal').style.display='none';Swal.fire('تم استلام الاستغاثة!','الونش في الطريق إليك.','success');}catch(e){Swal.fire('خطأ',e.message,'error');}btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-truck-pickup"></i> إرسال نداء الاستغاثة';};window.toggleTheme=()=>{document.body.classList.toggle('dark-mode');const isDark=document.body.classList.contains('dark-mode');localStorage.setItem('axon_merchant_theme',isDark?'dark':'light');document.getElementById('themeIcon').className=isDark?'fa-solid fa-sun':'fa-solid fa-moon';};if(localStorage.getItem('axon_merchant_theme')==='dark'){document.body.classList.add('dark-mode');setTimeout(()=>{document.getElementById('themeIcon').className='fa-solid fa-sun';},100);}</script></body></html>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>بوابة التجار | Axon Express Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        :root { --primary-blue: #0A3D62; --primary-red: #b82329; --white: #ffffff; --light-bg: #f4f7f6; --dark-text: #2c3e50; --border-color: #eee; }
+        html, body { font-family: 'Cairo', sans-serif; margin: 0; background: var(--light-bg); color: var(--dark-text); overflow-x: hidden; scroll-behavior: smooth; transition: 0.3s;}
+        
+        #printArea { display: none; }
+        .swal2-container { z-index: 99999 !important; }
+
+        header { background: var(--white); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--primary-blue); position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.08);}
+        .logo { font-size: 22px; font-weight: 900; color: var(--primary-blue); text-decoration: none; display: flex; align-items: center; gap: 8px;}
+        .logo span { color: var(--primary-red); }
+        .header-actions { display: flex; align-items: center; gap: 10px;}
+        
+        .lang-btn { background: transparent; border: 2px solid var(--primary-blue); color: var(--primary-blue); padding: 5px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 13px; transition: 0.3s;}
+        .lang-btn:hover { background: var(--primary-blue); color: white; }
+        #logoutBtn { background: var(--white); border: 2px solid var(--primary-red); color: var(--primary-red); padding: 6px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; transition: 0.3s;}
+        #logoutBtn:hover { background: var(--primary-red); color: white;}
+        
+        .container { padding: 20px; max-width: 1200px; margin: 0 auto; min-height: 80vh;}
+        
+        .top-panel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;}
+        .merchant-badge { background: var(--primary-blue); padding: 8px 20px; border-radius: 30px; font-size: 14px; color: white; font-weight: bold;}
+        .business-info-wrapper { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: var(--white); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
+        .business-info-wrapper input { padding: 8px 12px; border-radius: 5px; border: 1px solid #ccc; font-family: 'Cairo'; outline: none; flex: 1; min-width: 150px;}
+        .business-info-wrapper input:focus { border-color: var(--primary-blue); }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: var(--white); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-blue);}
+        .stat-card h3 { font-size: 15px; margin: 0 0 10px 0; color: #666;}
+        .stat-card .value { font-size: 26px; font-weight: 900; color: var(--primary-blue);}
+        
+        .axon-plus-section { background: var(--white); padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--border-color);}
+        .axon-plus-title { font-size: 16px; font-weight: 900; margin-bottom: 15px; color: var(--primary-blue); display: flex; align-items: center; gap: 8px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;}
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+        
+        .btn-service { border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; color: white;}
+        .btn-main-action { background: var(--primary-blue); grid-column: 1 / -1; font-size: 18px; padding: 18px; } 
+        .btn-eshteryly { background: #28a745; }
+        .btn-home { background: #d39e00; } 
+        .btn-rescue { background: var(--primary-red); } 
+        
+        .search-box { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Cairo'; outline: none; margin-bottom: 15px;}
+        .table-responsive { width: 100%; overflow-x: auto; background: var(--white); border-radius: 12px; border: 1px solid var(--border-color);}
+        table { width: 100%; min-width: 900px; border-collapse: collapse; }
+        th, td { padding: 15px 12px; text-align: right; border-bottom: 1px solid var(--border-color); font-size: 14px;}
+        th { background: var(--primary-blue); color: var(--white); font-weight: bold;}
+        .print-btn { background: #333; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; margin-bottom: 5px; width: 100%;}
+        .track-btn { background: #17a2b8; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; width: 100%;}
+        .awb-badge { background: #e0eaf5; color: var(--primary-blue); padding: 5px 12px; border-radius: 6px; font-weight: bold;}
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; z-index: 2000; padding: 15px; backdrop-filter: blur(5px);}
+        .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto; position: relative;}
+        .input-group label { font-size: 14px; font-weight: bold; color: var(--primary-blue); margin-top: 12px; display: block; }
+        .input-group input, .input-group select, .modal-content textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo'; background: var(--white); color: var(--dark-text);}
+        .close-btn { position: absolute; top: 15px; left: 15px; border: none; background: none; font-size: 24px; cursor: pointer; color: var(--primary-red);}
+
+        .floating-chat { position: fixed; bottom: 20px; right: 20px; background: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999; text-decoration: none;}
+        
+        body.dark-mode { --white: #1a1a2e; --light-bg: #16213e; --dark-text: #e0e0e0; --border-color: #0f3460; --primary-blue: #4a90e2;}
+        body.dark-mode header { background: #1a1a2e; border-bottom: 4px solid var(--primary-red); }
+        body.dark-mode .input-group input, body.dark-mode .input-group select, body.dark-mode .modal-content textarea { background: #16213e; border-color: #0f3460; color: white;}
+        body.dark-mode .business-info-wrapper { background: #16213e; border-color: #0f3460; }
+        body.dark-mode .business-info-wrapper input { background: #1a1a2e; color: white; border-color: #333; }
+
+        /* الطباعة */
+        @media print {
+            body { background: #fff; margin: 0; padding: 0; -webkit-print-color-adjust: exact; }
+            header, .container, .floating-chat, .print-controls { display: none !important; }
+            #printArea { display: block !important; width: 100%; margin: 0; padding: 0; }
+            @page { margin: 5mm; }
+        }
+        .a4-wrapper { width: 100%; max-width: 800px; margin: 0 auto; background: #fff; border: 2px solid #0A3D62; padding: 10px; box-sizing: border-box; }
+        .print-controls { text-align: center; margin-bottom: 20px; padding: 15px; background: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .print-controls button { cursor: pointer; padding: 12px 25px; margin: 5px; font-size: 16px; font-weight: bold; border: none; border-radius: 5px; color: white;}
+        .print-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #b82329; padding-bottom: 5px; margin-bottom: 10px; flex-wrap: nowrap; gap: 10px;}
+        .print-header > div { flex: 1; text-align: center; overflow: hidden; }
+        .barcode-svg { max-width: 100%; height: auto; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .box { border: 1px solid #ccc; padding: 5px; border-radius: 5px; font-size: 13px;}
+        .box h3 { margin: 0 0 5px 0; background: #0A3D62; color: #fff; padding: 3px; font-size: 13px; text-align: center;}
+        .cod-box { background: #fdf5f5; border: 2px solid #b82329; text-align: center; padding: 5px; border-radius: 5px; margin-bottom:10px;}
+        .constitution-columns { column-count: 2; column-gap: 15px; font-size: 9px; line-height: 1.3; text-align: justify; border: 1px solid #000; padding: 10px; margin-bottom: 10px; background: #fdfdfd;}
+        .constitution-columns h4 { margin: 5px 0 3px 0; font-size: 10px; color: #000; border-bottom: 1px solid #000; padding-bottom:2px;}
+        .constitution-columns p { margin: 0 0 4px 0; color: #000; break-inside: avoid;}
+        .footer-grid { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; font-size: 11px;}
+        .digital-sig { text-align: center; font-size: 9px; font-family: monospace; color: #000; border-top: 1px dashed #000; padding-top: 5px; font-weight:bold;}
+        .fragile-banner { background: #b82329; color: white; text-align: center; font-size: 16px; font-weight: bold; padding: 8px; border-radius: 5px; margin-bottom: 10px; border: 2px dashed #000;}
+        .safeer-name-badge { background: #0A3D62; color: white; padding: 8px 15px; border-radius: 8px; display: inline-block; font-family: 'Cairo'; margin-bottom: 5px; border: 2px solid #b82329;}
+        .safeer-name-badge h2 { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 1px;}
+        .branch-badge-print { font-weight: bold; font-size: 14px; color: #000; text-transform: uppercase; background: #f0f0f0; border: 2px solid #000; padding: 3px 10px; display: inline-block; margin-bottom: 5px;}
+    </style>
+</head>
+<body>
+    <header id="mainHeader">
+        <a href="#" class="logo"><i class="fa-solid fa-truck-fast"></i> AXON <span data-i18n="logo_span">EXPRESS</span></a>
+        <div class="header-actions">
+            <button onclick="window.toggleLang()" class="lang-btn" id="langBtn">English</button>
+            <button onclick="window.toggleTheme()" style="background:none; border:none; color:var(--primary-blue); font-size:24px; cursor:pointer;" title="الوضع الليلي">
+                <i id="themeIcon" class="fa-solid fa-moon"></i>
+            </button>
+            <button id="logoutBtn" onclick="window.logout()" data-i18n="logout">خروج</button>
+        </div>
+    </header>
+
+    <div class="container" id="mainContainer">
+        <div class="top-panel">
+            <div class="merchant-badge" id="merchantEmailDisplay">تهيئة المحطة...</div>
+            <div class="business-info-wrapper">
+                <i class="fa-solid fa-store" style="color:var(--primary-blue);"></i>
+                <input type="text" id="merchantBusinessAddress" data-i18n-placeholder="m_addr_ph" placeholder="عنوان المتجر (لاستلام الشحنات)">
+                <i class="fa-solid fa-phone" style="color:var(--primary-blue);"></i>
+                <input type="tel" id="merchantBusinessPhone" data-i18n-placeholder="m_phone_ph" placeholder="رقم المتجر (للتواصل)">
+                <button id="saveInfoBtn" style="background:var(--primary-red); color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-family:'Cairo'; font-weight:bold;" onclick="window.saveBusinessInfo()"><i class="fa-solid fa-floppy-disk"></i> <span data-i18n="save">حفظ</span></button>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card"><h3 data-i18n="stat_active">إجمالي شحناتك النشطة</h3><div class="value" id="totalShipments">0</div></div>
+            <div class="stat-card"><h3 data-i18n="stat_cod">التحصيلات المتوقعة (COD)</h3><div class="value" id="totalMoney" style="color:var(--primary-red);">0 ج.م</div></div>
+        </div>
+
+        <div class="axon-plus-section">
+            <div class="axon-plus-title"><i class="fa-solid fa-layer-group"></i> <span data-i18n="srv_title">مركز العمليات وخدمات أكسون بلس</span></div>
+            <div class="services-grid">
+                <button class="btn-service btn-main-action" onclick="document.getElementById('addModal').style.display='flex'">
+                    <i class="fa-solid fa-file-invoice"></i> <span data-i18n="srv_awb">إصدار بوليصة شحن</span>
+                </button>
+                <button class="btn-service btn-eshteryly" onclick="document.getElementById('eshterylyModal').style.display='flex'">
+                    <i class="fa-solid fa-cart-shopping"></i> <span data-i18n="srv_buy">طلبات تسوق (اشتريلي)</span>
+                </button>
+                <button class="btn-service" style="background: #0EA5E9;" onclick="document.getElementById('coldModal').style.display='flex'">
+                    <i class="fa-solid fa-temperature-arrow-down"></i> أكسون كولد/فريش
+                </button>
+                <button class="btn-service btn-home" onclick="document.getElementById('homeModal').style.display='flex'">
+                    <i class="fa-solid fa-truck-ramp-box"></i> <span data-i18n="srv_furniture">أكسون هوم (نقل الأثاث)</span>
+                </button>
+                <button class="btn-service btn-rescue" onclick="document.getElementById('rescueModal').style.display='flex'">
+                    <i class="fa-solid fa-truck-pickup"></i> <span data-i18n="srv_rescue">أكسون إنقاذ (ونش سيارات)</span>
+                </button>
+            </div>
+        </div>
+
+        <input type="text" id="searchInput" class="search-box" placeholder="🔍 ابحث في سجل شحناتك برقم البوليصة، الاسم، المحافظة...">
+        
+        <div class="table-responsive">
+            <table>
+                <thead><tr>
+                    <th data-i18n="th_awb">رقم البوليصة</th>
+                    <th data-i18n="th_rec">المستلم</th>
+                    <th data-i18n="th_phone">الموبايل</th>
+                    <th data-i18n="th_city">المحافظة</th>
+                    <th data-i18n="th_amt">المبلغ</th>
+                    <th data-i18n="th_status">الحالة</th>
+                    <th data-i18n="th_act">إجراء</th>
+                </tr></thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="printArea"></div>
+
+    <a href="https://wa.me/201147000882" class="floating-chat" id="floatingChatBtn" target="_blank" title="تواصل مع خدمة العملاء">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <!-- الموديلات -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="document.getElementById('addModal').style.display='none'">✖</button>
+            <h3 style="color:var(--primary-blue); border-bottom: 2px solid var(--primary-red); padding-bottom:10px; margin-top:0;" data-i18n="srv_awb">إصدار بوليصة شحن</h3>
+            <div class="input-group"><label>اسم المستلم</label><input type="text" id="recName" placeholder="الاسم ثلاثي"></div>
+            <div style="display:flex; gap:10px;">
+                <div class="input-group" style="flex:1;"><label>الموبايل الأساسي</label><input type="tel" id="recPhone" placeholder="01xxxxxxxxx"></div>
+                <div class="input-group" style="flex:1;"><label>موبايل احتياطي</label><input type="tel" id="recPhone2" placeholder="اختياري"></div>
+            </div>
+            <div class="input-group"><label>المحافظة</label><input type="text" id="recCity" placeholder="مثال: الإسكندرية" onkeyup="window.checkCityFilter()"></div>
+            
+            <div class="input-group" id="paymentTypeGroup" style="display:none; background:#e0eaf5; padding:12px; border-radius:8px; border:1px solid var(--primary-blue); margin-top:10px;">
+                <label style="color:var(--primary-red); font-size: 14px;"><i class="fa-solid fa-bolt"></i> نظام التحصيل (متاح للداخل فقط)</label>
+                <select id="shipmentPaymentType" style="border-color:var(--primary-blue); font-weight:bold;">
+                    <option value="normal">تحصيل عادي (التسوية مع الشركة)</option>
+                    <option value="prepaid">دفع مقدم (الكابتن يدفع للتاجر عند الاستلام)</option>
+                </select>
+            </div>
+
+            <div class="input-group"><label>العنوان بالتفصيل</label><input type="text" id="recAddress" placeholder="الشارع، العمارة، الشقة"></div>
+            <div style="display:flex; gap:10px;">
+                <div class="input-group" style="flex:1;"><label>الوزن (كجم)</label><input type="number" id="recWeight" value="1" min="1"></div>
+                <div class="input-group" style="flex:1;"><label>المبلغ المطلوب (COD)</label><input type="number" id="codAmount" placeholder="ج.م"></div>
+            </div>
+
+            <div class="input-group" style="background:#fff0f0; padding:10px; border-radius:8px; border:1px solid var(--primary-red); margin-top:10px;">
+                <label style="color:var(--primary-red); margin:0; display:flex; align-items:center; gap:10px; cursor:pointer;">
+                    <input type="checkbox" id="recFragile" style="width:20px; height:20px; margin:0;">
+                    <span><i class="fa-solid fa-wine-glass" style="font-size:18px;"></i> شحنة قابلة للكسر (عناية فائقة)</span>
+                </label>
+            </div>
+            
+            <button class="btn-service btn-main-action" id="btnSave" style="width:100%; margin-top:20px; justify-content:center; background: var(--primary-blue);" onclick="window.saveShipment()">
+                <i class="fa-solid fa-paper-plane"></i> <span data-i18n="btn_submit_awb">إرسال الشحنة للشركة وتوليد البوليصة</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- مودال اشتريلي -->
+    <div id="eshterylyModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="document.getElementById('eshterylyModal').style.display='none'">✖</button>
+            <h3 style="color:var(--primary-blue); border-bottom: 2px solid var(--primary-red); padding-bottom:10px; margin-top:0;">🛒 مهمة تسوق (اشتريلي)</h3>
+            <textarea id="eshDetails" placeholder="اكتب طلباتك بالتفصيل الدقيق..." rows="3"></textarea>
+            <div class="input-group"><label>عنوان توصيل المشتريات</label><input type="text" id="eshAddress" placeholder="العنوان أو الصق رابط اللوكيشن"></div>
+            <div class="input-group">
+                <label>طريقة دفع قيمة المشتريات</label>
+                <select id="eshPayment" onchange="window.togglePaymentDetails()">
+                    <option value="">-- حدد وسيلة الدفع --</option>
+                    <option value="cash">كاش عند الاستلام</option>
+                    <option value="balance">خصم من مستحقاتي لدى أكسون (سماح 7 أيام)</option>
+                    <option value="instapay">تحويل InstaPay</option>
+                    <option value="vfcash">تحويل Vodafone Cash</option>
+                </select>
+            </div>
+            
+            <div id="balanceDetails" style="display:none; background:#fff3cd; padding:12px; border-radius:8px; margin-top:10px; border:1px solid #ffeeba;">
+                <p style="margin:0; font-weight:bold; color:#856404; font-size:13px;"><i class="fa-solid fa-scale-balanced"></i> تنبيه قانوني: في حالة اختيار الدفع من المستحقات، يتم منحك فترة سماح 7 أيام للسداد. في حالة التأخير، يتم تطبيق غرامة تأخير قدرها 2% يومياً من إجمالي المبلغ.</p>
+            </div>
+            
+            <div id="instapayDetails" style="display:none; background:#f0f8ff; padding:12px; border-radius:8px; margin-top:10px;"><p style="margin:0; font-weight:bold; color:var(--primary-blue);">حساب InstaPay: <span style="color:red;">01027660260</span></p></div>
+            <div id="vfcashDetails" style="display:none; background:#ffebeb; padding:12px; border-radius:8px; margin-top:10px;"><p style="margin:0; font-weight:bold; color:var(--primary-blue);">محفظة فودافون: <span style="font-size:16px; color:var(--primary-red);">01030013810</span></p></div>
+            
+            <button class="btn-service btn-eshteryly" style="width:100%; justify-content:center; margin-top:15px;" onclick="window.submitEshteryly()">إرسال الطلب</button>
+        </div>
+    </div>
+
+    <!-- مودال كولد فريش -->
+    <div id="coldModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="document.getElementById('coldModal').style.display='none'">✖</button>
+            <h3 style="color:#0EA5E9; border-bottom:2px solid #0EA5E9; padding-bottom:10px; margin-top:0;">🥶 طلب شحن فريش/مبرد</h3>
+            <p style="font-size:13px; color:#666;">خاص بالمطابخ السحابية والأكل البيتي. التوصيل في نفس المحافظة ببوكسات حرارية.</p>
+            <div class="input-group"><label>وقت جاهزية الأوردر</label><input type="time" id="coldTime"></div>
+            <div class="input-group"><label>عنوان المستلم</label><input type="text" id="coldAddress" placeholder="عنوان المستلم بالتفصيل"></div>
+            <div class="input-group"><label>قيمة التحصيل (COD)</label><input type="number" id="coldAmount" placeholder="ج.م"></div>
+            <button onclick="window.submitColdOrder()" style="width:100%; background:#0EA5E9; color:white; padding:15px; border:none; border-radius:10px; font-weight:bold; margin-top:15px; cursor:pointer; font-family:'Cairo'; font-size:15px;">تأكيد طلب التوصيل المبرد</button>
+        </div>
+    </div>
+
+    <!-- مودال أكسون هوم -->
+    <div id="homeModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="document.getElementById('homeModal').style.display='none'">✖</button>
+            <h3 style="color:#d39e00; border-bottom: 2px solid var(--primary-blue); padding-bottom:10px; margin-top:0;">🚚 أكسون هوم (نقل الأثاث)</h3>
+            <div class="input-group"><label>نقل من</label><input type="text" id="homeFrom" placeholder="المنطقة والدور"></div>
+            <div class="input-group"><label>نقل إلى</label><input type="text" id="homeTo" placeholder="المنطقة والدور"></div>
+            <div class="input-group"><label>الخدمة</label><select id="homeService"><option value="سيارة وعمال">نقل + عمال</option><option value="سيارة وونش وعمال">نقل + ونش + عمال</option></select></div>
+            <div class="input-group"><label>رقم التواصل</label><input type="tel" id="homePhone" placeholder="01xxxxxxxxx"></div>
+            <button class="btn-service btn-home" style="width:100%; justify-content:center; margin-top:15px;" onclick="window.submitHomeOrder()">طلب معاينة</button>
+        </div>
+    </div>
+
+    <!-- مودال أكسون إنقاذ -->
+    <div id="rescueModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="document.getElementById('rescueModal').style.display='none'">✖</button>
+            <h3 style="color:var(--primary-red); border-bottom: 2px solid var(--primary-blue); padding-bottom:10px; margin-top:0;">🚨 طوارئ: أكسون إنقاذ</h3>
+            <div class="input-group"><label>رقم التليفون للتواصل (إلزامي)</label><input type="tel" id="rescuePhone" placeholder="01xxxxxxxxx"></div>
+            <div class="input-group"><label>نوع السيارة (اختياري)</label><input type="text" id="rescueCar" placeholder="مثال: كيا سيراتو"></div>
+            <div class="input-group">
+                <label><i class="fa-solid fa-location-dot"></i> موقعك الحالي (إلزامي للونش)</label>
+                <input type="text" id="rescueGPS" placeholder="اكتب عنوانك بدقة أو استخدم الزر لسحبه آلياً">
+            </div>
+            <button type="button" id="rescueLocationBtn" onclick="window.getRescueLocation()" style="background:#333; color:white; border:none; padding:12px; border-radius:8px; margin:10px 0; width:100%; cursor:pointer; font-weight:bold;"><i class="fa-solid fa-satellite-dish"></i> سحب موقعي آلياً</button>
+            <button class="btn-service btn-rescue" id="rescueSubmitBtn" style="width:100%; justify-content:center; margin-top:10px;" onclick="window.submitRescueOrder()"><i class="fa-solid fa-truck-pickup"></i> إرسال نداء الاستغاثة للشركة</button>
+        </div>
+    </div>
+
+    <!-- قاموس اللغة -->
+    <script>
+        const i18nDict = {
+            ar: { 
+                logo_span: "EXPRESS", logout: "خروج", save: "حفظ", m_addr_ph: "عنوان المتجر (لاستلام الشحنات)", m_phone_ph: "رقم المتجر (للتواصل)",
+                stat_active: "إجمالي شحناتك النشطة", stat_cod: "التحصيلات المتوقعة (COD)", srv_title: "مركز العمليات وخدمات أكسون بلس",
+                srv_awb: "إصدار بوليصة شحن", srv_buy: "طلبات تسوق (اشتريلي)", srv_furniture: "أكسون هوم (نقل الأثاث)", srv_rescue: "أكسون إنقاذ (ونش سيارات)",
+                th_awb: "رقم البوليصة", th_rec: "المستلم", th_phone: "الموبايل", th_city: "المحافظة", th_amt: "المبلغ", th_status: "الحالة", th_act: "إجراء",
+                btn_submit_awb: "إرسال الشحنة للشركة وتوليد البوليصة" 
+            },
+            en: { 
+                logo_span: "EXPRESS", logout: "Logout", save: "Save", m_addr_ph: "Store Address (For Pickups)", m_phone_ph: "Store Phone",
+                stat_active: "Active Shipments", stat_cod: "Expected COD", srv_title: "Operations Center & Axon Plus",
+                srv_awb: "Issue Waybill", srv_buy: "Shopping Request (Eshteryly)", srv_furniture: "Axon Home (Furniture)", srv_rescue: "Axon Rescue (Towing)",
+                th_awb: "AWB", th_rec: "Receiver", th_phone: "Phone", th_city: "City", th_amt: "Amount", th_status: "Status", th_act: "Action",
+                btn_submit_awb: "Submit Shipment & Generate AWB" 
+            }
+        };
+
+        window.toggleLang = () => { let lang = document.documentElement.lang === 'ar' ? 'en' : 'ar'; localStorage.setItem('axon_lang', lang); applyLang(lang); };
+        function applyLang(lang) {
+            document.documentElement.lang = lang; document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr'; 
+            document.getElementById('langBtn').innerText = lang === 'ar' ? 'English' : 'العربية';
+            document.querySelectorAll('[data-i18n]').forEach(el => { let key = el.getAttribute('data-i18n'); if(i18nDict[lang] && i18nDict[lang][key]) el.innerText = i18nDict[lang][key]; });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { let key = el.getAttribute('data-i18n-placeholder'); if(i18nDict[lang] && i18nDict[lang][key]) el.setAttribute('placeholder', i18nDict[lang][key]); });
+        }
+        document.addEventListener('DOMContentLoaded', () => { applyLang(localStorage.getItem('axon_lang') || 'ar'); });
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, where, setDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const app = initializeApp({
+            apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
+            authDomain: "axon-express-2f534.firebaseapp.com",
+            projectId: "axon-express-2f534",
+            storageBucket: "axon-express-2f534.firebasestorage.app",
+            messagingSenderId: "958528400260",
+            appId: "1:958528400260:web:504ae94f3ef2225b928bd1"
+        });
+        
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        let merchantEmail = "", merchantName = "", merchantIP = "جاري التحقق...", merchantPhone = "غير مسجل", merchantAddress = "غير مسجل", branchName = "المركز الرئيسي";
+
+        fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ merchantIP = d.ip; }).catch(e=>{ merchantIP = "غير معروف"; });
+        const deviceInfo = navigator.userAgent.substring(0, 40) + "..."; 
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                merchantEmail = user.email;
+                merchantName = merchantEmail.split('@')[0];
+                document.getElementById('merchantEmailDisplay').innerHTML = `مرحباً بك: ${merchantName} <i class="fa-solid fa-bolt" style="color:#ffc107;"></i>`;
+                loadShipments();
+                
+                const profileSnap = await getDoc(doc(db, "merchant_profiles", merchantEmail));
+                if(profileSnap.exists()) {
+                    if(profileSnap.data().businessPhone) {
+                        merchantPhone = profileSnap.data().businessPhone;
+                        document.getElementById('merchantBusinessPhone').value = merchantPhone;
+                    }
+                    if(profileSnap.data().businessAddress) {
+                        merchantAddress = profileSnap.data().businessAddress;
+                        document.getElementById('merchantBusinessAddress').value = merchantAddress;
+                    }
+                    if(profileSnap.data().branchName) {
+                        branchName = profileSnap.data().branchName;
+                    }
+                }
+            } else { window.location.href = "index.html"; }
+        });
+
+        window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
+
+        window.saveBusinessInfo = async () => {
+            const phone = document.getElementById('merchantBusinessPhone').value.trim();
+            const address = document.getElementById('merchantBusinessAddress').value.trim();
+            if(!phone || !address) return Swal.fire('تنبيه', 'يرجى إدخال رقم التليفون وعنوان الاستلام.', 'warning');
+            
+            try {
+                await setDoc(doc(db, "merchant_profiles", merchantEmail), { businessPhone: phone, businessAddress: address }, { merge: true });
+                merchantPhone = phone; 
+                merchantAddress = address;
+                Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم حفظ بيانات المتجر', showConfirmButton:false, timer:2000});
+            } catch(e) { Swal.fire('خطأ', 'فشل الحفظ: ' + e.message, 'error'); }
+        };
+
+        window.checkCityFilter = () => {
+            const cityValue = document.getElementById('recCity').value.trim().toLowerCase();
+            const paymentGroup = document.getElementById('paymentTypeGroup');
+            const isAlex = ['اسكندرية', 'الاسكندرية', 'إسكندرية', 'الإسكندرية'].some(k => cityValue.includes(k));
+            if (isAlex) paymentGroup.style.display = 'block';
+            else { paymentGroup.style.display = 'none'; document.getElementById('shipmentPaymentType').value = 'normal'; }
+        };
+
+        window.togglePaymentDetails = () => {
+            const val = document.getElementById('eshPayment').value;
+            document.getElementById('instapayDetails').style.display = val === 'instapay' ? 'block' : 'none';
+            document.getElementById('vfcashDetails').style.display = val === 'vfcash' ? 'block' : 'none';
+            document.getElementById('balanceDetails').style.display = val === 'balance' ? 'block' : 'none';
+        };
+
+        window.submitEshteryly = async () => {
+            const details = document.getElementById('eshDetails').value.trim();
+            const address = document.getElementById('eshAddress').value.trim();
+            const payment = document.getElementById('eshPayment').value;
+            
+            if(!details || !address || !payment) return Swal.fire('تنبيه', 'برجاء إكمال كافة البيانات واختيار طريقة الدفع.', 'warning');
+            
+            document.getElementById('eshterylyModal').style.display = 'none';
+            const user = auth.currentUser;
+            if(!user) return;
+
+            try {
+                await addDoc(collection(db, "eshteryly_orders"), {
+                    merchantEmail: user.email,
+                    details: details,
+                    address: address,
+                    paymentMethod: payment,
+                    status: "جاري البحث عن مندوب",
+                    timestamp: new Date(),
+                    branchName: branchName, 
+                    type: "radar" 
+                });
+                Swal.fire('تم!', 'طلبك تم توجيهه لطيارين الرادار بنجاح.', 'success');
+            } catch (e) { Swal.fire('خطأ في الإرسال', e.message, 'error'); }
+        };
+
+        window.submitColdOrder = async () => {
+            const time = document.getElementById('coldTime').value;
+            const address = document.getElementById('coldAddress').value.trim();
+            const amount = document.getElementById('coldAmount').value.trim();
+
+            if(!time || !address || !amount) return Swal.fire('تنبيه', 'رجاء إكمال كافة بيانات أوردر الفريش', 'warning');
+            
+            document.getElementById('coldModal').style.display = 'none';
+            const user = auth.currentUser;
+            if(!user) return;
+
+            try {
+                await addDoc(collection(db, "eshteryly_orders"), {
+                    merchantEmail: user.email,
+                    details: `🥶 أوردر كولد/فريش | جاهز الساعة: ${time} | المطلوب تحصيله: ${amount} ج.م`,
+                    address: address,
+                    paymentMethod: "pickup",
+                    status: "جاري البحث عن مندوب",
+                    timestamp: new Date(),
+                    branchName: branchName,
+                    type: "radar"
+                });
+                Swal.fire('تم!', 'تم بث أوردر الفريش للمناديب المجهزين ببوكسات حرارية.', 'success');
+            } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
+        };
+
+        window.submitHomeOrder = async () => {
+            const from = document.getElementById('homeFrom').value.trim();
+            const to = document.getElementById('homeTo').value.trim();
+            const phone = document.getElementById('homePhone').value.trim();
+            const service = document.getElementById('homeService').value;
+
+            if(!from || !to || !phone) return Swal.fire('نقص بيانات', 'برجاء إكمال حقول النقل بالكامل.', 'warning');
+            
+            document.getElementById('homeModal').style.display = 'none';
+            const user = auth.currentUser;
+            if(!user) return;
+
+            try {
+                await addDoc(collection(db, "axon_home_orders"), { merchantEmail: user.email, from, to, phone, service, status: "قيد التسعير", timestamp: new Date(), branchName });
+                Swal.fire('ممتاز!', 'تم تسجيل الطلب وسيقوم فريق التسعير بالتواصل معك فوراً.', 'success');
+            } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
+        };
+
+        window.getRescueLocation = () => {
+            const btn = document.getElementById('rescueLocationBtn');
+            const inputField = document.getElementById('rescueGPS');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري السحب...';
+            
+            if(navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        inputField.value = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                        btn.innerHTML = '✅ تم تحديد الموقع بدقة تامة';
+                    },
+                    (err) => { 
+                        fetch('https://ipapi.co/json/').then(r=>r.json()).then(data => {
+                            inputField.value = `تقريبي: ${data.city}, ${data.region}`;
+                            btn.innerHTML = '⚠️ تم السحب التقريبي (أكمل العنوان يدوياً)';
+                        }).catch(e => {
+                            btn.innerHTML = '❌ فشل السحب تماماً، اكتب عنوانك بإيدك';
+                        });
+                    },
+                    { enableHighAccuracy: true, timeout: 5000 }
+                );
+            } else {
+                btn.innerHTML = '❌ خاصية الموقع غير مدعومة';
+            }
+        };
+
+        window.submitRescueOrder = async () => {
+            const phone = document.getElementById('rescuePhone').value.trim();
+            const car = document.getElementById('rescueCar').value.trim() || 'غير محدد';
+            const gps = document.getElementById('rescueGPS').value.trim();
+            
+            if(!phone || !gps) {
+                return Swal.fire('طوارئ أكسون', 'يرجى إدخال التليفون وموقعك الحالي لإرسال الونش!', 'error');
+            }
+
+            document.getElementById('rescueModal').style.display='none';
+            const btn = document.getElementById('rescueSubmitBtn'); 
+            btn.disabled = true; btn.innerHTML = "جاري الإرسال...";
+            
+            const user = auth.currentUser;
+            if(!user) return;
+
+            try {
+                await addDoc(collection(db, "axon_rescue_orders"), { 
+                    merchantEmail: user.email, phone, car, gps, status: "نداء استغاثة", timestamp: new Date(), branchName 
+                });
+                
+                Swal.fire('تم استلام الاستغاثة!', 'الونش في الطريق إليك.', 'success');
+                document.getElementById('rescuePhone').value = '';
+                document.getElementById('rescueGPS').value = '';
+            } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
+            
+            btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-truck-pickup"></i> إرسال نداء الاستغاثة للشركة';
+        };
+
+        window.saveShipment = async () => {
+            const name = document.getElementById('recName').value.trim();
+            const phone = document.getElementById('recPhone').value.trim();
+            const city = document.getElementById('recCity').value.trim();
+            const address = document.getElementById('recAddress').value.trim();
+            const amount = document.getElementById('codAmount').value.trim();
+            const paymentType = document.getElementById('shipmentPaymentType').value;
+            const isFragile = document.getElementById('recFragile').checked; 
+
+            if(name === "" || phone === "" || city === "" || address === "" || amount === "") {
+                return Swal.fire('نقص بيانات', 'يوجد حقل أو أكثر فارغ، برجاء المراجعة!', 'warning');
+            }
+            
+            if(merchantAddress === "غير مسجل") {
+                return Swal.fire('عنوان الاستلام مفقود', 'برجاء كتابة عنوان متجرك في الخانة العلوية وحفظه أولاً عشان المندوب يعرف هيستلم منين!', 'warning');
+            }
+
+            const btn = document.getElementById('btnSave'); btn.disabled = true; btn.innerHTML = "جاري الإرسال...";
+            const user = auth.currentUser;
+            if(!user) return;
+
+            try {
+                const docRef = await addDoc(collection(db, "shipments"), {
+                    merchantEmail: user.email, name, phone, phone2: document.getElementById('recPhone2').value.trim() || "لا يوجد",
+                    city, address, weight: Number(document.getElementById('recWeight').value||1),
+                    amount: Number(amount), paymentType: paymentType, fragile: isFragile, 
+                    merchantAddress: merchantAddress,
+                    merchantIP: merchantIP,
+                    deviceInfo: deviceInfo,
+                    status: "قيد التوصيل", deleted: false, timestamp: new Date(), branchName
+                });
+                document.getElementById('addModal').style.display='none';
+                
+                document.querySelectorAll('#addModal input[type="text"], #addModal input[type="tel"], #addModal input[type="number"]').forEach(inp => { if(inp.id !== 'merchantBusinessAddress' && inp.id !== 'merchantBusinessPhone') inp.value = ''; });
+                document.getElementById('recFragile').checked = false;
+                
+                const awb = "AXN" + docRef.id.substring(0,5).toUpperCase();
+                window.printWB(awb, name, phone, document.getElementById('recPhone2').value, city, address, document.getElementById('recWeight').value||1, amount, isFragile);
+
+            } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
+            btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> إرسال الشحنة للشركة وتوليد البوليصة';
+        };
+
+        window.showCourierTrack = (courierName) => {
+            Swal.fire({
+                title: `📡 تتبع الكابتن: ${courierName}`,
+                html: `
+                    <div style="height: 160px; background: #e0eaf5; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; position: relative; overflow: hidden; border: 2px solid var(--primary-blue);">
+                        <div style="position: absolute; width: 100%; height: 100%; background: radial-gradient(circle, rgba(23,162,184,0.3) 0%, rgba(255,255,255,0) 70%); animation: pulse 2s infinite;"></div>
+                        <i class="fa-solid fa-motorcycle fa-4x" style="color: var(--primary-blue); z-index: 2;"></i>
+                        <span style="position: absolute; bottom: 10px; font-size: 13px; font-weight: 900; color: var(--primary-red);"><i class="fa-solid fa-satellite"></i> جاري الاتصال بالقمر الصناعي للرادار...</span>
+                    </div>
+                    <p style="font-size: 14px; color: #666; margin-bottom: 20px; font-weight: bold;">الكابتن في طريقه للعميل الآن. يمكنك التواصل معه مباشرة من خلال قناة أكسون المشفرة.</p>
+                    <button onclick="Swal.fire('تم التحويل', 'تم تحويلك لقناة الاتصال الآمنة بالكابتن.', 'success')" style="background: #25D366; color: white; border: none; padding: 15px 20px; border-radius: 8px; font-weight: 900; cursor: pointer; width: 100%; font-family:'Cairo'; font-size:16px;"><i class="fa-brands fa-whatsapp"></i> فتح قناة محادثة آمنة مع المندوب</button>
+                `,
+                showConfirmButton: false,
+                showCloseButton: true
+            });
+        };
+
+        function loadShipments() {
+            onSnapshot(query(collection(db, "shipments"), where("merchantEmail", "==", merchantEmail)), (snap) => {
+                let total = 0, html = "", count = 0;
+                let docs = [];
+                snap.forEach(doc => docs.push({id: doc.id, ...doc.data()}));
+                docs.sort((a, b) => b.timestamp - a.timestamp);
+
+                docs.forEach(d => {
+                    if(d.deleted) return;
+                    total += Number(d.amount) || 0; count++;
+                    const awb = "AXN" + d.id.substring(0,5).toUpperCase();
+                    const isFragile = d.fragile ? true : false; 
+                    
+                    let trackButton = "";
+                    if(d.status === "مع المندوب" || d.status.includes("مندوب")) {
+                        trackButton = `<button class="track-btn" onclick="window.showCourierTrack('${d.courierName || 'الكابتن'}')"><i class="fa-solid fa-map-location-dot"></i> تتبع الكابتن</button>`;
+                    }
+
+                    html += `<tr>
+                        <td><span class="awb-badge">${awb}</span></td>
+                        <td><b>${d.name}</b></td>
+                        <td dir="ltr">${d.phone}</td>
+                        <td>${d.city}</td>
+                        <td style="color:var(--primary-red); font-weight:bold;">${d.amount}</td>
+                        <td style="font-weight:bold;">${d.status}</td>
+                        <td style="display:flex; gap:5px; flex-direction:column;">
+                            <button class="print-btn" onclick="window.printWB('${awb}', '${d.name}', '${d.phone}', '${d.phone2}', '${d.city}', '${d.address}', '${d.weight}', '${d.amount}', ${isFragile})"><i class="fa-solid fa-print"></i> طباعة</button>
+                            ${trackButton}
+                        </td>
+                    </tr>`;
+                });
+                document.getElementById('tableBody').innerHTML = html;
+                document.getElementById('totalShipments').innerText = count;
+                document.getElementById('totalMoney').innerText = total + " ج.م";
+            });
+        }
+
+        window.printWB = (awb, name, p1, p2, city, addr, w, amt, isFragile) => {
+            document.getElementById('mainHeader').style.display = 'none';
+            document.getElementById('mainContainer').style.display = 'none';
+            document.getElementById('floatingChatBtn').style.display = 'none';
+
+            const timestampStr = new Date().toLocaleString('en-GB'); 
+            const digitalSignature = `[Merchant: ${merchantName}] | [IP: ${merchantIP}] | [Device: ${deviceInfo}] | [Time: ${timestampStr}]`;
+            
+            const branchBadgePrint = `<div style="border: 2px solid #000; display: inline-block; padding: 5px 15px; font-weight: 900; font-size: 14px; margin-bottom: 10px; background: #f0f0f0;">الفرع المُصدر: ${branchName}</div>`;
+            const safeerLogoHTML = `<div class="safeer-name-badge"><h2>${merchantName}</h2></div>`;
+            const fragileBannerHTML = isFragile ? `<div class="fragile-banner"><i class="fa-solid fa-wine-glass"></i> شحنة قابلة للكسر - تعامل بحذر شديد <i class="fa-solid fa-wine-glass"></i></div>` : '';
+
+            const printHTML = `
+                <div class="print-controls no-print">
+                    <button style="background: #0A3D62;" onclick="window.print()"><i class="fa-solid fa-print"></i> طباعة أو حفظ PDF</button>
+                    <button style="background: #b82329;" onclick="window.closePrintView()"><i class="fa-solid fa-arrow-right"></i> رجوع للسيستم</button>
+                </div>
+
+                <div class="a4-wrapper">
+                    ${branchBadgePrint}
+                    <div class="print-header">
+                        <div>${safeerLogoHTML}<br><small style="font-size:10px;">متجر السفير</small></div>
+                        <div><svg id="bc" class="barcode-svg"></svg><br><b style="font-size:14px;">${awb}</b></div>
+                        <div><h2 style="margin:0; color:#0A3D62; font-size:20px;">AXON <span style="color:#b82329;">EXPRESS</span></h2><p style="margin:0; font-size:12px;">بوليصة شحن</p></div>
+                    </div>
+                    
+                    ${fragileBannerHTML}
+
+                    <div class="info-grid">
+                        <div class="box">
+                            <h3>بيانات المرسل (من)</h3>
+                            <p style="margin:2px 0;">الاسم/التاجر: <b>${merchantName}</b></p>
+                            <p style="margin:2px 0;">الموبايل: <b dir="ltr">${merchantPhone}</b></p>
+                            <p style="margin:2px 0;">العنوان: <b>${merchantAddress}</b></p>
+                            <p style="margin:2px 0;">الوزن: <b>${w} كجم</b></p>
+                            <p style="margin:2px 0;">التاريخ: <b>${timestampStr.split(',')[0]}</b></p>
+                        </div>
+                        <div class="box">
+                            <h3>بيانات المستلم (إلى)</h3>
+                            <p style="margin:2px 0;">الاسم: <b>${name}</b></p>
+                            <p style="margin:2px 0;">الموبايل: <b dir="ltr">${p1}</b> ${p2 && p2 !== 'undefined' && p2 !== 'لا يوجد' ? `| <b dir="ltr">${p2}</b>` : ''}</p>
+                            <p style="margin:2px 0;">المحافظة: <b>${city}</b></p>
+                            <p style="margin:2px 0;">العنوان: <b>${addr}</b></p>
+                        </div>
+                    </div>
+                    
+                    <div class="cod-box">
+                        <h2 style="margin:0; color:#b82329; font-size:20px;">المبلغ المطلوب تحصيله (COD): ${amt} ج.م</h2>
+                    </div>
+
+                    <div class="constitution-columns">
+                        <h4 style="text-align:center; column-span: all; font-size:12px; color:#000;">شروط وأحكام الناقل (Axon Express)</h4>
+                        <p style="color:#000;"><b>أولاً: إقرار باستلام البضاعة بحالة ظاهرية سليمة:</b> يستلم الناقل البضاعة بناءً على الإقرار الصادر من المرسل بأنها بحالة ظاهرية سليمة، وخالية من أي عيوب أو تلف، ومعبأة تعبئة مناسبة تتناسب مع طبيعة البضاعة ومتطلبات النقل البري، ويكون الناقل غير مسؤول عن الفحص الفني للبضاعة أو مكوناتها الداخلية.</p>
+                        <p style="color:#000;"><b>ثانياً: تحديد نطاق مسؤولية الناقل:</b> يلتزم الناقل ببذل العناية المعتادة في نقل البضاعة والحفاظ عليها. ومع ذلك، لا يكون الناقل مسؤولاً عن أي تلف أو ضياع أو تأخير ينشأ نتيجة لأي من الأسباب التالية: 1. قوة قاهرة أو حادث لا يمكن توقعه. 2. طبيعة البضاعة من حيث قابليتها للكسر أو التلف. 3. التغليف غير الملائم من قبل المرسل. 4. خطأ من قبل المرسل أو المرسل إليه. 5. أي نقص في الوزن أو العدد لا يتوافق مع مستندات المرسل. 6. التأخير الناتج عن إجراءات تفتيش الجهات الحكومية أو القيود المرورية. 7. لا تتجاوز قيمة تعويض الناقل عن أي ضرر يثبت خطؤه فيه قيمة أجرة النقل المتفق عليها لهذه الشحنة، ما لم يثبت المرسل قيمة البضاعة الحقيقية ويعلنها كتابةً عند الشحن.</p>
+                        <p style="color:#000;"><b>ثالثاً: حدود التعويض واشتراط الإعلان بالقيمة:</b> يكون الناقل ملتزماً بالتعويض في حالة ثبوت خطئه بما لا يتجاوز قيمة أجرة النقل × 3، أو بحد أقصى مبلغ (500 جنيه)، أيهما أقل، وذلك ما لم يقم المرسل بالإعلان عن القيمة الحقيقية للبضاعة كتابةً على البوليصة وسداد نسبة إضافية مقابل ذلك كتأمين غير مسترد. في حال الشحنات القابلة للكسر فهي إما أن تنقل على مسؤولية الراسل ولا تلتزم الشركة بأي تعويض في حال التلف، أو أن يقوم بدفع قيمة تأمين مبلغ 10% من قيمة الطرد الفعلية وبذلك تتعهد الشركة بتعويض الراسل بكامل قيمة الطرد حيث أن الشركة تعيد تغليف الطرد.</p>
+                        <p style="color:#000;"><b>رابعاً: مهلة الإخطار بالشكاوى:</b> يُعتبر التسليم نافياً للمسؤولية ما لم يقم المرسل إليه بإخطار الناقل كتابةً بأي تحفظ أو اعتراض على البضاعة فور استلامها، أو خلال <b>48 ساعة كحد أقصى</b> من تاريخ التسليم للشكاوى الخفية، وإلا سقط حقه في أي مطالبة.</p>
+                        <h4 style="color:#000;">📝 إقرارات وتعهدات المرسل</h4>
+                        <p style="color:#000;"><b>1. صحة البيانات:</b> أتعهد بموجب هذا بأن جميع البيانات المذكورة في هذه البوليصة صحيحة وكاملة، وأتحمل وحدي المسؤولية عن عدم دقتها.<br><b>2. سلامة التغليف:</b> أقر بأن البضاعة معبأة بشكل مناسب يضمن سلامتها.<br><b>3. التراخيص:</b> أتعهد بتوفير جميع التراخيص والموافقات المطلوبة قانوناً لنقل هذه البضاعة.</p>
+                        <h4 style="color:#000;">🚫 المحظورات المطلقة</h4>
+                        <p style="color:#000;">يحظر بشكل قاطع شحن أو قبول أي من البضائع التالية: المواد شديدة الخطورة والاشتعال، الأسلحة والذخائر، المواد المخدرة، البضائع المهربة والمزورة، المواد سريعة التلف، الحيوانات، النقود والأحجار الكريمة.<br><b>. قد يخضع الطرد للتفتيش داخلياً بمعرفة الشركة وإذا تم العثور بداخل الطرد على أي مواد مخالفة للقانون سيتم على الفور إبلاغ السلطات المعنية لاتخاذ اللازم تجاه الراسل والمستلم.<br>. جميع ما سبق هو بمثابة إخلاء مسؤولية كاملة عن محتوى الطرود التي لم يتم الكشف عليها من طرف الشركة وأن المسؤولية الجنائية تقع كاملة على عاتق الراسل.</b></p>
+                        <h4 style="color:#000;">📋 تعليمات إلزامية للعملاء</h4>
+                        <p style="color:#000;">1. يتحمل المرسل مسؤولية التعبئة الآمنة وكتابة عنوان المستلم بوضوح. 2. يلتزم المرسل بتسليم الشحنة والحصول على إيصال. 3. يلتزم المرسل إليه باستلام الشحنة فور وصولها ويتحمل تكاليف التخزين حال التأخير. 4. لا تُقبل مطالبات بعد توقيع المرسل إليه بدون تحفظات.<br><span style="color:#000; font-weight:bold; font-size:10px;">5. يُمنع منعاً باتاً فتح الشحنة أو العبث بتغليفها قبل سداد كامل قيمتها (COD) ومصاريف الشحن لمندوب الشركة. وفي حالة رفض الاستلام بعد الفتح (بإذن التاجر)، يلتزم العميل بدفع مصاريف الشحن كاملة. وفي حالة رفض المستلم استلام الشحنة، يلتزم التاجر بسداد رسوم الشحن (ذهاباً وإياباً).</span></p>
+                    </div>
+
+                    <div class="footer-grid">
+                        <div style="line-height:1.4;">
+                            <b>تواصل معنا:</b><br>
+                            مسح الكود المجاور يوجهك لجميع روابط الشركة وحساباتنا.<br>
+                            <i style="color:#000; font-weight:bold;">خدمة العملاء (واتساب): 01147000882</i>
+                        </div>
+                        <div style="text-align:center;">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://axonexpress.taplink.ws" style="width:3cm; height:3cm; object-fit:contain; border: 1px solid #000; padding:2px;"><br>
+                        </div>
+                    </div>
+
+                    <div class="digital-sig">
+                        هذه البوليصة إلكترونية ومُصدرة مباشرة عبر نظام (أكسون إكسبريس) من حساب التاجر. يُعد إنشاؤها إقراراً نهائياً وملزماً بصحة البيانات وموافقة تامة على الشروط والأحكام والمسؤولية الجنائية.<br>
+                        <b>البيانات الرقمية أدناه تُعد بمثابة توقيع إلكتروني موثق للمُرسل:</b><br>
+                        ${digitalSignature}
+                    </div>
+                </div>
+            `;
+            
+            const printArea = document.getElementById('printArea');
+            printArea.innerHTML = printHTML;
+            printArea.style.display = 'block';
+
+            setTimeout(() => {
+                JsBarcode("#bc", awb, {format:"CODE128", width:1.5, height:35, displayValue:false});
+            }, 100);
+        };
+
+        window.closePrintView = () => {
+            document.getElementById('printArea').style.display = 'none';
+            document.getElementById('printArea').innerHTML = ''; 
+            document.getElementById('mainHeader').style.display = 'flex';
+            document.getElementById('mainContainer').style.display = 'block';
+            document.getElementById('floatingChatBtn').style.display = 'flex';
+        };
+
+        window.toggleTheme = () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('axon_merchant_theme', isDark ? 'dark' : 'light');
+            document.getElementById('themeIcon').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        };
+        
+        if(localStorage.getItem('axon_merchant_theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            setTimeout(() => { document.getElementById('themeIcon').className = 'fa-solid fa-sun'; }, 100);
+        }
+    </script>
+</body>
+</html>
