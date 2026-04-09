@@ -21,16 +21,18 @@
         
         html, body { font-family: 'Cairo', sans-serif; margin: 0; padding: 0; background: var(--light-bg); color: var(--dark-text); overflow-x: hidden; scroll-behavior: smooth; transition: background 0.3s, color 0.3s;}
         
+        .swal2-container { z-index: 99999 !important; }
+
         /* Header */
         header { background: var(--white); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--primary-red); position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: 0.3s;}
         .logo { font-size: 26px; font-weight: 900; color: var(--primary-blue); text-decoration: none; display: flex; align-items: center; gap: 8px; letter-spacing: 1px;}
         .logo span { color: var(--primary-red); }
-        
         .header-actions { display: flex; align-items: center; gap: 15px;}
-        .lang-btn { background: transparent; border: 2px solid var(--primary-blue); color: var(--primary-blue); padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: 900; font-family: 'Cairo'; font-size: 14px; transition: 0.4s;}
+        
+        .lang-btn { background: transparent; border: 2px solid var(--primary-blue); color: var(--primary-blue); padding: 5px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 13px; transition: 0.3s;}
         .lang-btn:hover { background: var(--primary-blue); color: white; }
         
-        .login-btn { background: linear-gradient(45deg, var(--primary-blue), var(--secondary-blue)); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 900; font-family: 'Cairo'; font-size: 15px; transition: 0.4s; box-shadow: 0 4px 15px rgba(6, 40, 61, 0.3);}
+        .login-btn { background: linear-gradient(45deg, var(--primary-blue), var(--secondary-blue)); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 900; font-family: 'Cairo'; font-size: 14px; transition: 0.4s; box-shadow: 0 4px 15px rgba(6, 40, 61, 0.3);}
         .login-btn:hover { background: linear-gradient(45deg, var(--primary-red), #b31741); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(214, 28, 78, 0.4); }
         
         /* Hero Section */
@@ -151,7 +153,6 @@
         .close-modal { position: absolute; top: 20px; left: 20px; background: rgba(214, 28, 78, 0.1); border: none; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--primary-red); transition: 0.3s; font-size: 18px;}
         .close-modal:hover { background: var(--primary-red); color: white; transform: rotate(90deg); }
         .legal-warning { background: #fff3cd; color: #856404; padding: 15px; border-radius: 12px; font-size: 13px; margin-bottom: 20px; border: 1px solid #ffeeba; text-align: justify; line-height: 1.6;}
-        .swal2-container { z-index: 99999 !important; }
 
         /* Dark Mode Overrides */
         body.dark-mode { --white: #161B22; --light-bg: #0D1117; --dark-text: #E2E8F0; --border-color: #30363D; }
@@ -270,6 +271,7 @@
             </div>
         </div>
 
+        <!-- إضافة كارت أكسون كولد فريش -->
         <div class="service-card" data-aos="fade-up" data-aos-delay="400" onclick="window.showService('cold')">
             <div class="badge-new" style="background: var(--primary-blue);" data-i18n="badge_merchant">حصري للتجار</div>
             <img src="https://images.unsplash.com/photo-1654922207993-2952fec328ae?q=80&w=600&auto=format&fit=crop" alt="أكسون كولد" class="service-img">
@@ -501,7 +503,7 @@
         </div>
     </div>
 
-    <!-- كود تغيير اللغة المظبوط -->
+    <!-- قاموس اللغة -->
     <script>
         const i18nDict = {
             ar: { 
@@ -602,13 +604,11 @@
         document.addEventListener('DOMContentLoaded', () => { applyLang(localStorage.getItem('axon_main_lang') || 'ar'); });
     </script>
 
-    <!-- الأكواد المفكوكة والواضحة لضمان عدم حدوث أي Crash -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, getDocs, onSnapshot, collection, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         
-        // 1. التهيئة الأولية
         const app = initializeApp({ 
             apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw", 
             authDomain: "axon-express-2f534.firebaseapp.com", 
@@ -620,10 +620,8 @@
         const auth = getAuth(app); 
         const db = getFirestore(app); 
 
-        // 2. تشغيل الأنيميشن بشكل مستقل عشان الصفحة متفضلش بيضا
         AOS.init({ duration: 1000, once: true });
         
-        // 3. أسعار الشحن اللحظية
         window.livePrices = { alex: 0, cairo: 0, beheira: 0, delta: 0, saeed: 0, penalty: 30 };
         onSnapshot(doc(db, "settings", "shipping_prices"), z => { 
             if (z.exists()) { window.livePrices = z.data(); window.calculateRate(); } 
@@ -671,7 +669,6 @@
             u.disabled = false; u.innerHTML = "تسجيل طلب الفرنشايز"; 
         };
         
-        // 🚀 كود الدخول المتين 🚀
         window.handleLogin = async () => {
             let z = document.getElementById('merchantEmail').value.trim().toLowerCase();
             let y = document.getElementById('merchantPassword').value;
@@ -781,6 +778,8 @@
                     },
                     { enableHighAccuracy: true, timeout: 5000 }
                 );
+            } else {
+                btn.innerHTML = '❌ خاصية الموقع غير مدعومة';
             }
         };
 
