@@ -4,10 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>بوابة التجار | Axon Express Premium</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+    
     <style>
         * { box-sizing: border-box; }
         :root { --primary-blue: #0A3D62; --primary-red: #b82329; --white: #ffffff; --light-bg: #f4f7f6; --dark-text: #2c3e50; --border-color: #eee; }
@@ -49,7 +55,6 @@
         .btn-home { background: #d39e00; } 
         .btn-rescue { background: var(--primary-red); } 
 
-        /* تنسيقات الرادار العصري للتاجر */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .radar-merchant-section { background: var(--white); padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 2px dashed var(--primary-red); animation: fadeIn 0.5s ease; display: none; position: relative; overflow: hidden;}
         .radar-merchant-section::before { content: ''; position: absolute; top: 0; right: 0; width: 5px; height: 100%; background: var(--primary-red); }
@@ -86,6 +91,11 @@
         .calc-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; font-weight: bold; }
         .calc-total { font-size: 18px; color: var(--primary-red); border-top: 1px solid #ddd; padding-top: 8px; margin-top: 8px; }
 
+        /* تنسيقات شات وماب التتبع */
+        .chat-bubble { padding: 10px 15px; border-radius: 15px; max-width: 80%; font-size: 13px; line-height: 1.4; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 5px; clear: both;}
+        .chat-mine { background: #dcf8c6; float: left; border-bottom-left-radius: 0; color: #000; }
+        .chat-other { background: #ffffff; float: right; border-bottom-right-radius: 0; color: #000; border: 1px solid #eee;}
+
         body.dark-mode { --white: #1a1a2e; --light-bg: #16213e; --dark-text: #e0e0e0; --border-color: #0f3460; --primary-blue: #4a90e2;}
         body.dark-mode header { background: #1a1a2e; border-bottom: 4px solid var(--primary-red); }
         body.dark-mode .input-group input, body.dark-mode .input-group select, body.dark-mode .modal-content textarea { background: #16213e; border-color: #0f3460; color: white;}
@@ -93,6 +103,7 @@
         body.dark-mode .business-info-wrapper input { background: #1a1a2e; color: white; border-color: #333; }
         body.dark-mode .calc-summary { background: #1a1a2e; border-color: #333; }
         body.dark-mode .radar-card p { background: #1a1a2e; color: #ccc;}
+        body.dark-mode .chat-other { background: #16213e; color: #fff; border-color: #333;}
 
         /* الطباعة */
         @media print {
@@ -202,6 +213,26 @@
     <a href="https://wa.me/201147000882" class="floating-chat" id="floatingChatBtn" target="_blank" title="تواصل مع خدمة العملاء">
         <i class="fa-brands fa-whatsapp"></i>
     </a>
+
+    <div id="trackChatModal" class="modal">
+        <div class="modal-content" style="padding: 15px; max-width: 600px; height: 90vh; display: flex; flex-direction: column;">
+            <button class="close-btn" onclick="window.closeTrackChat()">✖</button>
+            <h3 style="color:var(--primary-blue); margin-top:0; border-bottom:2px solid var(--primary-red); padding-bottom:10px;">
+                <i class="fa-solid fa-map-location-dot"></i> تتبع وتواصل مع: <span id="chatCourierName" style="color:var(--primary-red);">...</span>
+            </h3>
+
+            <div id="merchantMap" style="height: 200px; width: 100%; border-radius: 12px; border: 2px solid var(--primary-blue); margin-bottom: 15px; z-index: 1;"></div>
+
+            <div style="background: #f4f7f6; border-radius: 12px; border: 1px solid #ccc; display: flex; flex-direction: column; flex: 1; min-height: 250px; overflow: hidden;">
+                <div id="chatBox" style="flex: 1; padding: 15px; overflow-y: auto; display: block;">
+                    </div>
+                <div style="display: flex; border-top: 1px solid #ccc; padding: 10px; background: white;">
+                    <input type="text" id="chatInput" placeholder="اكتب رسالتك للكابتن هنا..." style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo'; outline: none;">
+                    <button onclick="window.sendChatMessage()" style="background: #25D366; color: white; border: none; padding: 10px 15px; border-radius: 8px; margin-right: 10px; font-family: 'Cairo'; font-weight: bold; cursor: pointer; transition: 0.2s;"><i class="fa-solid fa-paper-plane"></i> إرسال</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="addModal" class="modal">
         <div class="modal-content">
@@ -361,7 +392,13 @@
         const db = getFirestore(app);
         
         let merchantEmail = "", merchantName = "", merchantIP = "جاري التحقق...", merchantPhone = "غير مسجل", merchantAddress = "غير مسجل", branchName = "المركز الرئيسي";
-        let livePrices = { alex: 0, cairo: 0, beheira: 0, delta: 0, saeed: 0 }; // لتسعير الشحن الآلي
+        let livePrices = { alex: 0, cairo: 0, beheira: 0, delta: 0, saeed: 0 };
+        
+        // متغيرات الشات والخريطة
+        let currentChatCourier = "";
+        let chatUnsubscribe = null;
+        let merchantMap = null;
+        let courierMarker = null;
 
         fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ merchantIP = d.ip; }).catch(e=>{ merchantIP = "غير معروف"; });
         const deviceInfo = navigator.userAgent.substring(0, 40) + "..."; 
@@ -387,26 +424,96 @@
                     }
                 }
 
-                // سحب أسعار البورصة
                 onSnapshot(doc(db, "settings", "shipping_prices"), (snap) => {
                     if(snap.exists()) { 
                         livePrices = { ...livePrices, ...snap.data() }; 
-                        // تحديث سعر الخدمة المحلية لـ كولد واشتريلي في المودال بناءً على فرع التاجر
                         let localFee = window.getCityPrice(branchName);
                         document.getElementById('eshLocalPrice').innerText = localFee;
                         document.getElementById('coldLocalPrice').innerText = localFee;
-                        window.updateShippingCalc(); // لو بيكتب بوليصة تتحدث
+                        window.updateShippingCalc(); 
                     }
                 });
 
                 loadShipments();
-                loadMerchantRadar(); // سحب الرادار الخاص بالتاجر
+                loadMerchantRadar();
             } else { window.location.href = "index.html"; }
         });
 
         window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
 
-        // --- دالة الآلة الحاسبة الذكية ---
+        // --- دوال الشات والخريطة الجديدة ---
+        window.showCourierTrack = (courierName) => {
+            currentChatCourier = courierName;
+            document.getElementById('chatCourierName').innerText = courierName;
+            document.getElementById('trackChatModal').style.display = 'flex';
+
+            // 1. تشغيل الخريطة (Leaflet)
+            if(!merchantMap) {
+                merchantMap = L.map('merchantMap').setView([31.2001, 29.9187], 13); // إسكندرية افتراضي
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(merchantMap);
+                courierMarker = L.marker([31.2001, 29.9187]).addTo(merchantMap).bindPopup("موقع الكابتن التقريبي");
+                
+                // حل مشكلة تحميل الخريطة جوه المودال المخفي
+                setTimeout(() => merchantMap.invalidateSize(), 300);
+            }
+
+            // 2. تشغيل صندوق المحادثة الحي
+            if(chatUnsubscribe) chatUnsubscribe();
+            
+            // سحب كل الرسايل والفلترة محلياً عشان نتجنب الـ Index Error في الفايربيز للمبتدئين
+            chatUnsubscribe = onSnapshot(collection(db, "internal_chats"), (snap) => {
+                let html = "";
+                let msgs = [];
+                snap.forEach(doc => msgs.push(doc.data()));
+                
+                // ترتيب الرسايل بالوقت القديم للجديد
+                msgs.sort((a,b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
+
+                msgs.forEach(m => {
+                    // إظهار المحادثة بين التاجر الحالي والمندوب المحدد فقط
+                    if((m.from === merchantEmail && m.to === courierName) || (m.from === courierName && m.to === merchantEmail)) {
+                        const isMe = m.from === merchantEmail;
+                        const msgClass = isMe ? "chat-mine" : "chat-other";
+                        const senderName = isMe ? "أنت" : "الكابتن";
+                        
+                        html += `<div class="chat-bubble ${msgClass}">
+                                    <b style="font-size: 10px; color: #666; display: block; margin-bottom: 2px;">${senderName}</b>
+                                    ${m.message}
+                                 </div>`;
+                    }
+                });
+                
+                const chatBox = document.getElementById('chatBox');
+                chatBox.innerHTML = html || "<div style='text-align:center; color:gray; font-size:13px; margin-top:30px;'><i class='fa-solid fa-comments fa-2x'></i><br><br>الخط الآمن مفتوح.. ابدأ المحادثة مع الكابتن الآن.</div>";
+                // النزول لآخر رسالة أوتوماتيك
+                setTimeout(() => chatBox.scrollTop = chatBox.scrollHeight, 100);
+            });
+        };
+
+        window.closeTrackChat = () => {
+            document.getElementById('trackChatModal').style.display = 'none';
+            if(chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
+        };
+
+        window.sendChatMessage = async () => {
+            const input = document.getElementById('chatInput');
+            const msg = input.value.trim();
+            if(!msg || !currentChatCourier) return;
+
+            input.value = ""; // تفريغ الخانة فوراً
+            try {
+                await addDoc(collection(db, "internal_chats"), {
+                    from: merchantEmail,
+                    to: currentChatCourier,
+                    message: msg,
+                    timestamp: new Date()
+                });
+            } catch(e) {
+                Swal.fire('خطأ', e.message, 'error');
+            }
+        };
+
+
         window.getCityPrice = (cityName) => {
             if(!cityName) return 0;
             if(['قاهرة', 'جيزة', 'cairo', 'giza'].some(k => cityName.includes(k))) return Number(livePrices.cairo);
@@ -414,7 +521,7 @@
             if(['بحيرة', 'دمنهور', 'beheira'].some(k => cityName.includes(k))) return Number(livePrices.beheira);
             if(['صعيد', 'اسيوط', 'سوهاج', 'منيا', 'قنا', 'اسوان', 'أقصر'].some(k => cityName.includes(k))) return Number(livePrices.saeed);
             if(['دلتا', 'منصورة', 'طنطا', 'زقازيق', 'اسماعيلية', 'سويس', 'بورسعيد', 'قناة'].some(k => cityName.includes(k))) return Number(livePrices.delta);
-            return Number(livePrices.alex); // افتراضي لو مكتبش حاجة واضحة بياخد المحلي
+            return Number(livePrices.alex); 
         };
 
         window.updateShippingCalc = () => {
@@ -426,7 +533,7 @@
             document.getElementById('lblShippingFee').innerText = fee + " ج.م";
             document.getElementById('lblTotalAmount').innerText = (cod + fee) + " ج.م";
             
-            window.checkCityFilter(); // لسهولة التشيك على الدفع المقدم لاسكندرية
+            window.checkCityFilter(); 
         };
 
         window.saveBusinessInfo = async () => {
@@ -457,7 +564,6 @@
             document.getElementById('balanceDetails').style.display = val === 'balance' ? 'block' : 'none';
         };
 
-        // --- دوال الأوردرات والتسعير ---
         window.submitEshteryly = async () => {
             const details = document.getElementById('eshDetails').value.trim();
             const address = document.getElementById('eshAddress').value.trim();
@@ -495,7 +601,7 @@
             document.getElementById('coldModal').style.display = 'none';
             
             let localFee = window.getCityPrice(branchName);
-            let finalAmount = Number(rawAmount) + localFee; // السعر + التوصيل
+            let finalAmount = Number(rawAmount) + localFee; 
 
             try {
                 await addDoc(collection(db, "eshteryly_orders"), {
@@ -596,7 +702,6 @@
                 return Swal.fire('عنوان الاستلام مفقود', 'برجاء كتابة عنوان متجرك في الخانة العلوية وحفظه أولاً عشان المندوب يعرف هيستلم منين!', 'warning');
             }
 
-            // حساب الإجمالي اللي هيتطبع في البوليصة للعميل
             const fee = window.getCityPrice(city);
             const finalAmount = cod + fee;
 
@@ -606,7 +711,7 @@
                 const docRef = await addDoc(collection(db, "shipments"), {
                     merchantEmail: merchantEmail, name, phone, phone2: document.getElementById('recPhone2').value.trim() || "لا يوجد",
                     city, address, weight: Number(document.getElementById('recWeight').value||1),
-                    amount: finalAmount, // الإجمالي المضاف له الشحن
+                    amount: finalAmount, 
                     paymentType: paymentType, fragile: isFragile, 
                     merchantAddress: merchantAddress,
                     merchantPhone: merchantPhone,
@@ -618,18 +723,16 @@
                 
                 document.querySelectorAll('#addModal input[type="text"], #addModal input[type="tel"], #addModal input[type="number"]').forEach(inp => { if(inp.id !== 'merchantBusinessAddress' && inp.id !== 'merchantBusinessPhone') inp.value = ''; });
                 document.getElementById('recFragile').checked = false;
-                window.updateShippingCalc(); // تصغير الارقام
+                window.updateShippingCalc(); 
                 
                 const awb = "AXN" + docRef.id.substring(0,5).toUpperCase();
                 
-                // هنبعت ال finalAmount لدالة الطباعة
                 window.printWB(awb, name, phone, document.getElementById('recPhone2').value, city, address, document.getElementById('recWeight').value||1, finalAmount, isFragile, merchantAddress, merchantPhone);
 
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
             btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span data-i18n="btn_submit_awb">إرسال الشحنة وتوليد البوليصة بالإجمالي</span>';
         };
 
-        // --- تحميل أوامر الرادار الخاصة بالتاجر ---
         function loadMerchantRadar() {
             onSnapshot(query(collection(db, "eshteryly_orders"), where("merchantEmail", "==", merchantEmail)), (snap) => {
                 let html = "";
@@ -639,7 +742,6 @@
                 docs.sort((a,b) => b.timestamp - a.timestamp);
                 
                 docs.forEach(d => {
-                    // مبنعرضش الأوردرات القديمة اللي اتسلمت خلاص عشان منزحمش الشاشة
                     if(d.status === "تم التسليم بنجاح" || d.status === "مرفوض" || d.status === "تم التسليم") return;
                     count++;
                     
@@ -676,23 +778,6 @@
                 }
             });
         }
-
-        window.showCourierTrack = (courierName) => {
-            Swal.fire({
-                title: `📡 تتبع الكابتن: ${courierName}`,
-                html: `
-                    <div style="height: 160px; background: #e0eaf5; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; position: relative; overflow: hidden; border: 2px solid var(--primary-blue);">
-                        <div style="position: absolute; width: 100%; height: 100%; background: radial-gradient(circle, rgba(23,162,184,0.3) 0%, rgba(255,255,255,0) 70%); animation: pulse 2s infinite;"></div>
-                        <i class="fa-solid fa-motorcycle fa-4x" style="color: var(--primary-blue); z-index: 2;"></i>
-                        <span style="position: absolute; bottom: 10px; font-size: 13px; font-weight: 900; color: var(--primary-red);"><i class="fa-solid fa-satellite"></i> جاري الاتصال بالقمر الصناعي للرادار...</span>
-                    </div>
-                    <p style="font-size: 14px; color: #666; margin-bottom: 20px; font-weight: bold;">الكابتن في طريقه إليك. يمكنك التواصل معه مباشرة من خلال قناة أكسون المشفرة.</p>
-                    <button onclick="Swal.fire('تم التحويل', 'تم تحويلك لقناة الاتصال الآمنة بالكابتن.', 'success')" style="background: #25D366; color: white; border: none; padding: 15px 20px; border-radius: 8px; font-weight: 900; cursor: pointer; width: 100%; font-family:'Cairo'; font-size:16px;"><i class="fa-brands fa-whatsapp"></i> فتح قناة محادثة آمنة مع المندوب</button>
-                `,
-                showConfirmButton: false,
-                showCloseButton: true
-            });
-        };
 
         function loadShipments() {
             onSnapshot(query(collection(db, "shipments"), where("merchantEmail", "==", merchantEmail)), (snap) => {
