@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -19,14 +20,18 @@
         html, body { font-family: 'Cairo', sans-serif; margin: 0; background: var(--light-bg); color: var(--dark-text); overflow-x: hidden; scroll-behavior: smooth; transition: background 0.3s, color 0.3s;}
         
         #printArea { display: none; }
+        .swal2-container { font-family: 'Cairo', sans-serif !important; z-index: 99999 !important; }
 
         header { background: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary-red); position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s;}
         .logo { font-size: 22px; font-weight: 900; color: var(--primary-blue);}
         .logo span { color: var(--primary-red); }
         .container { padding: 20px; max-width: 1400px; margin: 0 auto;}
         
-        .top-badge { background: var(--primary-blue); color: white; padding: 5px 15px; border-radius: 20px; font-size: 13px; font-weight: bold;}
-        .branch-badge { background: var(--primary-red); color: white; padding: 5px 15px; border-radius: 8px; font-size: 14px; font-weight: bold; margin-right: 10px; display: none;}
+        .header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap;}
+        .branch-badge { background: var(--primary-red); color: white; padding: 5px 15px; border-radius: 8px; font-size: 14px; font-weight: bold; display: none;}
+        .lang-btn { background: transparent; border: 2px solid var(--primary-blue); color: var(--primary-blue); padding: 5px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 13px; transition: 0.3s;}
+        .lang-btn:hover { background: var(--primary-blue); color: white; }
+        .logout-btn { background: var(--white); border: 2px solid var(--primary-red); color: var(--primary-red); padding: 6px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; transition: 0.3s;}
 
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .stat-card { background: var(--white); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-blue); transition: 0.3s;}
@@ -53,8 +58,6 @@
         .search-box:focus { outline: none; border-color: var(--primary-blue); box-shadow: 0 0 5px rgba(10, 61, 98, 0.3); }
 
         .status-dropdown { padding: 6px; border-radius: 5px; border: 1px solid #ddd; font-family: 'Cairo'; font-weight: bold; outline: none; transition: 0.3s; background: var(--white); color: var(--dark-text);}
-        .logout-btn { background: var(--white); border: 2px solid var(--primary-red); color: var(--primary-red); padding: 6px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; transition: 0.3s;}
-        .lang-btn { background: transparent; border: 2px solid var(--primary-blue); color: var(--primary-blue); padding: 6px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 13px; transition: 0.3s;}
         
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; z-index: 2000; padding: 15px; backdrop-filter: blur(5px);}
         .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 500px; position: relative; transition: 0.3s; max-height: 90vh; overflow-y: auto;}
@@ -75,8 +78,17 @@
         body.dark-mode .new-acc-section { background: #0b2b30 !important; border-color: #17a2b8 !important; }
         body.dark-mode .new-acc-section h2 { color: #4dd0e1 !important; border-bottom-color: #17a2b8 !important; }
 
-        .admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
-        .admin-tab-btn { background: #e0eaf5; color: var(--primary-blue); border: none; padding: 10px 20px; border-radius: 8px; font-family: 'Cairo'; font-weight: bold; cursor: pointer; transition: 0.3s; white-space: nowrap; }
+        /* التابات العلوية (معدلة عشان متطيرش بره الشاشة وتبقى Scrollable) */
+        .admin-tabs { 
+            display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; 
+            padding-bottom: 10px; -webkit-overflow-scrolling: touch; scrollbar-width: none; 
+        }
+        .admin-tabs::-webkit-scrollbar { display: none; }
+        .admin-tab-btn { 
+            background: #e0eaf5; color: var(--primary-blue); border: none; padding: 12px 20px; 
+            border-radius: 8px; font-family: 'Cairo'; font-weight: bold; cursor: pointer; 
+            transition: 0.3s; white-space: nowrap; flex-shrink: 0; font-size: 15px;
+        }
         .admin-tab-btn.active { background: var(--primary-blue); color: white; }
         .admin-tab-content { display: none; }
         .admin-tab-content.active { display: block; }
@@ -124,12 +136,17 @@
         .safeer-name-badge h2 { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 1px;}
         .branch-badge-print { font-weight: bold; font-size: 14px; color: #000; text-transform: uppercase; background: #f0f0f0; border: 2px solid #000; padding: 3px 10px; display: inline-block; margin-bottom: 5px;}
         .fragile-banner { background: #b82329; color: white; text-align: center; font-size: 16px; font-weight: bold; padding: 8px; border-radius: 5px; margin-bottom: 10px; border: 2px dashed #000;}
+        
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 10px; }
+            .header-actions { width: 100%; justify-content: center; }
+        }
     </style>
 </head>
 <body>
     <header id="mainHeader">
         <div class="logo"><i class="fa-solid fa-chess-king"></i> <span data-i18n="admin_title">إدارة</span> | <span style="color:var(--primary-red);">AXON</span></div>
-        <div style="display: flex; gap: 10px; align-items: center;">
+        <div class="header-actions">
             <div class="branch-badge" id="adminBranchDisplay">الفرع: </div>
             <button onclick="window.toggleLang()" class="lang-btn" id="langBtn">English</button>
             <button onclick="window.toggleTheme()" style="background:none; border:none; color:var(--primary-blue); font-size:24px; cursor:pointer;" title="الوضع الليلي">
@@ -148,7 +165,7 @@
                 <span id="emergencyBadge" style="background:red; color:white; border-radius:50%; padding:2px 6px; font-size:10px; margin-right:5px; display:none;">0</span>
             </button>
             <button class="admin-tab-btn" onclick="switchAdminTab('supportOps')" style="position: relative;">
-                <i class="fa-solid fa-headset"></i> <span data-i18n="tab_support">الدعم والطلبات</span> 🎧 
+                <i class="fa-solid fa-headset"></i> <span data-i18n="tab_support">الدعم والموارد البشرية</span> 🎧 
                 <span id="ticketBadge" style="background:red; color:white; border-radius:50%; padding:2px 6px; font-size:10px; position:absolute; top:-5px; right:-5px; display:none;">0</span>
             </button>
         </div>
@@ -160,7 +177,6 @@
                 <div class="stat-card"><h3 data-i18n="stat_radar">مهام الرادار النشطة</h3><div class="value" id="activeRadarTasks">0</div></div>
             </div>
 
-            <!-- إنشاء حسابات جديدة (شغالة فعلياً) -->
             <div class="admin-section new-acc-section" id="createAccountsSection">
                 <h2><i class="fa-solid fa-user-plus"></i> <span data-i18n="create_acc">إنشاء حسابات جديدة</span></h2>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 15px;">
@@ -179,15 +195,13 @@
                 <button id="btnCreateAcc" onclick="window.createNewAccount()" style="background: #17a2b8; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; font-family: 'Cairo';"><span data-i18n="btn_create">إنشاء الحساب فوراً</span> 🚀</button>
             </div>
 
-            <!-- خريطة الرادار التكتيكي -->
             <div class="admin-section">
                 <h2 style="color: var(--primary-blue);"><i class="fa-solid fa-map-location-dot"></i> <span data-i18n="radar_map">الرادار التكتيكي (تتبع حي)</span></h2>
                 <div id="adminMap"></div>
             </div>
 
-            <!-- أهداف الرادار (البيكب واشتريلي) اللي كانت مختفية -->
             <div class="admin-section">
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary-red); padding-bottom: 10px; margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary-red); padding-bottom: 10px; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                     <h2 style="border: none; padding: 0; margin: 0;"><i class="fa-solid fa-satellite-dish"></i> أهداف الرادار (اشتريلي / بيكب / كولد)</h2>
                     <button onclick="window.issuePickupOrder()" style="background: var(--primary-red); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-family: 'Cairo'; font-weight: bold;"><i class="fa-solid fa-truck-pickup"></i> إصدار أمر بيكب جديد</button>
                 </div>
@@ -292,7 +306,6 @@
 
     <div id="printArea"></div>
 
-    <!-- مودال تعديل الشحنة اللي كان مختفي -->
     <div id="editShipmentModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="document.getElementById('editShipmentModal').style.display='none'">✖</button>
@@ -312,7 +325,7 @@
 
     <script>
         const i18nDict = {
-            ar: { admin_title: "إدارة", logout: "خروج", tab_main: "العمليات الرئيسية", tab_emergency: "طوارئ ونقل", tab_support: "الدعم والطلبات", stat_active: "إجمالي الشحنات المتاحة", stat_cod: "إجمالي التحصيلات (COD)", stat_radar: "مهام الرادار النشطة", create_acc: "إنشاء حسابات جديدة (موظفين وتجار)", btn_create: "إنشاء الحساب فوراً", radar_map: "الرادار التكتيكي (تتبع حي)", bourse_title: "بورصة الشحن الحية (تحديث مركزي)", bank_title: "الرادار اللوجستي (بنك الشحنات)" },
+            ar: { admin_title: "إدارة", logout: "خروج", tab_main: "العمليات الرئيسية", tab_emergency: "طوارئ ونقل", tab_support: "الدعم والطلبات", stat_active: "إجمالي الشحنات المتاحة", stat_cod: "إجمالي التحصيلات (COD)", stat_radar: "مهام الرادار النشطة", create_acc: "إنشاء حسابات جديدة", btn_create: "إنشاء الحساب فوراً", radar_map: "الرادار التكتيكي (تتبع حي)", bourse_title: "بورصة الشحن الحية (تحديث مركزي)", bank_title: "الرادار اللوجستي (بنك الشحنات)" },
             en: { admin_title: "Admin", logout: "Logout", tab_main: "Main Ops", tab_emergency: "Emergency", tab_support: "Support", stat_active: "Available Shipments", stat_cod: "Total COD", stat_radar: "Active Radar Tasks", create_acc: "Create New Accounts", btn_create: "Create Account Now", radar_map: "Tactical Live Radar", bourse_title: "Live Shipping Exchange", bank_title: "Logistics Radar (Shipments Bank)" }
         };
 
@@ -360,11 +373,11 @@
 
             if (adminRole === 'super_admin') {
                 document.getElementById('exchangeSection').style.display = 'block';
-                document.getElementById('createAccountsSection').style.display = 'block';
+                document.getElementById('createAccountsSection').style.display = 'block'; // السوبر أدمن بيشوفها
                 loadShipments(); loadLivePrices(); loadEmergencyOps(); loadSupportTickets(); loadRadarTasks();
             } else if (adminRole === 'branch_admin') {
                 document.getElementById('exchangeSection').style.display = 'none';
-                document.getElementById('createAccountsSection').style.display = 'none'; // مدراء الفروع لا ينشئون حسابات
+                document.getElementById('createAccountsSection').style.display = 'block'; // مدير الفرع كمان بيشوفها دلوقتي
                 document.getElementById('adminBranchDisplay').innerText = "فرع: " + adminBranch;
                 document.getElementById('adminBranchDisplay').style.display = 'inline-block';
                 loadShipments(adminBranch); loadEmergencyOps(adminBranch); loadSupportTickets(adminBranch); loadRadarTasks(adminBranch);
@@ -373,7 +386,7 @@
 
         window.logout = () => { localStorage.clear(); signOut(auth).then(() => window.location.href = "index.html"); }
 
-        // --- دالة إنشاء الحسابات الفعلية ---
+        // --- دالة إنشاء الحسابات الفعلية (الجديدة) ---
         window.createNewAccount = async () => {
             const name = document.getElementById('newAccName').value.trim();
             const email = document.getElementById('newAccEmail').value.trim();
@@ -383,6 +396,11 @@
 
             if(!name || !email || !pass) return Swal.fire('بيانات ناقصة', 'رجاءً تعبئة الاسم والإيميل والباسورد', 'error');
             if(pass.length < 6) return Swal.fire('خطأ', 'الباسورد يجب أن يكون 6 أحرف أو أرقام على الأقل', 'error');
+            
+            // لو مدير فرع بيحاول يعين مدير فرع زيه، امنعه!
+            if(adminRole === 'branch_admin' && role === 'admin') {
+                return Swal.fire('صلاحيات محدودة', 'القيادة العليا فقط هي من تستطيع تعيين مديري الفروع.', 'error');
+            }
 
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الإنشاء...'; btn.disabled = true;
 
@@ -398,14 +416,22 @@
 
                 let userData = { name: name, email: email, role: role, timestamp: new Date() };
                 
-                // تحديد بيانات إضافية حسب نوع الحساب
-                if(role === "delivery") { userData.status = "offline"; userData.currentLocation = {lat: null, lng: null}; }
-                if(role === "admin") { userData.branchName = prompt("أدخل اسم فرع المحافظة لهذا الوكيل (مثال: الإسكندرية):") || "المركز الرئيسي"; }
-                if(role === "merchant") { userData.branchName = prompt("أدخل اسم فرع المحافظة التابع لها التاجر:") || "المركز الرئيسي"; }
+                let targetBranch = "المركز الرئيسي";
+                
+                // تحديد المحافظة بناءً على مين اللي بيعمل الحساب
+                if(adminRole === 'super_admin') {
+                    targetBranch = prompt("أدخل اسم فرع المحافظة لهذا الحساب (مثال: الإسكندرية):") || "المركز الرئيسي";
+                } else {
+                    targetBranch = adminBranch; // إجبار ربط التاجر أو المندوب بفرع مديره
+                }
+
+                if(role === "delivery") { userData.status = "offline"; userData.currentLocation = {lat: null, lng: null}; userData.branchName = targetBranch;}
+                if(role === "admin") { userData.branchName = targetBranch; }
+                if(role === "merchant") { userData.branchName = targetBranch; }
 
                 await setDoc(doc(db, collectionName, role === "merchant" ? email : uid), userData);
                 
-                Swal.fire('عاش يا هندسة', `تم إنشاء حساب (${name}) بنجاح كـ (${role})`, 'success');
+                Swal.fire('عاش يا هندسة', `تم إنشاء حساب (${name}) بنجاح كـ (${role}) وربطه بفرع (${targetBranch})`, 'success');
                 
                 document.getElementById('newAccName').value = ''; document.getElementById('newAccEmail').value = ''; document.getElementById('newAccPass').value = '';
             } catch (error) { Swal.fire('خطأ في الإنشاء', error.message, 'error'); } 
@@ -581,11 +607,10 @@
             try {
                 await updateDoc(doc(db, "shipments", id), { name, address, amount: Number(amount), phone });
                 document.getElementById('editShipmentModal').style.display = 'none';
-                Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم التعديل', showConfirmButton:false, timer:1500});
+                Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم حفظ التعديلات', showConfirmButton:false, timer:1500});
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
         };
 
-        // دالة الإذاعة للرادار كاملة
         window.broadcastShipmentToRadar = async (shipmentId, merchantEmail, city, address, amount, paymentType, awb) => {
             if(!confirm("هل تريد بث هذه الشحنة للرادار ليقوم مندوب بتوصيلها الآن؟")) return;
             try { 
@@ -661,7 +686,6 @@
         window.toggleTheme = () => { document.body.classList.toggle('dark-mode'); const isDark = document.body.classList.contains('dark-mode'); localStorage.setItem('axon_admin_theme', isDark ? 'dark' : 'light'); document.getElementById('themeIcon').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon'; };
         if(localStorage.getItem('axon_admin_theme') === 'dark') { document.body.classList.add('dark-mode'); document.getElementById('themeIcon').className = 'fa-solid fa-sun'; }
 
-        // --- باقي الأقسام (طوارئ ودعم) ---
         function loadEmergencyOps(branchFilter = null) {
             onSnapshot(query(collection(db, "axon_rescue_orders"), orderBy("timestamp", "desc")), (snap) => {
                 let html = "", count = 0;
