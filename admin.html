@@ -384,18 +384,21 @@
         let adminIP = "جاري التحقق...";
         fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ adminIP = d.ip; }).catch(e=>{ adminIP = "غير معروف"; });
 
-        // أسماء المحافظات الـ 27
         const governorates = ["القاهرة", "الجيزة", "الإسكندرية", "الدقهلية", "الغربية", "المنوفية", "الشرقية", "القليوبية", "البحيرة", "كفر الشيخ", "دمياط", "الإسماعيلية", "بورسعيد", "السويس", "مرسى مطروح", "شمال سيناء", "جنوب سيناء", "البحر الأحمر", "الفيوم", "بني سويف", "المنيا", "أسيوط", "سوهاج", "قنا", "الأقصر", "أسوان", "الوادي الجديد"];
 
-        // توليد خانات البورصة
+        // 1. توليد الخانات أولاً
         function renderPricesGrid() {
             const grid = document.getElementById('pricesGrid');
+            if(!grid) return; // حماية إضافية
             let html = '';
             governorates.forEach(gov => {
                 html += `<div><label style="font-size:13px; font-weight:bold;">${gov}:</label><input type="number" id="price_${gov}" style="width:100%; padding:8px; border-radius:5px;" placeholder="ج.م"></div>`;
             });
             grid.innerHTML = html;
         }
+
+        // استدعاء توليد الخانات فورا عشان تبقى جاهزة في الـ DOM
+        renderPricesGrid();
 
         window.switchAdminTab = (tabId) => { 
             document.querySelectorAll('.admin-tab-content').forEach(c => c.style.display = 'none');
@@ -411,7 +414,6 @@
         onAuthStateChanged(auth, async (user) => {
             if (!user) { window.location.href = "index.html"; return; }
             
-            renderPricesGrid();
             adminRole = localStorage.getItem('axon_user_role') || 'super_admin';
             adminBranch = localStorage.getItem('axon_branch') || 'all';
 
@@ -420,11 +422,13 @@
             if (adminRole === 'super_admin') {
                 document.getElementById('exchangeSection').style.display = 'block';
                 document.getElementById('createAccountsSection').style.display = 'block'; 
-                loadShipments(); loadLivePrices(); loadEmergencyOps(); loadSupportTickets(); loadRadarTasks(); loadCouriersOnMap();
+                // 2. تحميل البيانات بعد التأكد إن الخانات موجودة
+                loadLivePrices(); 
+                loadShipments(); loadEmergencyOps(); loadSupportTickets(); loadRadarTasks(); loadCouriersOnMap();
             } else if (adminRole === 'branch_admin') {
                 document.getElementById('exchangeSection').style.display = 'none';
                 document.getElementById('createAccountsSection').style.display = 'block'; 
-                document.getElementById('branchSelectContainer').style.display = 'none'; // مدير الفرع مبيخترش فرع تاني
+                document.getElementById('branchSelectContainer').style.display = 'none'; 
                 document.getElementById('adminBranchDisplay').innerText = "فرع: " + adminBranch;
                 document.getElementById('adminBranchDisplay').style.display = 'inline-block';
                 loadShipments(adminBranch); loadEmergencyOps(adminBranch); loadSupportTickets(adminBranch); loadRadarTasks(adminBranch); loadCouriersOnMap(adminBranch);
@@ -522,11 +526,14 @@
                 if(snap.exists()) {
                     const d = snap.data();
                     governorates.forEach(gov => {
-                        if(document.getElementById(`price_${gov}`)) {
-                            document.getElementById(`price_${gov}`).value = d[gov] || '';
+                        let inputElement = document.getElementById(`price_${gov}`);
+                        if(inputElement) {
+                            inputElement.value = d[gov] || '';
                         }
                     });
-                    document.getElementById('pricePenalty').value = d.penalty || '';
+                    if(document.getElementById('pricePenalty')) {
+                        document.getElementById('pricePenalty').value = d.penalty || '';
+                    }
                 }
             });
         }
@@ -535,8 +542,10 @@
             const pricesToSave = { penalty: Number(document.getElementById("pricePenalty").value) || 0, lastUpdate: new Date().toLocaleTimeString("ar-EG") }; 
             
             governorates.forEach(gov => {
-                let val = document.getElementById(`price_${gov}`).value;
-                if(val) pricesToSave[gov] = Number(val);
+                let inputElement = document.getElementById(`price_${gov}`);
+                if(inputElement && inputElement.value) {
+                    pricesToSave[gov] = Number(inputElement.value);
+                }
             });
 
             await setDoc(doc(db, "settings", "shipping_prices"), pricesToSave, { merge: true }); 
