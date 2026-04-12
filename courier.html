@@ -23,10 +23,8 @@
         
         body { font-family: 'Cairo', sans-serif; background: var(--bg-color); margin: 0; color: var(--dark-text); overflow-x: hidden; transition: 0.3s; }
         
-        /* تظبيط العرض على الكمبيوتر */
         .app-container { max-width: 600px; margin: 0 auto; background: var(--bg-color); min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.1); position: relative;}
         
-        /* شاشة الدخول الاحترافية */
         #loginSection { 
             background: linear-gradient(135deg, var(--primary-blue), #000); 
             min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
@@ -44,7 +42,6 @@
             border-radius: 15px; font-weight: 900; font-size: 18px; cursor: pointer; transition: 0.3s;
         }
 
-        /* الهيدر الجديد */
         .app-header {
             background: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; 
             align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: var(--soft-shadow);
@@ -53,7 +50,6 @@
         .profile-area { display: flex; align-items: center; gap: 10px; }
         .avatar { width: 45px; height: 45px; background: var(--primary-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
 
-        /* حالة الوردية (Floating Switch) */
         .status-container {
             margin: 20px; background: var(--white); padding: 20px; border-radius: 24px;
             display: flex; justify-content: space-between; align-items: center; box-shadow: var(--soft-shadow);
@@ -61,58 +57,59 @@
         .status-badge { display: flex; align-items: center; gap: 8px; font-weight: bold; }
         .pulse-online { width: 12px; height: 12px; background: #10B981; border-radius: 50%; animation: pulse 1.5s infinite; }
         
-        /* الكروت المميزة */
         .section-title { padding: 0 25px; font-size: 18px; font-weight: 900; color: var(--primary-blue); margin-top: 25px; }
+        
         .order-card {
-            background: var(--white); margin: 15px 20px; padding: 20px; border-radius: 20px;
-            box-shadow: var(--soft-shadow); position: relative; transition: 0.3s; overflow: hidden;
+            margin: 15px 20px; padding: 20px; border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08); position: relative; transition: 0.3s; overflow: hidden;
+            border: 2px solid transparent;
         }
         .order-card:active { transform: scale(0.98); }
         
-        /* شريط اللون الجانبي لكل نوع طرد */
-        .card-border { position: absolute; right: 0; top: 0; bottom: 0; width: 6px; }
+        .card-border { position: absolute; right: 0; top: 0; bottom: 0; width: 8px; }
 
         .dist-tag {
-            position: absolute; top: 20px; left: 20px; background: #F3F4F6; color: var(--primary-blue);
-            padding: 6px 12px; border-radius: 12px; font-size: 12px; font-weight: 900;
+            position: absolute; top: 20px; left: 20px; background: rgba(255,255,255,0.9); color: var(--primary-blue);
+            padding: 6px 12px; border-radius: 12px; font-size: 14px; font-weight: 900; border: 1px solid rgba(0,0,0,0.1);
         }
         .task-badge { 
-            display: inline-block; padding: 5px 12px; border-radius: 8px; font-size: 12px; 
-            font-weight: bold; margin-bottom: 10px; 
+            display: inline-block; padding: 6px 15px; border-radius: 8px; font-size: 13px; 
+            font-weight: 900; margin-bottom: 10px; background: rgba(255,255,255,0.9);
         }
         
-        .merchant-name { font-size: 17px; font-weight: 900; margin: 0 0 5px 0; }
-        .location-text { font-size: 14px; color: #6B7280; margin: 5px 0 15px 0; display: flex; align-items: center; gap: 5px; line-height: 1.5; }
+        .merchant-name { font-size: 19px; font-weight: 900; margin: 0 0 8px 0; color: #111; }
+        .order-details-text { font-size: 14px; font-weight: bold; color: #333; margin-bottom: 10px; background: rgba(255,255,255,0.6); padding: 8px; border-radius: 8px;}
+        .location-text { font-size: 14px; color: #4B5563; margin: 5px 0 15px 0; display: flex; align-items: center; gap: 5px; line-height: 1.5; font-weight:bold; }
 
-        /* أزرار الأكشن السلسة */
         .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .btn-u {
             padding: 12px; border-radius: 12px; border: none; font-family: 'Cairo'; 
-            font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 14px;
+            font-weight: 900; cursor: pointer; transition: 0.2s; font-size: 14px;
         }
-        .btn-claim { background: var(--primary-blue); color: white; grid-column: span 2; font-size: 16px; font-weight: 900;}
-        .btn-details { background: #F3F4F6; color: var(--dark-text); }
-        .btn-ignore { background: #FEE2E2; color: var(--primary-red); }
-        .btn-nav { background: #E0E7FF; color: var(--primary-blue); }
-        .btn-done { background: #D1FAE5; color: #065F46; }
-        .btn-contact { background: #f3f4f6; color: #374151; grid-column: span 2; }
-        .btn-contact:hover { background: #e5e7eb; }
+        .btn-claim { background: var(--primary-blue); color: white; grid-column: span 2; font-size: 17px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
+        .btn-claim:hover { background: var(--secondary-blue); transform: translateY(-2px); }
+        .btn-details { background: #fff; color: var(--dark-text); border: 1px solid #ccc;}
+        .btn-ignore { background: #FEE2E2; color: var(--primary-red); border: 1px solid #fca5a5;}
+        .btn-nav { background: #E0E7FF; color: var(--primary-blue); border: 1px solid #c7d2fe;}
+        .btn-done { background: #D1FAE5; color: #065F46; border: 1px solid #a7f3d0;}
+        .btn-contact { background: #374151; color: white; grid-column: span 2; }
+        .btn-contact:hover { background: #111827; }
 
-        /* Dark Mode */
         body.dark-mode { --bg-color: #000; --white: #111827; --dark-text: #F9FAFB; --soft-shadow: none; }
         body.dark-mode .app-container { background: #000; }
-        body.dark-mode .app-header, body.dark-mode .order-card, body.dark-mode .status-container { border: 1px solid #1F2937; }
-        body.dark-mode .btn-details, body.dark-mode .btn-contact { background: #1F2937; color: #fff; }
-        body.dark-mode .dist-tag { background: #1F2937; color: #fff; }
+        body.dark-mode .app-header, body.dark-mode .status-container { border: 1px solid #374151; }
+        body.dark-mode .dist-tag { background: #1F2937; color: #fff; border-color:#374151;}
+        body.dark-mode .order-details-text { background: rgba(0,0,0,0.4); color: #fff; }
+        body.dark-mode .merchant-name { color: #fff; }
+        body.dark-mode .location-text { color: #ccc; }
 
         @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.7; } 70% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.7; } }
         
-        .swal2-container { font-family: 'Cairo', sans-serif !important; }
+        .swal2-container { font-family: 'Cairo', sans-serif !important; z-index: 99999 !important; }
     </style>
 </head>
 <body>
 
-    <!-- قسم الدخول -->
     <div id="loginSection">
         <div class="login-card">
             <h1 style="color:white; margin-bottom:5px;">AXON</h1>
@@ -123,7 +120,6 @@
         </div>
     </div>
 
-    <!-- المحتوى الرئيسي -->
     <div class="app-container" id="appContent" style="display:none;">
         <div class="app-header">
             <div class="profile-area">
@@ -149,12 +145,12 @@
 
         <div class="section-title">القريب منك (الرادار)</div>
         <div id="radarList">
-            <p style="text-align:center; color:gray; margin-top:30px;">الرادار مغلق.. ابدأ الوردية يا بطل.</p>
+            <p style="text-align:center; color:gray; margin-top:30px; font-weight:bold;">الرادار مغلق.. ابدأ الوردية يا بطل.</p>
         </div>
 
         <div class="section-title">مهامي الحالية</div>
         <div id="myTaskList">
-            <p style="text-align:center; color:gray; margin-top:20px;">لا يوجد مهام نشطة</p>
+            <p style="text-align:center; color:gray; margin-top:20px; font-weight:bold;">لا يوجد مهام نشطة</p>
         </div>
     </div>
 
@@ -163,7 +159,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, doc, updateDoc, setDoc, addDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, doc, updateDoc, getDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         
         const app = initializeApp({
             apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
@@ -177,6 +173,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         let currentCaptain = "", isOnline = false, watchId = null, lat = null, lng = null, ignored = new Set();
+        let notifiedTasks = new Set(); // ذاكرة الرادار عشان ميزعجش المندوب لنفس الطرد
 
         onAuthStateChanged(auth, (user) => {
             if (user && user.email.includes("@courier.axon.com")) {
@@ -213,7 +210,7 @@
                 txt.innerText = "متصل بالرادار 🟢";
                 Swal.fire({toast:true, position:'top', icon:'success', title:'وردية سعيدة يا بطل', showConfirmButton:false, timer:2000});
                 
-                // تشغيل الصوت في الخلفية لأول مرة عشان المتصفح يسمح بيه بعدين
+                // تفعيل الصوت المسبق لكسر حماية المتصفح
                 const audio = document.getElementById('alertSound');
                 audio.volume = 0; audio.play().catch(e=>{}); setTimeout(()=>{audio.pause(); audio.volume = 1;}, 100);
                 
@@ -236,7 +233,7 @@
 
         function loadRadar() {
             onSnapshot(collection(db, "eshteryly_orders"), (snap) => {
-                let radarHtml = "", myTasksHtml = "", nearbyFound = false;
+                let radarHtml = "", myTasksHtml = "", newAlert = false;
                 let availableOrders = [];
 
                 snap.forEach(docSnap => {
@@ -248,36 +245,50 @@
                         if(match){
                             distVal = parseFloat(calculateDistance(lat, lng, parseFloat(match[1]), parseFloat(match[2])));
                             distance = distVal + " كم";
-                            if(distVal < 2) nearbyFound = true;
+                            // توسيع دايرة الرادار لـ 5 كيلو
+                            if(distVal < 5) {
+                                if(!notifiedTasks.has(id) && d.status === "جاري البحث عن مندوب" && !ignored.has(id)) {
+                                    notifiedTasks.add(id);
+                                    newAlert = true;
+                                }
+                            }
                         }
                     }
 
-                    // --- تحديد ألوان وأنواع المهام بذكاء ---
-                    let typeIcon = "🛒", typeText = "اشتريلي وتسوق", typeColor = "#10B981", bgColor = "#D1FAE5"; 
+                    // --- ألوان فاقعة وباك جراوند كاملة لتمييز نوع الطرد ---
+                    let typeIcon = "🛒", typeText = "تسوق واشتريلي", typeColor = "#28a745", cardBg = "#e8f5e9"; 
                     if (d.paymentMethod === 'pickup') { 
-                        typeIcon = "📦"; typeText = "أمر بيكب واستلام"; typeColor = "#8B5CF6"; bgColor = "#EDE9FE"; 
+                        typeIcon = "📦"; typeText = "أمر بيكب واستلام"; typeColor = "#8e44ad"; cardBg = "#f4e8fb"; 
                     } else if (d.type === 'radar' || (d.details && d.details.includes('بوليصة'))) { 
-                        typeIcon = "🚚"; typeText = "توصيل بوليصة مباشر"; typeColor = "#3B82F6"; bgColor = "#DBEAFE"; 
+                        typeIcon = "🚚"; typeText = "توصيل بوليصة"; typeColor = "#007bff"; cardBg = "#e6f2ff"; 
                     }
                     if (d.details && d.details.includes('كولد')) { 
-                        typeIcon = "🥶"; typeText = "شحن كولد فريش"; typeColor = "#0EA5E9"; bgColor = "#E0F2FE"; 
+                        typeIcon = "🥶"; typeText = "شحن مبرد/فريش"; typeColor = "#17a2b8"; cardBg = "#e0f7fa"; 
+                    }
+
+                    // إبراز المبلغ
+                    let codDisplay = "";
+                    let matchAmt = d.details ? d.details.match(/تحصيل:\s*(\d+)/) : null;
+                    if(matchAmt) {
+                        codDisplay = `<span style="background:var(--primary-red); color:white; padding:3px 8px; border-radius:5px; font-weight:bold; margin-right:10px;">${matchAmt[1]} ج.م</span>`;
                     }
 
                     if(d.status === "جاري البحث عن مندوب" && isOnline && !ignored.has(id)){
-                        availableOrders.push({id, ...d, distVal, distance, typeIcon, typeText, typeColor, bgColor});
+                        availableOrders.push({id, ...d, distVal, distance, typeIcon, typeText, typeColor, cardBg, codDisplay});
                     }
 
                     if(d.status === "تم الاستلام بواسطة المندوب" && d.courierName === currentCaptain){
                         myTasksHtml += `
-                            <div class="order-card">
+                            <div class="order-card" style="background: ${cardBg}; border-color: ${typeColor};">
                                 <div class="card-border" style="background: ${typeColor};"></div>
-                                <span class="task-badge" style="background: ${bgColor}; color: ${typeColor};"><i class="fa-solid ${typeIcon === '🛒' ? 'fa-cart-shopping' : typeIcon === '📦' ? 'fa-box' : 'fa-truck-fast'}"></i> ${typeText}</span>
-                                <h4 class="merchant-name">${d.merchantEmail.split('@')[0]}</h4>
-                                <div class="location-text"><i class="fa-solid fa-location-dot"></i> ${d.address.substring(0,40)}...</div>
+                                <span class="task-badge" style="color: ${typeColor}; border: 1px solid ${typeColor};"><i class="fa-solid ${typeIcon === '🛒' ? 'fa-cart-shopping' : typeIcon === '📦' ? 'fa-box' : 'fa-truck-fast'}"></i> ${typeText}</span>
+                                <h4 class="merchant-name">${d.merchantEmail.split('@')[0]} ${codDisplay}</h4>
+                                <div class="order-details-text">${d.details}</div>
+                                <div class="location-text"><i class="fa-solid fa-location-dot" style="color:var(--primary-red);"></i> ${d.address.substring(0,40)}...</div>
                                 <div class="btn-grid">
-                                    <button class="btn-u btn-nav" onclick="window.openMap('${encodeURIComponent(d.address)}')"><i class="fa-solid fa-location-arrow"></i> ملاحة</button>
-                                    <button class="btn-u btn-done" onclick="window.completeTask('${id}', '${d.linkedShipmentId || ''}')"><i class="fa-solid fa-check"></i> تسليم</button>
-                                    <button class="btn-u btn-contact" onclick="window.contactMerchant('${d.merchantEmail}')"><i class="fa-solid fa-comments"></i> بيانات التاجر / محادثة</button>
+                                    <button class="btn-u btn-nav" onclick="window.openMap('${encodeURIComponent(d.address)}')"><i class="fa-solid fa-location-arrow"></i> ملاحة للعميل</button>
+                                    <button class="btn-u btn-done" onclick="window.completeTask('${id}', '${d.linkedShipmentId || ''}')"><i class="fa-solid fa-check-double"></i> تم التسليم</button>
+                                    <button class="btn-u btn-contact" onclick="window.contactMerchant('${d.merchantEmail}')"><i class="fa-solid fa-comments"></i> بيانات التاجر ومحادثة</button>
                                 </div>
                             </div>
                         `;
@@ -287,33 +298,34 @@
                 availableOrders.sort((a,b) => a.distVal - b.distVal);
                 availableOrders.forEach(o => {
                     radarHtml += `
-                        <div class="order-card">
+                        <div class="order-card" style="background: ${o.cardBg}; border-color: ${o.typeColor};">
                             <div class="card-border" style="background: ${o.typeColor};"></div>
-                            <div class="dist-tag">${o.distance}</div>
-                            <span class="task-badge" style="background: ${o.bgColor}; color: ${o.typeColor};">${o.typeIcon} ${o.typeText}</span>
-                            <h4 class="merchant-name">${o.merchantEmail.split('@')[0]}</h4>
-                            <p style="font-size:13px; color:gray; margin-top:5px; margin-bottom:15px;">المنطقة: ${o.address.split(',')[0]}</p>
+                            <div class="dist-tag"><i class="fa-solid fa-route"></i> ${o.distance}</div>
+                            <span class="task-badge" style="color: ${o.typeColor}; border: 1px solid ${o.typeColor};">${o.typeIcon} ${o.typeText}</span>
+                            <h4 class="merchant-name">${o.merchantEmail.split('@')[0]} ${o.codDisplay}</h4>
+                            <div class="order-details-text">${o.details}</div>
+                            <p style="font-size:14px; color:#4B5563; margin-top:5px; margin-bottom:15px; font-weight:bold;">المنطقة: ${o.address.split(',')[0]}</p>
                             <div class="btn-grid">
-                                <button class="btn-u btn-claim" onclick="window.claimOrder('${o.id}', '${o.linkedShipmentId || ''}')">خطف المهمة 🚀</button>
-                                <button class="btn-u btn-details" onclick="window.showDetails('${o.details}')">تفاصيل</button>
-                                <button class="btn-u btn-ignore" onclick="window.ignoreOrder('${o.id}')">تجاهل</button>
+                                <button class="btn-u btn-claim" onclick="window.claimOrder('${o.id}', '${o.linkedShipmentId || ''}')">قبول وخطف المهمة 🚀</button>
+                                <button class="btn-u btn-ignore" onclick="window.ignoreOrder('${o.id}')"><i class="fa-solid fa-xmark"></i> تجاهل</button>
                             </div>
                         </div>
                     `;
                 });
 
-                document.getElementById('radarList').innerHTML = isOnline ? (radarHtml || "<p style='text-align:center; padding:20px; color:gray;'>الرادار خالي.. جاري البحث</p>") : "<p style='text-align:center; padding:20px; color:gray;'>الرادار في وضع السكون.</p>";
-                document.getElementById('myTaskList').innerHTML = myTasksHtml || "<p style='text-align:center; padding:20px; color:gray;'>لا توجد مهام حالياً</p>";
+                document.getElementById('radarList').innerHTML = isOnline ? (radarHtml || "<p style='text-align:center; padding:20px; color:gray; font-weight:bold;'>الرادار خالي.. جاري البحث 📡</p>") : "<p style='text-align:center; padding:20px; color:gray; font-weight:bold;'>الرادار في وضع السكون.</p>";
+                document.getElementById('myTaskList').innerHTML = myTasksHtml || "<p style='text-align:center; padding:20px; color:gray; font-weight:bold;'>لا توجد مهام حالياً</p>";
                 
-                // تشغيل الصوت لو في أوردر جديد والمندوب أونلاين
-                if(nearbyFound && isOnline) {
+                // تشغيل السرينة وإظهار إشعار لو في طرد جديد في النطاق الجغرافي
+                if(newAlert && isOnline) {
                     const audio = document.getElementById('alertSound');
                     audio.play().catch(e => console.log("المتصفح منع الصوت التلقائي"));
+                    Swal.fire({
+                        toast: true, position: 'top', icon: 'info', title: '🚨 طرد جديد قريب منك على الرادار!', showConfirmButton: false, timer: 4000
+                    });
                 }
             });
         }
-
-        window.showDetails = (info) => Swal.fire({title:'تفاصيل المهمة', text:info, icon:'info', confirmButtonText:'علم'});
         
         window.claimOrder = async (id, linkedShipmentId) => {
             try {
@@ -322,10 +334,9 @@
                     courierName: currentCaptain
                 });
                 
-                // لو المهمة دي مربوطة ببوليصة شحن، نحدث البوليصة كمان
                 if(linkedShipmentId) {
                     await updateDoc(doc(db, "shipments", linkedShipmentId), {
-                        status: "مع المندوب: " + currentCaptain,
+                        status: "مع المندوب",
                         courierName: currentCaptain
                     });
                 }
@@ -336,35 +347,49 @@
             }
         };
 
+        // 🚀 الحل الجذري لمشكلة بيانات التاجر 🚀
         window.contactMerchant = async (email) => {
+            let phone = "مخفي (حماية أمنية)";
+            let callBtn = "";
+            
+            // محاولة سحب الرقم، لو الفايربيز قفش مش هيضرب إيرور وهيكمل
             try {
-                // الكود ده كان ناقص استدعاء getDoc وتم حله
                 const pSnap = await getDoc(doc(db, "merchant_profiles", email));
-                const phone = pSnap.exists() ? (pSnap.data().businessPhone || pSnap.data().phone || "غير مسجل") : "غير مسجل";
-                
-                Swal.fire({
-                    title: 'تواصل مع التاجر',
-                    html: `<b>رقم الهاتف:</b> <span dir="ltr">${phone}</span><br><br><button onclick="window.location.href='tel:${phone}'" class="btn-u btn-nav" style="width:100%; padding:10px; border-radius:10px; border:none; font-weight:bold;">اتصال هاتفى <i class="fa-solid fa-phone"></i></button>`,
-                    input: 'textarea',
-                    inputPlaceholder: 'اكتب رسالة شات داخلية هنا...',
-                    showCancelButton: true,
-                    confirmButtonText: 'إرسال رسالة',
-                    cancelButtonText: 'إلغاء'
-                }).then(async (res) => {
-                    if(res.isConfirmed && res.value){
-                        await addDoc(collection(db, "internal_chats"), { 
-                            from: currentCaptain, 
-                            to: email, 
-                            message: res.value, 
-                            timestamp: new Date() 
-                        });
-                        Swal.fire('تم الإرسال', 'رسالتك وصلت للتاجر', 'success');
+                if(pSnap.exists()) {
+                    phone = pSnap.data().businessPhone || pSnap.data().phone || phone;
+                    if(phone !== "مخفي (حماية أمنية)") {
+                        callBtn = `<button onclick="window.location.href='tel:${phone}'" class="btn-u btn-nav" style="width:100%; padding:12px; border-radius:10px; border:none; font-weight:bold; margin-bottom:15px; background:#10B981; color:white; font-size:16px;">اتصال هاتفى بالتاجر <i class="fa-solid fa-phone"></i></button>`;
                     }
-                });
+                }
             } catch(err) {
-                console.error(err);
-                Swal.fire('خطأ', 'حدثت مشكلة في سحب بيانات التاجر', 'error');
+                console.warn("جاري استخدام الإيميل فقط للمحادثة الداخلية");
             }
+
+            Swal.fire({
+                title: 'تواصل مع التاجر',
+                html: `
+                    <div style="text-align:right; font-size:15px; margin-bottom:15px; background:#f4f7f6; padding:10px; border-radius:8px; border:1px solid #ddd;">
+                        <b>التاجر:</b> ${email.split('@')[0]}<br>
+                        <b>رقم الهاتف:</b> <span dir="ltr" style="color:var(--primary-red); font-weight:bold;">${phone}</span>
+                    </div>
+                    ${callBtn}
+                `,
+                input: 'textarea',
+                inputPlaceholder: 'اكتب رسالة شات داخلية للتاجر هنا وسيراها فوراً...',
+                showCancelButton: true,
+                confirmButtonText: 'إرسال رسالة 💬',
+                cancelButtonText: 'إلغاء'
+            }).then(async (res) => {
+                if(res.isConfirmed && res.value){
+                    await addDoc(collection(db, "internal_chats"), { 
+                        from: currentCaptain, 
+                        to: email, 
+                        message: res.value, 
+                        timestamp: new Date() 
+                    });
+                    Swal.fire('تم الإرسال', 'رسالتك وصلت للتاجر', 'success');
+                }
+            });
         };
 
         function startTracking() {
@@ -383,7 +408,7 @@
         window.ignoreOrder = (id) => { ignored.add(id); loadRadar(); };
         
         window.completeTask = async (id, linkedShipmentId) => {
-            const r = await Swal.fire({title:'تأكيد الاستلام؟', text:'هل قمت بتنفيذ المهمة بنجاح؟', icon:'question', showCancelButton:true, confirmButtonText:'نعم، تمت', cancelButtonText:'إلغاء'});
+            const r = await Swal.fire({title:'تأكيد الاستلام؟', text:'هل قمت بتنفيذ المهمة وتسليمها بنجاح؟', icon:'question', showCancelButton:true, confirmButtonText:'نعم، تمت ✅', cancelButtonText:'إلغاء'});
             if(r.isConfirmed) {
                 await updateDoc(doc(db, "eshteryly_orders", id), {status:"تم التسليم بنجاح"});
                 if(linkedShipmentId) {
