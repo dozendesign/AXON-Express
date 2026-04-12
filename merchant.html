@@ -48,29 +48,51 @@
         .btn-eshteryly { background: #28a745; }
         .btn-home { background: #d39e00; } 
         .btn-rescue { background: var(--primary-red); } 
+
+        /* تنسيقات الرادار العصري للتاجر */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .radar-merchant-section { background: var(--white); padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 2px dashed var(--primary-red); animation: fadeIn 0.5s ease; display: none; position: relative; overflow: hidden;}
+        .radar-merchant-section::before { content: ''; position: absolute; top: 0; right: 0; width: 5px; height: 100%; background: var(--primary-red); }
+        .radar-title { color: var(--primary-red); margin-top: 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; font-size: 18px; }
+        .radar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 15px; }
+        .radar-card { background: #fdfdfd; border: 1px solid #e0e0e0; border-radius: 10px; padding: 15px; display: flex; flex-direction: column; gap: 10px; transition: 0.3s; position: relative;}
+        .radar-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-color: var(--primary-blue);}
+        .radar-card.type-cold { border-right: 4px solid #0EA5E9; }
+        .radar-card.type-buy { border-right: 4px solid #28a745; }
+        .radar-card h4 { margin: 0; font-size: 15px; color: var(--primary-blue); display: flex; justify-content: space-between; align-items: center;}
+        .radar-card p { margin: 0; font-size: 13px; color: #555; line-height: 1.5; background: #f4f7f6; padding: 8px; border-radius: 6px;}
+        .radar-status-badge { font-size: 11px; padding: 4px 8px; border-radius: 4px; font-weight: bold; background: #fff3cd; color: #856404; }
         
         .search-box { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Cairo'; outline: none; margin-bottom: 15px;}
         .table-responsive { width: 100%; overflow-x: auto; background: var(--white); border-radius: 12px; border: 1px solid var(--border-color);}
         table { width: 100%; min-width: 900px; border-collapse: collapse; }
         th, td { padding: 15px 12px; text-align: right; border-bottom: 1px solid var(--border-color); font-size: 14px;}
         th { background: var(--primary-blue); color: var(--white); font-weight: bold;}
-        .print-btn { background: #333; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; margin-bottom: 5px; width: 100%;}
-        .track-btn { background: #17a2b8; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; width: 100%;}
+        .print-btn { background: #333; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; margin-bottom: 5px; width: 100%; transition: 0.3s;}
+        .track-btn { background: #17a2b8; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; width: 100%; transition: 0.3s;}
+        .track-btn:hover, .print-btn:hover { opacity: 0.9; transform: translateY(-2px); }
         .awb-badge { background: #e0eaf5; color: var(--primary-blue); padding: 5px 12px; border-radius: 6px; font-weight: bold;}
         
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; z-index: 2000; padding: 15px; backdrop-filter: blur(5px);}
         .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto; position: relative;}
         .input-group label { font-size: 14px; font-weight: bold; color: var(--primary-blue); margin-top: 12px; display: block; }
-        .input-group input, .input-group select, .modal-content textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo'; background: var(--white); color: var(--dark-text);}
+        .input-group input, .input-group select, .modal-content textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo'; background: var(--white); color: var(--dark-text); transition: 0.3s;}
+        .input-group input:focus { border-color: var(--primary-blue); }
         .close-btn { position: absolute; top: 15px; left: 15px; border: none; background: none; font-size: 24px; cursor: pointer; color: var(--primary-red);}
 
         .floating-chat { position: fixed; bottom: 20px; right: 20px; background: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999; text-decoration: none;}
         
+        .calc-summary { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 15px; border: 2px dashed #ccc; }
+        .calc-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; font-weight: bold; }
+        .calc-total { font-size: 18px; color: var(--primary-red); border-top: 1px solid #ddd; padding-top: 8px; margin-top: 8px; }
+
         body.dark-mode { --white: #1a1a2e; --light-bg: #16213e; --dark-text: #e0e0e0; --border-color: #0f3460; --primary-blue: #4a90e2;}
         body.dark-mode header { background: #1a1a2e; border-bottom: 4px solid var(--primary-red); }
         body.dark-mode .input-group input, body.dark-mode .input-group select, body.dark-mode .modal-content textarea { background: #16213e; border-color: #0f3460; color: white;}
-        body.dark-mode .business-info-wrapper { background: #16213e; border-color: #0f3460; }
+        body.dark-mode .business-info-wrapper, body.dark-mode .radar-merchant-section, body.dark-mode .radar-card { background: #16213e; border-color: #0f3460; }
         body.dark-mode .business-info-wrapper input { background: #1a1a2e; color: white; border-color: #333; }
+        body.dark-mode .calc-summary { background: #1a1a2e; border-color: #333; }
+        body.dark-mode .radar-card p { background: #1a1a2e; color: #ccc;}
 
         /* الطباعة */
         @media print {
@@ -151,7 +173,13 @@
             </div>
         </div>
 
-        <input type="text" id="searchInput" class="search-box" placeholder="🔍 ابحث في سجل شحناتك برقم البوليصة، الاسم، المحافظة...">
+        <div class="radar-merchant-section" id="merchantRadarSection">
+            <h2 class="radar-title"><i class="fa-solid fa-satellite-dish fa-beat"></i> مهام الرادار الخاصة بك (متابعة حية)</h2>
+            <div class="radar-grid" id="radarGridBody">
+                </div>
+        </div>
+
+        <input type="text" id="searchInput" class="search-box" placeholder="🔍 ابحث في سجل البوالص برقم البوليصة، الاسم، المحافظة...">
         
         <div class="table-responsive">
             <table>
@@ -160,7 +188,7 @@
                     <th data-i18n="th_rec">المستلم</th>
                     <th data-i18n="th_phone">الموبايل</th>
                     <th data-i18n="th_city">المحافظة</th>
-                    <th data-i18n="th_amt">المبلغ</th>
+                    <th data-i18n="th_amt">المبلغ الإجمالي</th>
                     <th data-i18n="th_status">الحالة</th>
                     <th data-i18n="th_act">إجراء</th>
                 </tr></thead>
@@ -184,7 +212,7 @@
                 <div class="input-group" style="flex:1;"><label>الموبايل الأساسي</label><input type="tel" id="recPhone" placeholder="01xxxxxxxxx"></div>
                 <div class="input-group" style="flex:1;"><label>موبايل احتياطي</label><input type="tel" id="recPhone2" placeholder="اختياري"></div>
             </div>
-            <div class="input-group"><label>المحافظة</label><input type="text" id="recCity" placeholder="مثال: الإسكندرية" onkeyup="window.checkCityFilter()"></div>
+            <div class="input-group"><label>المحافظة (الوجهة)</label><input type="text" id="recCity" placeholder="اكتب المحافظة لحساب الشحن آلياً" onkeyup="window.updateShippingCalc()"></div>
             
             <div class="input-group" id="paymentTypeGroup" style="display:none; background:#e0eaf5; padding:12px; border-radius:8px; border:1px solid var(--primary-blue); margin-top:10px;">
                 <label style="color:var(--primary-red); font-size: 14px;"><i class="fa-solid fa-bolt"></i> نظام التحصيل (متاح للداخل فقط)</label>
@@ -197,7 +225,13 @@
             <div class="input-group"><label>العنوان بالتفصيل</label><input type="text" id="recAddress" placeholder="الشارع، العمارة، الشقة"></div>
             <div style="display:flex; gap:10px;">
                 <div class="input-group" style="flex:1;"><label>الوزن (كجم)</label><input type="number" id="recWeight" value="1" min="1"></div>
-                <div class="input-group" style="flex:1;"><label>المبلغ المطلوب (COD)</label><input type="number" id="codAmount" placeholder="ج.م"></div>
+                <div class="input-group" style="flex:1;"><label>قيمة البضاعة المطلوبة</label><input type="number" id="codAmount" placeholder="تمن بضاعتك فقط" oninput="window.updateShippingCalc()"></div>
+            </div>
+
+            <div class="calc-summary">
+                <div class="calc-row"><span>قيمة البضاعة:</span> <span id="lblCodAmount">0 ج.م</span></div>
+                <div class="calc-row"><span>رسوم الشحن المقررة:</span> <span id="lblShippingFee" style="color:var(--primary-blue);">0 ج.م</span></div>
+                <div class="calc-row calc-total"><span>الإجمالي للتحصيل (بالبوليصة):</span> <span id="lblTotalAmount">0 ج.م</span></div>
             </div>
 
             <div class="input-group" style="background:#fff0f0; padding:10px; border-radius:8px; border:1px solid var(--primary-red); margin-top:10px;">
@@ -207,8 +241,8 @@
                 </label>
             </div>
             
-            <button class="btn-service btn-main-action" id="btnSave" style="width:100%; margin-top:20px; justify-content:center; background: var(--primary-blue);" onclick="window.saveShipment()">
-                <i class="fa-solid fa-paper-plane"></i> <span data-i18n="btn_submit_awb">إرسال الشحنة للشركة وتوليد البوليصة</span>
+            <button class="btn-service btn-main-action" id="btnSave" style="width:100%; margin-top:15px; justify-content:center; background: var(--primary-blue);" onclick="window.saveShipment()">
+                <i class="fa-solid fa-paper-plane"></i> <span data-i18n="btn_submit_awb">إرسال الشحنة وتوليد البوليصة بالإجمالي</span>
             </button>
         </div>
     </div>
@@ -217,6 +251,7 @@
         <div class="modal-content">
             <button class="close-btn" onclick="document.getElementById('eshterylyModal').style.display='none'">✖</button>
             <h3 style="color:var(--primary-blue); border-bottom: 2px solid var(--primary-red); padding-bottom:10px; margin-top:0;">🛒 مهمة تسوق (اشتريلي)</h3>
+            <p style="font-size:13px; font-weight:bold; color:var(--primary-red); background:#ffeeba; padding:8px; border-radius:5px;">رسوم الخدمة المقررة: <span id="eshLocalPrice">يتم حسابها...</span> ج.م</p>
             <textarea id="eshDetails" placeholder="اكتب طلباتك بالتفصيل الدقيق..." rows="3"></textarea>
             <div class="input-group"><label>عنوان توصيل المشتريات</label><input type="text" id="eshAddress" placeholder="العنوان أو الصق رابط اللوكيشن"></div>
             <div class="input-group">
@@ -237,7 +272,7 @@
             <div id="instapayDetails" style="display:none; background:#f0f8ff; padding:12px; border-radius:8px; margin-top:10px;"><p style="margin:0; font-weight:bold; color:var(--primary-blue);">حساب InstaPay: <span style="color:red;">01027660260</span></p></div>
             <div id="vfcashDetails" style="display:none; background:#ffebeb; padding:12px; border-radius:8px; margin-top:10px;"><p style="margin:0; font-weight:bold; color:var(--primary-blue);">محفظة فودافون: <span style="font-size:16px; color:var(--primary-red);">01030013810</span></p></div>
             
-            <button class="btn-service btn-eshteryly" style="width:100%; justify-content:center; margin-top:15px;" onclick="window.submitEshteryly()">إرسال الطلب</button>
+            <button class="btn-service btn-eshteryly" style="width:100%; justify-content:center; margin-top:15px;" onclick="window.submitEshteryly()">إرسال الطلب للرادار</button>
         </div>
     </div>
 
@@ -245,10 +280,10 @@
         <div class="modal-content">
             <button class="close-btn" onclick="document.getElementById('coldModal').style.display='none'">✖</button>
             <h3 style="color:#0EA5E9; border-bottom:2px solid #0EA5E9; padding-bottom:10px; margin-top:0;">🥶 طلب شحن فريش/مبرد</h3>
-            <p style="font-size:13px; color:#666;">خاص بالمطابخ السحابية والأكل البيتي. التوصيل في نفس المحافظة ببوكسات حرارية.</p>
+            <p style="font-size:13px; font-weight:bold; color:#0EA5E9; background:#e0f7fa; padding:8px; border-radius:5px;">رسوم الخدمة المقررة: <span id="coldLocalPrice">يتم حسابها...</span> ج.م</p>
             <div class="input-group"><label>وقت جاهزية الأوردر</label><input type="time" id="coldTime"></div>
             <div class="input-group"><label>عنوان المستلم</label><input type="text" id="coldAddress" placeholder="عنوان المستلم بالتفصيل"></div>
-            <div class="input-group"><label>قيمة التحصيل (COD)</label><input type="number" id="coldAmount" placeholder="ج.م"></div>
+            <div class="input-group"><label>قيمة التحصيل (COD)</label><input type="number" id="coldAmount" placeholder="تمن الأوردر فقط"></div>
             <button onclick="window.submitColdOrder()" style="width:100%; background:#0EA5E9; color:white; padding:15px; border:none; border-radius:10px; font-weight:bold; margin-top:15px; cursor:pointer; font-family:'Cairo'; font-size:15px;">تأكيد طلب التوصيل المبرد</button>
         </div>
     </div>
@@ -286,14 +321,14 @@
                 logo_span: "EXPRESS", logout: "خروج", save: "حفظ", m_addr_ph: "عنوان المتجر (لاستلام الشحنات)", m_phone_ph: "رقم المتجر (للتواصل)",
                 stat_active: "إجمالي شحناتك النشطة", stat_cod: "التحصيلات المتوقعة (COD)", srv_title: "مركز العمليات وخدمات أكسون بلس",
                 srv_awb: "إصدار بوليصة شحن", srv_buy: "طلبات تسوق (اشتريلي)", srv_furniture: "أكسون هوم (نقل الأثاث)", srv_rescue: "أكسون إنقاذ (ونش سيارات)", srv_cold: "أكسون كولد/فريش",
-                th_awb: "رقم البوليصة", th_rec: "المستلم", th_phone: "الموبايل", th_city: "المحافظة", th_amt: "المبلغ", th_status: "الحالة", th_act: "إجراء",
-                btn_submit_awb: "إرسال الشحنة للشركة وتوليد البوليصة" 
+                th_awb: "رقم البوليصة", th_rec: "المستلم", th_phone: "الموبايل", th_city: "المحافظة", th_amt: "المبلغ الإجمالي", th_status: "الحالة", th_act: "إجراء",
+                btn_submit_awb: "إرسال الشحنة وتوليد البوليصة بالإجمالي" 
             },
             en: { 
                 logo_span: "EXPRESS", logout: "Logout", save: "Save", m_addr_ph: "Store Address (For Pickups)", m_phone_ph: "Store Phone",
                 stat_active: "Active Shipments", stat_cod: "Expected COD", srv_title: "Operations Center & Axon Plus",
                 srv_awb: "Issue Waybill", srv_buy: "Shopping Request (Eshteryly)", srv_furniture: "Axon Home (Furniture)", srv_rescue: "Axon Rescue (Towing)", srv_cold: "Axon Cold/Fresh",
-                th_awb: "AWB", th_rec: "Receiver", th_phone: "Phone", th_city: "City", th_amt: "Amount", th_status: "Status", th_act: "Action",
+                th_awb: "AWB", th_rec: "Receiver", th_phone: "Phone", th_city: "City", th_amt: "Total Amount", th_status: "Status", th_act: "Action",
                 btn_submit_awb: "Submit Shipment & Generate AWB" 
             }
         };
@@ -326,6 +361,7 @@
         const db = getFirestore(app);
         
         let merchantEmail = "", merchantName = "", merchantIP = "جاري التحقق...", merchantPhone = "غير مسجل", merchantAddress = "غير مسجل", branchName = "المركز الرئيسي";
+        let livePrices = { alex: 0, cairo: 0, beheira: 0, delta: 0, saeed: 0 }; // لتسعير الشحن الآلي
 
         fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ merchantIP = d.ip; }).catch(e=>{ merchantIP = "غير معروف"; });
         const deviceInfo = navigator.userAgent.substring(0, 40) + "..."; 
@@ -350,11 +386,48 @@
                         branchName = profileSnap.data().branchName;
                     }
                 }
+
+                // سحب أسعار البورصة
+                onSnapshot(doc(db, "settings", "shipping_prices"), (snap) => {
+                    if(snap.exists()) { 
+                        livePrices = { ...livePrices, ...snap.data() }; 
+                        // تحديث سعر الخدمة المحلية لـ كولد واشتريلي في المودال بناءً على فرع التاجر
+                        let localFee = window.getCityPrice(branchName);
+                        document.getElementById('eshLocalPrice').innerText = localFee;
+                        document.getElementById('coldLocalPrice').innerText = localFee;
+                        window.updateShippingCalc(); // لو بيكتب بوليصة تتحدث
+                    }
+                });
+
                 loadShipments();
+                loadMerchantRadar(); // سحب الرادار الخاص بالتاجر
             } else { window.location.href = "index.html"; }
         });
 
         window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
+
+        // --- دالة الآلة الحاسبة الذكية ---
+        window.getCityPrice = (cityName) => {
+            if(!cityName) return 0;
+            if(['قاهرة', 'جيزة', 'cairo', 'giza'].some(k => cityName.includes(k))) return Number(livePrices.cairo);
+            if(['اسكندرية', 'الاسكندرية', 'إسكندرية', 'alex'].some(k => cityName.includes(k))) return Number(livePrices.alex);
+            if(['بحيرة', 'دمنهور', 'beheira'].some(k => cityName.includes(k))) return Number(livePrices.beheira);
+            if(['صعيد', 'اسيوط', 'سوهاج', 'منيا', 'قنا', 'اسوان', 'أقصر'].some(k => cityName.includes(k))) return Number(livePrices.saeed);
+            if(['دلتا', 'منصورة', 'طنطا', 'زقازيق', 'اسماعيلية', 'سويس', 'بورسعيد', 'قناة'].some(k => cityName.includes(k))) return Number(livePrices.delta);
+            return Number(livePrices.alex); // افتراضي لو مكتبش حاجة واضحة بياخد المحلي
+        };
+
+        window.updateShippingCalc = () => {
+            const city = document.getElementById('recCity').value.trim().toLowerCase();
+            const cod = Number(document.getElementById('codAmount').value) || 0;
+            const fee = window.getCityPrice(city);
+            
+            document.getElementById('lblCodAmount').innerText = cod + " ج.م";
+            document.getElementById('lblShippingFee').innerText = fee + " ج.م";
+            document.getElementById('lblTotalAmount').innerText = (cod + fee) + " ج.م";
+            
+            window.checkCityFilter(); // لسهولة التشيك على الدفع المقدم لاسكندرية
+        };
 
         window.saveBusinessInfo = async () => {
             const phone = document.getElementById('merchantBusinessPhone').value.trim();
@@ -384,6 +457,7 @@
             document.getElementById('balanceDetails').style.display = val === 'balance' ? 'block' : 'none';
         };
 
+        // --- دوال الأوردرات والتسعير ---
         window.submitEshteryly = async () => {
             const details = document.getElementById('eshDetails').value.trim();
             const address = document.getElementById('eshAddress').value.trim();
@@ -392,13 +466,14 @@
             if(!details || !address || !payment) return Swal.fire('تنبيه', 'برجاء إكمال كافة البيانات واختيار طريقة الدفع.', 'warning');
             
             document.getElementById('eshterylyModal').style.display = 'none';
-            const user = auth.currentUser;
-            if(!user) return;
+            
+            let localFee = window.getCityPrice(branchName);
+            let finalDetails = details + ` | ⚠️ رسوم الخدمة المقررة: ${localFee} ج.م`;
 
             try {
                 await addDoc(collection(db, "eshteryly_orders"), {
-                    merchantEmail: user.email,
-                    details: details,
+                    merchantEmail: merchantEmail,
+                    details: finalDetails,
                     address: address,
                     paymentMethod: payment,
                     status: "جاري البحث عن مندوب",
@@ -406,25 +481,26 @@
                     branchName: branchName, 
                     type: "radar" 
                 });
-                Swal.fire('تم!', 'طلبك تم توجيهه لطيارين الرادار بنجاح.', 'success');
+                Swal.fire('تم!', 'تم بث أوردر المشتريات للرادار.', 'success');
             } catch (e) { Swal.fire('خطأ في الإرسال', e.message, 'error'); }
         };
 
         window.submitColdOrder = async () => {
             const time = document.getElementById('coldTime').value;
             const address = document.getElementById('coldAddress').value.trim();
-            const amount = document.getElementById('coldAmount').value.trim();
+            const rawAmount = document.getElementById('coldAmount').value.trim();
 
-            if(!time || !address || !amount) return Swal.fire('تنبيه', 'رجاء إكمال كافة بيانات أوردر الفريش', 'warning');
+            if(!time || !address || !rawAmount) return Swal.fire('تنبيه', 'رجاء إكمال كافة بيانات أوردر الفريش', 'warning');
             
             document.getElementById('coldModal').style.display = 'none';
-            const user = auth.currentUser;
-            if(!user) return;
+            
+            let localFee = window.getCityPrice(branchName);
+            let finalAmount = Number(rawAmount) + localFee; // السعر + التوصيل
 
             try {
                 await addDoc(collection(db, "eshteryly_orders"), {
-                    merchantEmail: user.email,
-                    details: `🥶 أوردر كولد/فريش | جاهز الساعة: ${time} | المطلوب تحصيله: ${amount} ج.م`,
+                    merchantEmail: merchantEmail,
+                    details: `🥶 كولد/فريش | الساعة: ${time} | تحصيل نهائي بالشحن: ${finalAmount} ج.م`,
                     address: address,
                     paymentMethod: "pickup",
                     status: "جاري البحث عن مندوب",
@@ -432,7 +508,7 @@
                     branchName: branchName,
                     type: "radar"
                 });
-                Swal.fire('تم!', 'تم بث أوردر الفريش للمناديب المجهزين ببوكسات حرارية.', 'success');
+                Swal.fire('تم!', 'تم بث أوردر الفريش لمناديب الكولد.', 'success');
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
         };
 
@@ -445,11 +521,9 @@
             if(!from || !to || !phone) return Swal.fire('نقص بيانات', 'برجاء إكمال حقول النقل بالكامل.', 'warning');
             
             document.getElementById('homeModal').style.display = 'none';
-            const user = auth.currentUser;
-            if(!user) return;
 
             try {
-                await addDoc(collection(db, "axon_home_orders"), { merchantEmail: user.email, from, to, phone, service, status: "قيد التسعير", timestamp: new Date(), branchName });
+                await addDoc(collection(db, "axon_home_orders"), { merchantEmail: merchantEmail, from, to, phone, service, status: "قيد التسعير", timestamp: new Date(), branchName });
                 Swal.fire('ممتاز!', 'تم تسجيل الطلب وسيقوم فريق التسعير بالتواصل معك فوراً.', 'success');
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
         };
@@ -493,12 +567,9 @@
             const btn = document.getElementById('rescueSubmitBtn'); 
             btn.disabled = true; btn.innerHTML = "جاري الإرسال...";
             
-            const user = auth.currentUser;
-            if(!user) return;
-
             try {
                 await addDoc(collection(db, "axon_rescue_orders"), { 
-                    merchantEmail: user.email, phone, car, gps, status: "نداء استغاثة", timestamp: new Date(), branchName 
+                    merchantEmail: merchantEmail, phone, car, gps, status: "نداء استغاثة", timestamp: new Date(), branchName 
                 });
                 
                 Swal.fire('تم استلام الاستغاثة!', 'الونش في الطريق إليك.', 'success');
@@ -514,27 +585,29 @@
             const phone = document.getElementById('recPhone').value.trim();
             const city = document.getElementById('recCity').value.trim();
             const address = document.getElementById('recAddress').value.trim();
-            const amount = document.getElementById('codAmount').value.trim();
+            const cod = Number(document.getElementById('codAmount').value) || 0;
             const paymentType = document.getElementById('shipmentPaymentType').value;
             const isFragile = document.getElementById('recFragile').checked; 
 
-            if(name === "" || phone === "" || city === "" || address === "" || amount === "") {
+            if(name === "" || phone === "" || city === "" || address === "" || cod === 0) {
                 return Swal.fire('نقص بيانات', 'يوجد حقل أو أكثر فارغ، برجاء المراجعة!', 'warning');
             }
-            
             if(merchantAddress === "غير مسجل") {
                 return Swal.fire('عنوان الاستلام مفقود', 'برجاء كتابة عنوان متجرك في الخانة العلوية وحفظه أولاً عشان المندوب يعرف هيستلم منين!', 'warning');
             }
 
+            // حساب الإجمالي اللي هيتطبع في البوليصة للعميل
+            const fee = window.getCityPrice(city);
+            const finalAmount = cod + fee;
+
             const btn = document.getElementById('btnSave'); btn.disabled = true; btn.innerHTML = "جاري الإرسال...";
-            const user = auth.currentUser;
-            if(!user) return;
 
             try {
                 const docRef = await addDoc(collection(db, "shipments"), {
-                    merchantEmail: user.email, name, phone, phone2: document.getElementById('recPhone2').value.trim() || "لا يوجد",
+                    merchantEmail: merchantEmail, name, phone, phone2: document.getElementById('recPhone2').value.trim() || "لا يوجد",
                     city, address, weight: Number(document.getElementById('recWeight').value||1),
-                    amount: Number(amount), paymentType: paymentType, fragile: isFragile, 
+                    amount: finalAmount, // الإجمالي المضاف له الشحن
+                    paymentType: paymentType, fragile: isFragile, 
                     merchantAddress: merchantAddress,
                     merchantPhone: merchantPhone,
                     merchantIP: merchantIP,
@@ -545,14 +618,64 @@
                 
                 document.querySelectorAll('#addModal input[type="text"], #addModal input[type="tel"], #addModal input[type="number"]').forEach(inp => { if(inp.id !== 'merchantBusinessAddress' && inp.id !== 'merchantBusinessPhone') inp.value = ''; });
                 document.getElementById('recFragile').checked = false;
+                window.updateShippingCalc(); // تصغير الارقام
                 
                 const awb = "AXN" + docRef.id.substring(0,5).toUpperCase();
                 
-                window.printWB(awb, name, phone, document.getElementById('recPhone2').value, city, address, document.getElementById('recWeight').value||1, amount, isFragile, merchantAddress, merchantPhone);
+                // هنبعت ال finalAmount لدالة الطباعة
+                window.printWB(awb, name, phone, document.getElementById('recPhone2').value, city, address, document.getElementById('recWeight').value||1, finalAmount, isFragile, merchantAddress, merchantPhone);
 
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
-            btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span data-i18n="btn_submit_awb">إرسال الشحنة للشركة وتوليد البوليصة</span>';
+            btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span data-i18n="btn_submit_awb">إرسال الشحنة وتوليد البوليصة بالإجمالي</span>';
         };
+
+        // --- تحميل أوامر الرادار الخاصة بالتاجر ---
+        function loadMerchantRadar() {
+            onSnapshot(query(collection(db, "eshteryly_orders"), where("merchantEmail", "==", merchantEmail)), (snap) => {
+                let html = "";
+                let count = 0;
+                let docs = [];
+                snap.forEach(d => docs.push({id: d.id, ...d.data()}));
+                docs.sort((a,b) => b.timestamp - a.timestamp);
+                
+                docs.forEach(d => {
+                    // مبنعرضش الأوردرات القديمة اللي اتسلمت خلاص عشان منزحمش الشاشة
+                    if(d.status === "تم التسليم بنجاح" || d.status === "مرفوض" || d.status === "تم التسليم") return;
+                    count++;
+                    
+                    let isCold = d.details && d.details.includes('كولد');
+                    let isBuy = !isCold && d.paymentMethod !== 'pickup' && !d.details.includes('بوليصة');
+                    
+                    let cardClass = isCold ? 'type-cold' : (isBuy ? 'type-buy' : '');
+                    let icon = isCold ? '<i class="fa-solid fa-temperature-arrow-down"></i> كولد' : (isBuy ? '<i class="fa-solid fa-cart-shopping"></i> اشتريلي' : '<i class="fa-solid fa-box"></i> أمر مباشر');
+                    
+                    let statusBadge = d.status.includes('مندوب') 
+                        ? `<span class="radar-status-badge" style="background:#d4edda; color:#155724;"><i class="fa-solid fa-motorcycle"></i> مع الكابتن</span>` 
+                        : `<span class="radar-status-badge"><i class="fa-solid fa-satellite-dish fa-beat"></i> مذاع للرادار</span>`;
+                    
+                    let trackBtn = d.status.includes('مندوب') 
+                        ? `<button class="track-btn" onclick="window.showCourierTrack('${d.courierName || 'المندوب'}')"><i class="fa-solid fa-map-location-dot"></i> تتبع وتواصل مع المندوب</button>` 
+                        : `<button class="track-btn" style="background:#ccc; color:#666; cursor:not-allowed;" disabled><i class="fa-solid fa-spinner fa-spin"></i> في انتظار القبول...</button>`;
+
+                    html += `
+                        <div class="radar-card ${cardClass}">
+                            <h4>${icon} ${statusBadge}</h4>
+                            <p><b>التفاصيل:</b> ${d.details}<br><b>العنوان:</b> ${d.address}</p>
+                            ${trackBtn}
+                        </div>
+                    `;
+                });
+                
+                const container = document.getElementById('merchantRadarSection');
+                const body = document.getElementById('radarGridBody');
+                if(count > 0) {
+                    container.style.display = 'block';
+                    body.innerHTML = html;
+                } else {
+                    container.style.display = 'none';
+                }
+            });
+        }
 
         window.showCourierTrack = (courierName) => {
             Swal.fire({
@@ -563,7 +686,7 @@
                         <i class="fa-solid fa-motorcycle fa-4x" style="color: var(--primary-blue); z-index: 2;"></i>
                         <span style="position: absolute; bottom: 10px; font-size: 13px; font-weight: 900; color: var(--primary-red);"><i class="fa-solid fa-satellite"></i> جاري الاتصال بالقمر الصناعي للرادار...</span>
                     </div>
-                    <p style="font-size: 14px; color: #666; margin-bottom: 20px; font-weight: bold;">الكابتن في طريقه للعميل الآن. يمكنك التواصل معه مباشرة من خلال قناة أكسون المشفرة.</p>
+                    <p style="font-size: 14px; color: #666; margin-bottom: 20px; font-weight: bold;">الكابتن في طريقه إليك. يمكنك التواصل معه مباشرة من خلال قناة أكسون المشفرة.</p>
                     <button onclick="Swal.fire('تم التحويل', 'تم تحويلك لقناة الاتصال الآمنة بالكابتن.', 'success')" style="background: #25D366; color: white; border: none; padding: 15px 20px; border-radius: 8px; font-weight: 900; cursor: pointer; width: 100%; font-family:'Cairo'; font-size:16px;"><i class="fa-brands fa-whatsapp"></i> فتح قناة محادثة آمنة مع المندوب</button>
                 `,
                 showConfirmButton: false,
