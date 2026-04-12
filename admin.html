@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -78,7 +77,6 @@
         body.dark-mode .new-acc-section { background: #0b2b30 !important; border-color: #17a2b8 !important; }
         body.dark-mode .new-acc-section h2 { color: #4dd0e1 !important; border-bottom-color: #17a2b8 !important; }
 
-        /* التابات العلوية (معدلة عشان متطيرش بره الشاشة وتبقى Scrollable) */
         .admin-tabs { 
             display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; 
             padding-bottom: 10px; -webkit-overflow-scrolling: touch; scrollbar-width: none; 
@@ -136,11 +134,6 @@
         .safeer-name-badge h2 { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 1px;}
         .branch-badge-print { font-weight: bold; font-size: 14px; color: #000; text-transform: uppercase; background: #f0f0f0; border: 2px solid #000; padding: 3px 10px; display: inline-block; margin-bottom: 5px;}
         .fragile-banner { background: #b82329; color: white; text-align: center; font-size: 16px; font-weight: bold; padding: 8px; border-radius: 5px; margin-bottom: 10px; border: 2px dashed #000;}
-        
-        @media (max-width: 768px) {
-            header { flex-direction: column; gap: 10px; }
-            .header-actions { width: 100%; justify-content: center; }
-        }
     </style>
 </head>
 <body>
@@ -148,6 +141,7 @@
         <div class="logo"><i class="fa-solid fa-chess-king"></i> <span data-i18n="admin_title">إدارة</span> | <span style="color:var(--primary-red);">AXON</span></div>
         <div class="header-actions">
             <div class="branch-badge" id="adminBranchDisplay">الفرع: </div>
+            <button onclick="window.location.href='finance.html'" class="lang-btn" style="background:#fff; color:var(--primary-blue);"><i class="fa-solid fa-vault"></i> الخزينة</button>
             <button onclick="window.toggleLang()" class="lang-btn" id="langBtn">English</button>
             <button onclick="window.toggleTheme()" style="background:none; border:none; color:var(--primary-blue); font-size:24px; cursor:pointer;" title="الوضع الليلي">
                 <i id="themeIcon" class="fa-solid fa-moon"></i>
@@ -196,7 +190,10 @@
             </div>
 
             <div class="admin-section">
-                <h2 style="color: var(--primary-blue);"><i class="fa-solid fa-map-location-dot"></i> <span data-i18n="radar_map">الرادار التكتيكي (تتبع حي)</span></h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary-red); padding-bottom: 10px; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                    <h2 style="border: none; padding: 0; margin: 0; color: var(--primary-blue);"><i class="fa-solid fa-map-location-dot"></i> <span data-i18n="radar_map">الرادار التكتيكي (تتبع حي)</span></h2>
+                    <span style="font-size: 12px; font-weight: bold; color: #10B981; background: #d1fae5; padding: 5px 10px; border-radius: 5px;">متصل بشبكة الكباتن</span>
+                </div>
                 <div id="adminMap"></div>
             </div>
 
@@ -348,12 +345,15 @@
         const auth = getAuth(app); 
         const db = getFirestore(app);
 
-        // إنشاء نسخة ثانوية لإنشاء الحسابات بدون ما تطلع الأدمن من حسابه الحالي
         const secondaryApp = initializeApp(firebaseConfig, "SecondaryApp");
         const secondaryAuth = getAuth(secondaryApp);
 
         let adminRole = "", adminBranch = "all";
         let currentFilter = 'all';
+        
+        // خريطة الرادار التكتيكية
+        let adminMap = null;
+        let courierMarkers = {};
 
         let adminIP = "جاري التحقق...";
         fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ adminIP = d.ip; }).catch(e=>{ adminIP = "غير معروف"; });
@@ -363,6 +363,11 @@
             document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(tabId).style.display = 'block';
             event.currentTarget.classList.add('active');
+            
+            // تحديث حجم الخريطة لو اتفتحت بعد ما كانت مخفية
+            if(tabId === 'mainOps' && adminMap) {
+                setTimeout(() => adminMap.invalidateSize(), 200);
+            }
         };
 
         onAuthStateChanged(auth, async (user) => {
@@ -371,22 +376,23 @@
             adminRole = localStorage.getItem('axon_user_role') || 'super_admin';
             adminBranch = localStorage.getItem('axon_branch') || 'all';
 
+            initAdminMap();
+
             if (adminRole === 'super_admin') {
                 document.getElementById('exchangeSection').style.display = 'block';
-                document.getElementById('createAccountsSection').style.display = 'block'; // السوبر أدمن بيشوفها
-                loadShipments(); loadLivePrices(); loadEmergencyOps(); loadSupportTickets(); loadRadarTasks();
+                document.getElementById('createAccountsSection').style.display = 'block'; 
+                loadShipments(); loadLivePrices(); loadEmergencyOps(); loadSupportTickets(); loadRadarTasks(); loadCouriersOnMap();
             } else if (adminRole === 'branch_admin') {
                 document.getElementById('exchangeSection').style.display = 'none';
-                document.getElementById('createAccountsSection').style.display = 'block'; // مدير الفرع كمان بيشوفها دلوقتي
+                document.getElementById('createAccountsSection').style.display = 'block'; 
                 document.getElementById('adminBranchDisplay').innerText = "فرع: " + adminBranch;
                 document.getElementById('adminBranchDisplay').style.display = 'inline-block';
-                loadShipments(adminBranch); loadEmergencyOps(adminBranch); loadSupportTickets(adminBranch); loadRadarTasks(adminBranch);
+                loadShipments(adminBranch); loadEmergencyOps(adminBranch); loadSupportTickets(adminBranch); loadRadarTasks(adminBranch); loadCouriersOnMap(adminBranch);
             } else { window.location.href = "index.html"; }
         });
 
         window.logout = () => { localStorage.clear(); signOut(auth).then(() => window.location.href = "index.html"); }
 
-        // --- دالة إنشاء الحسابات الفعلية (الجديدة) ---
         window.createNewAccount = async () => {
             const name = document.getElementById('newAccName').value.trim();
             const email = document.getElementById('newAccEmail').value.trim();
@@ -397,7 +403,6 @@
             if(!name || !email || !pass) return Swal.fire('بيانات ناقصة', 'رجاءً تعبئة الاسم والإيميل والباسورد', 'error');
             if(pass.length < 6) return Swal.fire('خطأ', 'الباسورد يجب أن يكون 6 أحرف أو أرقام على الأقل', 'error');
             
-            // لو مدير فرع بيحاول يعين مدير فرع زيه، امنعه!
             if(adminRole === 'branch_admin' && role === 'admin') {
                 return Swal.fire('صلاحيات محدودة', 'القيادة العليا فقط هي من تستطيع تعيين مديري الفروع.', 'error');
             }
@@ -405,10 +410,9 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الإنشاء...'; btn.disabled = true;
 
             try {
-                // استخدام الـ Secondary Auth عشان الأدمن الحالي ميخرجش
                 const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, pass);
                 const uid = userCredential.user.uid;
-                await signOut(secondaryAuth); // الخروج من الحساب الجديد فوراً
+                await signOut(secondaryAuth); 
 
                 let collectionName = "merchant_profiles"; 
                 if(role === "delivery") collectionName = "couriers";
@@ -418,11 +422,10 @@
                 
                 let targetBranch = "المركز الرئيسي";
                 
-                // تحديد المحافظة بناءً على مين اللي بيعمل الحساب
                 if(adminRole === 'super_admin') {
                     targetBranch = prompt("أدخل اسم فرع المحافظة لهذا الحساب (مثال: الإسكندرية):") || "المركز الرئيسي";
                 } else {
-                    targetBranch = adminBranch; // إجبار ربط التاجر أو المندوب بفرع مديره
+                    targetBranch = adminBranch; 
                 }
 
                 if(role === "delivery") { userData.status = "offline"; userData.currentLocation = {lat: null, lng: null}; userData.branchName = targetBranch;}
@@ -438,9 +441,53 @@
             finally { btn.innerHTML = '<span data-i18n="btn_create">إنشاء الحساب فوراً</span> 🚀'; btn.disabled = false; }
         };
 
-        // --- إعداد الخريطة ---
-        let map = L.map('adminMap').setView([31.2001, 29.9187], 12);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
+        // --- 🚀 تهيئة وتحديث الخريطة التكتيكية 🚀 ---
+        function initAdminMap() {
+            adminMap = L.map('adminMap').setView([30.0444, 31.2357], 6); // زووم على مصر كلها
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(adminMap);
+        }
+
+        function loadCouriersOnMap(branchFilter = null) {
+            // أيقونة المندوب
+            const courierIcon = L.icon({
+                iconUrl: 'https://cdn-icons-png.flaticon.com/512/2983/2983794.png',
+                iconSize: [35, 35],
+                iconAnchor: [17, 35],
+                popupAnchor: [0, -35]
+            });
+
+            onSnapshot(collection(db, "couriers"), (snap) => {
+                // فلترة وعرض الكباتن الأونلاين بس اللي ليهم GPS
+                snap.forEach(doc => {
+                    const d = doc.data();
+                    const id = doc.id;
+                    
+                    if(branchFilter && branchFilter !== 'all' && d.branchName !== branchFilter) {
+                        if(courierMarkers[id]) { adminMap.removeLayer(courierMarkers[id]); delete courierMarkers[id]; }
+                        return;
+                    }
+                    
+                    if(d.status === 'online' && d.currentLocation && d.currentLocation.lat) {
+                        const latLng = [d.currentLocation.lat, d.currentLocation.lng];
+                        
+                        if(courierMarkers[id]) {
+                            // لو الدبوس موجود، حركه للمكان الجديد
+                            courierMarkers[id].setLatLng(latLng);
+                        } else {
+                            // لو مش موجود، اخلقه وحطه ع الخريطة
+                            const popupText = `<div style="text-align:center; font-family:'Cairo';"><b>كابتن: ${d.name}</b><br><span style="color:#10B981;">🟢 أونلاين (${d.branchName || 'عام'})</span></div>`;
+                            courierMarkers[id] = L.marker(latLng, {icon: courierIcon}).addTo(adminMap).bindPopup(popupText);
+                        }
+                    } else {
+                        // لو الكابتن قفل الوردية أو ملوش مكان، امسحه من الخريطة
+                        if(courierMarkers[id]) {
+                            adminMap.removeLayer(courierMarkers[id]);
+                            delete courierMarkers[id];
+                        }
+                    }
+                });
+            });
+        }
 
         function loadLivePrices() {
             onSnapshot(doc(db, "settings", "shipping_prices"), (snap) => {
