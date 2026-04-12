@@ -95,6 +95,15 @@
         .btn-contact { background: #374151; color: white; grid-column: span 2; }
         .btn-contact:hover { background: #111827; }
 
+        /* الشات المودال للمندوب */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; z-index: 2000; padding: 15px; backdrop-filter: blur(5px);}
+        .modal-content { background: var(--white); padding: 20px; border-radius: 15px; width: 100%; max-width: 500px; position: relative; transition: 0.3s; max-height: 90vh; display: flex; flex-direction: column;}
+        .close-btn { position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--primary-red);}
+        
+        .chat-bubble { padding: 10px 15px; border-radius: 15px; max-width: 80%; font-size: 13px; line-height: 1.4; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 5px; clear: both;}
+        .chat-mine { background: #dcf8c6; float: left; border-bottom-left-radius: 0; color: #000; }
+        .chat-other { background: #ffffff; float: right; border-bottom-right-radius: 0; color: #000; border: 1px solid #eee;}
+
         body.dark-mode { --bg-color: #000; --white: #111827; --dark-text: #F9FAFB; --soft-shadow: none; }
         body.dark-mode .app-container { background: #000; }
         body.dark-mode .app-header, body.dark-mode .status-container { border: 1px solid #374151; }
@@ -102,6 +111,8 @@
         body.dark-mode .order-details-text { background: rgba(0,0,0,0.4); color: #fff; }
         body.dark-mode .merchant-name { color: #fff; }
         body.dark-mode .location-text { color: #ccc; }
+        body.dark-mode .modal-content { background: #1F2937; border: 1px solid #374151;}
+        body.dark-mode .chat-other { background: #111827; color: #fff; border-color: #374151;}
 
         @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.7; } 70% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.7; } }
         
@@ -156,10 +167,30 @@
 
     <audio id="alertSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
+    <div id="chatModal" class="modal">
+        <div class="modal-content" style="height: 80vh;">
+            <button class="close-btn" onclick="window.closeChatModal()">✖</button>
+            <h3 style="color:var(--primary-blue); margin-top:0; border-bottom:2px solid var(--primary-red); padding-bottom:10px;">
+                <i class="fa-solid fa-comments"></i> محادثة التاجر: <span id="chatMerchantEmail" style="color:var(--primary-red);">...</span>
+            </h3>
+            
+            <div id="callMerchantBtnArea" style="margin-bottom: 10px;"></div>
+
+            <div style="background: #f4f7f6; border-radius: 12px; border: 1px solid #ccc; display: flex; flex-direction: column; flex: 1; overflow: hidden;">
+                <div id="chatBoxCourier" style="flex: 1; padding: 15px; overflow-y: auto; display: block;">
+                    </div>
+                <div style="display: flex; border-top: 1px solid #ccc; padding: 10px; background: white;">
+                    <input type="text" id="chatInputCourier" placeholder="رد على التاجر هنا..." style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo'; outline: none;">
+                    <button onclick="window.sendChatMessage()" style="background: #25D366; color: white; border: none; padding: 10px 15px; border-radius: 8px; margin-right: 10px; font-family: 'Cairo'; font-weight: bold; cursor: pointer;"><i class="fa-solid fa-paper-plane"></i> إرسال</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, doc, updateDoc, getDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, doc, updateDoc, getDoc, addDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         
         const app = initializeApp({
             apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
@@ -172,20 +203,25 @@
         
         const auth = getAuth(app);
         const db = getFirestore(app);
-        let currentCaptain = "", isOnline = false, watchId = null, lat = null, lng = null, ignored = new Set();
-        let notifiedTasks = new Set(); // ذاكرة الرادار عشان ميزعجش المندوب لنفس الطرد
+        let currentCaptain = "", currentCaptainId = "", isOnline = false, watchId = null, lat = null, lng = null, ignored = new Set();
+        let notifiedTasks = new Set(); 
+        
+        // متغيرات الشات
+        let currentChatMerchant = "";
+        let chatUnsubscribe = null;
 
         onAuthStateChanged(auth, (user) => {
             if (user && user.email.includes("@courier.axon.com")) {
                 currentCaptain = user.email.split('@')[0];
+                currentCaptainId = user.uid;
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('appContent').style.display = 'block';
                 document.getElementById('cDisplayName').innerText = currentCaptain;
                 document.getElementById('cInitials').innerText = currentCaptain.substring(0, 2).toUpperCase();
-                startTracking();
             } else {
                 document.getElementById('loginSection').style.display = 'flex';
                 document.getElementById('appContent').style.display = 'none';
+                if(watchId) { navigator.geolocation.clearWatch(watchId); watchId = null; }
             }
         });
 
@@ -210,18 +246,56 @@
                 txt.innerText = "متصل بالرادار 🟢";
                 Swal.fire({toast:true, position:'top', icon:'success', title:'وردية سعيدة يا بطل', showConfirmButton:false, timer:2000});
                 
-                // تفعيل الصوت المسبق لكسر حماية المتصفح
                 const audio = document.getElementById('alertSound');
                 audio.volume = 0; audio.play().catch(e=>{}); setTimeout(()=>{audio.pause(); audio.volume = 1;}, 100);
+                
+                // تحديث حالة المندوب في الفايربيز وتفعيل التتبع
+                updateCourierStatus("online");
+                startTracking();
                 
             } else {
                 btn.innerText = "بدء الوردية"; 
                 btn.style.background = "var(--primary-blue)";
                 dot.className = ""; 
                 txt.innerText = "خارج الوردية";
+                
+                // إيقاف التتبع وتحديث الحالة
+                if(watchId) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+                updateCourierStatus("offline");
             }
             loadRadar();
         };
+
+        async function updateCourierStatus(status) {
+            if(!currentCaptainId) return;
+            try {
+                await updateDoc(doc(db, "couriers", currentCaptainId), { status: status });
+            } catch(e) { console.error("Error updating status:", e); }
+        }
+
+        // 🚀 دالة تتبع الموقع ورفعه للفايربيز (GPS) 🚀
+        function startTracking() {
+            if(navigator.geolocation){
+                watchId = navigator.geolocation.watchPosition(async (pos) => {
+                    lat = pos.coords.latitude; 
+                    lng = pos.coords.longitude;
+                    loadRadar();
+                    
+                    // رفع الإحداثيات لملف الكابتن عشان التاجر يشوفها لايف ع الخريطة
+                    if(currentCaptainId && isOnline) {
+                        try {
+                            await updateDoc(doc(db, "couriers", currentCaptainId), {
+                                "currentLocation.lat": lat,
+                                "currentLocation.lng": lng,
+                                "lastUpdated": new Date()
+                            });
+                        } catch(e) { console.error("Error updating GPS:", e); }
+                    }
+                }, err => console.log("GPS Error:", err), {enableHighAccuracy:true, maximumAge: 10000, timeout: 5000});
+            } else {
+                Swal.fire('خطأ', 'خاصية الـ GPS غير مدعومة في جهازك', 'error');
+            }
+        }
 
         function calculateDistance(lat1, lon1, lat2, lon2) {
             const R = 6371; 
@@ -245,7 +319,7 @@
                         if(match){
                             distVal = parseFloat(calculateDistance(lat, lng, parseFloat(match[1]), parseFloat(match[2])));
                             distance = distVal + " كم";
-                            // توسيع دايرة الرادار لـ 5 كيلو
+                            
                             if(distVal < 5) {
                                 if(!notifiedTasks.has(id) && d.status === "جاري البحث عن مندوب" && !ignored.has(id)) {
                                     notifiedTasks.add(id);
@@ -255,7 +329,6 @@
                         }
                     }
 
-                    // --- ألوان فاقعة وباك جراوند كاملة لتمييز نوع الطرد ---
                     let typeIcon = "🛒", typeText = "تسوق واشتريلي", typeColor = "#28a745", cardBg = "#e8f5e9"; 
                     if (d.paymentMethod === 'pickup') { 
                         typeIcon = "📦"; typeText = "أمر بيكب واستلام"; typeColor = "#8e44ad"; cardBg = "#f4e8fb"; 
@@ -266,7 +339,6 @@
                         typeIcon = "🥶"; typeText = "شحن مبرد/فريش"; typeColor = "#17a2b8"; cardBg = "#e0f7fa"; 
                     }
 
-                    // إبراز المبلغ
                     let codDisplay = "";
                     let matchAmt = d.details ? d.details.match(/تحصيل:\s*(\d+)/) : null;
                     if(matchAmt) {
@@ -288,7 +360,7 @@
                                 <div class="btn-grid">
                                     <button class="btn-u btn-nav" onclick="window.openMap('${encodeURIComponent(d.address)}')"><i class="fa-solid fa-location-arrow"></i> ملاحة للعميل</button>
                                     <button class="btn-u btn-done" onclick="window.completeTask('${id}', '${d.linkedShipmentId || ''}')"><i class="fa-solid fa-check-double"></i> تم التسليم</button>
-                                    <button class="btn-u btn-contact" onclick="window.contactMerchant('${d.merchantEmail}')"><i class="fa-solid fa-comments"></i> بيانات التاجر ومحادثة</button>
+                                    <button class="btn-u btn-contact" onclick="window.openChatModal('${d.merchantEmail}')"><i class="fa-solid fa-comments"></i> بيانات التاجر ومحادثة</button>
                                 </div>
                             </div>
                         `;
@@ -316,7 +388,6 @@
                 document.getElementById('radarList').innerHTML = isOnline ? (radarHtml || "<p style='text-align:center; padding:20px; color:gray; font-weight:bold;'>الرادار خالي.. جاري البحث 📡</p>") : "<p style='text-align:center; padding:20px; color:gray; font-weight:bold;'>الرادار في وضع السكون.</p>";
                 document.getElementById('myTaskList').innerHTML = myTasksHtml || "<p style='text-align:center; padding:20px; color:gray; font-weight:bold;'>لا توجد مهام حالياً</p>";
                 
-                // تشغيل السرينة وإظهار إشعار لو في طرد جديد في النطاق الجغرافي
                 if(newAlert && isOnline) {
                     const audio = document.getElementById('alertSound');
                     audio.play().catch(e => console.log("المتصفح منع الصوت التلقائي"));
@@ -347,60 +418,78 @@
             }
         };
 
-        // 🚀 الحل الجذري لمشكلة بيانات التاجر 🚀
-        window.contactMerchant = async (email) => {
+        // 🚀 شات المندوب والتاجر اللايف 🚀
+        window.openChatModal = async (email) => {
+            currentChatMerchant = email;
+            document.getElementById('chatMerchantEmail').innerText = email.split('@')[0];
+            document.getElementById('chatModal').style.display = 'flex';
+
+            // محاولة سحب الرقم من الفايربيز
             let phone = "مخفي (حماية أمنية)";
-            let callBtn = "";
-            
-            // محاولة سحب الرقم، لو الفايربيز قفش مش هيضرب إيرور وهيكمل
+            let callBtnHtml = "";
             try {
                 const pSnap = await getDoc(doc(db, "merchant_profiles", email));
                 if(pSnap.exists()) {
                     phone = pSnap.data().businessPhone || pSnap.data().phone || phone;
                     if(phone !== "مخفي (حماية أمنية)") {
-                        callBtn = `<button onclick="window.location.href='tel:${phone}'" class="btn-u btn-nav" style="width:100%; padding:12px; border-radius:10px; border:none; font-weight:bold; margin-bottom:15px; background:#10B981; color:white; font-size:16px;">اتصال هاتفى بالتاجر <i class="fa-solid fa-phone"></i></button>`;
+                        callBtnHtml = `<button onclick="window.location.href='tel:${phone}'" style="width:100%; padding:10px; border-radius:8px; border:none; background:#10B981; color:white; font-family:'Cairo'; font-weight:bold; font-size:14px;"><i class="fa-solid fa-phone"></i> اتصال هاتفي مباشر بالتاجر: <span dir="ltr">${phone}</span></button>`;
                     }
                 }
-            } catch(err) {
-                console.warn("جاري استخدام الإيميل فقط للمحادثة الداخلية");
-            }
+            } catch(err) { console.warn("Cannot read phone."); }
+            document.getElementById('callMerchantBtnArea').innerHTML = callBtnHtml;
 
-            Swal.fire({
-                title: 'تواصل مع التاجر',
-                html: `
-                    <div style="text-align:right; font-size:15px; margin-bottom:15px; background:#f4f7f6; padding:10px; border-radius:8px; border:1px solid #ddd;">
-                        <b>التاجر:</b> ${email.split('@')[0]}<br>
-                        <b>رقم الهاتف:</b> <span dir="ltr" style="color:var(--primary-red); font-weight:bold;">${phone}</span>
-                    </div>
-                    ${callBtn}
-                `,
-                input: 'textarea',
-                inputPlaceholder: 'اكتب رسالة شات داخلية للتاجر هنا وسيراها فوراً...',
-                showCancelButton: true,
-                confirmButtonText: 'إرسال رسالة 💬',
-                cancelButtonText: 'إلغاء'
-            }).then(async (res) => {
-                if(res.isConfirmed && res.value){
-                    await addDoc(collection(db, "internal_chats"), { 
-                        from: currentCaptain, 
-                        to: email, 
-                        message: res.value, 
-                        timestamp: new Date() 
-                    });
-                    Swal.fire('تم الإرسال', 'رسالتك وصلت للتاجر', 'success');
-                }
+            // تشغيل السحب الحي للرسايل
+            if(chatUnsubscribe) chatUnsubscribe();
+            
+            chatUnsubscribe = onSnapshot(collection(db, "internal_chats"), (snap) => {
+                let html = "";
+                let msgs = [];
+                snap.forEach(doc => msgs.push(doc.data()));
+                
+                msgs.sort((a,b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
+
+                msgs.forEach(m => {
+                    // إظهار المحادثة دي بس
+                    if((m.from === currentCaptain && m.to === email) || (m.from === email && m.to === currentCaptain)) {
+                        const isMe = m.from === currentCaptain;
+                        const msgClass = isMe ? "chat-mine" : "chat-other";
+                        const senderName = isMe ? "أنت" : "التاجر";
+                        
+                        html += `<div class="chat-bubble ${msgClass}">
+                                    <b style="font-size: 10px; color: #666; display: block; margin-bottom: 2px;">${senderName}</b>
+                                    ${m.message}
+                                 </div>`;
+                    }
+                });
+                
+                const chatBox = document.getElementById('chatBoxCourier');
+                chatBox.innerHTML = html || "<div style='text-align:center; color:gray; font-size:13px; margin-top:30px;'><i class='fa-solid fa-handshake fa-2x'></i><br><br>تواصل مع التاجر لتأكيد استلامك للأوردر.</div>";
+                setTimeout(() => chatBox.scrollTop = chatBox.scrollHeight, 100);
             });
         };
 
-        function startTracking() {
-            if(navigator.geolocation){
-                watchId = navigator.geolocation.watchPosition(pos => {
-                    lat = pos.coords.latitude; 
-                    lng = pos.coords.longitude;
-                    loadRadar();
-                }, err => console.log(err), {enableHighAccuracy:true});
+        window.closeChatModal = () => {
+            document.getElementById('chatModal').style.display = 'none';
+            if(chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
+        };
+
+        window.sendChatMessage = async () => {
+            const input = document.getElementById('chatInputCourier');
+            const msg = input.value.trim();
+            if(!msg || !currentChatMerchant) return;
+
+            input.value = ""; 
+            try {
+                await addDoc(collection(db, "internal_chats"), {
+                    from: currentCaptain,
+                    to: currentChatMerchant,
+                    message: msg,
+                    timestamp: new Date()
+                });
+            } catch(e) {
+                Swal.fire('خطأ', 'لم يتم إرسال الرسالة', 'error');
             }
-        }
+        };
 
         window.openMap = (addr) => window.open(`https://www.google.com/maps/search/?api=1&query=${addr}`, '_blank');
         window.logout = () => signOut(auth).then(() => window.location.reload());
