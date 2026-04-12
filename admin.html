@@ -185,6 +185,38 @@
                             <option value="admin">إدارة (وكيل محافظة)</option>
                         </select>
                     </div>
+                    <div id="branchSelectContainer">
+                        <label style="font-size:13px; font-weight:bold;">تعيين على محافظة:</label>
+                        <select id="newAccBranch" class="status-dropdown" style="width: 100%; padding: 8px;">
+                            <option value="القاهرة">القاهرة</option>
+                            <option value="الجيزة">الجيزة</option>
+                            <option value="الإسكندرية">الإسكندرية</option>
+                            <option value="الدقهلية">الدقهلية</option>
+                            <option value="الغربية">الغربية</option>
+                            <option value="المنوفية">المنوفية</option>
+                            <option value="الشرقية">الشرقية</option>
+                            <option value="القليوبية">القليوبية</option>
+                            <option value="البحيرة">البحيرة</option>
+                            <option value="كفر الشيخ">كفر الشيخ</option>
+                            <option value="دمياط">دمياط</option>
+                            <option value="الإسماعيلية">الإسماعيلية</option>
+                            <option value="بورسعيد">بورسعيد</option>
+                            <option value="السويس">السويس</option>
+                            <option value="مرسى مطروح">مرسى مطروح</option>
+                            <option value="شمال سيناء">شمال سيناء</option>
+                            <option value="جنوب سيناء">جنوب سيناء</option>
+                            <option value="البحر الأحمر">البحر الأحمر</option>
+                            <option value="الفيوم">الفيوم</option>
+                            <option value="بني سويف">بني سويف</option>
+                            <option value="المنيا">المنيا</option>
+                            <option value="أسيوط">أسيوط</option>
+                            <option value="سوهاج">سوهاج</option>
+                            <option value="قنا">قنا</option>
+                            <option value="الأقصر">الأقصر</option>
+                            <option value="أسوان">أسوان</option>
+                            <option value="الوادي الجديد">الوادي الجديد</option>
+                        </select>
+                    </div>
                 </div>
                 <button id="btnCreateAcc" onclick="window.createNewAccount()" style="background: #17a2b8; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; font-family: 'Cairo';"><span data-i18n="btn_create">إنشاء الحساب فوراً</span> 🚀</button>
             </div>
@@ -212,16 +244,11 @@
 
             <div class="admin-section bourse-section" style="background: #fffde7; border: 2px dashed #f57f17;" id="exchangeSection">
                 <h2 style="color: #e65100; border-bottom-color: #f57f17;"><i class="fa-solid fa-tower-broadcast"></i> <span data-i18n="bourse_title">بورصة الشحن الحية (تحديث مركزي)</span></h2>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 15px;">
-                    <div><label style="font-size:13px; font-weight:bold;">الإسكندرية:</label><input type="number" id="priceAlex" style="width:100%; padding:8px; border-radius:5px;"></div>
-                    <div><label style="font-size:13px; font-weight:bold;">القاهرة والجيزة:</label><input type="number" id="priceCairo" style="width:100%; padding:8px; border-radius:5px;"></div>
-                    <div><label style="font-size:13px; font-weight:bold;">البحيرة:</label><input type="number" id="priceBeheira" style="width:100%; padding:8px; border-radius:5px;"></div>
-                    <div><label style="font-size:13px; font-weight:bold;">الدلتا والقناة:</label><input type="number" id="priceDelta" style="width:100%; padding:8px; border-radius:5px;"></div>
-                    <div><label style="font-size:13px; font-weight:bold;">الصعيد:</label><input type="number" id="priceSaeed" style="width:100%; padding:8px; border-radius:5px;"></div>
-                    <div style="grid-column: 1 / -1; background: #ffe0b2; padding: 10px; border-radius: 5px; border: 1px solid #ff9800; margin-top: 5px;">
-                        <label style="font-size:13px; font-weight:bold; color: #d84315;"><i class="fa-solid fa-triangle-exclamation"></i> غرامة تأجيل الاستلام:</label>
-                        <input type="number" id="pricePenalty" placeholder="مثال: 30" style="width:100%; padding:8px; border-radius:5px; border: 1px solid #ff9800; font-weight:bold; color:#d84315;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 15px;" id="pricesGrid">
                     </div>
+                <div style="background: #ffe0b2; padding: 10px; border-radius: 5px; border: 1px solid #ff9800; margin-bottom: 15px;">
+                    <label style="font-size:13px; font-weight:bold; color: #d84315;"><i class="fa-solid fa-triangle-exclamation"></i> غرامة تأجيل الاستلام:</label>
+                    <input type="number" id="pricePenalty" placeholder="مثال: 30" style="width:100%; padding:8px; border-radius:5px; border: 1px solid #ff9800; font-weight:bold; color:#d84315;">
                 </div>
                 <button onclick="window.updateLivePrices()" style="background: #e65100; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; font-family:'Cairo';">تحديث التسعيرة في الشبكة 📡</button>
             </div>
@@ -351,12 +378,24 @@
         let adminRole = "", adminBranch = "all";
         let currentFilter = 'all';
         
-        // خريطة الرادار التكتيكية
         let adminMap = null;
         let courierMarkers = {};
 
         let adminIP = "جاري التحقق...";
         fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ adminIP = d.ip; }).catch(e=>{ adminIP = "غير معروف"; });
+
+        // أسماء المحافظات الـ 27
+        const governorates = ["القاهرة", "الجيزة", "الإسكندرية", "الدقهلية", "الغربية", "المنوفية", "الشرقية", "القليوبية", "البحيرة", "كفر الشيخ", "دمياط", "الإسماعيلية", "بورسعيد", "السويس", "مرسى مطروح", "شمال سيناء", "جنوب سيناء", "البحر الأحمر", "الفيوم", "بني سويف", "المنيا", "أسيوط", "سوهاج", "قنا", "الأقصر", "أسوان", "الوادي الجديد"];
+
+        // توليد خانات البورصة
+        function renderPricesGrid() {
+            const grid = document.getElementById('pricesGrid');
+            let html = '';
+            governorates.forEach(gov => {
+                html += `<div><label style="font-size:13px; font-weight:bold;">${gov}:</label><input type="number" id="price_${gov}" style="width:100%; padding:8px; border-radius:5px;" placeholder="ج.م"></div>`;
+            });
+            grid.innerHTML = html;
+        }
 
         window.switchAdminTab = (tabId) => { 
             document.querySelectorAll('.admin-tab-content').forEach(c => c.style.display = 'none');
@@ -364,7 +403,6 @@
             document.getElementById(tabId).style.display = 'block';
             event.currentTarget.classList.add('active');
             
-            // تحديث حجم الخريطة لو اتفتحت بعد ما كانت مخفية
             if(tabId === 'mainOps' && adminMap) {
                 setTimeout(() => adminMap.invalidateSize(), 200);
             }
@@ -373,6 +411,7 @@
         onAuthStateChanged(auth, async (user) => {
             if (!user) { window.location.href = "index.html"; return; }
             
+            renderPricesGrid();
             adminRole = localStorage.getItem('axon_user_role') || 'super_admin';
             adminBranch = localStorage.getItem('axon_branch') || 'all';
 
@@ -385,6 +424,7 @@
             } else if (adminRole === 'branch_admin') {
                 document.getElementById('exchangeSection').style.display = 'none';
                 document.getElementById('createAccountsSection').style.display = 'block'; 
+                document.getElementById('branchSelectContainer').style.display = 'none'; // مدير الفرع مبيخترش فرع تاني
                 document.getElementById('adminBranchDisplay').innerText = "فرع: " + adminBranch;
                 document.getElementById('adminBranchDisplay').style.display = 'inline-block';
                 loadShipments(adminBranch); loadEmergencyOps(adminBranch); loadSupportTickets(adminBranch); loadRadarTasks(adminBranch); loadCouriersOnMap(adminBranch);
@@ -420,13 +460,7 @@
 
                 let userData = { name: name, email: email, role: role, timestamp: new Date() };
                 
-                let targetBranch = "المركز الرئيسي";
-                
-                if(adminRole === 'super_admin') {
-                    targetBranch = prompt("أدخل اسم فرع المحافظة لهذا الحساب (مثال: الإسكندرية):") || "المركز الرئيسي";
-                } else {
-                    targetBranch = adminBranch; 
-                }
+                let targetBranch = adminRole === 'super_admin' ? document.getElementById('newAccBranch').value : adminBranch;
 
                 if(role === "delivery") { userData.status = "offline"; userData.currentLocation = {lat: null, lng: null}; userData.branchName = targetBranch;}
                 if(role === "admin") { userData.branchName = targetBranch; }
@@ -441,14 +475,12 @@
             finally { btn.innerHTML = '<span data-i18n="btn_create">إنشاء الحساب فوراً</span> 🚀'; btn.disabled = false; }
         };
 
-        // --- 🚀 تهيئة وتحديث الخريطة التكتيكية 🚀 ---
         function initAdminMap() {
-            adminMap = L.map('adminMap').setView([30.0444, 31.2357], 6); // زووم على مصر كلها
+            adminMap = L.map('adminMap').setView([30.0444, 31.2357], 6); 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(adminMap);
         }
 
         function loadCouriersOnMap(branchFilter = null) {
-            // أيقونة المندوب
             const courierIcon = L.icon({
                 iconUrl: 'https://cdn-icons-png.flaticon.com/512/2983/2983794.png',
                 iconSize: [35, 35],
@@ -457,7 +489,6 @@
             });
 
             onSnapshot(collection(db, "couriers"), (snap) => {
-                // فلترة وعرض الكباتن الأونلاين بس اللي ليهم GPS
                 snap.forEach(doc => {
                     const d = doc.data();
                     const id = doc.id;
@@ -471,15 +502,12 @@
                         const latLng = [d.currentLocation.lat, d.currentLocation.lng];
                         
                         if(courierMarkers[id]) {
-                            // لو الدبوس موجود، حركه للمكان الجديد
                             courierMarkers[id].setLatLng(latLng);
                         } else {
-                            // لو مش موجود، اخلقه وحطه ع الخريطة
                             const popupText = `<div style="text-align:center; font-family:'Cairo';"><b>كابتن: ${d.name}</b><br><span style="color:#10B981;">🟢 أونلاين (${d.branchName || 'عام'})</span></div>`;
                             courierMarkers[id] = L.marker(latLng, {icon: courierIcon}).addTo(adminMap).bindPopup(popupText);
                         }
                     } else {
-                        // لو الكابتن قفل الوردية أو ملوش مكان، امسحه من الخريطة
                         if(courierMarkers[id]) {
                             adminMap.removeLayer(courierMarkers[id]);
                             delete courierMarkers[id];
@@ -493,19 +521,25 @@
             onSnapshot(doc(db, "settings", "shipping_prices"), (snap) => {
                 if(snap.exists()) {
                     const d = snap.data();
-                    document.getElementById('priceAlex').value = d.alex || '';
-                    document.getElementById('priceCairo').value = d.cairo || '';
-                    document.getElementById('priceBeheira').value = d.beheira || '';
-                    document.getElementById('priceDelta').value = d.delta || '';
-                    document.getElementById('priceSaeed').value = d.saeed || '';
+                    governorates.forEach(gov => {
+                        if(document.getElementById(`price_${gov}`)) {
+                            document.getElementById(`price_${gov}`).value = d[gov] || '';
+                        }
+                    });
                     document.getElementById('pricePenalty').value = d.penalty || '';
                 }
             });
         }
 
         window.updateLivePrices = async () => {
-            const vals = { alex: document.getElementById("priceAlex").value, cairo: document.getElementById("priceCairo").value, beheira: document.getElementById("priceBeheira").value, delta: document.getElementById("priceDelta").value, saeed: document.getElementById("priceSaeed").value, penalty: document.getElementById("pricePenalty").value }; 
-            await setDoc(doc(db, "settings", "shipping_prices"), { alex: Number(vals.alex), cairo: Number(vals.cairo), beheira: Number(vals.beheira), delta: Number(vals.delta), saeed: Number(vals.saeed), penalty: Number(vals.penalty), lastUpdate: new Date().toLocaleTimeString("ar-EG") }, { merge: true }); 
+            const pricesToSave = { penalty: Number(document.getElementById("pricePenalty").value) || 0, lastUpdate: new Date().toLocaleTimeString("ar-EG") }; 
+            
+            governorates.forEach(gov => {
+                let val = document.getElementById(`price_${gov}`).value;
+                if(val) pricesToSave[gov] = Number(val);
+            });
+
+            await setDoc(doc(db, "settings", "shipping_prices"), pricesToSave, { merge: true }); 
             Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم تحديث البورصة', showConfirmButton:false, timer:2000});
         };
 
