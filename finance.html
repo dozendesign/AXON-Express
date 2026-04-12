@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>الخزينة المركزية | Axon Finance Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -19,52 +19,69 @@
         }
         body { font-family: 'Cairo', sans-serif; margin: 0; background: var(--bg-color); color: var(--text-dark); transition: 0.3s; }
         
-        header { background: var(--primary-blue); padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100;}
-        header h1 { margin: 0; font-size: 20px; font-weight: 900; display: flex; align-items: center; gap: 15px;}
+        header { background: var(--primary-blue); padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; transition: 0.3s;}
+        header h1 { margin: 0; font-size: 20px; font-weight: 900; display: flex; align-items: center; gap: 10px;}
         header h1 span { color: var(--primary-red); }
         
-        .lang-btn { background: transparent; border: 1px solid white; color: white; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 12px;}
-        .logout-btn { background: var(--primary-red); border: none; color: white; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 12px; margin-right: 10px;}
+        .header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap;}
+        .lang-btn { background: transparent; border: 1px solid white; color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 12px; transition: 0.3s;}
+        .lang-btn:hover { background: rgba(255,255,255,0.2); }
+        .logout-btn { background: var(--primary-red); border: none; color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 12px; transition: 0.3s;}
+        .logout-btn:hover { background: #b80322; }
 
         .container { padding: 20px; max-width: 1300px; margin: 0 auto; }
         
         /* فلتر المحافظات */
-        .branch-filter-box { background: var(--card-bg); padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border-color); display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.02);}
-        .branch-select { padding: 10px; border-radius: 8px; border: 2px solid var(--primary-blue); font-family: 'Cairo'; font-weight: bold; flex: 1;}
+        .branch-filter-box { background: var(--card-bg); padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border-color); display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); transition: 0.3s;}
+        .branch-select { padding: 10px; border-radius: 8px; border: 2px solid var(--primary-blue); font-family: 'Cairo'; font-weight: bold; flex: 1; outline: none; transition: 0.3s;}
+        .branch-select:focus { box-shadow: 0 0 5px rgba(30, 58, 138, 0.3); }
 
-        .tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px;}
-        .tab-btn { background: #e0eaf5; border: none; padding: 10px 20px; border-radius: 8px; font-family: 'Cairo'; font-weight: bold; color: var(--primary-blue); cursor: pointer; transition: 0.3s; white-space: nowrap;}
+        .tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; -webkit-overflow-scrolling: touch;}
+        .tabs::-webkit-scrollbar { display: none; }
+        .tab-btn { background: #e0eaf5; border: none; padding: 10px 20px; border-radius: 8px; font-family: 'Cairo'; font-weight: bold; color: var(--primary-blue); cursor: pointer; transition: 0.3s; white-space: nowrap; flex-shrink: 0;}
         .tab-btn.active { background: var(--primary-blue); color: white; }
         
+        /* أنيميشن التابات */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease forwards; }
         
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: var(--card-bg); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-blue);}
+        .stat-card { background: var(--card-bg); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-blue); transition: transform 0.3s, box-shadow 0.3s;}
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
         .stat-card.red { border-bottom-color: var(--primary-red); }
         .stat-card.green { border-bottom-color: #10B981; }
         .stat-card .value { font-size: 26px; font-weight: 900; color: var(--primary-blue); margin-top: 5px;}
 
-        .table-responsive { width: 100%; overflow-x: auto; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 25px;}
+        .table-responsive { width: 100%; overflow-x: auto; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.03);}
         table { width: 100%; min-width: 900px; border-collapse: collapse; }
         th { background: var(--primary-blue); color: white; padding: 15px; text-align: inherit;}
         td { padding: 12px; border-bottom: 1px solid var(--border-color); font-size: 14px;}
         tr:hover { background-color: rgba(30, 58, 138, 0.05); }
 
-        .btn-action { border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; color: white; transition: 0.3s; margin: 2px;}
+        .btn-action { border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; color: white; transition: 0.3s; margin: 2px;}
+        .btn-action:hover { opacity: 0.8; transform: translateY(-2px); }
         .btn-print { background: #333; }
         .btn-settle { background: #10B981; }
         
-        .radio-btn { background: var(--primary-red); color: white; border: none; padding: 5px 12px; border-radius: 20px; cursor: pointer; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 5px;}
-        
         body.dark-mode { --bg-color: #0D1117; --card-bg: #161B22; --text-dark: #E2E8F0; --border-color: #30363D; }
+
+        /* تظبيط مقاسات الموبايل */
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 12px; padding: 15px; }
+            .header-actions { justify-content: center; width: 100%; }
+            .branch-filter-box { flex-direction: column; align-items: stretch; text-align: center; }
+            .branch-select { width: 100%; }
+            .btn-print { width: 100%; }
+            .stat-card { padding: 15px; }
+        }
 
         /* تنسيقات شاشة الطباعة للمحاسب */
         @media print {
             body { background: white; color: black; font-size: 12px; }
-            header, .branch-filter-box, .tabs, .btn-action, .radio-btn { display: none !important; }
+            header, .branch-filter-box, .tabs, .btn-action { display: none !important; }
             .container { width: 100%; max-width: none; padding: 0; margin: 0; }
-            .stat-card { border: 1px solid #000; box-shadow: none; break-inside: avoid; }
+            .stat-card { border: 1px solid #000; box-shadow: none; break-inside: avoid; transform: none !important; }
             table { border: 1px solid #000; }
             th, td { border: 1px solid #000; padding: 8px; color: black !important;}
             th { background: #eee !important; color: black !important; -webkit-print-color-adjust: exact; }
@@ -78,16 +95,11 @@
 <body>
 
     <header>
-        <h1>AXON <span data-i18n="fin_title">FINANCE</span> 
-            <button id="radioToggleBtn" class="radio-btn" onclick="toggleRadio()">
-                <i class="fa-solid fa-radio"></i> <span data-i18n="radio">روق دماغك</span>
-            </button>
-            <audio id="axonRadio" src="http://37.157.242.101:17317/stream" preload="none"></audio>
-        </h1>
-        <div style="display: flex; gap: 15px; align-items: center;">
+        <h1><i class="fa-solid fa-vault"></i> AXON <span data-i18n="fin_title">FINANCE</span></h1>
+        <div class="header-actions">
             <button onclick="window.location.href='admin.html'" class="lang-btn" style="background:#fff; color:var(--primary-blue);"><i class="fa-solid fa-arrow-right"></i> رجوع للإدارة</button>
             <button onclick="window.toggleLang()" class="lang-btn" id="langBtn">English</button>
-            <button onclick="window.toggleTheme()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;"><i id="themeIcon" class="fa-solid fa-moon"></i></button>
+            <button onclick="window.toggleTheme()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;" title="الوضع الليلي"><i id="themeIcon" class="fa-solid fa-moon"></i></button>
             <button onclick="window.logout()" class="logout-btn"><i class="fa-solid fa-power-off"></i> خروج</button>
         </div>
     </header>
@@ -187,7 +199,7 @@
     <script>
         const i18nDict = {
             ar: {
-                fin_title: "FINANCE", radio: "روق دماغك", review_branch: "مراجعة حسابات فرع:", all_branches: "الجمهورية (الكل)",
+                fin_title: "FINANCE", review_branch: "مراجعة حسابات فرع:", all_branches: "الجمهورية (الكل)",
                 sync: "جاري جرد الخزينة...", tab_1: "الموقف العام", tab_2: "دفتر اليومية", tab_3: "عهد الكباتن", tab_4: "تسويات التجار", tab_5: "المصروفات",
                 stat_custody: "إجمالي العهد بالخارج", stat_dues: "مستحقات التجار", stat_profit: "أرباح التشغيل",
                 th_date: "التاريخ", th_type: "النوع", th_merchant: "التاجر", th_courier: "المندوب", th_amt: "المبلغ", th_status: "الحالة",
@@ -195,7 +207,7 @@
                 add_exp: "تسجيل مصروف", th_desc: "البند"
             },
             en: {
-                fin_title: "FINANCE", radio: "Relax Mode", review_branch: "Review Branch:", all_branches: "All Egypt",
+                fin_title: "FINANCE", review_branch: "Review Branch:", all_branches: "All Egypt",
                 sync: "Syncing Treasury Data...", tab_1: "Overview", tab_2: "Journal", tab_3: "Couriers Cash", tab_4: "Merchant Settlements", tab_5: "Expenses",
                 stat_custody: "Total Cash Outside", stat_dues: "Merchant Dues", stat_profit: "Net Profit",
                 th_date: "Date", th_type: "Type", th_merchant: "Merchant", th_courier: "Courier", th_amt: "Amount", th_status: "Status",
@@ -221,23 +233,6 @@
         }
         document.addEventListener('DOMContentLoaded', () => applyLang(localStorage.getItem('axon_acc_lang') || 'ar'));
         
-        let radioPlaying = false;
-        window.toggleRadio = () => {
-            const audio = document.getElementById('axonRadio');
-            const btn = document.getElementById('radioToggleBtn');
-            if(radioPlaying) {
-                audio.pause();
-                btn.innerHTML = '<i class="fa-solid fa-radio"></i> <span data-i18n="radio">روق دماغك</span>';
-                btn.style.background = 'var(--primary-red)';
-            } else {
-                audio.play();
-                btn.innerHTML = '<i class="fa-solid fa-volume-high fa-beat"></i> شغال يا هندسة';
-                btn.style.background = '#10B981';
-            }
-            radioPlaying = !radioPlaying;
-            applyLang(document.documentElement.lang); 
-        };
-
         window.printReport = (tabId) => {
             document.getElementById('printDate').innerText = "تاريخ الطباعة: " + new Date().toLocaleString('ar-EG');
             const branchName = document.getElementById('branchFilter').options[document.getElementById('branchFilter').selectedIndex].text;
@@ -247,6 +242,19 @@
             document.getElementById(tabId).classList.add('active-print');
             
             window.print();
+        };
+
+        window.toggleTheme = () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            document.getElementById('themeIcon').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        };
+        
+        window.showTab = (id) => {
+            document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            event.currentTarget.classList.add('active');
         };
     </script>
 
@@ -274,12 +282,11 @@
 
         onAuthStateChanged(auth, (user) => { 
             if(user) {
-                // تظبيط صلاحيات مدير الفرع على شاشة الخزنة
                 if(adminRole === 'branch_admin') {
                     const filterSelect = document.getElementById('branchFilter');
                     filterSelect.innerHTML = `<option value="${adminBranch}">${adminBranch}</option>`;
                     filterSelect.value = adminBranch;
-                    filterSelect.disabled = true; // منع التغيير
+                    filterSelect.disabled = true; 
                     filterSelect.style.background = "#eee";
                 }
                 loadData(); 
@@ -296,7 +303,6 @@
             let shipmentsQuery = collection(db, "shipments");
             let radarQuery = collection(db, "eshteryly_orders");
 
-            // جدار حماية الداتا: لو مدير فرع، الفايربيز مش هيبعتله غير ملفات محافظته بس
             if (adminRole === 'branch_admin' && adminBranch !== 'all') {
                 shipmentsQuery = query(collection(db, "shipments"), where("branchName", "==", adminBranch));
                 radarQuery = query(collection(db, "eshteryly_orders"), where("branchName", "==", adminBranch));
@@ -407,15 +413,6 @@
                 }
             });
         };
-
-        window.toggleTheme=()=> document.body.classList.toggle('dark-mode');
-        window.showTab=(id)=>{
-            document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            event.currentTarget.classList.add('active');
-        };
     </script>
 </body>
 </html>
-
