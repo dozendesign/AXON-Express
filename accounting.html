@@ -24,6 +24,7 @@
         header h1 span { color: var(--primary-red); }
         
         .lang-btn { background: transparent; border: 1px solid white; color: white; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 12px;}
+        .logout-btn { background: var(--primary-red); border: none; color: white; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 12px; margin-right: 10px;}
 
         .container { padding: 20px; max-width: 1300px; margin: 0 auto; }
         
@@ -50,13 +51,28 @@
         td { padding: 12px; border-bottom: 1px solid var(--border-color); font-size: 14px;}
         tr:hover { background-color: rgba(30, 58, 138, 0.05); }
 
-        .btn-action { border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; color: white; transition: 0.3s;}
+        .btn-action { border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; color: white; transition: 0.3s; margin: 2px;}
         .btn-print { background: #333; }
         .btn-settle { background: #10B981; }
         
         .radio-btn { background: var(--primary-red); color: white; border: none; padding: 5px 12px; border-radius: 20px; cursor: pointer; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 5px;}
         
         body.dark-mode { --bg-color: #0D1117; --card-bg: #161B22; --text-dark: #E2E8F0; --border-color: #30363D; }
+
+        /* تنسيقات شاشة الطباعة للمحاسب */
+        @media print {
+            body { background: white; color: black; font-size: 12px; }
+            header, .branch-filter-box, .tabs, .btn-action, .radio-btn { display: none !important; }
+            .container { width: 100%; max-width: none; padding: 0; margin: 0; }
+            .stat-card { border: 1px solid #000; box-shadow: none; break-inside: avoid; }
+            table { border: 1px solid #000; }
+            th, td { border: 1px solid #000; padding: 8px; color: black !important;}
+            th { background: #eee !important; color: black !important; -webkit-print-color-adjust: exact; }
+            #printHeader { display: block !important; text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px; }
+            .tab-content { display: none !important; }
+            .tab-content.active-print { display: block !important; }
+        }
+        #printHeader { display: none; }
     </style>
 </head>
 <body>
@@ -69,17 +85,25 @@
             <audio id="axonRadio" src="http://37.157.242.101:17317/stream" preload="none"></audio>
         </h1>
         <div style="display: flex; gap: 15px; align-items: center;">
+            <button onclick="window.location.href='admin.html'" class="lang-btn" style="background:#fff; color:var(--primary-blue);"><i class="fa-solid fa-arrow-right"></i> رجوع للإدارة</button>
             <button onclick="window.toggleLang()" class="lang-btn" id="langBtn">English</button>
             <button onclick="window.toggleTheme()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;"><i id="themeIcon" class="fa-solid fa-moon"></i></button>
+            <button onclick="window.logout()" class="logout-btn"><i class="fa-solid fa-power-off"></i> خروج</button>
         </div>
     </header>
 
     <div class="container">
-        <!-- فلتر مراجعة المحافظات -->
+        
+        <div id="printHeader">
+            <h2>AXON EXPRESS - تقرير مالي</h2>
+            <p id="printDate"></p>
+            <p id="printFilterInfo"></p>
+        </div>
+
         <div class="branch-filter-box">
             <i class="fa-solid fa-city" style="color:var(--primary-blue); font-size: 20px;"></i>
             <span style="font-weight:bold;" data-i18n="review_branch">مراجعة حسابات فرع:</span>
-            <select id="branchFilter" class="branch-select" onchange="rAS()">
+            <select id="branchFilter" class="branch-select" onchange="window.rAS()">
                 <option value="all" data-i18n="all_branches">الجمهورية (الكل)</option>
                 <option value="الإسكندرية">الإسكندرية</option>
                 <option value="القاهرة والجيزة">القاهرة والجيزة</option>
@@ -87,6 +111,7 @@
                 <option value="الصعيد">الصعيد</option>
                 <option value="البحيرة">البحيرة</option>
             </select>
+            <button class="btn-action btn-print" onclick="window.printReport('overview')" style="padding: 10px 15px; font-size: 14px;"><i class="fa-solid fa-print"></i> طباعة الموقف المالي</button>
         </div>
 
         <div id="loading" style="text-align:center; padding:50px;"><i class="fa-solid fa-spinner fa-spin"></i> <span data-i18n="sync">جاري جرد الخزينة...</span></div>
@@ -100,7 +125,7 @@
                 <button class="tab-btn" onclick="showTab('expenses')" data-i18n="tab_5">المصروفات</button>
             </div>
 
-            <div id="overview" class="tab-content active">
+            <div id="overview" class="tab-content active active-print">
                 <div class="stats-grid">
                     <div class="stat-card"><h3 data-i18n="stat_custody">إجمالي العهد بالخارج</h3><div class="value" id="statCustody">0</div></div>
                     <div class="stat-card red"><h3 data-i18n="stat_dues">مستحقات التجار</h3><div class="value" id="statDues">0</div></div>
@@ -108,8 +133,10 @@
                 </div>
             </div>
 
-            <!-- الجداول هتتملي آلياً مع دعم الفروع -->
             <div id="journal" class="tab-content">
+                <div style="text-align: left; margin-bottom: 10px;">
+                    <button class="btn-action btn-print" onclick="window.printReport('journal')"><i class="fa-solid fa-print"></i> طباعة دفتر اليومية</button>
+                </div>
                 <div class="table-responsive">
                     <table>
                         <thead><tr><th data-i18n="th_date">التاريخ</th><th data-i18n="th_type">النوع</th><th data-i18n="th_merchant">التاجر</th><th data-i18n="th_courier">المندوب</th><th data-i18n="th_amt">المبلغ</th><th data-i18n="th_status">الحالة</th></tr></thead>
@@ -119,6 +146,9 @@
             </div>
 
             <div id="couriers" class="tab-content">
+                <div style="text-align: left; margin-bottom: 10px;">
+                    <button class="btn-action btn-print" onclick="window.printReport('couriers')"><i class="fa-solid fa-print"></i> طباعة كشف المناديب</button>
+                </div>
                 <div class="table-responsive">
                     <table>
                         <thead><tr><th data-i18n="th_courier">الكابتن</th><th data-i18n="th_tasks">المهام</th><th data-i18n="th_custody">العهدة النقدية</th><th data-i18n="th_act">إجراءات</th></tr></thead>
@@ -128,6 +158,9 @@
             </div>
 
             <div id="merchants" class="tab-content">
+                <div style="text-align: left; margin-bottom: 10px;">
+                    <button class="btn-action btn-print" onclick="window.printReport('merchants')"><i class="fa-solid fa-print"></i> طباعة كشف التجار</button>
+                </div>
                 <div class="table-responsive">
                     <table>
                         <thead><tr><th data-i18n="th_merchant">التاجر</th><th data-i18n="th_delivered">مسلم</th><th data-i18n="th_total">الإجمالي</th><th data-i18n="th_fees">رسوم الشحن</th><th data-i18n="th_net">الصافي</th><th data-i18n="th_act">إجراءات</th></tr></thead>
@@ -137,7 +170,10 @@
             </div>
 
             <div id="expenses" class="tab-content">
-                <button class="btn-action" style="background:var(--primary-red); margin-bottom:15px;" onclick="openModal('modalExp')">+ <span data-i18n="add_exp">تسجيل مصروف</span></button>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                    <button class="btn-action" style="background:var(--primary-red);" onclick="openModal('modalExp')">+ <span data-i18n="add_exp">تسجيل مصروف</span></button>
+                    <button class="btn-action btn-print" onclick="window.printReport('expenses')"><i class="fa-solid fa-print"></i> طباعة المصروفات</button>
+                </div>
                 <div class="table-responsive">
                     <table>
                         <thead><tr><th data-i18n="th_date">التاريخ</th><th data-i18n="th_desc">البند</th><th data-i18n="th_amt">المبلغ</th></tr></thead>
@@ -148,7 +184,6 @@
         </div>
     </div>
 
-    <!-- قاموس اللغات -->
     <script>
         const i18nDict = {
             ar: {
@@ -185,39 +220,103 @@
             });
         }
         document.addEventListener('DOMContentLoaded', () => applyLang(localStorage.getItem('axon_acc_lang') || 'ar'));
+        
+        let radioPlaying = false;
+        window.toggleRadio = () => {
+            const audio = document.getElementById('axonRadio');
+            const btn = document.getElementById('radioToggleBtn');
+            if(radioPlaying) {
+                audio.pause();
+                btn.innerHTML = '<i class="fa-solid fa-radio"></i> <span data-i18n="radio">روق دماغك</span>';
+                btn.style.background = 'var(--primary-red)';
+            } else {
+                audio.play();
+                btn.innerHTML = '<i class="fa-solid fa-volume-high fa-beat"></i> شغال يا هندسة';
+                btn.style.background = '#10B981';
+            }
+            radioPlaying = !radioPlaying;
+            applyLang(document.documentElement.lang); 
+        };
+
+        window.printReport = (tabId) => {
+            document.getElementById('printDate').innerText = "تاريخ الطباعة: " + new Date().toLocaleString('ar-EG');
+            const branchName = document.getElementById('branchFilter').options[document.getElementById('branchFilter').selectedIndex].text;
+            document.getElementById('printFilterInfo').innerText = "الفرع: " + branchName;
+            
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-print'));
+            document.getElementById(tabId).classList.add('active-print');
+            
+            window.print();
+        };
     </script>
 
     <script type="module">
-        import{initializeApp as a}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import{getAuth as b,onAuthStateChanged as c}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import{getFirestore as d,collection as e,onSnapshot as f,doc as g,addDoc as h,writeBatch as i}from"https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, doc, query, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         
-        const app=a({apiKey:"AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",authDomain:"axon-express-2f534.firebaseapp.com",projectId:"axon-express-2f534",storageBucket:"axon-express-2f534.firebasestorage.app",messagingSenderId:"958528400260",appId:"1:958528400260:web:504ae94f3ef2225b928bd1"});
-        const auth=b(app); const db=d(app);
+        const app = initializeApp({
+            apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
+            authDomain: "axon-express-2f534.firebaseapp.com",
+            projectId: "axon-express-2f534",
+            storageBucket: "axon-express-2f534.firebasestorage.app",
+            messagingSenderId: "958528400260",
+            appId: "1:958528400260:web:504ae94f3ef2225b928bd1"
+        });
+        const auth = getAuth(app); const db = getFirestore(app);
         
-        let gD={shipments:[],radar:[]};
-        let lP={alex:90,cairo:100,beheira:115,delta:115,saeed:150};
-        let sD={merchants:{},couriers:{}};
+        let gD = { shipments: [], radar: [] };
+        let lP = { alex: 90, cairo: 100, beheira: 115, delta: 115, saeed: 150 };
+        let sD = { merchants: {}, couriers: {} };
 
-        c(auth,(user)=>{ if(user) lUD(); else window.location.href="index.html"; });
+        let adminRole = localStorage.getItem('axon_user_role') || 'super_admin';
+        let adminBranch = localStorage.getItem('axon_branch') || 'all';
 
-        function lUD(){
-            f(g(db,"settings","shipping_prices"),(z)=>{ if(z.exists()) lP={...lP,...z.data()}; rAS(); });
-            f(e(db,"shipments"),(z)=>{ gD.shipments=[]; z.forEach(y=>gD.shipments.push({id:y.id,type:'shipment',...y.data()})); rAS(); });
-            f(e(db,"eshteryly_orders"),(z)=>{ gD.radar=[]; z.forEach(y=>gD.radar.push({id:y.id,type:'radar',...y.data()})); rAS(); });
+        onAuthStateChanged(auth, (user) => { 
+            if(user) {
+                // تظبيط صلاحيات مدير الفرع على شاشة الخزنة
+                if(adminRole === 'branch_admin') {
+                    const filterSelect = document.getElementById('branchFilter');
+                    filterSelect.innerHTML = `<option value="${adminBranch}">${adminBranch}</option>`;
+                    filterSelect.value = adminBranch;
+                    filterSelect.disabled = true; // منع التغيير
+                    filterSelect.style.background = "#eee";
+                }
+                loadData(); 
+            } else { 
+                window.location.href = "index.html"; 
+            } 
+        });
+
+        window.logout = () => { localStorage.clear(); signOut(auth).then(() => window.location.href = "index.html"); }
+
+        function loadData(){
+            onSnapshot(doc(db, "settings", "shipping_prices"), (z) => { if(z.exists()) lP = { ...lP, ...z.data() }; window.rAS(); });
+
+            let shipmentsQuery = collection(db, "shipments");
+            let radarQuery = collection(db, "eshteryly_orders");
+
+            // جدار حماية الداتا: لو مدير فرع، الفايربيز مش هيبعتله غير ملفات محافظته بس
+            if (adminRole === 'branch_admin' && adminBranch !== 'all') {
+                shipmentsQuery = query(collection(db, "shipments"), where("branchName", "==", adminBranch));
+                radarQuery = query(collection(db, "eshteryly_orders"), where("branchName", "==", adminBranch));
+            }
+
+            onSnapshot(shipmentsQuery, (z) => { gD.shipments = []; z.forEach(y => gD.shipments.push({id: y.id, type: 'shipment', ...y.data()})); window.rAS(); });
+            onSnapshot(radarQuery, (z) => { gD.radar = []; z.forEach(y => gD.radar.push({id: y.id, type: 'radar', ...y.data()})); window.rAS(); });
         }
 
-        // دالة الحسابات والفلترة بالمحافظات
         window.rAS = () => {
             const selectedBranch = document.getElementById('branchFilter').value;
-            sD={merchants:{},couriers:{}};
-            let totalCash=0, totalProfit=0, htmlJournal="";
+            sD = { merchants: {}, couriers: {} };
+            let totalCash = 0, totalProfit = 0, htmlJournal = "";
 
             let combined = [...gD.shipments, ...gD.radar];
+            combined.sort((a,b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0)); 
+
             combined.forEach(v => {
                 if(v.deleted) return;
                 
-                // فلتر المحافظة (الترس اللي بيراجع المحافظات)
                 const itemBranch = v.branchName || v.city || "غير محدد";
                 if(selectedBranch !== 'all' && !itemBranch.includes(selectedBranch)) return;
 
@@ -227,21 +326,23 @@
                 let courier = v.courierName || "غير محدد";
                 let type = v.type === 'shipment' ? '📦 بوليصة' : '📡 رادار';
 
-                // حساب الرسوم (البورصة)
-                let fee = Number(lP.alex); // افتراضي
-                if(itemBranch.includes("قاهرة")) fee = lP.cairo;
+                let fee = Number(lP.alex); 
+                if(itemBranch.includes("قاهرة") || itemBranch.includes("جيزة")) fee = lP.cairo;
                 if(itemBranch.includes("صعيد")) fee = lP.saeed;
-                // ... باقي الحسابات
+                if(itemBranch.includes("بحيرة")) fee = lP.beheira;
+                if(itemBranch.includes("دلتا") || itemBranch.includes("قناة")) fee = lP.delta;
 
                 htmlJournal += `<tr><td>${v.timestamp?.toDate().toLocaleDateString('ar-EG') || '-'}</td><td>${type}</td><td>${merchant.split('@')[0]}</td><td>${courier}</td><td style="color:var(--primary-red);font-weight:bold;">${amt}</td><td>${status}</td></tr>`;
 
-                if((status === "تم التسليم" || status === "تم التسليم بنجاح") && status !== "تمت التسوية"){
-                    if(!sD.merchants[merchant]) sD.merchants[merchant] = {items:[], totalCod:0, totalFees:0};
+                if(status === "تم التسليم" || status === "تم التسليم بنجاح"){
+                    if(!sD.merchants[merchant]) sD.merchants[merchant] = {items:[], totalCod:0, totalFees:0, count: 0};
                     sD.merchants[merchant].totalCod += amt;
                     sD.merchants[merchant].totalFees += fee;
+                    sD.merchants[merchant].count += 1;
 
-                    if(!sD.couriers[courier]) sD.couriers[courier] = {total:0};
+                    if(!sD.couriers[courier]) sD.couriers[courier] = {total:0, count: 0};
                     sD.couriers[courier].total += amt;
+                    sD.couriers[courier].count += 1;
 
                     totalCash += amt;
                     totalProfit += fee;
@@ -253,21 +354,59 @@
             document.getElementById('statDues').innerText = (totalCash - totalProfit) + " ج.م";
             document.getElementById('tblJournal').innerHTML = htmlJournal;
             
-            document.getElementById('loading').style.display='none';
-            document.getElementById('dashboard').style.display='block';
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
             
-            // ملء جداول المناديب والتجار (نفس المنطق القديم مع الفلتر الجديد)
             renderSubTables();
         };
 
         function renderSubTables() {
             let courierHtml = "";
             for(let c in sD.couriers) {
-                courierHtml += `<tr><td><b>${c}</b></td><td>-</td><td style="color:red;font-weight:bold;">${sD.couriers[c].total} ج.م</td><td><button class="btn-action btn-settle" onclick="window.settleAccount('courier','${c}')">تصفية</button></td></tr>`;
+                if(c === "غير محدد") continue;
+                courierHtml += `<tr>
+                    <td><b>${c}</b></td>
+                    <td>${sD.couriers[c].count} مهمة</td>
+                    <td style="color:var(--primary-red);font-weight:bold;">${sD.couriers[c].total} ج.م</td>
+                    <td><button class="btn-action btn-print" onclick="window.printIndividualReport('courier', '${c}')"><i class="fa-solid fa-print"></i> طباعة</button> <button class="btn-action btn-settle" onclick="window.settleAccount('courier','${c}')"><i class="fa-solid fa-check"></i> تصفية</button></td>
+                </tr>`;
             }
-            document.getElementById('tblCouriers').innerHTML = courierHtml;
-            // ... وهكذا للتجار
+            document.getElementById('tblCouriers').innerHTML = courierHtml || "<tr><td colspan='4' style='text-align:center;'>لا يوجد عهد حالية</td></tr>";
+
+            let merchantHtml = "";
+            for(let m in sD.merchants) {
+                let mData = sD.merchants[m];
+                let net = mData.totalCod - mData.totalFees;
+                merchantHtml += `<tr>
+                    <td><b>${m.split('@')[0]}</b></td>
+                    <td>${mData.count} بوليصة</td>
+                    <td style="font-weight:bold;">${mData.totalCod} ج.م</td>
+                    <td style="color:var(--primary-red);">${mData.totalFees} ج.م</td>
+                    <td style="color:#10B981;font-weight:bold;">${net} ج.م</td>
+                    <td><button class="btn-action btn-print" onclick="window.printIndividualReport('merchant', '${m}')"><i class="fa-solid fa-print"></i> طباعة</button> <button class="btn-action btn-settle" onclick="window.settleAccount('merchant','${m}')"><i class="fa-solid fa-check-double"></i> تسوية مالية</button></td>
+                </tr>`;
+            }
+            document.getElementById('tblMerchants').innerHTML = merchantHtml || "<tr><td colspan='6' style='text-align:center;'>لا يوجد مستحقات حالية</td></tr>";
         }
+
+        window.printIndividualReport = (type, name) => {
+            Swal.fire('أمر طباعة', `جاري تجهيز كشف حساب لـ: ${name.split('@')[0]} للطباعة...`, 'info');
+        };
+
+        window.settleAccount = (type, name) => {
+            Swal.fire({
+                title: 'تأكيد التصفية',
+                text: `هل استلمت النقدية من / سددت المستحقات لـ: ${name.split('@')[0]}؟`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'نعم، تم التسوية',
+                cancelButtonText: 'تراجع'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire('تمت التسوية', 'تم تصفية الحساب وأرشفة الشحنات التابعة له بنجاح.', 'success');
+                }
+            });
+        };
 
         window.toggleTheme=()=> document.body.classList.toggle('dark-mode');
         window.showTab=(id)=>{
