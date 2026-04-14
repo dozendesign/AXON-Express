@@ -205,11 +205,33 @@
         <p style="font-size:14px; color:#888; margin-bottom:20px; font-weight:600;" data-i18n="calc_desc">متصل مباشرة بـ "بورصة أكسون" للحصول على التحديثات اللحظية</p>
         <select class="calc-select" id="calcSelect" onchange="window.calculateRate()">
             <option value="0" data-i18n="calc_opt_0">-- حدد وجهة الشحنة --</option>
-            <option value="alex" data-i18n="calc_opt_1">الإسكندرية (والساحل)</option>
-            <option value="cairo" data-i18n="calc_opt_2">القاهرة والجيزة</option>
-            <option value="beheira" data-i18n="calc_opt_3">البحيرة</option>
-            <option value="delta" data-i18n="calc_opt_4">الدلتا والقناة</option>
-            <option value="saeed" data-i18n="calc_opt_5">الصعيد</option>
+            <option value="القاهرة">القاهرة</option>
+            <option value="الجيزة">الجيزة</option>
+            <option value="الإسكندرية">الإسكندرية</option>
+            <option value="الدقهلية">الدقهلية</option>
+            <option value="الغربية">الغربية</option>
+            <option value="المنوفية">المنوفية</option>
+            <option value="الشرقية">الشرقية</option>
+            <option value="القليوبية">القليوبية</option>
+            <option value="البحيرة">البحيرة</option>
+            <option value="كفر الشيخ">كفر الشيخ</option>
+            <option value="دمياط">دمياط</option>
+            <option value="الإسماعيلية">الإسماعيلية</option>
+            <option value="بورسعيد">بورسعيد</option>
+            <option value="السويس">السويس</option>
+            <option value="مرسى مطروح">مرسى مطروح</option>
+            <option value="شمال سيناء">شمال سيناء</option>
+            <option value="جنوب سيناء">جنوب سيناء</option>
+            <option value="البحر الأحمر">البحر الأحمر</option>
+            <option value="الفيوم">الفيوم</option>
+            <option value="بني سويف">بني سويف</option>
+            <option value="المنيا">المنيا</option>
+            <option value="أسيوط">أسيوط</option>
+            <option value="سوهاج">سوهاج</option>
+            <option value="قنا">قنا</option>
+            <option value="الأقصر">الأقصر</option>
+            <option value="أسوان">أسوان</option>
+            <option value="الوادي الجديد">الوادي الجديد</option>
         </select>
         <div class="calc-result" id="calcResult">0 EGP</div>
     </div>
@@ -346,9 +368,11 @@
                 <p><i class="fa-solid fa-envelope contact-icon"></i> <span data-i18n="ft_email">البريد: info@axonexpress.com</span></p>
             </div>
         </div>
-        <p style="text-align:center; color:#5c6b7a; border-top:1px solid rgba(255,255,255,0.05); padding-top:25px; margin:0; font-size: 14px; font-weight: bold; letter-spacing: 1px;">
-            AXON EXPRESS © 2026 | <span data-i18n="ft_copy">تم بناء النظام بواسطة التكنولوجيا المتقدمة.</span>
-        </p>
+        <div style="text-align:center; padding:25px; background:#031520; border-top:1px solid rgba(255,255,255,0.05); margin-top:20px;">
+            <h4 style="margin:0;color:#fff;font-size:16px;font-weight:900;">تم الإنشاء بواسطة ESAIA</h4>
+            <p style="margin:5px 0 0 0;color:#D61C4E;font-size:14px;font-weight:bold;">الشركة المصرية السعودية العامة لهندسة الهوية المؤسسية والصناعات المتقدمة</p>
+            <p style="margin:5px 0 0 0;color:#b0c4de;font-size:12px;font-family:Tahoma,sans-serif;">The Egyptian Saudi General Company for Corporate Identity Engineering and Advanced Industries</p>
+        </div>
     </footer>
 
     <div class="command-cluster">
@@ -386,6 +410,11 @@
                 <b><i class="fa-solid fa-triangle-exclamation"></i> إقرار بالمسؤولية القانونية:</b> 
                 النظام يقوم بتسجيل بصمة جهازك الرقمية بشكل آلي. الضغط على (تأكيد) يُعد إقراراً بجدية طلبك للإنقاذ. في حال ثبوت أن الطلب وهمي أو بغرض العبث وتشتيت الموارد، يحق لشركة أكسون إكسبريس اتخاذ كافة الإجراءات القانونية الصارمة ضد مقدم الطلب.
             </div>
+            <div class="input-group" style="margin-bottom:15px; text-align:right;">
+                <label style="cursor:pointer; display:flex; align-items:center; gap:10px;">
+                    <input type="checkbox" id="pRescueRobot" style="width:20px; height:20px; margin:0;"> أنا لست روبوت (تأكيد صحة البيانات)
+                </label>
+            </div>
 
             <button class="submit-btn" style="background:var(--primary-blue);" onclick="window.submitPublicRescueOrder()"><i class="fa-solid fa-bell-concierge"></i> تأكيد وإرسال نداء الاستغاثة</button>
         </div>
@@ -406,6 +435,11 @@
             <div class="legal-warning">
                 <b><i class="fa-solid fa-triangle-exclamation"></i> إقرار جدية الطلب:</b> 
                 يتم سحب التوقيع الرقمي للشبكة التي تستخدمها الآن. هذا الإجراء لحمايتنا من الطلبات الوهمية، وإرسالك للطلب يُعد إقراراً بجدية رغبتك في حجز الخدمة أو طلب معاينة وتخضع للمساءلة في حال العبث.
+            </div>
+            <div class="input-group" style="margin-bottom:15px; text-align:right;">
+                <label style="cursor:pointer; display:flex; align-items:center; gap:10px;">
+                    <input type="checkbox" id="pHomeRobot" style="width:20px; height:20px; margin:0;"> أنا لست روبوت (تأكيد صحة البيانات)
+                </label>
             </div>
 
             <button class="submit-btn" style="background:var(--primary-red);" onclick="window.submitPublicHomeOrder()"><i class="fa-solid fa-clipboard-check"></i> تأكيد وطلب التسعير/المعاينة</button>
@@ -437,6 +471,17 @@
                 <option value="أخرى">أخرى (اذكرها في الملاحظات)</option>
             </select>
             <textarea id="carNotes" placeholder="خبراتك السابقة أو المهارات التي تميزك..." rows="3"></textarea>
+            
+            <div class="legal-warning">
+                <b><i class="fa-solid fa-triangle-exclamation"></i> إقرار قانوني:</b> 
+                النظام يقوم بتسجيل بصمة جهازك الرقمية. الضغط على (تأكيد) يُعد إقراراً بجدية طلبك. في حال ثبوت أن الطلب وهمي بغرض تشتيت الموارد، يحق للشركة اتخاذ الإجراءات القانونية.
+            </div>
+            <div class="input-group" style="margin-bottom:15px; text-align:right;">
+                <label style="cursor:pointer; display:flex; align-items:center; gap:10px;">
+                    <input type="checkbox" id="carRobot" style="width:20px; height:20px; margin:0;"> أنا لست روبوت (تأكيد صحة البيانات)
+                </label>
+            </div>
+
             <button id="btnCareer" class="submit-btn" onclick="window.submitCareer()">إرسال بياناتك للقيادة</button>
         </div>
     </div>
@@ -449,11 +494,33 @@
             <input type="tel" id="franPhone" placeholder="رقم الهاتف الأساسي">
             <select id="franCity">
                 <option value="">-- المحافظة المستهدفة --</option>
-                <option value="الإسكندرية">الإسكندرية (والساحل)</option>
-                <option value="البحيرة">البحيرة (دمنهور والقرى)</option>
-                <option value="القاهرة والجيزة">القاهرة الكبرى</option>
-                <option value="الدلتا">منطقة الدلتا</option>
-                <option value="الصعيد">منطقة الصعيد</option>
+                <option value="القاهرة">القاهرة</option>
+                <option value="الجيزة">الجيزة</option>
+                <option value="الإسكندرية">الإسكندرية</option>
+                <option value="الدقهلية">الدقهلية</option>
+                <option value="الغربية">الغربية</option>
+                <option value="المنوفية">المنوفية</option>
+                <option value="الشرقية">الشرقية</option>
+                <option value="القليوبية">القليوبية</option>
+                <option value="البحيرة">البحيرة</option>
+                <option value="كفر الشيخ">كفر الشيخ</option>
+                <option value="دمياط">دمياط</option>
+                <option value="الإسماعيلية">الإسماعيلية</option>
+                <option value="بورسعيد">بورسعيد</option>
+                <option value="السويس">السويس</option>
+                <option value="مرسى مطروح">مرسى مطروح</option>
+                <option value="شمال سيناء">شمال سيناء</option>
+                <option value="جنوب سيناء">جنوب سيناء</option>
+                <option value="البحر الأحمر">البحر الأحمر</option>
+                <option value="الفيوم">الفيوم</option>
+                <option value="بني سويف">بني سويف</option>
+                <option value="المنيا">المنيا</option>
+                <option value="أسيوط">أسيوط</option>
+                <option value="سوهاج">سوهاج</option>
+                <option value="قنا">قنا</option>
+                <option value="الأقصر">الأقصر</option>
+                <option value="أسوان">أسوان</option>
+                <option value="الوادي الجديد">الوادي الجديد</option>
             </select>
             <select id="franOffice">
                 <option value="">-- الموقف اللوجستي للمقر --</option>
@@ -461,6 +528,17 @@
                 <option value="لا">لا أمتلك مقراً (جاري البحث)</option>
             </select>
             <textarea id="franNotes" placeholder="حجم الاستثمار المتوقع أو خبراتك السابقة في اللوجستيات..." rows="3"></textarea>
+
+            <div class="legal-warning">
+                <b><i class="fa-solid fa-triangle-exclamation"></i> إقرار قانوني:</b> 
+                النظام يقوم بتسجيل بصمة جهازك الرقمية. الضغط على (تأكيد) يُعد إقراراً بجدية طلبك. في حال ثبوت أن الطلب وهمي بغرض تشتيت الموارد، يحق للشركة اتخاذ الإجراءات القانونية.
+            </div>
+            <div class="input-group" style="margin-bottom:15px; text-align:right;">
+                <label style="cursor:pointer; display:flex; align-items:center; gap:10px;">
+                    <input type="checkbox" id="franRobot" style="width:20px; height:20px; margin:0;"> أنا لست روبوت (تأكيد صحة البيانات)
+                </label>
+            </div>
+
             <button id="btnFranchise" class="submit-btn" onclick="window.submitFranchise()">تسجيل طلب الفرنشايز</button>
         </div>
     </div>
@@ -618,7 +696,16 @@
         window.calculateRate = () => { 
             const z = document.getElementById('calcSelect').value; 
             if (z === "0") { document.getElementById('calcResult').innerText = "0 EGP"; return; } 
-            document.getElementById('calcResult').innerText = `${window.livePrices[z] || 0} EGP`; 
+            
+            let price = window.livePrices[z];
+            if(!price) {
+                if(['القاهرة','الجيزة'].includes(z)) price = window.livePrices.cairo;
+                else if(z === 'الإسكندرية') price = window.livePrices.alex;
+                else if(z === 'البحيرة') price = window.livePrices.beheira;
+                else price = 100;
+            }
+            
+            document.getElementById('calcResult').innerText = `${price || 100} EGP`; 
         };
         
         window.showService = z => { 
@@ -630,29 +717,43 @@
             else if (z === 'cold') { y = "أكسون كولد / فريش"; x = "تنبيه: هذه الخدمة الحصرية (للمطابخ السحابية والأكل البيتي المبرد) متاحة فقط للتجار المسجلين من داخل محطة التاجر الخاصة بهم."; } 
             Swal.fire({ title: y, text: x, icon: 'info', confirmButtonText: 'علم', confirmButtonColor: '#06283D' }); 
         };
+
+        let publicIP = "جاري التحقق...";
+        fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ publicIP = d.ip; }).catch(e=>{ publicIP = "غير معروف"; });
+        const publicDeviceInfo = navigator.userAgent.substring(0, 50) + "...";
         
         window.submitCareer = async () => { 
             const z = document.getElementById('carName').value.trim(), y = document.getElementById('carPhone').value.trim(), x = document.getElementById('carCity').value.trim(), w = document.getElementById('carPosition').value, v = document.getElementById('carNotes').value.trim(); 
+            
             if (!z || !y || !x || !w) return Swal.fire('خطأ إدخال', 'يرجى استكمال البيانات المطلوبة.', 'warning'); 
+            if (y.length < 10) return Swal.fire('خطأ إدخال', 'برجاء إدخال رقم هاتف صحيح (10 أرقام على الأقل).', 'warning');
+            if (!document.getElementById('carRobot').checked) return Swal.fire('تنبيه', 'رجاء تأكيد صحة البيانات والضغط على مربع "أنا لست روبوت".', 'warning');
+
             const u = document.getElementById('btnCareer'); u.disabled = true; u.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التشفير...'; 
             try { 
-                await addDoc(collection(db, "careers"), { name: z, phone: y, city: x, position: w, notes: v, timestamp: new Date() }); 
+                await addDoc(collection(db, "careers"), { name: z, phone: y, city: x, position: w, notes: v, userIP: publicIP, deviceInfo: publicDeviceInfo, timestamp: new Date() }); 
                 document.getElementById('careerModal').style.display = 'none'; 
                 Swal.fire('تم الإرسال', 'تم توجيه ملفك لإدارة الموارد البشرية. استعد للتحرك.', 'success'); 
-                document.querySelectorAll('#careerModal input, #careerModal select, #careerModal textarea').forEach(t => t.value = ''); 
+                document.querySelectorAll('#careerModal input, #careerModal select, #careerModal textarea').forEach(t => { if(t.type !== 'checkbox') t.value = ''; }); 
+                document.getElementById('carRobot').checked = false;
             } catch (t) { Swal.fire('فشل الاتصال', t.message, 'error'); } 
             u.disabled = false; u.innerHTML = "إرسال بياناتك للقيادة"; 
         };
         
         window.submitFranchise = async () => { 
             const z = document.getElementById('franName').value.trim(), y = document.getElementById('franPhone').value.trim(), x = document.getElementById('franCity').value, w = document.getElementById('franOffice').value, v = document.getElementById('franNotes').value.trim(); 
+            
             if (!z || !y || !x || !w) return Swal.fire('خطأ إدخال', 'جميع الحقول الأساسية مطلوبة.', 'warning'); 
+            if (y.length < 10) return Swal.fire('خطأ إدخال', 'برجاء إدخال رقم هاتف صحيح (10 أرقام على الأقل).', 'warning');
+            if (!document.getElementById('franRobot').checked) return Swal.fire('تنبيه', 'رجاء تأكيد صحة البيانات والضغط على مربع "أنا لست روبوت".', 'warning');
+
             const u = document.getElementById('btnFranchise'); u.disabled = true; u.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الإرسال...'; 
             try { 
-                await addDoc(collection(db, "franchises"), { name: z, phone: y, city: x, office: w, notes: v, timestamp: new Date() }); 
+                await addDoc(collection(db, "franchises"), { name: z, phone: y, city: x, office: w, notes: v, userIP: publicIP, deviceInfo: publicDeviceInfo, timestamp: new Date() }); 
                 document.getElementById('franchiseModal').style.display = 'none'; 
                 Swal.fire('نجاح', 'تم تسجيل طلب الوكالة وسيتم التواصل معك.', 'success'); 
-                document.querySelectorAll('#franchiseModal input, #franchiseModal select, #franchiseModal textarea').forEach(t => t.value = ''); 
+                document.querySelectorAll('#franchiseModal input, #franchiseModal select, #franchiseModal textarea').forEach(t => { if(t.type !== 'checkbox') t.value = ''; }); 
+                document.getElementById('franRobot').checked = false;
             } catch (t) { Swal.fire('فشل الاتصال', t.message, 'error'); } 
             u.disabled = false; u.innerHTML = "تسجيل طلب الفرنشايز"; 
         };
@@ -814,10 +915,6 @@
         
         window.openSupportTicket = async () => { document.getElementById('trackingDashboardModal').style.display = 'none'; const { value: z } = await Swal.fire({ title: 'التواصل مع القيادة', input: 'textarea', inputLabel: 'اشرح مشكلتك بالتفصيل بخصوص هذه الشحنة وسنتواصل معك', inputPlaceholder: 'اكتب هنا...', showCancelButton: true, confirmButtonText: 'إرسال التذكرة', cancelButtonText: 'إلغاء' }); if (z) { try { await addDoc(collection(db, "web_inquiries"), { message: `تذكرة دعم (بوليصة: ${currentTrackedDoc.awb}): ${z}`, phone: currentTrackedDoc.phone, status: "new", timestamp: new Date() }); Swal.fire('تم الإرسال', 'تم رفع التذكرة لخدمة العملاء وسيتم حل المشكلة فوراً.', 'success').then(() => openDashboard()); } catch (y) { Swal.fire('خطأ', 'لم يتم إرسال التذكرة.', 'error').then(() => openDashboard()); } } else { openDashboard(); } };
 
-        let publicIP = "جاري التحقق...";
-        fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ publicIP = d.ip; }).catch(e=>{ publicIP = "غير معروف"; });
-        const publicDeviceInfo = navigator.userAgent.substring(0, 50) + "...";
-
         window.getPublicRescueLocation = () => {
             const btn = document.getElementById('pRescueLocationBtn');
             const inputField = document.getElementById('pRescueGPS');
@@ -844,13 +941,14 @@
             }
         };
 
-        // تعديل لسد ثغرة أرقام الموبايل في طلب الإنقاذ
+        // تعديل لسد ثغرة أرقام الموبايل في طلب الإنقاذ + مربع الروبوت
         window.submitPublicRescueOrder = async () => {
             const phone = document.getElementById('pRescuePhone').value.trim();
             const car = document.getElementById('pRescueCar').value.trim() || 'غير محدد';
             const gps = document.getElementById('pRescueGPS').value.trim();
             
             if(!phone || phone.length < 10 || !gps) return Swal.fire('تنبيه', 'رجاء إدخال رقم هاتف صحيح (10 أرقام على الأقل) وموقعك الحالي لتوجيه الونش.', 'warning');
+            if(!document.getElementById('pRescueRobot').checked) return Swal.fire('تنبيه', 'رجاء تأكيد صحة البيانات والضغط على مربع "أنا لست روبوت".', 'warning');
             
             document.getElementById('publicRescueModal').style.display='none';
             
@@ -869,11 +967,12 @@
                     });
                     Swal.fire('تم استلام النداء', 'الونش يتحرك إليك الآن. سيتم الاتصال بك فوراً.', 'success');
                     document.getElementById('pRescuePhone').value = ''; document.getElementById('pRescueGPS').value = '';
+                    document.getElementById('pRescueRobot').checked = false;
                 } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
             }
         };
 
-        // تعديل لسد ثغرة أرقام الموبايل في نقل العفش
+        // تعديل لسد ثغرة أرقام الموبايل في نقل العفش + مربع الروبوت
         window.submitPublicHomeOrder = async () => {
             const from = document.getElementById('pHomeFrom').value.trim();
             const to = document.getElementById('pHomeTo').value.trim();
@@ -881,6 +980,7 @@
             const service = document.getElementById('pHomeService').value;
             
             if(!from || !to || !phone || phone.length < 10) return Swal.fire('تنبيه', 'رجاء إكمال بيانات النقل وإدخال رقم هاتف صحيح (10 أرقام على الأقل).', 'warning');
+            if(!document.getElementById('pHomeRobot').checked) return Swal.fire('تنبيه', 'رجاء تأكيد صحة البيانات والضغط على مربع "أنا لست روبوت".', 'warning');
             
             document.getElementById('publicHomeModal').style.display='none';
             
@@ -899,6 +999,7 @@
                     });
                     Swal.fire('ممتاز', 'تم استلام طلبك. فريق التسعير والمعاينات سيتصل بك فوراً.', 'success');
                     document.getElementById('pHomeFrom').value = ''; document.getElementById('pHomeTo').value = ''; document.getElementById('pHomePhone').value = '';
+                    document.getElementById('pHomeRobot').checked = false;
                 } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
             }
         };
