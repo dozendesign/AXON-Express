@@ -24,10 +24,10 @@
         .swal2-container { z-index: 99999 !important; }
 
         /* Header */
-        header { background: var(--white); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--primary-red); position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: 0.3s;}
+        header { background: var(--white); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--primary-red); position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: 0.3s; flex-wrap: wrap; gap: 10px;}
         .logo { font-size: 26px; font-weight: 900; color: var(--primary-blue); text-decoration: none; display: flex; align-items: center; gap: 8px; letter-spacing: 1px;}
         .logo span { color: var(--primary-red); }
-        .header-actions { display: flex; align-items: center; gap: 15px;}
+        .header-actions { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; justify-content: flex-end;}
         
         .lang-btn { background: transparent; border: 2px solid var(--primary-blue); color: var(--primary-blue); padding: 5px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 13px; transition: 0.3s;}
         .lang-btn:hover { background: var(--primary-blue); color: white; }
@@ -153,6 +153,14 @@
         .close-modal { position: absolute; top: 20px; left: 20px; background: rgba(214, 28, 78, 0.1); border: none; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--primary-red); transition: 0.3s; font-size: 18px;}
         .close-modal:hover { background: var(--primary-red); color: white; transform: rotate(90deg); }
         .legal-warning { background: #fff3cd; color: #856404; padding: 15px; border-radius: 12px; font-size: 13px; margin-bottom: 20px; border: 1px solid #ffeeba; text-align: justify; line-height: 1.6;}
+
+        /* تنسيقات الموبايل والزراير (التعديل الجديد) */
+        @media (max-width: 600px) {
+            header { padding: 12px 10px; flex-direction: column; align-items: center; gap: 12px; }
+            .logo { font-size: 22px; }
+            .header-actions { justify-content: center; width: 100%; gap: 10px; flex-wrap: wrap; }
+            .lang-btn, .login-btn { padding: 8px 15px; font-size: 13px; flex-grow: 1; text-align: center; }
+        }
 
         /* Dark Mode Overrides */
         body.dark-mode { --white: #161B22; --light-bg: #0D1117; --dark-text: #E2E8F0; --border-color: #30363D; }
@@ -448,17 +456,19 @@
 
     <div id="loginModal" class="modal">
         <div class="modal-content">
-            <button onclick="document.getElementById('loginModal').style.display='none'" class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+            <button onclick="document.getElementById('loginModal').style.display='none'" class="close-btn">✖</button>
             <h3 style="color:var(--primary-blue); border-bottom:2px solid var(--primary-red); padding-bottom:15px; margin-top:0;"><i class="fa-solid fa-fingerprint"></i> بوابة التحقق</h3>
-            <input type="text" id="merchantEmail" placeholder="كود الدخول (البريد الإلكتروني)">
-            <input type="password" id="merchantPassword" placeholder="شفرة المرور (الباسورد)">
-            <button id="btnLogin" class="submit-btn" onclick="window.handleLogin()">دخول المحطة</button>
+            <div class="input-group">
+                <input type="text" id="merchantEmail" placeholder="كود الدخول (البريد الإلكتروني)">
+                <input type="password" id="merchantPassword" placeholder="شفرة المرور (الباسورد)">
+            </div>
+            <button id="btnLogin" class="btn-service btn-main-action" style="width:100%; justify-content:center; margin-top:15px;" onclick="window.handleLogin()">دخول المحطة</button>
         </div>
     </div>
 
     <div id="careerModal" class="modal">
         <div class="modal-content">
-            <button onclick="document.getElementById('careerModal').style.display='none'" class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+            <button onclick="document.getElementById('careerModal').style.display='none'" class="close-btn">✖</button>
             <h3 style="color:var(--primary-blue); border-bottom:2px solid var(--primary-red); padding-bottom:15px; margin-top:0;"><i class="fa-solid fa-user-plus"></i> انضم للأسطول</h3>
             <input type="text" id="carName" placeholder="الاسم الرباعي">
             <input type="tel" id="carPhone" placeholder="رقم الهاتف (للتواصل)">
@@ -488,7 +498,7 @@
 
     <div id="franchiseModal" class="modal">
         <div class="modal-content">
-            <button onclick="document.getElementById('franchiseModal').style.display='none'" class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+            <button onclick="document.getElementById('franchiseModal').style.display='none'" class="close-btn">✖</button>
             <h3 style="color:var(--primary-blue); border-bottom:2px solid var(--primary-red); padding-bottom:15px; margin-top:0;"><i class="fa-solid fa-code-branch"></i> طلب إنشاء عقدة (فرع)</h3>
             <input type="text" id="franName" placeholder="اسم المستثمر / الشركة">
             <input type="tel" id="franPhone" placeholder="رقم الهاتف الأساسي">
@@ -545,7 +555,7 @@
     
     <div id="trackingDashboardModal" class="modal">
         <div class="modal-content" style="max-width: 550px;">
-            <button onclick="document.getElementById('trackingDashboardModal').style.display='none'" class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+            <button onclick="document.getElementById('trackingDashboardModal').style.display='none'" class="close-btn">✖</button>
             <h3 style="color:var(--primary-blue); margin-top:0; font-size: 28px; font-weight: 900;" id="dashAwbTitle">AXN00000</h3>
             <p style="font-size: 16px; color: #666; margin-bottom: 25px;">مرحباً <b id="dashCustName" style="color: var(--primary-red);"></b>، شحنتك في أمان تام.</p>
             
