@@ -32,6 +32,9 @@
         #logoutBtn { background: var(--white); border: 2px solid var(--primary-red); color: var(--primary-red); padding: 6px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; transition: 0.3s;}
         #logoutBtn:hover { background: var(--primary-red); color: white;}
         
+        .login-btn { background: linear-gradient(45deg, var(--primary-blue), #144272); color: white; border: none; padding: 6px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 13px; transition: 0.4s;}
+        .login-btn:hover { background: linear-gradient(45deg, var(--primary-red), #b31741); }
+
         .container { padding: 20px; max-width: 1200px; margin: 0 auto; min-height: 80vh;}
         
         .top-panel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;}
@@ -96,12 +99,12 @@
         .chat-mine { background: #dcf8c6; float: left; border-bottom-left-radius: 0; color: #000; }
         .chat-other { background: #ffffff; float: right; border-bottom-right-radius: 0; color: #000; border: 1px solid #eee;}
 
-        /* تنسيقات الموبايل والزراير */
+        /* تنسيقات الموبايل والزراير (التصليح اللي طلبته) */
         @media (max-width: 600px) {
-            header { padding: 10px; }
-            .logo { font-size: 18px; }
-            .header-actions { justify-content: center; width: 100%; gap: 5px; }
-            .lang-btn, #logoutBtn { padding: 5px 10px; font-size: 12px; }
+            header { padding: 12px 10px; flex-direction: column; align-items: center; gap: 12px; }
+            .logo { font-size: 22px; }
+            .header-actions { justify-content: center; width: 100%; gap: 10px; flex-wrap: wrap; }
+            .lang-btn, #logoutBtn, .login-btn { padding: 8px 15px; font-size: 13px; flex-grow: 1; text-align: center; }
             .top-panel { flex-direction: column; align-items: stretch; text-align: center; }
             .merchant-badge { margin-bottom: 10px; }
             .business-info-wrapper { flex-direction: column; align-items: stretch; }
@@ -152,6 +155,7 @@
             <button onclick="window.toggleTheme()" style="background:none; border:none; color:var(--primary-blue); font-size:24px; cursor:pointer;" title="الوضع الليلي">
                 <i id="themeIcon" class="fa-solid fa-moon"></i>
             </button>
+            <button class="login-btn" onclick="document.getElementById('loginModal').style.display='flex'" data-i18n="merchant_portal">بوابة التجار <i class="fa-solid fa-user-lock" style="margin-right: 5px;"></i></button>
             <button id="logoutBtn" onclick="window.logout()" data-i18n="logout">خروج</button>
         </div>
     </header>
@@ -362,9 +366,22 @@
         </div>
     </div>
 
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <button onclick="document.getElementById('loginModal').style.display='none'" class="close-btn">✖</button>
+            <h3 style="color:var(--primary-blue); border-bottom:2px solid var(--primary-red); padding-bottom:15px; margin-top:0;"><i class="fa-solid fa-fingerprint"></i> بوابة التحقق</h3>
+            <div class="input-group">
+                <input type="text" id="merchantEmail" placeholder="كود الدخول (البريد الإلكتروني)">
+                <input type="password" id="merchantPassword" placeholder="شفرة المرور (الباسورد)">
+            </div>
+            <button id="btnLogin" class="btn-service btn-main-action" style="width:100%; justify-content:center; margin-top:15px;" onclick="window.handleLogin()">دخول المحطة</button>
+        </div>
+    </div>
+
     <script>
         const i18nDict = {
             ar: { 
+                merchant_portal: "بوابة التجار",
                 logo_span: "EXPRESS", logout: "خروج", save: "حفظ", m_addr_ph: "عنوان المتجر (لاستلام الشحنات)", m_phone_ph: "رقم المتجر (للتواصل)",
                 stat_active: "إجمالي شحناتك النشطة", stat_cod: "التحصيلات المتوقعة (COD)", srv_title: "مركز العمليات وخدمات أكسون بلس",
                 srv_awb: "إصدار بوليصة شحن", srv_buy: "طلبات تسوق (اشتريلي)", srv_furniture: "أكسون هوم (نقل الأثاث)", srv_rescue: "أكسون إنقاذ (ونش سيارات)", srv_cold: "أكسون كولد/فريش",
@@ -372,6 +389,7 @@
                 btn_submit_awb: "إرسال الشحنة وتوليد البوليصة بالإجمالي" 
             },
             en: { 
+                merchant_portal: "Login",
                 logo_span: "EXPRESS", logout: "Logout", save: "Save", m_addr_ph: "Store Address (For Pickups)", m_phone_ph: "Store Phone",
                 stat_active: "Active Shipments", stat_cod: "Expected COD", srv_title: "Operations Center & Axon Plus",
                 srv_awb: "Issue Waybill", srv_buy: "Shopping Request (Eshteryly)", srv_furniture: "Axon Home (Furniture)", srv_rescue: "Axon Rescue (Towing)", srv_cold: "Axon Cold/Fresh",
@@ -384,7 +402,13 @@
         function applyLang(lang) {
             document.documentElement.lang = lang; document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr'; 
             document.getElementById('langBtn').innerText = lang === 'ar' ? 'English' : 'العربية';
-            document.querySelectorAll('[data-i18n]').forEach(el => { let key = el.getAttribute('data-i18n'); if(i18nDict[lang] && i18nDict[lang][key]) el.innerText = i18nDict[lang][key]; });
+            document.querySelectorAll('[data-i18n]').forEach(el => { 
+                let key = el.getAttribute('data-i18n'); 
+                if(i18nDict[lang] && i18nDict[lang][key]) {
+                    if(key === 'merchant_portal') el.innerHTML = i18nDict[lang][key] + ' <i class="fa-solid fa-user-lock" style="margin-right: 5px;"></i>';
+                    else el.innerText = i18nDict[lang][key];
+                }
+            });
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { let key = el.getAttribute('data-i18n-placeholder'); if(i18nDict[lang] && i18nDict[lang][key]) el.setAttribute('placeholder', i18nDict[lang][key]); });
         }
         document.addEventListener('DOMContentLoaded', () => { applyLang(localStorage.getItem('axon_lang') || 'ar'); });
