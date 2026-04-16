@@ -5,12 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>بوابة التجار | Axon Express Premium</title>
     
+    <script>
+        (function() {
+            var domain = window.location.hostname;
+            if (domain !== 'axon-express.vercel.app' && domain !== 'localhost' && domain !== '127.0.0.1') {
+                document.body.innerHTML = '<h1>🚫 Access Denied</h1><p>Ecological Symbiosis Lock Activated.</p>';
+                window.stop();
+                throw new Error("Domain locked.");
+            }
+            
+            document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+            document.addEventListener('keydown', function(e) {
+                if (e.keyCode === 123 || 
+                   (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) || 
+                   (e.ctrlKey && e.keyCode === 85)) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        })();
+    </script>
+
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
     
@@ -41,21 +61,23 @@
         .business-info-wrapper input:focus { border-color: var(--primary-blue); }
         
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: var(--white); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-blue);}
+        .stat-card { background: var(--white); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-blue); animation: fadeIn 0.5s ease;}
         .stat-card h3 { font-size: 15px; margin: 0 0 10px 0; color: #666;}
         .stat-card .value { font-size: 26px; font-weight: 900; color: var(--primary-blue);}
         
-        .axon-plus-section { background: var(--white); padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--border-color);}
+        .axon-plus-section { background: var(--white); padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--border-color); animation: fadeIn 0.6s ease;}
         .axon-plus-title { font-size: 16px; font-weight: 900; margin-bottom: 15px; color: var(--primary-blue); display: flex; align-items: center; gap: 8px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;}
         .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
         
-        .btn-service { border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; color: white;}
+        .btn-service { border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; color: white; transition: 0.3s;}
+        .btn-service:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .btn-main-action { background: var(--primary-blue); grid-column: 1 / -1; font-size: 18px; padding: 18px; } 
         .btn-eshteryly { background: #28a745; }
         .btn-home { background: #d39e00; } 
         .btn-rescue { background: var(--primary-red); } 
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
         .radar-merchant-section { background: var(--white); padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 2px dashed var(--primary-red); animation: fadeIn 0.5s ease; display: none; position: relative; overflow: hidden;}
         .radar-merchant-section::before { content: ''; position: absolute; top: 0; right: 0; width: 5px; height: 100%; background: var(--primary-red); }
         .radar-title { color: var(--primary-red); margin-top: 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; font-size: 18px; }
@@ -69,7 +91,7 @@
         .radar-status-badge { font-size: 11px; padding: 4px 8px; border-radius: 4px; font-weight: bold; background: #fff3cd; color: #856404; }
         
         .search-box { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Cairo'; outline: none; margin-bottom: 15px;}
-        .table-responsive { width: 100%; overflow-x: auto; background: var(--white); border-radius: 12px; border: 1px solid var(--border-color);}
+        .table-responsive { width: 100%; overflow-x: auto; background: var(--white); border-radius: 12px; border: 1px solid var(--border-color); animation: fadeIn 0.8s ease;}
         table { width: 100%; min-width: 900px; border-collapse: collapse; }
         th, td { padding: 15px 12px; text-align: right; border-bottom: 1px solid var(--border-color); font-size: 14px;}
         th { background: var(--primary-blue); color: var(--white); font-weight: bold;}
@@ -79,24 +101,24 @@
         .awb-badge { background: #e0eaf5; color: var(--primary-blue); padding: 5px 12px; border-radius: 6px; font-weight: bold;}
         
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; z-index: 2000; padding: 15px; backdrop-filter: blur(5px);}
-        .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto; position: relative;}
+        .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto; position: relative; animation: fadeIn 0.4s ease;}
         .input-group label { font-size: 14px; font-weight: bold; color: var(--primary-blue); margin-top: 12px; display: block; }
         .input-group input, .input-group select, .modal-content textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo'; background: var(--white); color: var(--dark-text); transition: 0.3s;}
-        .input-group input:focus { border-color: var(--primary-blue); }
-        .close-btn { position: absolute; top: 15px; left: 15px; border: none; background: none; font-size: 24px; cursor: pointer; color: var(--primary-red);}
+        .input-group input:focus, .input-group select:focus { border-color: var(--primary-blue); }
+        .close-btn { position: absolute; top: 15px; left: 15px; border: none; background: none; font-size: 24px; cursor: pointer; color: var(--primary-red); transition: 0.3s;}
+        .close-btn:hover { transform: rotate(90deg); }
 
-        .floating-chat { position: fixed; bottom: 20px; right: 20px; background: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999; text-decoration: none;}
+        .floating-chat { position: fixed; bottom: 20px; right: 20px; background: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999; text-decoration: none; transition: 0.3s;}
+        .floating-chat:hover { transform: scale(1.1); }
         
         .calc-summary { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 15px; border: 2px dashed #ccc; }
         .calc-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; font-weight: bold; }
         .calc-total { font-size: 18px; color: var(--primary-red); border-top: 1px solid #ddd; padding-top: 8px; margin-top: 8px; }
 
-        /* تنسيقات شات وماب التتبع */
         .chat-bubble { padding: 10px 15px; border-radius: 15px; max-width: 80%; font-size: 13px; line-height: 1.4; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 5px; clear: both;}
         .chat-mine { background: #dcf8c6; float: left; border-bottom-left-radius: 0; color: #000; }
         .chat-other { background: #ffffff; float: right; border-bottom-right-radius: 0; color: #000; border: 1px solid #eee;}
 
-        /* تنسيقات الموبايل والزراير */
         @media (max-width: 600px) {
             header { padding: 12px 10px; flex-direction: column; align-items: center; gap: 12px; }
             .logo { font-size: 22px; }
@@ -116,13 +138,15 @@
         body.dark-mode .radar-card p { background: #1a1a2e; color: #ccc;}
         body.dark-mode .chat-other { background: #16213e; color: #fff; border-color: #333;}
 
-        /* الطباعة */
+        /* الطباعة الإجبارية بالألوان */
         @media print {
-            body { background: #fff; margin: 0; padding: 0; -webkit-print-color-adjust: exact; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #fff; margin: 0; padding: 0; color: #000; }
             header, .container, .floating-chat, .print-controls, footer { display: none !important; }
             #printArea { display: block !important; width: 100%; margin: 0; padding: 0; }
             @page { margin: 5mm; }
         }
+        
         .a4-wrapper { width: 100%; max-width: 800px; margin: 0 auto; background: #fff; border: 2px solid #0A3D62; padding: 10px; box-sizing: border-box; color: #000; }
         .print-controls { text-align: center; margin-bottom: 20px; padding: 15px; background: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
         .print-controls button { cursor: pointer; padding: 12px 25px; margin: 5px; font-size: 16px; font-weight: bold; border: none; border-radius: 5px; color: white; font-family: 'Cairo';}
@@ -141,7 +165,7 @@
         .safeer-name-badge { background: #0A3D62; color: white; padding: 8px 15px; border-radius: 8px; display: inline-block; font-family: 'Cairo'; margin-bottom: 5px; border: 2px solid #b82329;}
         .safeer-name-badge h2 { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 1px;}
         .branch-badge-print { font-weight: bold; font-size: 14px; color: #000; text-transform: uppercase; background: #f0f0f0; border: 2px solid #000; padding: 3px 10px; display: inline-block; margin-bottom: 5px;}
-        .fragile-banner { background: #b82329; color: white; text-align: center; font-size: 16px; font-weight: bold; padding: 8px; border-radius: 5px; margin-bottom: 10px; border: 2px dashed #000;}
+        .fragile-banner { color: white; text-align: center; font-size: 14px; font-weight: bold; padding: 8px; border-radius: 5px; margin-bottom: 10px; border: 2px dashed #000;}
     </style>
 </head>
 <body>
@@ -197,7 +221,7 @@
         <div class="radar-merchant-section" id="merchantRadarSection">
             <h2 class="radar-title"><i class="fa-solid fa-satellite-dish fa-beat"></i> مهام الرادار الخاصة بك (متابعة حية)</h2>
             <div class="radar-grid" id="radarGridBody">
-                </div>
+            </div>
         </div>
 
         <input type="text" id="searchInput" class="search-box" placeholder="🔍 ابحث في سجل البوالص برقم البوليصة، الاسم، المحافظة...">
@@ -218,10 +242,10 @@
         </div>
     </div>
 
-    <footer style="text-align:center; padding:25px; background:var(--white); border-top:1px solid var(--border-color); margin-top:40px;">
-        <h4 style="margin:0;color:var(--primary-blue);font-size:16px;font-weight:900;">تم الإنشاء بواسطة ESAIA</h4>
-        <p style="margin:5px 0 0 0;color:var(--primary-red);font-size:14px;font-weight:bold;">الشركة المصرية السعودية العامة لهندسة الهوية المؤسسية والصناعات المتقدمة</p>
-        <p style="margin:5px 0 0 0;color:#666;font-size:12px;font-family:Tahoma,sans-serif;">The Egyptian Saudi General Company for Corporate Identity Engineering and Advanced Industries</p>
+    <footer style="text-align:center; padding:15px; background:var(--white); border-top:1px solid var(--border-color); margin-top:40px;">
+        <h4 style="margin:0;color:var(--primary-blue);font-size:11px;font-weight:900;">تم الإنشاء بواسطة ESAIA</h4>
+        <p style="margin:5px 0 0 0;color:var(--primary-red);font-size:9px;font-weight:bold;">الشركة المصرية السعودية العامة لهندسة الهوية المؤسسية والصناعات المتقدمة</p>
+        <p style="margin:5px 0 0 0;color:#666;font-size:8px;font-family:Tahoma,sans-serif;">The Egyptian Saudi General Company for Corporate Identity Engineering and Advanced Industries</p>
     </footer>
 
     <div id="printArea"></div>
@@ -236,12 +260,9 @@
             <h3 style="color:var(--primary-blue); margin-top:0; border-bottom:2px solid var(--primary-red); padding-bottom:10px;">
                 <i class="fa-solid fa-map-location-dot"></i> تتبع وتواصل مع: <span id="chatCourierName" style="color:var(--primary-red);">...</span>
             </h3>
-
             <div id="merchantMap" style="height: 200px; width: 100%; border-radius: 12px; border: 2px solid var(--primary-blue); margin-bottom: 15px; z-index: 1;"></div>
-
             <div style="background: #f4f7f6; border-radius: 12px; border: 1px solid #ccc; display: flex; flex-direction: column; flex: 1; min-height: 250px; overflow: hidden;">
-                <div id="chatBox" style="flex: 1; padding: 15px; overflow-y: auto; display: block;">
-                    </div>
+                <div id="chatBox" style="flex: 1; padding: 15px; overflow-y: auto; display: block;"></div>
                 <div style="display: flex; border-top: 1px solid #ccc; padding: 10px; background: white;">
                     <input type="text" id="chatInput" placeholder="اكتب رسالتك للكابتن هنا..." style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo'; outline: none;">
                     <button onclick="window.sendChatMessage()" style="background: #25D366; color: white; border: none; padding: 10px 15px; border-radius: 8px; margin-right: 10px; font-family: 'Cairo'; font-weight: bold; cursor: pointer; transition: 0.2s;"><i class="fa-solid fa-paper-plane"></i> إرسال</button>
@@ -254,11 +275,14 @@
         <div class="modal-content">
             <button class="close-btn" onclick="document.getElementById('addModal').style.display='none'">✖</button>
             <h3 style="color:var(--primary-blue); border-bottom: 2px solid var(--primary-red); padding-bottom:10px; margin-top:0;" data-i18n="srv_awb">إصدار بوليصة شحن</h3>
+            
             <div class="input-group"><label>اسم المستلم</label><input type="text" id="recName" placeholder="الاسم ثلاثي"></div>
+            
             <div style="display:flex; gap:10px;">
                 <div class="input-group" style="flex:1;"><label>الموبايل الأساسي</label><input type="tel" id="recPhone" placeholder="01xxxxxxxxx"></div>
                 <div class="input-group" style="flex:1;"><label>موبايل احتياطي</label><input type="tel" id="recPhone2" placeholder="اختياري"></div>
             </div>
+            
             <div class="input-group"><label>المحافظة (الوجهة)</label><input type="text" id="recCity" placeholder="اكتب المحافظة لحساب الشحن آلياً" onkeyup="window.updateShippingCalc()"></div>
             
             <div class="input-group" id="paymentTypeGroup" style="display:none; background:#e0eaf5; padding:12px; border-radius:8px; border:1px solid var(--primary-blue); margin-top:10px;">
@@ -270,22 +294,41 @@
             </div>
 
             <div class="input-group"><label>العنوان بالتفصيل</label><input type="text" id="recAddress" placeholder="الشارع، العمارة، الشقة"></div>
+            
             <div style="display:flex; gap:10px;">
-                <div class="input-group" style="flex:1;"><label>الوزن (كجم)</label><input type="number" id="recWeight" value="1" min="1"></div>
-                <div class="input-group" style="flex:1;"><label>قيمة البضاعة المطلوبة</label><input type="number" id="codAmount" placeholder="تمن بضاعتك فقط" oninput="window.updateShippingCalc()"></div>
+                <div class="input-group" style="flex:1;">
+                    <label>الوزن (كجم)</label>
+                    <input type="number" id="recWeight" value="1" min="1" oninput="window.updateShippingCalc()">
+                </div>
+                <div class="input-group" style="flex:1;">
+                    <label>قيمة البضاعة المطلوبة</label>
+                    <input type="number" id="codAmount" placeholder="تمن بضاعتك فقط" oninput="window.updateShippingCalc()">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>نوع التغليف والتأمين</label>
+                <select id="fragileType" onchange="window.handleFragileChange()">
+                    <option value="normal">شحنة عادية (تغليف قياسي)</option>
+                    <option value="insured">قابل للكسر + تأمين شامل (VIP) 🛡️</option>
+                    <option value="uninsured">قابل للكسر + بدون تأمين (مسؤولية التاجر) ⚠️</option>
+                </select>
+            </div>
+
+            <div id="insuredDiv" style="display:none; background:#e0f7fa; padding:10px; border-radius:8px; border:1px solid #00acc1; margin-top:10px;">
+                <label style="color:#00838f; font-weight:bold;">القيمة الحقيقية للطرد (لحساب التأمين 10%)</label>
+                <input type="number" id="itemRealValue" placeholder="أدخل السعر الحقيقي" oninput="window.updateShippingCalc()">
+                <p style="font-size:12px; color:#006064; margin-top:8px; line-height:1.5;">⚠️ <b>تنبيه هام:</b> يُدفع مبلغ التأمين مقدماً ليد المندوب. يحق للمندوب فتح الطرد للمعاينة والمطابقة، وله حق الرفض في حال سوء التغليف أو تلاعب السعر. مبلغ التأمين غير مسترد لضمان النقل في حاويات مخصصة.</p>
+            </div>
+
+            <div id="uninsuredDiv" style="display:none; background:#fff3cd; padding:10px; border-radius:8px; border:1px solid #ffeeba; margin-top:10px;">
+                <p style="font-size:12px; color:#856404; margin:0; line-height:1.5;">⚠️ <b>إقرار إخلاء مسؤولية:</b> أقر أنا الراسل بأنني قمت بتغليف الطرد داخلياً ليتحمل صدمات النقل البري، وأتحمل المسؤولية الكاملة عن أي تلف للقطعة، وأتنازل عن المطالبة بأي تعويض مادي.</p>
             </div>
 
             <div class="calc-summary">
                 <div class="calc-row"><span>قيمة البضاعة:</span> <span id="lblCodAmount">0 ج.م</span></div>
                 <div class="calc-row"><span>رسوم الشحن المقررة:</span> <span id="lblShippingFee" style="color:var(--primary-blue);">0 ج.م</span></div>
                 <div class="calc-row calc-total"><span>الإجمالي للتحصيل (بالبوليصة):</span> <span id="lblTotalAmount">0 ج.م</span></div>
-            </div>
-
-            <div class="input-group" style="background:#fff0f0; padding:10px; border-radius:8px; border:1px solid var(--primary-red); margin-top:10px;">
-                <label style="color:var(--primary-red); margin:0; display:flex; align-items:center; gap:10px; cursor:pointer;">
-                    <input type="checkbox" id="recFragile" style="width:20px; height:20px; margin:0;">
-                    <span><i class="fa-solid fa-wine-glass" style="font-size:18px;"></i> شحنة قابلة للكسر (عناية فائقة)</span>
-                </label>
             </div>
             
             <button class="btn-service btn-main-action" id="btnSave" style="width:100%; margin-top:15px; justify-content:center; background: var(--primary-blue);" onclick="window.saveShipment()">
@@ -410,7 +453,6 @@
         let merchantEmail = "", merchantName = "", merchantIP = "جاري التحقق...", merchantPhone = "غير مسجل", merchantAddress = "غير مسجل", branchName = "المركز الرئيسي";
         let livePrices = { alex: 0, cairo: 0, beheira: 0, delta: 0, saeed: 0 };
         
-        // متغيرات الشات والخريطة
         let currentChatCourier = "";
         let chatUnsubscribe = null;
         let merchantMap = null;
@@ -457,36 +499,27 @@
 
         window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
 
-        // --- دوال الشات والخريطة الجديدة ---
         window.showCourierTrack = (courierName) => {
             currentChatCourier = courierName;
             document.getElementById('chatCourierName').innerText = courierName;
             document.getElementById('trackChatModal').style.display = 'flex';
 
-            // 1. تشغيل الخريطة (Leaflet)
             if(!merchantMap) {
-                merchantMap = L.map('merchantMap').setView([31.2001, 29.9187], 13); // إسكندرية افتراضي
+                merchantMap = L.map('merchantMap').setView([31.2001, 29.9187], 13);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(merchantMap);
                 courierMarker = L.marker([31.2001, 29.9187]).addTo(merchantMap).bindPopup("موقع الكابتن التقريبي");
-                
-                // حل مشكلة تحميل الخريطة جوه المودال المخفي
                 setTimeout(() => merchantMap.invalidateSize(), 300);
             }
 
-            // 2. تشغيل صندوق المحادثة الحي
             if(chatUnsubscribe) chatUnsubscribe();
             
-            // سحب كل الرسايل والفلترة محلياً عشان نتجنب الـ Index Error في الفايربيز للمبتدئين
             chatUnsubscribe = onSnapshot(collection(db, "internal_chats"), (snap) => {
                 let html = "";
                 let msgs = [];
                 snap.forEach(doc => msgs.push(doc.data()));
-                
-                // ترتيب الرسايل بالوقت القديم للجديد
                 msgs.sort((a,b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
 
                 msgs.forEach(m => {
-                    // إظهار المحادثة بين التاجر الحالي والمندوب المحدد فقط
                     if((m.from === merchantEmail && m.to === courierName) || (m.from === courierName && m.to === merchantEmail)) {
                         const isMe = m.from === merchantEmail;
                         const msgClass = isMe ? "chat-mine" : "chat-other";
@@ -501,7 +534,6 @@
                 
                 const chatBox = document.getElementById('chatBox');
                 chatBox.innerHTML = html || "<div style='text-align:center; color:gray; font-size:13px; margin-top:30px;'><i class='fa-solid fa-comments fa-2x'></i><br><br>الخط الآمن مفتوح.. ابدأ المحادثة مع الكابتن الآن.</div>";
-                // النزول لآخر رسالة أوتوماتيك
                 setTimeout(() => chatBox.scrollTop = chatBox.scrollHeight, 100);
             });
         };
@@ -516,7 +548,7 @@
             const msg = input.value.trim();
             if(!msg || !currentChatCourier) return;
 
-            input.value = ""; // تفريغ الخانة فوراً
+            input.value = "";
             try {
                 await addDoc(collection(db, "internal_chats"), {
                     from: merchantEmail,
@@ -529,7 +561,6 @@
             }
         };
 
-
         window.getCityPrice = (cityName) => {
             if(!cityName) return 0;
             if(['قاهرة', 'جيزة', 'cairo', 'giza'].some(k => cityName.includes(k))) return Number(livePrices.cairo);
@@ -540,15 +571,46 @@
             return Number(livePrices.alex); 
         };
 
+        window.handleFragileChange = () => {
+            const type = document.getElementById('fragileType').value;
+            document.getElementById('insuredDiv').style.display = type === 'insured' ? 'block' : 'none';
+            document.getElementById('uninsuredDiv').style.display = type === 'uninsured' ? 'block' : 'none';
+            
+            if(type !== 'insured') document.getElementById('itemRealValue').value = '';
+            window.updateShippingCalc();
+        };
+
         window.updateShippingCalc = () => {
             const city = document.getElementById('recCity').value.trim().toLowerCase();
             const cod = Number(document.getElementById('codAmount').value) || 0;
-            const fee = window.getCityPrice(city);
+            const weight = Number(document.getElementById('recWeight').value) || 1;
+            
+            let baseFee = window.getCityPrice(city);
+            
+            // حساب الوزن الزائد (2 كيلو مجاناً، بعد كده 10 جنيه للكيلو)
+            let overWeightFee = 0;
+            if (weight > 2) { overWeightFee = Math.ceil(weight - 2) * 10; }
+
+            // حساب التأمين لو مختار VIP
+            let insuranceFee = 0;
+            if (document.getElementById('fragileType').value === 'insured') {
+                const realVal = Number(document.getElementById('itemRealValue').value) || 0;
+                insuranceFee = realVal * 0.10; // 10%
+            }
+            
+            let totalFee = baseFee + overWeightFee + insuranceFee;
+            let finalAmount = cod + totalFee;
             
             document.getElementById('lblCodAmount').innerText = cod + " ج.م";
-            document.getElementById('lblShippingFee').innerText = fee + " ج.م";
-            document.getElementById('lblTotalAmount').innerText = (cod + fee) + " ج.م";
             
+            let feeString = `${baseFee} ج.م`;
+            if (overWeightFee > 0) feeString += ` + ${overWeightFee} (وزن زائد)`;
+            if (insuranceFee > 0) feeString += ` + ${insuranceFee} (تأمين)`;
+            
+            document.getElementById('lblShippingFee').innerHTML = feeString + ` = <b>${totalFee} ج.م</b>`;
+            document.getElementById('lblTotalAmount').innerText = finalAmount + " ج.م";
+            
+            window.currentCalculatedShipping = totalFee;
             window.checkCityFilter(); 
         };
 
@@ -709,7 +771,7 @@
             const address = document.getElementById('recAddress').value.trim();
             const cod = Number(document.getElementById('codAmount').value) || 0;
             const paymentType = document.getElementById('shipmentPaymentType').value;
-            const isFragile = document.getElementById('recFragile').checked; 
+            const fragileType = document.getElementById('fragileType').value; 
 
             if(name === "" || phone === "" || city === "" || address === "" || cod === 0) {
                 return Swal.fire('نقص بيانات', 'يوجد حقل أو أكثر فارغ، برجاء المراجعة!', 'warning');
@@ -718,8 +780,9 @@
                 return Swal.fire('عنوان الاستلام مفقود', 'برجاء كتابة عنوان متجرك في الخانة العلوية وحفظه أولاً عشان المندوب يعرف هيستلم منين!', 'warning');
             }
 
-            const fee = window.getCityPrice(city);
-            const finalAmount = cod + fee;
+            // سحب الرسوم الكلية اللي اتحسبت في الشاشة
+            const totalShippingFee = window.currentCalculatedShipping || window.getCityPrice(city);
+            const finalAmount = cod + totalShippingFee;
 
             const btn = document.getElementById('btnSave'); btn.disabled = true; btn.innerHTML = "جاري الإرسال...";
 
@@ -728,7 +791,7 @@
                     merchantEmail: merchantEmail, name, phone, phone2: document.getElementById('recPhone2').value.trim() || "لا يوجد",
                     city, address, weight: Number(document.getElementById('recWeight').value||1),
                     amount: finalAmount, 
-                    paymentType: paymentType, fragile: isFragile, 
+                    paymentType: paymentType, fragile: fragileType, 
                     merchantAddress: merchantAddress,
                     merchantPhone: merchantPhone,
                     merchantIP: merchantIP,
@@ -736,17 +799,20 @@
                     status: "قيد التوصيل", deleted: false, timestamp: new Date(), branchName
                 });
                 
-                // التعديل الهندسي: حفظ الـ AWB صراحةً جوه قاعدة البيانات عشان التتبع
                 const awb = "AXN" + docRef.id.substring(0,5).toUpperCase();
                 await updateDoc(doc(db, "shipments", docRef.id), { awb: awb });
 
                 document.getElementById('addModal').style.display='none';
                 
-                document.querySelectorAll('#addModal input[type="text"], #addModal input[type="tel"], #addModal input[type="number"]').forEach(inp => { if(inp.id !== 'merchantBusinessAddress' && inp.id !== 'merchantBusinessPhone') inp.value = ''; });
-                document.getElementById('recFragile').checked = false;
+                document.querySelectorAll('#addModal input[type="text"], #addModal input[type="tel"], #addModal input[type="number"]').forEach(inp => { 
+                    if(inp.id !== 'merchantBusinessAddress' && inp.id !== 'merchantBusinessPhone') inp.value = ''; 
+                });
+                document.getElementById('fragileType').value = 'normal';
+                document.getElementById('insuredDiv').style.display = 'none';
+                document.getElementById('uninsuredDiv').style.display = 'none';
                 window.updateShippingCalc(); 
                 
-                window.printWB(awb, name, phone, document.getElementById('recPhone2').value, city, address, document.getElementById('recWeight').value||1, finalAmount, isFragile, merchantAddress, merchantPhone);
+                window.printWB(awb, name, phone, document.getElementById('recPhone2').value, city, address, document.getElementById('recWeight').value||1, finalAmount, fragileType, merchantAddress, merchantPhone);
 
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
             btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span data-i18n="btn_submit_awb">إرسال الشحنة وتوليد البوليصة بالإجمالي</span>';
@@ -809,7 +875,7 @@
                     if(d.deleted) return;
                     total += Number(d.amount) || 0; count++;
                     const awb = d.awb || ("AXN" + d.id.substring(0,5).toUpperCase());
-                    const isFragile = d.fragile ? true : false; 
+                    const fragileType = d.fragile || 'normal'; 
                     const mAdd = d.merchantAddress || merchantAddress;
                     const mPh = d.merchantPhone || merchantPhone;
                     
@@ -826,7 +892,7 @@
                         <td style="color:var(--primary-red); font-weight:bold;">${d.amount}</td>
                         <td style="font-weight:bold;">${d.status}</td>
                         <td style="display:flex; gap:5px; flex-direction:column;">
-                            <button class="print-btn" onclick="window.printWB('${awb}', '${d.name}', '${d.phone}', '${d.phone2}', '${d.city}', '${d.address}', '${d.weight}', '${d.amount}', ${isFragile}, '${mAdd}', '${mPh}')"><i class="fa-solid fa-print"></i> طباعة</button>
+                            <button class="print-btn" onclick="window.printWB('${awb}', '${d.name}', '${d.phone}', '${d.phone2}', '${d.city}', '${d.address}', '${d.weight}', '${d.amount}', '${fragileType}', '${mAdd}', '${mPh}')"><i class="fa-solid fa-print"></i> طباعة</button>
                             ${trackButton}
                         </td>
                     </tr>`;
@@ -837,7 +903,7 @@
             });
         }
 
-        window.printWB = (awb, name, p1, p2, city, addr, w, amt, isFragile, mAddress, mPhone) => {
+        window.printWB = (awb, name, p1, p2, city, addr, w, amt, fragileType, mAddress, mPhone) => {
             document.getElementById('mainHeader').style.display = 'none';
             document.getElementById('mainContainer').style.display = 'none';
             document.getElementById('floatingChatBtn').style.display = 'none';
@@ -847,7 +913,13 @@
             
             const branchBadgePrint = `<div style="border: 2px solid #000; display: inline-block; padding: 5px 15px; font-weight: 900; font-size: 14px; margin-bottom: 10px; background: #f0f0f0;">الفرع المُصدر: ${branchName}</div>`;
             const safeerLogoHTML = `<div class="safeer-name-badge"><h2>${merchantName}</h2></div>`;
-            const fragileBannerHTML = isFragile ? `<div class="fragile-banner"><i class="fa-solid fa-wine-glass"></i> شحنة قابلة للكسر - تعامل بحذر شديد <i class="fa-solid fa-wine-glass"></i></div>` : '';
+            
+            let fragileBannerHTML = '';
+            if (fragileType === 'insured') {
+                fragileBannerHTML = `<div class="fragile-banner" style="background:#0EA5E9; border-color:#0284c7;"><i class="fa-solid fa-shield-halved"></i> شحنة قابلة للكسر (مؤمن عليها VIP) - يحق للمندوب الفحص</div>`;
+            } else if (fragileType === 'uninsured') {
+                fragileBannerHTML = `<div class="fragile-banner" style="background:#f59e0b; border-color:#d39e00; color:#000;"><i class="fa-solid fa-triangle-exclamation"></i> شحنة قابلة للكسر (بدون تأمين) - مسؤولية الراسل بالكامل</div>`;
+            }
 
             const printHTML = `
                 <div class="print-controls no-print">
