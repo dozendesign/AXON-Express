@@ -236,7 +236,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, doc, updateDoc, getDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, doc, updateDoc, getDoc, addDoc, query, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         
         const app = initializeApp({
             apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
@@ -396,16 +396,17 @@
             return (R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)))).toFixed(1);
         }
 
-        // سحب المانيفست بسحب عام وفلترة داخلية لتجنب Index error
         function loadManifest() {
-            onSnapshot(collection(db, "shipments"), (snap) => {
+            // سحب قانوني متوافق مع الحماية: بيسحب عهدة المندوب ده فقط
+            const q = query(collection(db, "shipments"), where("courierName", "==", currentCaptain));
+            onSnapshot(q, (snap) => {
                 let html = ""; let count = 0;
                 let docs = [];
                 snap.forEach(doc => docs.push({id: doc.id, ...doc.data()}));
                 docs.sort((a,b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
 
                 docs.forEach(d => {
-                    if(d.courierName === currentCaptain && d.status !== "تم التسليم" && d.status !== "تمت التسوية" && d.status !== "مرتجع") {
+                    if(d.status !== "تم التسليم" && d.status !== "تمت التسوية" && d.status !== "مرتجع") {
                         count++;
                         globalOrdersData[d.id] = {id: d.id, source: 'manifest', ...d};
                         const awb = d.awb || "AXN...";
