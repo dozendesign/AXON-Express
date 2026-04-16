@@ -4,6 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>المحطة التكتيكية | Axon Express</title>
+    
+    <script>
+        (function() {
+            var domain = window.location.hostname;
+            if (domain !== 'axon-express.vercel.app' && domain !== 'localhost' && domain !== '127.0.0.1') {
+                document.body.innerHTML = '<h1>🚫 Access Denied</h1><p>Ecological Symbiosis Lock Activated.</p>';
+                window.stop();
+                throw new Error("Domain locked.");
+            }
+            
+            document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+            document.addEventListener('keydown', function(e) {
+                if (e.keyCode === 123 || 
+                   (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) || 
+                   (e.ctrlKey && e.keyCode === 85)) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        })();
+    </script>
+
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -142,7 +164,7 @@
         .safeer-name-badge { background: #0A3D62; color: white; padding: 8px 15px; border-radius: 8px; display: inline-block; font-family: 'Cairo'; margin-bottom: 5px; border: 2px solid #b82329;}
         .safeer-name-badge h2 { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 1px;}
         .branch-badge-print { font-weight: bold; font-size: 14px; color: #000; text-transform: uppercase; background: #f0f0f0; border: 2px solid #000; padding: 3px 10px; display: inline-block; margin-bottom: 5px;}
-        .fragile-banner { background: #b82329; color: white; text-align: center; font-size: 16px; font-weight: bold; padding: 8px; border-radius: 5px; margin-bottom: 10px; border: 2px dashed #000;}
+        .fragile-banner { color: white; text-align: center; font-size: 14px; font-weight: bold; padding: 8px; border-radius: 5px; margin-bottom: 10px; border: 2px dashed #000;}
         
         .manifest-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; }
         .manifest-table th, .manifest-table td { border: 1px solid #000; padding: 8px; text-align: center; }
@@ -352,8 +374,9 @@
     </div>
 
     <footer style="text-align:center; padding:15px; background:var(--white); border-top:1px solid var(--border-color); margin-top:40px;">
-        <h4 style="margin:0;color:var(--primary-blue);font-size:13px;font-weight:900;">تم الإنشاء بواسطة ESAIA</h4>
-        <p style="margin:5px 0 0 0;color:var(--primary-red);font-size:11px;font-weight:bold;">الشركة المصرية السعودية العامة لهندسة الهوية المؤسسية والصناعات المتقدمة</p>
+        <h4 style="margin:0;color:var(--primary-blue);font-size:11px;font-weight:900;">تم الإنشاء بواسطة ESAIA</h4>
+        <p style="margin:5px 0 0 0;color:var(--primary-red);font-size:9px;font-weight:bold;">الشركة المصرية السعودية العامة لهندسة الهوية المؤسسية والصناعات المتقدمة</p>
+        <p style="margin:5px 0 0 0;color:#666;font-size:8px;font-family:Tahoma,sans-serif;">The Egyptian Saudi General Company for Corporate Identity Engineering and Advanced Industries</p>
     </footer>
 
     <div id="printArea"></div>
@@ -647,11 +670,9 @@
                 let couriersOptions = '<option value="">-- تسليم لمندوب --</option>';
                 window.branchCouriersList.forEach(c => { couriersOptions += `<option value="${c.name}">${c.name}</option>`; });
 
-                // تجميع المدن والتجار للفلاتر المتقدمة
                 let citiesSet = new Set();
                 let merchantsSet = new Set();
 
-                // قراءة الفلاتر المتقدمة
                 const advCity = document.getElementById('advFilterBranch').value;
                 const advMerchant = document.getElementById('advFilterMerchant').value;
 
@@ -662,19 +683,16 @@
                     const merchant = d.merchantEmail ? d.merchantEmail.split('@')[0] : "إدارة";
                     citiesSet.add(d.city); merchantsSet.add(merchant);
 
-                    // فلتر الفرع (يظهر شحنات الفرع الأساسية، أو الشحنات المترحلّة إليه)
                     if(branchFilter && branchFilter !== 'all') {
                         if(d.branchName !== branchFilter && d.targetBranch !== branchFilter) return;
                     }
 
-                    // فلتر الحالة
                     if(currentFilter === 'مطلوب تعيين' && d.status !== 'قيد التوصيل' && d.status !== 'Pending') return;
                     if(currentFilter === 'مكتملة' && d.status !== 'تم التسليم' && d.status !== 'تمت التسوية') return;
                     if(currentFilter === 'مع المناديب' && !d.status.includes('مندوب') && d.status !== 'مذاع للرادار') return;
                     if(currentFilter === 'مرتجع' && d.status !== 'مرتجع' && d.status !== 'مؤجل') return;
                     if(currentFilter === 'واردات' && d.targetBranch !== adminBranch) return;
 
-                    // فلاتر متقدمة
                     if(advCity && d.city !== advCity) return;
                     if(advMerchant && merchant !== advMerchant) return;
 
@@ -693,7 +711,6 @@
                     let actionBtns = '';
                     let courierAction = '';
 
-                    // لو الشحنة جاية ترانزيت للفرع ده
                     if(d.targetBranch === adminBranch && d.status.includes('ترانزيت')) {
                         actionBtns = `<button class="btn-action btn-receive" style="width:100%; padding:10px; font-size:12px;" onclick="window.receiveTransit('${id}', '${d.phone}', '${merchant}')"><i class="fa-solid fa-download"></i> استلام وتنبيه العميل</button>`;
                         courierAction = `<div style="margin-top:5px; background:#fd7e14; color:white; padding:3px; border-radius:5px; font-size:11px; text-align:center;">شحنة واردة من ${d.branchName}</div>`;
@@ -737,7 +754,6 @@
                 document.getElementById('totalShipments').innerText = count;
                 document.getElementById('totalMoney').innerText = totalM + " ج.م";
 
-                // تحديث الفلاتر المتقدمة (أول مرة بس عشان الاختيار ميتمسحش)
                 if(document.getElementById('advFilterBranch').options.length <= 1) {
                     let cHtml = '<option value="">-- فلتر المحافظة (المدينة) --</option>';
                     citiesSet.forEach(c => cHtml += `<option value="${c}">${c}</option>`);
@@ -811,7 +827,6 @@
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
         };
 
-        // 🚛 الترحيل بين الفروع واستلام الواتساب 🚛
         window.openTransitModal = (id) => {
             document.getElementById('transitShipId').value = id;
             document.getElementById('transitModal').style.display = 'flex';
@@ -840,7 +855,6 @@
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
         };
 
-        // 🖨️ طباعة المانيفست (كشف العهدة القانوني) 🖨️
         window.generateManifest = () => {
             const courierName = document.getElementById('manifestCourierSelect').value;
             if(!courierName) return Swal.fire('خطأ', 'الرجاء اختيار المندوب أولاً', 'error');
@@ -897,8 +911,23 @@
             document.getElementById('mainContainer').style.display = 'none';
             
             const timestamp = new Date().toLocaleString('ar-EG');
-            const fragileBannerHTML = data.isFragile ? `<div class="fragile-banner"><i class="fa-solid fa-wine-glass"></i> شحنة قابلة للكسر - تعامل بحذر شديد <i class="fa-solid fa-wine-glass"></i></div>` : '';
             
+            // قراءة المتغيرات الحديثة القادمة من التاجر
+            const fragileType = data.fragile || 'normal';
+            const insuranceFee = data.insuranceFee || 0;
+            
+            let fragileBannerHTML = '';
+            if (fragileType === 'insured') {
+                fragileBannerHTML = `<div class="fragile-banner" style="background:#b82329; border-color:#000; color:#fff;"><i class="fa-solid fa-shield-halved"></i> شحنة قابلة للكسر (مؤمن عليها VIP) - يحق للمندوب الفحص</div>`;
+            } else if (fragileType === 'uninsured') {
+                fragileBannerHTML = `<div class="fragile-banner" style="background:#0A3D62; border-color:#000; color:#b82329;"><i class="fa-solid fa-triangle-exclamation"></i> شحنة قابلة للكسر (بدون تأمين) - مسؤولية الراسل بالكامل</div>`;
+            }
+
+            let insurancePrintHTML = '';
+            if(insuranceFee > 0) {
+                insurancePrintHTML = `<div style="text-align:center; background:#f0f8ff; border:2px dashed #0A3D62; padding:8px; border-radius:5px; margin-bottom:10px; color:#0A3D62; font-weight:bold; font-size:16px;">⚠️ رسوم تأمين مُسددة كاش للمندوب: ${insuranceFee} ج.م</div>`;
+            }
+
             document.getElementById('printArea').innerHTML = `
                 <div class="print-controls-ui no-print">
                     <button onclick="window.print()" style="background:var(--primary-blue);">اطبع البوليصة الآن</button>
@@ -910,13 +939,15 @@
                         <div><svg id="barcodePrint" class="barcode-svg"></svg><br><b style="font-size:16px;">${data.awb}</b></div>
                         <div><h2 style="margin:0; color:#0A3D62; font-size:22px;">AXON <span style="color:#D90429;">EXPRESS</span></h2><p style="margin:0; font-size:13px; font-weight:bold;">بوليصة شحن إلكترونية</p></div>
                     </div>
+                    
                     ${fragileBannerHTML}
+
                     <div class="info-grid">
                         <div class="box">
                             <h3>بيانات المرسل (التاجر)</h3>
                             <p style="margin:4px 0;">الاسم: <b>${data.merchant}</b></p>
-                            <p style="margin:4px 0;">الموبايل: <b dir="ltr">${data.mPh}</b></p>
-                            <p style="margin:4px 0;">العنوان: <b>${data.mAdd}</b></p>
+                            <p style="margin:4px 0;">الموبايل: <b dir="ltr">${data.merchantPhone || 'غير مسجل'}</b></p>
+                            <p style="margin:4px 0;">العنوان: <b>${data.merchantAddress || 'غير مسجل'}</b></p>
                             <p style="margin:4px 0;">الوزن: <b>${data.weight || 1} كجم</b></p>
                             <p style="margin:4px 0;">التاريخ: <b>${timestamp.split(',')[0]}</b></p>
                         </div>
@@ -928,7 +959,10 @@
                             <p style="margin:4px 0;">العنوان: <b>${data.address}</b></p>
                         </div>
                     </div>
-                    <div class="cod-box"><h2 style="margin:0; font-size:22px;">المبلغ المطلوب تحصيله (COD): ${data.amount} ج.م</h2></div>
+                    
+                    <div class="cod-box"><h2 style="margin:0; color:#b82329; font-size:22px;">المبلغ المطلوب تحصيله (COD): ${data.amount} ج.م</h2></div>
+                    ${insurancePrintHTML}
+                    
                     <div class="constitution-columns">
                         <h4 style="text-align:center; column-span: all; font-size:13px; margin-bottom:8px;">شروط وأحكام الناقل (Axon Express)</h4>
                         <p><b>أولاً: إقرار باستلام البضاعة بحالة ظاهرية سليمة:</b> يستلم الناقل البضاعة بناءً على الإقرار الصادر من المرسل بأنها بحالة ظاهرية سليمة، وخالية من أي عيوب أو تلف، ومعبأة تعبئة مناسبة تتناسب مع طبيعة البضاعة ومتطلبات النقل البري، ويكون الناقل غير مسؤول عن الفحص الفني للبضاعة أو مكوناتها الداخلية.</p>
