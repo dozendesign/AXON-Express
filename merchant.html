@@ -436,7 +436,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, where, setDoc, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, where, or, setDoc, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const app = initializeApp({
             apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
@@ -513,7 +513,15 @@
 
             if(chatUnsubscribe) chatUnsubscribe();
             
-            chatUnsubscribe = onSnapshot(collection(db, "internal_chats"), (snap) => {
+            const chatQ = query(
+                collection(db, "internal_chats"),
+                or(
+                    where("from", "==", merchantEmail),
+                    where("to", "==", merchantEmail)
+                )
+            );
+            
+            chatUnsubscribe = onSnapshot(chatQ, (snap) => {
                 let html = "";
                 let msgs = [];
                 snap.forEach(doc => msgs.push(doc.data()));
@@ -791,7 +799,7 @@
                 return Swal.fire('عنوان الاستلام مفقود', 'برجاء كتابة عنوان متجرك في الخانة العلوية وحفظه أولاً عشان المندوب يعرف هيستلم منين!', 'warning');
             }
 
-            // سحب الرسوم الكلية والتأمين من المتغيرات العامة اللي اتحسبت
+            // سحب الرسوم الكلية والتأمين من المتغيرات العامة
             const totalShippingFee = window.currentCalculatedShipping || window.getCityPrice(city);
             const insuranceFee = window.currentInsuranceFee || 0;
             const finalAmount = cod + totalShippingFee;
@@ -799,7 +807,11 @@
             const btn = document.getElementById('btnSave'); btn.disabled = true; btn.innerHTML = "جاري الإرسال...";
 
             try {
-                const docRef = await addDoc(collection(db, "shipments"), {
+                // تعديل النينجا: دمج الإنشاء وإضافة الـ AWB في خطوة واحدة لتجنب الاصطدام بالقواعد الأمنية
+                const newShipmentRef = doc(collection(db, "shipments"));
+                const awb = "AXN" + newShipmentRef.id.substring(0,5).toUpperCase();
+                
+                await setDoc(newShipmentRef, {
                     merchantEmail: merchantEmail, name, phone, phone2: document.getElementById('recPhone2').value.trim() || "لا يوجد",
                     city, address, weight: Number(document.getElementById('recWeight').value||1),
                     amount: finalAmount, 
@@ -809,11 +821,9 @@
                     merchantPhone: merchantPhone,
                     merchantIP: merchantIP,
                     deviceInfo: deviceInfo,
-                    status: "قيد التوصيل", deleted: false, timestamp: new Date(), branchName
+                    status: "قيد التوصيل", deleted: false, timestamp: new Date(), branchName,
+                    awb: awb
                 });
-                
-                const awb = "AXN" + docRef.id.substring(0,5).toUpperCase();
-                await updateDoc(doc(db, "shipments", docRef.id), { awb: awb });
 
                 document.getElementById('addModal').style.display='none';
                 
