@@ -580,6 +580,7 @@
             window.updateShippingCalc();
         };
 
+        // هندسة الحاسبة وتعديل التأمين
         window.updateShippingCalc = () => {
             const city = document.getElementById('recCity').value.trim().toLowerCase();
             const cod = Number(document.getElementById('codAmount').value) || 0;
@@ -598,19 +599,29 @@
                 insuranceFee = realVal * 0.10; // 10%
             }
             
-            let totalFee = baseFee + overWeightFee + insuranceFee;
-            let finalAmount = cod + totalFee;
+            // مصاريف الشحن الكلية (بدون التأمين)
+            let totalShippingFee = baseFee + overWeightFee;
+            
+            // الـ COD الإجمالي (البضاعة + مصاريف الشحن فقط)
+            let finalAmount = cod + totalShippingFee;
             
             document.getElementById('lblCodAmount').innerText = cod + " ج.م";
             
             let feeString = `${baseFee} ج.م`;
             if (overWeightFee > 0) feeString += ` + ${overWeightFee} (وزن زائد)`;
-            if (insuranceFee > 0) feeString += ` + ${insuranceFee} (تأمين)`;
             
-            document.getElementById('lblShippingFee').innerHTML = feeString + ` = <b>${totalFee} ج.م</b>`;
-            document.getElementById('lblTotalAmount').innerText = finalAmount + " ج.م";
+            document.getElementById('lblShippingFee').innerHTML = feeString + ` = <b>${totalShippingFee} ج.م</b>`;
             
-            window.currentCalculatedShipping = totalFee;
+            // إظهار الإجمالي ولو في تأمين يظهر في سطر مستقل
+            let totalHTML = `${finalAmount} ج.م`;
+            if(insuranceFee > 0) {
+                totalHTML += `<br><span style="font-size:13px; color:#0A3D62; display:block; margin-top:5px; background:#e0f7fa; padding:5px; border-radius:5px; border:1px solid #00acc1;"><i class="fa-solid fa-hand-holding-dollar"></i> رسوم تأمين (${insuranceFee} ج.م) تُدفع كاش للمندوب الآن</span>`;
+            }
+            document.getElementById('lblTotalAmount').innerHTML = totalHTML;
+            
+            // حفظ المتغيرات عشان نستدعيها وقت الإرسال للفايربيز
+            window.currentCalculatedShipping = totalShippingFee;
+            window.currentInsuranceFee = insuranceFee;
             window.checkCityFilter(); 
         };
 
@@ -780,8 +791,9 @@
                 return Swal.fire('عنوان الاستلام مفقود', 'برجاء كتابة عنوان متجرك في الخانة العلوية وحفظه أولاً عشان المندوب يعرف هيستلم منين!', 'warning');
             }
 
-            // سحب الرسوم الكلية اللي اتحسبت في الشاشة
+            // سحب الرسوم الكلية والتأمين من المتغيرات العامة اللي اتحسبت
             const totalShippingFee = window.currentCalculatedShipping || window.getCityPrice(city);
+            const insuranceFee = window.currentInsuranceFee || 0;
             const finalAmount = cod + totalShippingFee;
 
             const btn = document.getElementById('btnSave'); btn.disabled = true; btn.innerHTML = "جاري الإرسال...";
@@ -791,6 +803,7 @@
                     merchantEmail: merchantEmail, name, phone, phone2: document.getElementById('recPhone2').value.trim() || "لا يوجد",
                     city, address, weight: Number(document.getElementById('recWeight').value||1),
                     amount: finalAmount, 
+                    insuranceFee: insuranceFee,
                     paymentType: paymentType, fragile: fragileType, 
                     merchantAddress: merchantAddress,
                     merchantPhone: merchantPhone,
@@ -812,7 +825,7 @@
                 document.getElementById('uninsuredDiv').style.display = 'none';
                 window.updateShippingCalc(); 
                 
-                window.printWB(awb, name, phone, document.getElementById('recPhone2').value, city, address, document.getElementById('recWeight').value||1, finalAmount, fragileType, merchantAddress, merchantPhone);
+                window.printWB(awb, name, phone, document.getElementById('recPhone2').value, city, address, document.getElementById('recWeight').value||1, finalAmount, fragileType, merchantAddress, merchantPhone, insuranceFee);
 
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
             btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span data-i18n="btn_submit_awb">إرسال الشحنة وتوليد البوليصة بالإجمالي</span>';
@@ -876,6 +889,7 @@
                     total += Number(d.amount) || 0; count++;
                     const awb = d.awb || ("AXN" + d.id.substring(0,5).toUpperCase());
                     const fragileType = d.fragile || 'normal'; 
+                    const insuranceFee = d.insuranceFee || 0;
                     const mAdd = d.merchantAddress || merchantAddress;
                     const mPh = d.merchantPhone || merchantPhone;
                     
@@ -892,7 +906,7 @@
                         <td style="color:var(--primary-red); font-weight:bold;">${d.amount}</td>
                         <td style="font-weight:bold;">${d.status}</td>
                         <td style="display:flex; gap:5px; flex-direction:column;">
-                            <button class="print-btn" onclick="window.printWB('${awb}', '${d.name}', '${d.phone}', '${d.phone2}', '${d.city}', '${d.address}', '${d.weight}', '${d.amount}', '${fragileType}', '${mAdd}', '${mPh}')"><i class="fa-solid fa-print"></i> طباعة</button>
+                            <button class="print-btn" onclick="window.printWB('${awb}', '${d.name}', '${d.phone}', '${d.phone2}', '${d.city}', '${d.address}', '${d.weight}', '${d.amount}', '${fragileType}', '${mAdd}', '${mPh}', ${insuranceFee})"><i class="fa-solid fa-print"></i> طباعة</button>
                             ${trackButton}
                         </td>
                     </tr>`;
@@ -903,7 +917,7 @@
             });
         }
 
-        window.printWB = (awb, name, p1, p2, city, addr, w, amt, fragileType, mAddress, mPhone) => {
+        window.printWB = (awb, name, p1, p2, city, addr, w, amt, fragileType, mAddress, mPhone, insuranceFee) => {
             document.getElementById('mainHeader').style.display = 'none';
             document.getElementById('mainContainer').style.display = 'none';
             document.getElementById('floatingChatBtn').style.display = 'none';
@@ -916,9 +930,14 @@
             
             let fragileBannerHTML = '';
             if (fragileType === 'insured') {
-                fragileBannerHTML = `<div class="fragile-banner" style="background:#0EA5E9; border-color:#0284c7;"><i class="fa-solid fa-shield-halved"></i> شحنة قابلة للكسر (مؤمن عليها VIP) - يحق للمندوب الفحص</div>`;
+                fragileBannerHTML = `<div class="fragile-banner" style="background:#b82329; border-color:#000; color:#fff;"><i class="fa-solid fa-shield-halved"></i> شحنة قابلة للكسر (مؤمن عليها VIP) - يحق للمندوب الفحص</div>`;
             } else if (fragileType === 'uninsured') {
-                fragileBannerHTML = `<div class="fragile-banner" style="background:#f59e0b; border-color:#d39e00; color:#000;"><i class="fa-solid fa-triangle-exclamation"></i> شحنة قابلة للكسر (بدون تأمين) - مسؤولية الراسل بالكامل</div>`;
+                fragileBannerHTML = `<div class="fragile-banner" style="background:#0A3D62; border-color:#000; color:#b82329;"><i class="fa-solid fa-triangle-exclamation"></i> شحنة قابلة للكسر (بدون تأمين) - مسؤولية الراسل بالكامل</div>`;
+            }
+            
+            let insurancePrintHTML = '';
+            if(insuranceFee > 0) {
+                insurancePrintHTML = `<div style="text-align:center; background:#f0f8ff; border:2px dashed #0A3D62; padding:8px; border-radius:5px; margin-bottom:10px; color:#0A3D62; font-weight:bold; font-size:16px;">⚠️ رسوم تأمين مُسددة كاش للمندوب: ${insuranceFee} ج.م</div>`;
             }
 
             const printHTML = `
@@ -958,6 +977,7 @@
                     <div class="cod-box">
                         <h2 style="margin:0; color:#b82329; font-size:20px;">المبلغ المطلوب تحصيله (COD): ${amt} ج.م</h2>
                     </div>
+                    ${insurancePrintHTML}
 
                     <div class="constitution-columns">
                         <h4 style="text-align:center; column-span: all; font-size:12px; color:#000;">شروط وأحكام الناقل (Axon Express)</h4>
