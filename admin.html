@@ -52,6 +52,9 @@
         .btn-action:hover { opacity: 0.8; }
         .btn-save { background: #28a745; } .btn-edit { background: #007bff; } .btn-delete { background: var(--primary-red); } .btn-print { background: #333; } .btn-track { background: #17a2b8; margin-top: 5px; width: 100%; }
         .btn-broadcast { background: #8e44ad; } 
+        .btn-transit { background: #fd7e14; }
+        .btn-receive { background: #20c997; box-shadow: 0 2px 5px rgba(0,0,0,0.2); animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         
         .search-box { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd; font-family: 'Cairo'; font-size: 14px; transition: 0.3s; background: var(--white); color: var(--dark-text); }
         .search-box:focus { outline: none; border-color: var(--primary-blue); box-shadow: 0 0 5px rgba(10, 61, 98, 0.3); }
@@ -98,16 +101,20 @@
         .status-warning { background-color: #fff3cd !important; } 
         .status-success { background-color: #e8f5e9 !important; } 
         .status-archived { background-color: #e2e3e5 !important; color: #6c757d; } 
+        .status-transit { background-color: #fff3cd !important; border-right: 4px solid #fd7e14; }
         body.dark-mode .status-danger { background-color: #4a1919 !important; }
         body.dark-mode .status-warning { background-color: #4a3f15 !important; }
         body.dark-mode .status-success { background-color: #1b3820 !important; }
         body.dark-mode .status-archived { background-color: #2b2b2b !important; color: #888; }
+        body.dark-mode .status-transit { background-color: #4a3f15 !important; border-right: 4px solid #fd7e14; }
 
-        .filter-group { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap;}
+        .filter-group { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; align-items: center;}
         .filter-btn { background: #fff; border: 1px solid #ccc; padding: 6px 15px; border-radius: 20px; cursor: pointer; font-family: 'Cairo'; font-size: 13px; font-weight: bold; transition: 0.3s;}
         .filter-btn.active { background: var(--primary-blue); color: white; border-color: var(--primary-blue); }
         body.dark-mode .filter-btn { background: #2c2c2c; border-color: #444; color: #fff;}
         body.dark-mode .filter-btn.active { background: var(--primary-blue); }
+        .adv-filter-select { padding: 6px 15px; border-radius: 20px; border: 1px solid #007bff; background: #e0eaf5; color: #007bff; font-weight: bold; font-family: 'Cairo'; font-size: 13px; outline: none;}
+        body.dark-mode .adv-filter-select { background: #062338; color: #66b2ff; border-color: #66b2ff; }
 
         /* ---------------- CSS الطباعة (ملون إجباري) ---------------- */
         @media print {
@@ -268,7 +275,7 @@
                     <button onclick="document.getElementById('manifestModal').style.display='flex'" style="background:var(--primary-blue); color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-family:'Cairo'; font-weight:bold;"><i class="fa-solid fa-file-invoice"></i> طباعة كشف عهدة مندوب</button>
                 </div>
                 
-                <input type="text" id="searchInput" class="search-box" placeholder="🔍 بحث سريع في الشحنات..." onkeyup="window.filterTable()">
+                <input type="text" id="searchInput" class="search-box" placeholder="🔍 بحث برقم البوليصة، التليفون، اسم التاجر..." onkeyup="window.filterTable()">
                 
                 <div class="filter-group">
                     <button class="filter-btn active" onclick="window.applyFilter('all', this)">الكل</button>
@@ -276,6 +283,10 @@
                     <button class="filter-btn" onclick="window.applyFilter('مع المناديب', this)" style="border-color: #f39c12; color: #f39c12;">مع المناديب 🟡</button>
                     <button class="filter-btn" onclick="window.applyFilter('مكتملة', this)" style="border-color: #28a745; color: #28a745;">مكتملة 🟢</button>
                     <button class="filter-btn" onclick="window.applyFilter('مرتجع', this)" style="border-color: #6c757d; color: #6c757d;">مرتجعات ومؤجل ⚪</button>
+                    <button class="filter-btn" onclick="window.applyFilter('واردات', this)" style="border-color: #fd7e14; color: #fd7e14;"><i class="fa-solid fa-download"></i> واردات من الفروع</button>
+                    
+                    <select id="advFilterBranch" class="adv-filter-select" onchange="window.triggerLoadShipments()"><option value="">-- فلتر المحافظة (المدينة) --</option></select>
+                    <select id="advFilterMerchant" class="adv-filter-select" onchange="window.triggerLoadShipments()"><option value="">-- فلتر التاجر (الراسل) --</option></select>
                 </div>
 
                 <div class="table-wrapper">
@@ -374,6 +385,17 @@
         </div>
     </div>
 
+    <div id="transitModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="document.getElementById('transitModal').style.display='none'">✖</button>
+            <h3 style="color:#fd7e14; border-bottom:2px solid #fd7e14; padding-bottom:10px; margin-top:0;"><i class="fa-solid fa-truck-fast"></i> ترحيل لمحافظة أخرى</h3>
+            <input type="hidden" id="transitShipId">
+            <label style="font-weight:bold;">اختر الفرع (المحافظة) المتجه إليها الطرد:</label>
+            <select id="transitTargetBranch" class="status-dropdown" style="width: 100%; margin-top: 10px; padding: 10px;"></select>
+            <button onclick="window.executeTransit()" style="width:100%; background:#fd7e14; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; font-family:'Cairo'; margin-top:15px; cursor:pointer;"><i class="fa-solid fa-check"></i> تأكيد الترحيل</button>
+        </div>
+    </div>
+
     <script>
         const i18nDict = {
             ar: { admin_title: "إدارة", logout: "خروج", tab_main: "العمليات الرئيسية", tab_emergency: "طوارئ ونقل", tab_support: "الدعم والطلبات", stat_active: "إجمالي الشحنات المتاحة", stat_cod: "إجمالي التحصيلات (COD)", stat_radar: "مهام الرادار النشطة", create_acc: "إنشاء حسابات جديدة", btn_create: "إنشاء الحساب فوراً", radar_map: "الرادار التكتيكي (تتبع حي)", bourse_title: "بورصة الشحن الحية (تحديث مركزي)", bank_title: "الرادار اللوجستي (بنك الشحنات)" },
@@ -420,10 +442,13 @@
             const grid = document.getElementById('pricesGrid');
             if(!grid) return; 
             let html = '';
+            let transitHtml = '<option value="">-- حدد المحافظة --</option>';
             governorates.forEach(gov => {
                 html += `<div><label style="font-size:13px; font-weight:bold;">${gov}:</label><input type="number" id="price_${gov}" style="width:100%; padding:8px; border-radius:5px;" placeholder="ج.م"></div>`;
+                transitHtml += `<option value="${gov}">${gov}</option>`;
             });
             grid.innerHTML = html;
+            document.getElementById('transitTargetBranch').innerHTML = transitHtml;
         }
         renderPricesGrid();
 
@@ -433,9 +458,7 @@
             document.getElementById(tabId).style.display = 'block';
             event.currentTarget.classList.add('active');
             
-            if(tabId === 'mainOps' && adminMap) {
-                setTimeout(() => adminMap.invalidateSize(), 200);
-            }
+            if(tabId === 'mainOps' && adminMap) { setTimeout(() => adminMap.invalidateSize(), 200); }
         };
 
         onAuthStateChanged(auth, async (user) => {
@@ -474,10 +497,7 @@
 
             if(!name || !email || !pass) return Swal.fire('بيانات ناقصة', 'رجاءً تعبئة الاسم والإيميل والباسورد', 'error');
             if(pass.length < 6) return Swal.fire('خطأ', 'الباسورد يجب أن يكون 6 أحرف أو أرقام على الأقل', 'error');
-            
-            if(adminRole === 'branch_admin' && role === 'admin') {
-                return Swal.fire('صلاحيات محدودة', 'القيادة العليا فقط هي من تستطيع تعيين مديري الفروع.', 'error');
-            }
+            if(adminRole === 'branch_admin' && role === 'admin') return Swal.fire('صلاحيات محدودة', 'القيادة العليا فقط هي من تستطيع تعيين مديري الفروع.', 'error');
 
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الإنشاء...'; btn.disabled = true;
 
@@ -537,10 +557,7 @@
             onSnapshot(doc(db, "settings", "shipping_prices"), (snap) => {
                 if(snap.exists()) {
                     const d = snap.data();
-                    governorates.forEach(gov => {
-                        let inputElement = document.getElementById(`price_${gov}`);
-                        if(inputElement) inputElement.value = d[gov] || '';
-                    });
+                    governorates.forEach(gov => { let inputElement = document.getElementById(`price_${gov}`); if(inputElement) inputElement.value = d[gov] || ''; });
                     if(document.getElementById('pricePenalty')) document.getElementById('pricePenalty').value = d.penalty || '';
                 }
             });
@@ -548,10 +565,7 @@
 
         window.updateLivePrices = async () => {
             const pricesToSave = { penalty: Number(document.getElementById("pricePenalty").value) || 0, lastUpdate: new Date().toLocaleTimeString("ar-EG") }; 
-            governorates.forEach(gov => {
-                let inputElement = document.getElementById(`price_${gov}`);
-                if(inputElement && inputElement.value) pricesToSave[gov] = Number(inputElement.value);
-            });
+            governorates.forEach(gov => { let inputElement = document.getElementById(`price_${gov}`); if(inputElement && inputElement.value) pricesToSave[gov] = Number(inputElement.value); });
             await setDoc(doc(db, "settings", "shipping_prices"), pricesToSave, { merge: true }); 
             Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم تحديث البورصة', showConfirmButton:false, timer:2000});
         };
@@ -559,9 +573,7 @@
         window.issuePickupOrder = async () => {
             const { value: vals } = await Swal.fire({ title: 'إصدار أمر بيكب جديد', html: '<input id="swal-merchant" class="swal2-input" placeholder="اسم التاجر أو الشركة"><input id="swal-address" class="swal2-input" placeholder="العنوان بالتفصيل"><input id="swal-notes" class="swal2-input" placeholder="ملاحظات">', preConfirm: () => [document.getElementById('swal-merchant').value, document.getElementById('swal-address').value, document.getElementById('swal-notes').value] });
             if (vals && vals[0] && vals[1]) { 
-                await addDoc(collection(db, "eshteryly_orders"), { 
-                    merchantEmail: vals[0], details: vals[2] || "طلب استلام طرود من التاجر", address: vals[1], paymentMethod: "pickup", status: "جاري البحث عن مندوب", timestamp: new Date(), branchName: adminBranch === 'all' ? "المركز الرئيسي" : adminBranch, type: 'radar'
-                }); 
+                await addDoc(collection(db, "eshteryly_orders"), { merchantEmail: vals[0], details: vals[2] || "طلب استلام طرود من التاجر", address: vals[1], paymentMethod: "pickup", status: "جاري البحث عن مندوب", timestamp: new Date(), branchName: adminBranch === 'all' ? "المركز الرئيسي" : adminBranch, type: 'radar' }); 
                 Swal.fire('تم', 'تم البث للرادار', 'success'); 
             }
         };
@@ -595,7 +607,6 @@
         
         window.deleteEsh = async (id) => { if(confirm("تأكيد حذف الهدف من الرادار؟")) { await deleteDoc(doc(db, "eshteryly_orders", id)); } };
 
-        // تحميل قائمة المناديب
         function loadCouriersList(branchFilter) {
             onSnapshot(collection(db, "couriers"), (snap) => {
                 window.branchCouriersList = [];
@@ -620,8 +631,12 @@
             currentFilter = category;
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             btnElement.classList.add('active');
-            loadShipments(adminRole === 'branch_admin' ? adminBranch : 'all');
+            window.triggerLoadShipments();
         };
+
+        window.triggerLoadShipments = () => {
+            loadShipments(adminRole === 'branch_admin' ? adminBranch : 'all');
+        }
 
         function loadShipments(branchFilter = null) {
             let q = query(collection(db, "shipments"), orderBy("timestamp", "desc"));
@@ -632,51 +647,80 @@
                 let couriersOptions = '<option value="">-- تسليم لمندوب --</option>';
                 window.branchCouriersList.forEach(c => { couriersOptions += `<option value="${c.name}">${c.name}</option>`; });
 
+                // تجميع المدن والتجار للفلاتر المتقدمة
+                let citiesSet = new Set();
+                let merchantsSet = new Set();
+
+                // قراءة الفلاتر المتقدمة
+                const advCity = document.getElementById('advFilterBranch').value;
+                const advMerchant = document.getElementById('advFilterMerchant').value;
+
                 snap.forEach(docSnap => {
                     const d = docSnap.data(), id = docSnap.id;
                     if(d.deleted) return;
-                    if(branchFilter && branchFilter !== 'all' && d.branchName !== branchFilter) return;
                     
+                    const merchant = d.merchantEmail ? d.merchantEmail.split('@')[0] : "إدارة";
+                    citiesSet.add(d.city); merchantsSet.add(merchant);
+
+                    // فلتر الفرع (يظهر شحنات الفرع الأساسية، أو الشحنات المترحلّة إليه)
+                    if(branchFilter && branchFilter !== 'all') {
+                        if(d.branchName !== branchFilter && d.targetBranch !== branchFilter) return;
+                    }
+
+                    // فلتر الحالة
                     if(currentFilter === 'مطلوب تعيين' && d.status !== 'قيد التوصيل' && d.status !== 'Pending') return;
                     if(currentFilter === 'مكتملة' && d.status !== 'تم التسليم' && d.status !== 'تمت التسوية') return;
                     if(currentFilter === 'مع المناديب' && !d.status.includes('مندوب') && d.status !== 'مذاع للرادار') return;
                     if(currentFilter === 'مرتجع' && d.status !== 'مرتجع' && d.status !== 'مؤجل') return;
+                    if(currentFilter === 'واردات' && d.targetBranch !== adminBranch) return;
+
+                    // فلاتر متقدمة
+                    if(advCity && d.city !== advCity) return;
+                    if(advMerchant && merchant !== advMerchant) return;
 
                     totalM += Number(d.amount) || 0; count++;
                     const awb = d.awb || ("AXN" + id.substring(0,5).toUpperCase());
-                    const merchant = d.merchantEmail ? d.merchantEmail.split('@')[0] : "إدارة";
                     const branch = d.branchName || "المركز الرئيسي";
-                    const isFragile = d.fragile ? true : false;
-                    const mAdd = d.merchantAddress || "غير مسجل";
-                    const mPh = d.merchantPhone || "غير مسجل";
-                    
-                    window.loadedShipmentsData[id] = { ...d, awb, merchant, branch, isFragile, mAdd, mPh, id };
+                    window.loadedShipmentsData[id] = { ...d, awb, merchant, branch, id };
 
                     let rowClass = "";
                     if(d.status === 'قيد التوصيل' || d.status === 'Pending') rowClass = "status-danger";
                     else if(d.status === 'مذاع للرادار' || d.status.includes('مندوب')) rowClass = "status-warning";
                     else if(d.status === 'تم التسليم' || d.status === 'تمت التسوية') rowClass = "status-success";
                     else if(d.status === 'مرتجع' || d.status === 'مؤجل') rowClass = "status-archived";
+                    else if(d.status.includes('ترانزيت')) rowClass = "status-transit";
 
-                    let courierAction = d.courierName ? 
-                        `<div style="margin-top:5px; background:var(--primary-blue); color:white; padding:3px; border-radius:5px; font-size:11px; text-align:center;">عهدة: ${d.courierName}</div>` : 
-                        `<select class="courier-dropdown" style="margin-top:5px; width:100%; font-size:11px;" onchange="window.assignCourier('${id}', this.value)">${couriersOptions}</select>`;
+                    let actionBtns = '';
+                    let courierAction = '';
 
-                    html += `<tr class="${rowClass}">
-                        <td style="white-space:nowrap;">
+                    // لو الشحنة جاية ترانزيت للفرع ده
+                    if(d.targetBranch === adminBranch && d.status.includes('ترانزيت')) {
+                        actionBtns = `<button class="btn-action btn-receive" style="width:100%; padding:10px; font-size:12px;" onclick="window.receiveTransit('${id}', '${d.phone}', '${merchant}')"><i class="fa-solid fa-download"></i> استلام وتنبيه العميل</button>`;
+                        courierAction = `<div style="margin-top:5px; background:#fd7e14; color:white; padding:3px; border-radius:5px; font-size:11px; text-align:center;">شحنة واردة من ${d.branchName}</div>`;
+                    } else {
+                        actionBtns = `
                             <button class="btn-action btn-save" onclick="window.updateStatus('${id}')">حفظ</button>
                             <button class="btn-action btn-print" onclick="window.printWaybillById('${id}')"><i class="fa-solid fa-print"></i></button>
                             <button class="btn-action btn-broadcast" onclick="window.broadcastShipmentToRadarById('${id}')" title="إسناد للرادار"><i class="fa-solid fa-satellite-dish"></i></button>
                             <button class="btn-action btn-edit" onclick="window.openEditModalById('${id}')"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn-action btn-transit" onclick="window.openTransitModal('${id}')" title="ترحيل لمحافظة أخرى"><i class="fa-solid fa-truck-fast"></i></button>
                             <button class="btn-action btn-delete" onclick="window.deleteShipment('${id}')"><i class="fa-solid fa-trash"></i></button>
-                        </td>
+                        `;
+                        courierAction = d.courierName ? 
+                            `<div style="margin-top:5px; background:var(--primary-blue); color:white; padding:3px; border-radius:5px; font-size:11px; text-align:center;">عهدة: ${d.courierName}</div>` : 
+                            `<select class="courier-dropdown" style="margin-top:5px; width:100%; font-size:11px;" onchange="window.assignCourier('${id}', this.value)">${couriersOptions}</select>`;
+                    }
+
+                    html += `<tr class="${rowClass}">
+                        <td style="white-space:nowrap; min-width:150px;">${actionBtns}</td>
                         <td>
                             <select id="st-${id}" class="status-dropdown" style="width:100%;">
-                                <option value="قيد التوصيل" ${d.status==='قيد التوصيل'?'selected':''}>قيد التوصيل</option>
-                                <option value="مذاع للرادار" ${d.status==='مذاع للرادار'?'selected':''}>مذاع للرادار</option>
-                                <option value="تم التسليم" ${d.status==='تم التسليم'?'selected':''}>تم التسليم</option>
-                                <option value="مؤجل" ${d.status==='مؤجل'?'selected':''}>مؤجل</option>
-                                <option value="مرتجع" ${d.status==='مرتجع'?'selected':''}>مرتجع</option>
+                                <option value="${d.status}" selected style="display:none;">${d.status}</option>
+                                <option value="قيد التوصيل">قيد التوصيل</option>
+                                <option value="مذاع للرادار">مذاع للرادار</option>
+                                <option value="تم التسليم">تم التسليم</option>
+                                <option value="مؤجل">مؤجل</option>
+                                <option value="مرتجع">مرتجع</option>
                             </select>
                             ${courierAction}
                         </td>
@@ -688,9 +732,21 @@
                         <td><span style="background:#e0eaf5; padding:5px; border-radius:5px; color:var(--primary-blue); font-weight:bold; font-size:12px;">${branch}</span></td>
                     </tr>`;
                 });
+                
                 document.getElementById('shipmentsBody').innerHTML = html;
                 document.getElementById('totalShipments').innerText = count;
                 document.getElementById('totalMoney').innerText = totalM + " ج.م";
+
+                // تحديث الفلاتر المتقدمة (أول مرة بس عشان الاختيار ميتمسحش)
+                if(document.getElementById('advFilterBranch').options.length <= 1) {
+                    let cHtml = '<option value="">-- فلتر المحافظة (المدينة) --</option>';
+                    citiesSet.forEach(c => cHtml += `<option value="${c}">${c}</option>`);
+                    document.getElementById('advFilterBranch').innerHTML = cHtml;
+
+                    let mHtml = '<option value="">-- فلتر التاجر (الراسل) --</option>';
+                    merchantsSet.forEach(m => mHtml += `<option value="${m}">${m}</option>`);
+                    document.getElementById('advFilterMerchant').innerHTML = mHtml;
+                }
             });
         }
 
@@ -749,19 +805,38 @@
             if(!data) return;
             if(!confirm("هل تريد بث هذه الشحنة للرادار ليقوم مندوب بتوصيلها الآن؟")) return;
             try { 
-                await addDoc(collection(db, "eshteryly_orders"), { 
-                    merchantEmail: data.merchantEmail, 
-                    details: `توصيل مباشر (بوليصة: ${data.awb}) - تحصيل: ${data.amount} ج.م`, 
-                    address: `${data.city} - ${data.address}`, 
-                    paymentMethod: data.paymentType || 'normal', 
-                    status: "جاري البحث عن مندوب", 
-                    timestamp: new Date(), 
-                    branchName: adminBranch === 'all' ? "المركز الرئيسي" : adminBranch, 
-                    type: 'radar',
-                    linkedShipmentId: id
-                }); 
+                await addDoc(collection(db, "eshteryly_orders"), { merchantEmail: data.merchantEmail, details: `توصيل مباشر (بوليصة: ${data.awb}) - تحصيل: ${data.amount} ج.م`, address: `${data.city} - ${data.address}`, paymentMethod: data.paymentType || 'normal', status: "جاري البحث عن مندوب", timestamp: new Date(), branchName: adminBranch === 'all' ? "المركز الرئيسي" : adminBranch, type: 'radar', linkedShipmentId: id }); 
                 await updateDoc(doc(db, "shipments", id), { status: "مذاع للرادار" }); 
                 Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم البث للرادار', showConfirmButton:false, timer:2000}); 
+            } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
+        };
+
+        // 🚛 الترحيل بين الفروع واستلام الواتساب 🚛
+        window.openTransitModal = (id) => {
+            document.getElementById('transitShipId').value = id;
+            document.getElementById('transitModal').style.display = 'flex';
+        };
+
+        window.executeTransit = async () => {
+            const id = document.getElementById('transitShipId').value;
+            const target = document.getElementById('transitTargetBranch').value;
+            if(!target) return Swal.fire('تنبيه', 'برجاء اختيار المحافظة المتجه إليها الطرد', 'warning');
+            
+            try {
+                await updateDoc(doc(db, "shipments", id), { status: `ترانزيت إلى ${target}`, targetBranch: target });
+                document.getElementById('transitModal').style.display = 'none';
+                Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم الترحيل للفرع بنجاح', showConfirmButton:false, timer:2000});
+            } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
+        };
+
+        window.receiveTransit = async (id, phone, merchant) => {
+            try {
+                await updateDoc(doc(db, "shipments", id), { status: 'قيد التوصيل', branchName: adminBranch, targetBranch: null });
+                Swal.fire('تم استلام الفرع', 'تم استلام الشحنة وتجهيز رسالة الواتساب للعميل', 'success');
+                
+                let waPhone = phone.startsWith('0') ? '2' + phone : phone;
+                let msg = `مرحباً بك من أكسون إكسبريس 📦\nشحنتك من (${merchant}) وصلت فرع (${adminBranch}) بأمان، وجاري تجهيزها لتسليمها لك اليوم إن شاء الله.\nتقدر تتابعها من موقعنا برقم البوليصة.`;
+                window.open(`https://wa.me/${waPhone}?text=${encodeURIComponent(msg)}`, '_blank');
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
         };
 
@@ -776,8 +851,7 @@
             for(let key in window.loadedShipmentsData) {
                 let s = window.loadedShipmentsData[key];
                 if(s.courierName === courierName && s.status !== 'تم التسليم' && s.status !== 'تمت التسوية' && s.status !== 'مرتجع') {
-                    targetShipments.push(s);
-                    totalCod += Number(s.amount) || 0;
+                    targetShipments.push(s); totalCod += Number(s.amount) || 0;
                 }
             }
 
@@ -791,68 +865,24 @@
             
             let tableRows = '';
             targetShipments.forEach((s, index) => {
-                tableRows += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td><b>${s.awb}</b></td>
-                        <td>${s.merchant}</td>
-                        <td>${s.name} (${s.phone})<br>${s.city} - ${s.address}</td>
-                        <td style="color:#b82329; font-weight:bold; font-size:14px;">${s.amount} ج.م</td>
-                        <td></td>
-                    </tr>
-                `;
+                tableRows += `<tr><td>${index + 1}</td><td><b>${s.awb}</b></td><td>${s.merchant}</td><td>${s.name} (${s.phone})<br>${s.city} - ${s.address}</td><td style="color:#b82329; font-weight:bold; font-size:14px;">${s.amount} ج.م</td><td></td></tr>`;
             });
 
             document.getElementById('printArea').innerHTML = `
-                <div class="print-controls-ui no-print">
-                    <button onclick="window.print()" style="background:#0A3D62;">🖨️ طباعة كشف العهدة (A4)</button>
-                    <button onclick="window.closePrintView()" style="background:#b82329;">رجوع للسيستم</button>
-                </div>
+                <div class="print-controls-ui no-print"><button onclick="window.print()" style="background:#0A3D62;">🖨️ طباعة كشف العهدة (A4)</button><button onclick="window.closePrintView()" style="background:#b82329;">رجوع للسيستم</button></div>
                 <div class="a4-wrapper" dir="rtl">
                     <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid #0A3D62; padding-bottom:10px; margin-bottom:20px;">
-                        <div>
-                            <h1 style="margin:0; color:#0A3D62; font-size:28px;">AXON <span style="color:#b82329;">EXPRESS</span></h1>
-                            <p style="margin:0; font-weight:bold;">الفرع: ${adminBranch === 'all' ? 'إدارة عامة' : adminBranch}</p>
-                        </div>
-                        <div style="text-align:center;">
-                            <h2 style="margin:0; text-decoration:underline;">كشف عهدة تسليم يومي (Manifest)</h2>
-                            <p style="margin:0; font-size:12px;">تاريخ الطباعة: ${timestamp}</p>
-                        </div>
-                        <div style="text-align:left;">
-                            <p style="margin:0; font-size:16px; font-weight:bold; background:#e0eaf5; padding:5px 10px; border:1px solid #0A3D62;">كابتن: ${courierName}</p>
-                        </div>
+                        <div><h1 style="margin:0; color:#0A3D62; font-size:28px;">AXON <span style="color:#b82329;">EXPRESS</span></h1><p style="margin:0; font-weight:bold;">الفرع: ${adminBranch === 'all' ? 'إدارة عامة' : adminBranch}</p></div>
+                        <div style="text-align:center;"><h2 style="margin:0; text-decoration:underline;">كشف عهدة تسليم يومي (Manifest)</h2><p style="margin:0; font-size:12px;">تاريخ الطباعة: ${timestamp}</p></div>
+                        <div style="text-align:left;"><p style="margin:0; font-size:16px; font-weight:bold; background:#e0eaf5; padding:5px 10px; border:1px solid #0A3D62;">كابتن: ${courierName}</p></div>
                     </div>
-
-                    <table class="manifest-table">
-                        <thead>
-                            <tr>
-                                <th style="width:30px;">م</th>
-                                <th style="width:120px;">رقم البوليصة</th>
-                                <th style="width:120px;">الراسل (التاجر)</th>
-                                <th>بيانات المستلم (المرسل إليه)</th>
-                                <th style="width:80px;">مبلغ التحصيل</th>
-                                <th style="width:100px;">الحالة (توقيع العميل)</th>
-                            </tr>
-                        </thead>
-                        <tbody>${tableRows}</tbody>
-                    </table>
-
-                    <div class="manifest-footer">
-                        <h2 style="margin:0; color:#b82329;">إجمالي المبالغ النقدية بعهدة المندوب المطلوب تحصيلها: ${totalCod} ج.م</h2>
-                        <p style="margin:5px 0 0 0; font-weight:bold;">(إجمالي عدد الطرود: ${targetShipments.length} طرد)</p>
-                    </div>
-
+                    <table class="manifest-table"><thead><tr><th style="width:30px;">م</th><th style="width:120px;">رقم البوليصة</th><th style="width:120px;">الراسل (التاجر)</th><th>بيانات المستلم (المرسل إليه)</th><th style="width:80px;">مبلغ التحصيل</th><th style="width:100px;">الحالة (توقيع العميل)</th></tr></thead><tbody>${tableRows}</tbody></table>
+                    <div class="manifest-footer"><h2 style="margin:0; color:#b82329;">إجمالي المبالغ النقدية بعهدة المندوب المطلوب تحصيلها: ${totalCod} ج.م</h2><p style="margin:5px 0 0 0; font-weight:bold;">(إجمالي عدد الطرود: ${targetShipments.length} طرد)</p></div>
                     <div class="legal-manifest-text">
                         <h3 style="margin:0 0 10px 0; color:#0A3D62; text-align:center;">إقرار استلام أمانة وعهدة نقدية</h3>
-                        أنا الموقع أدناه/ <b>${courierName}</b> بصفتي مندوب توصيل بشركة أكسون إكسبريس، أقر بأنني قد تسلمت في تاريخه الطرود المبينة في الكشف أعلاه وعددها (<b>${targetShipments.length}</b>) طرد، وبإجمالي مبالغ نقدية مطلوب تحصيلها وقدرها (<b>${totalCod} ج.م</b>).
-                        <br><br>
+                        أنا الموقع أدناه/ <b>${courierName}</b> بصفتي مندوب توصيل بشركة أكسون إكسبريس، أقر بأنني قد تسلمت في تاريخه الطرود المبينة في الكشف أعلاه وعددها (<b>${targetShipments.length}</b>) طرد، وبإجمالي مبالغ نقدية مطلوب تحصيلها وقدرها (<b>${totalCod} ج.م</b>).<br><br>
                         وأتعهد بالحفاظ على هذه العهدة (سواء كانت طروداً لم تُسلم أو مبالغ نقدية محصلة) وتسليمها لإدارة الفرع/الخزينة في نهاية اليوم العملي بالكامل. وإذا أخللت بذلك أو قمت بالتصرف في العهدة لنفسي أو تبديدها، أكون خائناً للأمانة ومبدداً للعهدة المسلمة لي على سبيل الأمانة لتوصيلها، وأكون مسئولاً مسئولية جنائية ومدنية طبقاً لنص <b>المادة (341) من قانون العقوبات المصري</b>، وللشركة الحق في اتخاذ كافة الإجراءات القانونية الصارمة ضدي، مع اعتباري منقطعاً عن العمل ومسلماً لكافة مستحقاتي تعويضاً للشركة.
-                        
-                        <div class="sig-box">
-                            <div>توقيع المندوب المُستلم: .......................................</div>
-                            <div>بصمة الإبهام: ....................</div>
-                            <div>توقيع وتصديق الإدارة: .......................................</div>
-                        </div>
+                        <div class="sig-box"><div>توقيع المندوب المُستلم: .......................................</div><div>بصمة الإبهام: ....................</div><div>توقيع وتصديق الإدارة: .......................................</div></div>
                     </div>
                 </div>
             `;
