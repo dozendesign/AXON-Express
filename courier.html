@@ -18,13 +18,14 @@
             --bg-color: #F3F4F6; 
             --white: #ffffff; 
             --dark-text: #111827; 
-            --soft-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --soft-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
         
-        body { font-family: 'Cairo', sans-serif; background: var(--bg-color); margin: 0; color: var(--dark-text); overflow-x: hidden; transition: 0.3s; }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg-color); margin: 0; color: var(--dark-text); overflow-x: hidden; transition: 0.3s; padding-bottom: 70px; /* مساحة للـ Bottom Nav */ }
         
-        .app-container { max-width: 600px; margin: 0 auto; background: var(--bg-color); min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.1); position: relative;}
+        .app-container { max-width: 600px; margin: 0 auto; background: var(--bg-color); min-height: 100vh; position: relative;}
         
+        /* شاشة الدخول */
         #loginSection { 
             background: linear-gradient(135deg, var(--primary-blue), #000); 
             min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
@@ -35,7 +36,7 @@
         }
         .login-card input {
             width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 15px; border: none; 
-            background: white; font-family: 'Cairo'; font-size: 16px; text-align: center;
+            background: white; font-family: 'Cairo'; font-size: 16px; text-align: center; outline:none;
         }
         .login-btn {
             width: 100%; background: var(--primary-red); color: white; border: none; padding: 15px; 
@@ -43,80 +44,89 @@
         }
         .login-btn:disabled { background: #888; cursor: not-allowed; }
 
+        /* الهيدر */
         .app-header {
             background: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; 
             align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: var(--soft-shadow);
-            border-bottom-left-radius: 25px; border-bottom-right-radius: 25px;
+            border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;
         }
         .profile-area { display: flex; align-items: center; gap: 10px; }
         .avatar { width: 45px; height: 45px; background: var(--primary-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
 
+        /* شريط الحالة والوردية */
         .status-container {
-            margin: 20px; background: var(--white); padding: 20px; border-radius: 24px;
+            margin: 15px; background: var(--white); padding: 15px 20px; border-radius: 20px;
             display: flex; justify-content: space-between; align-items: center; box-shadow: var(--soft-shadow);
         }
         .status-badge { display: flex; align-items: center; gap: 8px; font-weight: bold; }
         .pulse-online { width: 12px; height: 12px; background: #10B981; border-radius: 50%; animation: pulse 1.5s infinite; }
         
-        .section-title { padding: 0 25px; font-size: 18px; font-weight: 900; color: var(--primary-blue); margin-top: 25px; }
-        
-        .order-card {
-            margin: 15px 20px; padding: 20px; border-radius: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08); position: relative; transition: 0.3s; overflow: hidden;
-            border: 2px solid transparent;
+        /* التابات السفلية (Bottom Navigation) */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 600px;
+            background: var(--white); display: flex; justify-content: space-around; padding: 10px 5px;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.05); border-top-left-radius: 20px; border-top-right-radius: 20px; z-index: 1000;
         }
-        .order-card:active { transform: scale(0.98); }
-        
-        .card-border { position: absolute; right: 0; top: 0; bottom: 0; width: 8px; }
+        .nav-item {
+            flex: 1; text-align: center; color: #9CA3AF; font-size: 12px; font-weight: bold; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; gap: 5px; transition: 0.3s; position: relative;
+        }
+        .nav-item i { font-size: 20px; transition: 0.3s; }
+        .nav-item.active { color: var(--primary-blue); }
+        .nav-item.active i { transform: translateY(-3px); }
+        .nav-badge { position: absolute; top: -5px; right: 20px; background: var(--primary-red); color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; display: none;}
 
-        .dist-tag {
-            position: absolute; top: 20px; left: 20px; background: rgba(255,255,255,0.9); color: var(--primary-blue);
-            padding: 6px 12px; border-radius: 12px; font-size: 14px; font-weight: 900; border: 1px solid rgba(0,0,0,0.1);
-        }
-        .task-badge { 
-            display: inline-block; padding: 6px 15px; border-radius: 8px; font-size: 13px; 
-            font-weight: 900; margin-bottom: 10px; background: rgba(255,255,255,0.9);
-        }
+        /* حاويات الصفحات */
+        .page-tab { display: none; padding: 0 15px 20px 15px; animation: fadeIn 0.3s ease; }
+        .page-tab.active { display: block; }
         
-        .merchant-name { font-size: 19px; font-weight: 900; margin: 0 0 8px 0; color: #11; }
-        .order-details-text { font-size: 14px; font-weight: bold; color: #333; margin-bottom: 10px; background: rgba(255,255,255,0.6); padding: 8px; border-radius: 8px;}
-        .location-text { font-size: 14px; color: #4B5563; margin: 5px 0 15px 0; display: flex; align-items: center; gap: 5px; line-height: 1.5; font-weight:bold; }
-
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .btn-u {
-            padding: 12px; border-radius: 12px; border: none; font-family: 'Cairo'; 
-            font-weight: 900; cursor: pointer; transition: 0.2s; font-size: 14px;
+        /* تصميم الكارت المدمج (InDrive Style) */
+        .compact-card {
+            background: var(--white); padding: 12px 15px; border-radius: 15px; display: flex; align-items: center; 
+            justify-content: space-between; box-shadow: var(--soft-shadow); margin-bottom: 12px; cursor: pointer;
+            border-right: 4px solid var(--primary-blue); transition: 0.2s;
         }
-        .btn-claim { background: var(--primary-blue); color: white; grid-column: span 2; font-size: 17px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
-        .btn-claim:hover { background: var(--secondary-blue); transform: translateY(-2px); }
-        .btn-details { background: #fff; color: var(--dark-text); border: 1px solid #ccc;}
-        .btn-ignore { background: #FEE2E2; color: var(--primary-red); border: 1px solid #fca5a5;}
-        .btn-nav { background: #E0E7FF; color: var(--primary-blue); border: 1px solid #c7d2fe;}
-        .btn-done { background: #D1FAE5; color: #065F46; border: 1px solid #a7f3d0;}
+        .compact-card:active { transform: scale(0.98); }
+        .card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-left: 10px; }
+        .card-info { flex: 1; }
+        .card-title { font-weight: 900; font-size: 15px; margin: 0; color: var(--dark-text); }
+        .card-sub { font-size: 12px; color: #6B7280; margin: 2px 0 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
+        .card-price { font-weight: 900; color: var(--primary-red); font-size: 16px; text-align: left;}
+        .card-dist { font-size: 11px; background: #e0eaf5; color: var(--primary-blue); padding: 2px 6px; border-radius: 5px; font-weight: bold; }
+
+        /* المودال الشامل للتفاصيل */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); align-items: flex-end; justify-content: center; z-index: 2000; padding: 0; backdrop-filter: blur(3px);}
+        .modal-content { background: var(--white); padding: 25px; border-top-left-radius: 25px; border-top-right-radius: 25px; width: 100%; max-width: 600px; position: relative; transition: 0.3s; animation: slideUp 0.3s ease; max-height: 85vh; overflow-y: auto;}
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .close-btn { position: absolute; top: 15px; left: 15px; background: #f3f4f6; border: none; font-size: 18px; cursor: pointer; color: var(--primary-red); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center;}
+        
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px;}
+        .btn-u { padding: 12px; border-radius: 12px; border: none; font-family: 'Cairo'; font-weight: 900; cursor: pointer; transition: 0.2s; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px;}
+        .btn-claim { background: var(--primary-blue); color: white; grid-column: span 2; font-size: 18px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
+        .btn-claim:hover { background: var(--secondary-blue); }
+        .btn-ignore { background: #FEE2E2; color: var(--primary-red); }
+        .btn-nav { background: #E0E7FF; color: var(--primary-blue); }
+        .btn-done { background: #D1FAE5; color: #065F46; }
         .btn-contact { background: #374151; color: white; grid-column: span 2; }
-        .btn-contact:hover { background: #111827; }
 
-        /* الشات المودال للمندوب */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; z-index: 2000; padding: 15px; backdrop-filter: blur(5px);}
-        .modal-content { background: var(--white); padding: 20px; border-radius: 15px; width: 100%; max-width: 500px; position: relative; transition: 0.3s; max-height: 90vh; display: flex; flex-direction: column;}
-        .close-btn { position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--primary-red);}
-        
+        /* الشات */
         .chat-bubble { padding: 10px 15px; border-radius: 15px; max-width: 80%; font-size: 13px; line-height: 1.4; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 5px; clear: both;}
         .chat-mine { background: #dcf8c6; float: left; border-bottom-left-radius: 0; color: #000; }
         .chat-other { background: #ffffff; float: right; border-bottom-right-radius: 0; color: #000; border: 1px solid #eee;}
 
+        /* الدارك مود */
         body.dark-mode { --bg-color: #000; --white: #111827; --dark-text: #F9FAFB; --soft-shadow: none; }
         body.dark-mode .app-container { background: #000; }
-        body.dark-mode .app-header, body.dark-mode .status-container { border: 1px solid #374151; }
-        body.dark-mode .dist-tag { background: #1F2937; color: #fff; border-color:#374151;}
-        body.dark-mode .order-details-text { background: rgba(0,0,0,0.4); color: #fff; }
-        body.dark-mode .merchant-name { color: #fff; }
-        body.dark-mode .location-text { color: #ccc; }
-        body.dark-mode .modal-content { background: #1F2937; border: 1px solid #374151;}
-        body.dark-mode .chat-other { background: #111827; color: #fff; border-color: #374151;}
+        body.dark-mode .app-header, body.dark-mode .status-container, body.dark-mode .bottom-nav { border-top: 1px solid #374151; border-bottom: 1px solid #374151;}
+        body.dark-mode .compact-card { background: #1F2937; border-color: #374151; border-right-color: var(--primary-blue);}
+        body.dark-mode .card-sub { color: #9CA3AF; }
+        body.dark-mode .modal-content { background: #111827; border-top: 1px solid #374151;}
+        body.dark-mode .close-btn { background: #374151; }
+        body.dark-mode .chat-other { background: #1F2937; color: #fff; border-color: #374151;}
 
         @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.7; } 70% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.7; } }
-        
         .swal2-container { font-family: 'Cairo', sans-serif !important; z-index: 99999 !important; }
     </style>
 </head>
@@ -155,34 +165,68 @@
             <button id="shiftBtn" onclick="window.toggleShift()" style="background:var(--primary-blue); color:white; border:none; padding:10px 25px; border-radius:12px; font-weight:bold; font-family:'Cairo';">بدء الوردية</button>
         </div>
 
-        <div class="section-title">القريب منك (الرادار)</div>
-        <div id="radarList">
-            <p style="text-align:center; color:gray; margin-top:30px; font-weight:bold;">الرادار مغلق.. ابدأ الوردية يا بطل.</p>
+        <div id="radarTab" class="page-tab active">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h3 style="margin:0; color:var(--primary-blue);"><i class="fa-solid fa-satellite-dish"></i> الرادار المفتوح</h3>
+            </div>
+            <div id="radarList">
+                <p style="text-align:center; color:gray; margin-top:30px; font-weight:bold;">الرادار مغلق.. ابدأ الوردية يا بطل.</p>
+            </div>
         </div>
 
-        <div class="section-title">مهامي الحالية</div>
-        <div id="myTaskList">
-            <p style="text-align:center; color:gray; margin-top:20px; font-weight:bold;">لا يوجد مهام نشطة</p>
+        <div id="myTasksTab" class="page-tab">
+            <h3 style="margin-bottom:15px; color:var(--primary-blue);"><i class="fa-solid fa-motorcycle"></i> مهامي الحالية (رادار)</h3>
+            <div id="myTaskList">
+                <p style="text-align:center; color:gray; margin-top:20px; font-weight:bold;">لا يوجد مهام نشطة</p>
+            </div>
+        </div>
+
+        <div id="manifestTab" class="page-tab">
+            <h3 style="margin-bottom:15px; color:var(--primary-blue);"><i class="fa-solid fa-file-invoice"></i> عهدة البوالص (المانيفست)</h3>
+            <div id="manifestList">
+                <p style="text-align:center; color:gray; margin-top:20px; font-weight:bold;">لم يتم تعيين بوالص لك اليوم.</p>
+            </div>
+        </div>
+
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="switchTab('radarTab', this)">
+                <i class="fa-solid fa-satellite-dish"></i>
+                <span>الرادار</span>
+            </div>
+            <div class="nav-item" onclick="switchTab('myTasksTab', this)">
+                <span class="nav-badge" id="tasksBadge">0</span>
+                <i class="fa-solid fa-motorcycle"></i>
+                <span>مهامي</span>
+            </div>
+            <div class="nav-item" onclick="switchTab('manifestTab', this)">
+                <span class="nav-badge" id="manifestBadge">0</span>
+                <i class="fa-solid fa-boxes-packing"></i>
+                <span>المانيفست</span>
+            </div>
         </div>
     </div>
 
     <audio id="alertSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
+    <div id="orderDetailsModal" class="modal">
+        <div class="modal-content" id="orderDetailsContent">
+            </div>
+    </div>
+
     <div id="chatModal" class="modal">
         <div class="modal-content" style="height: 80vh;">
-            <button class="close-btn" onclick="window.closeChatModal()">✖</button>
+            <button class="close-btn" onclick="window.closeChatModal()"><i class="fa-solid fa-xmark"></i></button>
             <h3 style="color:var(--primary-blue); margin-top:0; border-bottom:2px solid var(--primary-red); padding-bottom:10px;">
-                <i class="fa-solid fa-comments"></i> محادثة التاجر: <span id="chatMerchantEmail" style="color:var(--primary-red);">...</span>
+                <i class="fa-solid fa-comments"></i> محادثة مع: <span id="chatMerchantEmail" style="color:var(--primary-red); font-size:14px;">...</span>
             </h3>
             
             <div id="callMerchantBtnArea" style="margin-bottom: 10px;"></div>
 
-            <div style="background: #f4f7f6; border-radius: 12px; border: 1px solid #ccc; display: flex; flex-direction: column; flex: 1; overflow: hidden;">
-                <div id="chatBoxCourier" style="flex: 1; padding: 15px; overflow-y: auto; display: block;">
-                    </div>
+            <div style="background: var(--bg-color); border-radius: 12px; border: 1px solid #ccc; display: flex; flex-direction: column; flex: 1; overflow: hidden;">
+                <div id="chatBoxCourier" style="flex: 1; padding: 15px; overflow-y: auto; display: block;"></div>
                 <div style="display: flex; border-top: 1px solid #ccc; padding: 10px; background: white;">
-                    <input type="text" id="chatInputCourier" placeholder="رد على التاجر هنا..." style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo'; outline: none;">
-                    <button onclick="window.sendChatMessage()" style="background: #25D366; color: white; border: none; padding: 10px 15px; border-radius: 8px; margin-right: 10px; font-family: 'Cairo'; font-weight: bold; cursor: pointer;"><i class="fa-solid fa-paper-plane"></i> إرسال</button>
+                    <input type="text" id="chatInputCourier" placeholder="رد هنا..." style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo'; outline: none;">
+                    <button onclick="window.sendChatMessage()" style="background: #25D366; color: white; border: none; padding: 10px 15px; border-radius: 8px; margin-right: 10px; font-family: 'Cairo'; font-weight: bold; cursor: pointer;"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
         </div>
@@ -191,7 +235,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, doc, updateDoc, getDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, doc, updateDoc, getDoc, addDoc, query, where, or } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         
         const app = initializeApp({
             apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
@@ -204,20 +248,40 @@
         
         const auth = getAuth(app);
         const db = getFirestore(app);
+        
         let currentCaptain = "", currentCaptainId = "", isOnline = false, watchId = null, lat = null, lng = null, ignored = new Set();
         let notifiedTasks = new Set(); 
+        let globalOrdersData = {}; // لتخزين الداتا وعرضها في المودال
         
-        // متغيرات الشات
         let currentChatMerchant = "";
         let chatUnsubscribe = null;
+        let wakeLock = null;
 
-        // صائد أخطاء تسجيل الدخول
+        // إدارة التابات السفلية
+        window.switchTab = (tabId, element) => {
+            document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            element.classList.add('active');
+        };
+
+        // منع إغلاق الشاشة
+        const requestWakeLock = async () => {
+            if ('wakeLock' in navigator) {
+                try { wakeLock = await navigator.wakeLock.request('screen'); } 
+                catch (err) { console.log('WakeLock error:', err); }
+            }
+        };
+        const releaseWakeLock = () => { if (wakeLock !== null) { wakeLock.release(); wakeLock = null; } };
+
+        // طلب تصريح الإشعارات للخلفية
+        if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+            Notification.requestPermission();
+        }
+
         function resetLoginBtn() {
             const btn = document.getElementById('loginBtn');
-            if(btn) {
-                btn.innerHTML = 'تسجيل الدخول';
-                btn.disabled = false;
-            }
+            if(btn) { btn.innerHTML = 'تسجيل الدخول'; btn.disabled = false; }
         }
 
         onAuthStateChanged(auth, async (user) => {
@@ -233,15 +297,14 @@
                         document.getElementById('cDisplayName').innerText = currentCaptain;
                         document.getElementById('cInitials').innerText = currentCaptain.substring(0, 2).toUpperCase();
                         resetLoginBtn();
+                        loadManifest(); // سحب عهدة الصبح
                     } else {
-                        // لو مسجل دخول بس ملفه مش في المناديب (مثلاً أدمن أو تاجر)
                         await signOut(auth);
-                        Swal.fire('مرفوض', 'هذا الإيميل غير مسجل ككابتن في النظام. تأكد من الإدارة.', 'error');
+                        Swal.fire('مرفوض', 'هذا الإيميل غير مسجل ككابتن.', 'error');
                         resetLoginBtn();
                     }
                 } catch(e) {
-                    console.error("Firebase Rule Error:", e);
-                    Swal.fire('خطأ أمني', 'قواعد الحماية تمنع الدخول، أو الداتا ناقصة: ' + e.message, 'error');
+                    Swal.fire('خطأ أمني', 'قواعد الحماية أو الداتا فيها مشكلة: ' + e.message, 'error');
                     await signOut(auth);
                     resetLoginBtn();
                 }
@@ -249,6 +312,7 @@
                 document.getElementById('loginSection').style.display = 'flex';
                 document.getElementById('appContent').style.display = 'none';
                 if(watchId) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+                releaseWakeLock();
                 resetLoginBtn();
             }
         });
@@ -259,41 +323,31 @@
             const p = document.getElementById('cPass').value;
             
             if(!u || !p) return Swal.fire('بيانات ناقصة', 'أدخل الإيميل كاملاً والباسورد', 'warning');
-            
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الاتصال بالرادار...';
-            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الاتصال...'; btn.disabled = true;
 
-            try { 
-                await signInWithEmailAndPassword(auth, u, p); 
-                // onAuthStateChanged هي اللي هتكّمل الليلة
-            } catch(e) { 
-                resetLoginBtn();
-                Swal.fire('خطأ في الدخول', 'الإيميل أو الرقم السري غير صحيح.', 'error'); 
-            }
+            try { await signInWithEmailAndPassword(auth, u, p); } 
+            catch(e) { resetLoginBtn(); Swal.fire('خطأ في الدخول', 'بيانات غير صحيحة.', 'error'); }
         };
 
         window.toggleShift = () => {
             isOnline = !isOnline;
             const btn = document.getElementById('shiftBtn'), dot = document.getElementById('statusDot'), txt = document.getElementById('statusTxt');
             if(isOnline) {
-                btn.innerText = "إنهاء الوردية"; 
-                btn.style.background = "var(--primary-red)";
-                dot.className = "pulse-online"; 
-                txt.innerText = "متصل بالرادار 🟢";
+                btn.innerText = "إنهاء الوردية"; btn.style.background = "var(--primary-red)";
+                dot.className = "pulse-online"; txt.innerText = "متصل بالرادار 🟢";
                 Swal.fire({toast:true, position:'top', icon:'success', title:'وردية سعيدة يا بطل', showConfirmButton:false, timer:2000});
                 
                 const audio = document.getElementById('alertSound');
                 audio.volume = 0; audio.play().catch(e=>{}); setTimeout(()=>{audio.pause(); audio.volume = 1;}, 100);
                 
+                requestWakeLock();
                 updateCourierStatus("online");
                 startTracking();
-                
             } else {
-                btn.innerText = "بدء الوردية"; 
-                btn.style.background = "var(--primary-blue)";
-                dot.className = ""; 
-                txt.innerText = "خارج الوردية";
+                btn.innerText = "بدء الوردية"; btn.style.background = "var(--primary-blue)";
+                dot.className = ""; txt.innerText = "خارج الوردية";
                 
+                releaseWakeLock();
                 if(watchId) { navigator.geolocation.clearWatch(watchId); watchId = null; }
                 updateCourierStatus("offline");
             }
@@ -302,198 +356,285 @@
 
         async function updateCourierStatus(status) {
             if(!currentCaptainId) return;
-            try {
-                await updateDoc(doc(db, "couriers", currentCaptainId), { status: status });
-            } catch(e) { console.error("Error updating status:", e); }
+            try { await updateDoc(doc(db, "couriers", currentCaptainId), { status: status }); } catch(e) {}
         }
 
-        // 🚀 دالة تتبع الموقع ورفعه للفايربيز (GPS) 🚀
         function startTracking() {
             if(navigator.geolocation){
                 watchId = navigator.geolocation.watchPosition(async (pos) => {
-                    lat = pos.coords.latitude; 
-                    lng = pos.coords.longitude;
+                    lat = pos.coords.latitude; lng = pos.coords.longitude;
                     loadRadar();
-                    
                     if(currentCaptainId && isOnline) {
-                        try {
-                            await updateDoc(doc(db, "couriers", currentCaptainId), {
-                                "currentLocation.lat": lat,
-                                "currentLocation.lng": lng,
-                                "lastUpdated": new Date()
-                            });
-                        } catch(e) { console.error("Error updating GPS:", e); }
+                        try { await updateDoc(doc(db, "couriers", currentCaptainId), { "currentLocation.lat": lat, "currentLocation.lng": lng, "lastUpdated": new Date() }); } catch(e) {}
                     }
-                }, err => console.log("GPS Error:", err), {enableHighAccuracy:true, maximumAge: 10000, timeout: 5000});
-            } else {
-                Swal.fire('خطأ', 'خاصية الـ GPS غير مدعومة في جهازك', 'error');
-            }
+                }, err => {}, {enableHighAccuracy:true, maximumAge: 10000, timeout: 5000});
+            } else { Swal.fire('خطأ', 'الـ GPS غير مدعوم', 'error'); }
         }
 
         function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371; 
-            const dLat = (lat2-lat1) * Math.PI/180; 
-            const dLon = (lon2-lon1) * Math.PI/180;
+            const R = 6371; const dLat = (lat2-lat1) * Math.PI/180; const dLon = (lon2-lon1) * Math.PI/180;
             const a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
             return (R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)))).toFixed(1);
         }
 
+        // سحب المانيفست (تعديل الأمان بـ where)
+        function loadManifest() {
+            const q = query(collection(db, "shipments"), where("courierName", "==", currentCaptain));
+            onSnapshot(q, (snap) => {
+                let html = ""; let count = 0;
+                snap.forEach(docSnap => {
+                    const d = docSnap.data(), id = docSnap.id;
+                    if(d.status === "تم التسليم" || d.status === "تمت التسوية" || d.status === "مرتجع") return;
+                    count++;
+                    globalOrdersData[id] = {id, source: 'manifest', ...d};
+                    
+                    const awb = d.awb || "AXN...";
+                    html += `
+                        <div class="compact-card" onclick="window.openOrderDetails('${id}', 'manifest')">
+                            <div class="card-icon" style="background:#e0eaf5; color:var(--primary-blue);"><i class="fa-solid fa-box"></i></div>
+                            <div class="card-info">
+                                <h4 class="card-title">${awb}</h4>
+                                <p class="card-sub">${d.merchantEmail.split('@')[0]} ➡️ ${d.city}</p>
+                            </div>
+                            <div class="card-price">${d.amount} ج.م</div>
+                        </div>
+                    `;
+                });
+                document.getElementById('manifestList').innerHTML = html || "<p style='text-align:center; color:gray; font-weight:bold; margin-top:20px;'>لا يوجد عهدة بوالص مفتوحة.</p>";
+                
+                const badge = document.getElementById('manifestBadge');
+                if(count > 0) { badge.style.display = 'block'; badge.innerText = count; } else { badge.style.display = 'none'; }
+            });
+        }
+
         function loadRadar() {
             onSnapshot(collection(db, "eshteryly_orders"), (snap) => {
-                let radarHtml = "", myTasksHtml = "", newAlert = false;
+                let radarHtml = "", myTasksHtml = "", newAlert = false, myTasksCount = 0;
                 let availableOrders = [];
 
                 snap.forEach(docSnap => {
                     const d = docSnap.data(), id = docSnap.id;
                     let distance = "--", distVal = 9999;
                     
-                    if(lat && lng && d.address && d.address.includes('maps.google.com')){
+                    if(lat && lng && d.address && d.address.includes('http')){
                         const match = d.address.match(/q=([\d\.-]+),([\d\.-]+)/);
                         if(match){
                             distVal = parseFloat(calculateDistance(lat, lng, parseFloat(match[1]), parseFloat(match[2])));
                             distance = distVal + " كم";
                             
-                            if(distVal < 5) {
-                                if(!notifiedTasks.has(id) && d.status === "جاري البحث عن مندوب" && !ignored.has(id)) {
-                                    notifiedTasks.add(id);
-                                    newAlert = true;
-                                }
+                            if(distVal < 5 && !notifiedTasks.has(id) && d.status === "جاري البحث عن مندوب" && !ignored.has(id)) {
+                                notifiedTasks.add(id); newAlert = true;
                             }
                         }
                     }
 
-                    let typeIcon = "🛒", typeText = "تسوق واشتريلي", typeColor = "#28a745", cardBg = "#e8f5e9"; 
-                    if (d.paymentMethod === 'pickup') { 
-                        typeIcon = "📦"; typeText = "أمر بيكب واستلام"; typeColor = "#8e44ad"; cardBg = "#f4e8fb"; 
-                    } else if (d.type === 'radar' || (d.details && d.details.includes('بوليصة'))) { 
-                        typeIcon = "🚚"; typeText = "توصيل بوليصة"; typeColor = "#007bff"; cardBg = "#e6f2ff"; 
-                    }
-                    if (d.details && d.details.includes('كولد')) { 
-                        typeIcon = "🥶"; typeText = "شحن مبرد/فريش"; typeColor = "#17a2b8"; cardBg = "#e0f7fa"; 
-                    }
+                    let typeIcon = "fa-cart-shopping", typeColor = "#28a745", typeBg = "#e8f5e9"; 
+                    if (d.paymentMethod === 'pickup') { typeIcon = "fa-box-open"; typeColor = "#8e44ad"; typeBg = "#f4e8fb"; } 
+                    else if (d.type === 'radar' || (d.details && d.details.includes('بوليصة'))) { typeIcon = "fa-truck-fast"; typeColor = "#007bff"; typeBg = "#e6f2ff"; }
+                    if (d.details && d.details.includes('كولد')) { typeIcon = "fa-snowflake"; typeColor = "#17a2b8"; typeBg = "#e0f7fa"; }
 
-                    let codDisplay = "";
+                    let codText = "مجاني";
                     let matchAmt = d.details ? d.details.match(/تحصيل:\s*(\d+)/) : null;
-                    if(matchAmt) {
-                        codDisplay = `<span style="background:var(--primary-red); color:white; padding:3px 8px; border-radius:5px; font-weight:bold; margin-right:10px;">${matchAmt[1]} ج.م</span>`;
-                    }
+                    if(matchAmt) codText = matchAmt[1] + " ج.م";
+
+                    globalOrdersData[id] = {id, source: 'radar', distance, typeIcon, typeColor, codText, ...d};
 
                     if(d.status === "جاري البحث عن مندوب" && isOnline && !ignored.has(id)){
-                        availableOrders.push({id, ...d, distVal, distance, typeIcon, typeText, typeColor, cardBg, codDisplay});
+                        availableOrders.push(globalOrdersData[id]);
                     }
 
                     if(d.status === "تم الاستلام بواسطة المندوب" && d.courierName === currentCaptain){
+                        myTasksCount++;
                         myTasksHtml += `
-                            <div class="order-card" style="background: ${cardBg}; border-color: ${typeColor};">
-                                <div class="card-border" style="background: ${typeColor};"></div>
-                                <span class="task-badge" style="color: ${typeColor}; border: 1px solid ${typeColor};"><i class="fa-solid ${typeIcon === '🛒' ? 'fa-cart-shopping' : typeIcon === '📦' ? 'fa-box' : 'fa-truck-fast'}"></i> ${typeText}</span>
-                                <h4 class="merchant-name">${d.merchantEmail.split('@')[0]} ${codDisplay}</h4>
-                                <div class="order-details-text">${d.details}</div>
-                                <div class="location-text"><i class="fa-solid fa-location-dot" style="color:var(--primary-red);"></i> ${d.address.substring(0,40)}...</div>
-                                <div class="btn-grid">
-                                    <button class="btn-u btn-nav" onclick="window.openMap('${encodeURIComponent(d.address)}')"><i class="fa-solid fa-location-arrow"></i> ملاحة للعميل</button>
-                                    <button class="btn-u btn-done" onclick="window.completeTask('${id}', '${d.linkedShipmentId || ''}')"><i class="fa-solid fa-check-double"></i> تم التسليم</button>
-                                    <button class="btn-u btn-contact" onclick="window.openChatModal('${d.merchantEmail}')"><i class="fa-solid fa-comments"></i> بيانات التاجر ومحادثة</button>
+                            <div class="compact-card" style="border-right-color: ${typeColor};" onclick="window.openOrderDetails('${id}', 'radar')">
+                                <div class="card-icon" style="background:${typeBg}; color:${typeColor};"><i class="fa-solid ${typeIcon}"></i></div>
+                                <div class="card-info">
+                                    <h4 class="card-title">${d.merchantEmail.split('@')[0]}</h4>
+                                    <p class="card-sub">${d.address.split(',')[0]}</p>
                                 </div>
+                                <div class="card-price">${codText}</div>
                             </div>
                         `;
                     }
                 });
 
-                availableOrders.sort((a,b) => a.distVal - b.distVal);
+                availableOrders.sort((a,b) => (a.distVal||999) - (b.distVal||999));
                 availableOrders.forEach(o => {
                     radarHtml += `
-                        <div class="order-card" style="background: ${o.cardBg}; border-color: ${o.typeColor};">
-                            <div class="card-border" style="background: ${o.typeColor};"></div>
-                            <div class="dist-tag"><i class="fa-solid fa-route"></i> ${o.distance}</div>
-                            <span class="task-badge" style="color: ${o.typeColor}; border: 1px solid ${o.typeColor};">${o.typeIcon} ${o.typeText}</span>
-                            <h4 class="merchant-name">${o.merchantEmail.split('@')[0]} ${o.codDisplay}</h4>
-                            <div class="order-details-text">${o.details}</div>
-                            <p style="font-size:14px; color:#4B5563; margin-top:5px; margin-bottom:15px; font-weight:bold;">المنطقة: ${o.address.split(',')[0]}</p>
-                            <div class="btn-grid">
-                                <button class="btn-u btn-claim" onclick="window.claimOrder('${o.id}', '${o.linkedShipmentId || ''}')">قبول وخطف المهمة 🚀</button>
-                                <button class="btn-u btn-ignore" onclick="window.ignoreOrder('${o.id}')"><i class="fa-solid fa-xmark"></i> تجاهل</button>
+                        <div class="compact-card" style="border-right-color: ${o.typeColor};" onclick="window.openOrderDetails('${o.id}', 'radar')">
+                            <div class="card-icon" style="background:#f3f4f6; color:${o.typeColor};"><i class="fa-solid ${o.typeIcon}"></i></div>
+                            <div class="card-info">
+                                <h4 class="card-title">${o.merchantEmail.split('@')[0]} <span class="card-dist">${o.distance}</span></h4>
+                                <p class="card-sub">${o.details}</p>
                             </div>
+                            <div class="card-price">${o.codText}</div>
                         </div>
                     `;
                 });
 
                 document.getElementById('radarList').innerHTML = isOnline ? (radarHtml || "<p style='text-align:center; padding:20px; color:gray; font-weight:bold;'>الرادار خالي.. جاري البحث 📡</p>") : "<p style='text-align:center; padding:20px; color:gray; font-weight:bold;'>الرادار في وضع السكون.</p>";
-                document.getElementById('myTaskList').innerHTML = myTasksHtml || "<p style='text-align:center; padding:20px; color:gray; font-weight:bold;'>لا توجد مهام حالياً</p>";
+                document.getElementById('myTaskList').innerHTML = myTasksHtml || "<p style='text-align:center; padding:20px; color:gray; font-weight:bold;'>لا توجد مهام رادار نشطة</p>";
                 
+                const badge = document.getElementById('tasksBadge');
+                if(myTasksCount > 0) { badge.style.display = 'block'; badge.innerText = myTasksCount; } else { badge.style.display = 'none'; }
+
                 if(newAlert && isOnline) {
                     const audio = document.getElementById('alertSound');
-                    audio.play().catch(e => console.log("المتصفح منع الصوت التلقائي"));
-                    Swal.fire({
-                        toast: true, position: 'top', icon: 'info', title: '🚨 طرد جديد قريب منك على الرادار!', showConfirmButton: false, timer: 4000
-                    });
+                    audio.play().catch(e => {});
+                    if (Notification.permission === "granted") { new Notification("🚨 أكسون رادار", { body: "في أوردر جديد قريب منك، افتح التطبيق!" }); }
                 }
             });
         }
-        
-        window.claimOrder = async (id, linkedShipmentId) => {
-            try {
-                await updateDoc(doc(db, "eshteryly_orders", id), {
-                    status: "تم الاستلام بواسطة المندوب", 
-                    courierName: currentCaptain,
-                    courierId: currentCaptainId
-                });
-                
-                if(linkedShipmentId) {
-                    await updateDoc(doc(db, "shipments", linkedShipmentId), {
-                        status: "مع المندوب"
-                    });
+
+        // فتح المودال لعرض تفاصيل أي أوردر
+        window.openOrderDetails = (id, source) => {
+            const data = globalOrdersData[id];
+            if(!data) return;
+
+            let contentHtml = `<button class="close-btn" onclick="document.getElementById('orderDetailsModal').style.display='none'"><i class="fa-solid fa-chevron-down"></i></button>`;
+            
+            if(source === 'radar') {
+                let isMine = data.status === "تم الاستلام بواسطة المندوب" && data.courierName === currentCaptain;
+                contentHtml += `
+                    <div style="text-align:center; margin-bottom:20px;">
+                        <div style="background:${data.typeColor}; color:white; width:60px; height:60px; border-radius:15px; display:flex; align-items:center; justify-content:center; font-size:24px; margin:0 auto 10px auto;"><i class="fa-solid ${data.typeIcon}"></i></div>
+                        <h2 style="margin:0; color:var(--dark-text);">${data.merchantEmail.split('@')[0]}</h2>
+                        <div style="font-size:22px; font-weight:900; color:var(--primary-red); margin-top:5px;">${data.codText}</div>
+                    </div>
+                    <div style="background:var(--bg-color); padding:15px; border-radius:12px; margin-bottom:15px; font-size:14px; line-height:1.6;">
+                        <b><i class="fa-solid fa-circle-info"></i> التفاصيل:</b><br>${data.details}<br><br>
+                        <b><i class="fa-solid fa-location-dot" style="color:var(--primary-red);"></i> العنوان:</b><br>${data.address}
+                    </div>
+                `;
+
+                if(!isMine) {
+                    contentHtml += `
+                        <div class="btn-grid">
+                            <button class="btn-u btn-claim" onclick="window.claimOrder('${id}', '${data.linkedShipmentId || ''}')">🚀 قبول وخطف المهمة</button>
+                            <button class="btn-u btn-ignore" style="grid-column: span 2;" onclick="window.ignoreOrder('${id}')">تجاهل الإشعار</button>
+                        </div>
+                    `;
+                } else {
+                    contentHtml += `
+                        <div class="btn-grid">
+                            <button class="btn-u btn-nav" onclick="window.openNativeMap('${encodeURIComponent(data.address)}')"><i class="fa-solid fa-location-arrow"></i> فتح خرائط جوجل</button>
+                            <button class="btn-u btn-done" onclick="window.completeTask('${id}', '${data.linkedShipmentId || ''}', 'radar')"><i class="fa-solid fa-check-double"></i> إنهاء التسليم</button>
+                            <button class="btn-u btn-contact" onclick="window.openChatModal('${data.merchantEmail}')"><i class="fa-solid fa-comments"></i> محادثة التاجر</button>
+                        </div>
+                    `;
                 }
-                
+            } else if (source === 'manifest') {
+                contentHtml += `
+                    <div style="text-align:center; margin-bottom:20px;">
+                        <div style="background:var(--primary-blue); color:white; width:60px; height:60px; border-radius:15px; display:flex; align-items:center; justify-content:center; font-size:24px; margin:0 auto 10px auto;"><i class="fa-solid fa-box"></i></div>
+                        <h2 style="margin:0; color:var(--dark-text);">${data.awb || 'AXN...'}</h2>
+                        <div style="font-size:22px; font-weight:900; color:var(--primary-red); margin-top:5px;">${data.amount} ج.م</div>
+                    </div>
+                    <div style="background:var(--bg-color); padding:15px; border-radius:12px; margin-bottom:15px; font-size:14px; line-height:1.6;">
+                        <b><i class="fa-solid fa-user"></i> المستلم:</b> ${data.name}<br>
+                        <b><i class="fa-solid fa-phone"></i> التليفون:</b> <span dir="ltr">${data.phone}</span><br>
+                        <b><i class="fa-solid fa-store"></i> الراسل:</b> ${data.merchantEmail.split('@')[0]}<br><br>
+                        <b><i class="fa-solid fa-location-dot" style="color:var(--primary-red);"></i> العنوان:</b><br>${data.city} - ${data.address}
+                    </div>
+                    <div class="btn-grid">
+                        <button class="btn-u btn-nav" onclick="window.openNativeMap('${encodeURIComponent(data.city + ' ' + data.address)}')"><i class="fa-solid fa-location-arrow"></i> الملاحة</button>
+                        <button class="btn-u btn-done" onclick="window.completeTask('${id}', null, 'manifest')"><i class="fa-solid fa-check-double"></i> تم التسليم كاش</button>
+                        <button class="btn-u btn-contact" onclick="window.openChatModal('${data.merchantEmail}')"><i class="fa-solid fa-comments"></i> رسالة للتاجر</button>
+                        <button class="btn-u btn-ignore" style="grid-column: span 2;" onclick="window.markReturn('${id}')"><i class="fa-solid fa-rotate-left"></i> محاولة فاشلة (تأجيل/مرتجع)</button>
+                    </div>
+                `;
+            }
+
+            document.getElementById('orderDetailsContent').innerHTML = contentHtml;
+            document.getElementById('orderDetailsModal').style.display = 'flex';
+        };
+
+        window.claimOrder = async (id, linkedShipmentId) => {
+            document.getElementById('orderDetailsModal').style.display = 'none';
+            try {
+                await updateDoc(doc(db, "eshteryly_orders", id), { status: "تم الاستلام بواسطة المندوب", courierName: currentCaptain, courierId: currentCaptainId });
+                if(linkedShipmentId) { await updateDoc(doc(db, "shipments", linkedShipmentId), { status: "مع المندوب" }); }
                 Swal.fire({toast:true, position:'top', icon:'success', title:'تم خطف المهمة بنجاح', showConfirmButton:false, timer:2000});
-            } catch(e) { 
-                Swal.fire('سبقك بطل آخر', 'المهمة مقتنصة بالفعل أو الصلاحيات لا تسمح', 'error'); 
+                switchTab('myTasksTab', document.querySelectorAll('.nav-item')[1]);
+            } catch(e) { Swal.fire('خطأ', 'الصلاحيات لا تسمح أو المهمة اتخطفت', 'error'); }
+        };
+
+        window.completeTask = async (id, linkedShipmentId, source) => {
+            document.getElementById('orderDetailsModal').style.display = 'none';
+            const r = await Swal.fire({title:'تأكيد التسليم؟', text:'هل استلمت الكاش وتم تسليم الطرد؟', icon:'question', showCancelButton:true, confirmButtonText:'نعم ✅', cancelButtonText:'إلغاء'});
+            if(r.isConfirmed) {
+                if(source === 'radar') {
+                    await updateDoc(doc(db, "eshteryly_orders", id), {status:"تم التسليم بنجاح"});
+                    if(linkedShipmentId) await updateDoc(doc(db, "shipments", linkedShipmentId), {status: "تم التسليم"});
+                } else if(source === 'manifest') {
+                    await updateDoc(doc(db, "shipments", id), {status: "تم التسليم"});
+                }
+                Swal.fire({toast:true, position:'top', icon:'success', title:'عاش يا بطل، مهمة تمت', showConfirmButton:false, timer:2000});
             }
         };
 
-        // 🚀 شات المندوب والتاجر اللايف 🚀
+        window.markReturn = async (id) => {
+            document.getElementById('orderDetailsModal').style.display = 'none';
+            const r = await Swal.fire({title:'سبب عدم التسليم؟', input: 'select', inputOptions: {'مؤجل': 'مؤجل لليوم التالي', 'مرتجع': 'رفض الاستلام (مرتجع)'}, showCancelButton:true});
+            if(r.isConfirmed && r.value) {
+                await updateDoc(doc(db, "shipments", id), {status: r.value});
+                Swal.fire({toast:true, position:'top', icon:'info', title:'تم تحديث الحالة لـ ' + r.value, showConfirmButton:false, timer:2000});
+            }
+        };
+
+        window.ignoreOrder = (id) => { 
+            ignored.add(id); 
+            document.getElementById('orderDetailsModal').style.display = 'none';
+            loadRadar(); 
+        };
+
+        // فتح خرائط جوجل كـ Native App 
+        window.openNativeMap = (addr) => {
+            const isAndroid = /android/i.test(navigator.userAgent || navigator.vendor || window.opera);
+            if(isAndroid) {
+                window.open(`google.navigation:q=${addr}`, '_system');
+            } else {
+                window.open(`https://www.google.com/maps/search/?api=1&query=${addr}`, '_blank');
+            }
+        };
+
+        // 🚀 شات المندوب (مؤمن بالـ OR query) 🚀
         window.openChatModal = async (email) => {
+            document.getElementById('orderDetailsModal').style.display = 'none';
             currentChatMerchant = email;
             document.getElementById('chatMerchantEmail').innerText = email.split('@')[0];
             document.getElementById('chatModal').style.display = 'flex';
 
-            let phone = "مخفي (حماية أمنية)";
-            let callBtnHtml = "";
+            let phone = "مخفي"; let callBtnHtml = "";
             try {
                 const pSnap = await getDoc(doc(db, "merchant_profiles", email));
-                if(pSnap.exists()) {
-                    phone = pSnap.data().businessPhone || pSnap.data().phone || phone;
-                    if(phone !== "مخفي (حماية أمنية)") {
-                        callBtnHtml = `<button onclick="window.location.href='tel:${phone}'" style="width:100%; padding:10px; border-radius:8px; border:none; background:#10B981; color:white; font-family:'Cairo'; font-weight:bold; font-size:14px;"><i class="fa-solid fa-phone"></i> اتصال هاتفي مباشر بالتاجر: <span dir="ltr">${phone}</span></button>`;
-                    }
+                if(pSnap.exists() && pSnap.data().businessPhone) {
+                    phone = pSnap.data().businessPhone;
+                    callBtnHtml = `<button onclick="window.location.href='tel:${phone}'" style="width:100%; padding:10px; border-radius:8px; border:none; background:#10B981; color:white; font-family:'Cairo'; font-weight:bold;"><i class="fa-solid fa-phone"></i> اتصال بالتاجر: <span dir="ltr">${phone}</span></button>`;
                 }
-            } catch(err) { console.warn("Cannot read phone."); }
+            } catch(err) {}
             document.getElementById('callMerchantBtnArea').innerHTML = callBtnHtml;
 
             if(chatUnsubscribe) chatUnsubscribe();
             
-            chatUnsubscribe = onSnapshot(collection(db, "internal_chats"), (snap) => {
-                let html = "";
-                let msgs = [];
+            // Query مؤمن يتوافق مع Rules الفايربيز
+            const chatQ = query(collection(db, "internal_chats"), or(where("from", "==", currentCaptain), where("to", "==", currentCaptain)));
+            
+            chatUnsubscribe = onSnapshot(chatQ, (snap) => {
+                let html = ""; let msgs = [];
                 snap.forEach(doc => msgs.push(doc.data()));
-                
                 msgs.sort((a,b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
 
                 msgs.forEach(m => {
                     if((m.from === currentCaptain && m.to === email) || (m.from === email && m.to === currentCaptain)) {
                         const isMe = m.from === currentCaptain;
                         const msgClass = isMe ? "chat-mine" : "chat-other";
-                        const senderName = isMe ? "أنت" : "التاجر";
-                        
-                        html += `<div class="chat-bubble ${msgClass}">
-                                    <b style="font-size: 10px; color: #666; display: block; margin-bottom: 2px;">${senderName}</b>
-                                    ${m.message}
-                                 </div>`;
+                        html += `<div class="chat-bubble ${msgClass}"><b style="font-size:10px; color:#666; display:block; margin-bottom:2px;">${isMe?'أنت':'التاجر'}</b>${m.message}</div>`;
                     }
                 });
                 
                 const chatBox = document.getElementById('chatBoxCourier');
-                chatBox.innerHTML = html || "<div style='text-align:center; color:gray; font-size:13px; margin-top:30px;'><i class='fa-solid fa-handshake fa-2x'></i><br><br>تواصل مع التاجر لتأكيد استلامك للأوردر.</div>";
+                chatBox.innerHTML = html || "<div style='text-align:center; color:gray; font-size:13px; margin-top:30px;'>ابدأ المحادثة مع التاجر لتأكيد الأوردر.</div>";
                 setTimeout(() => chatBox.scrollTop = chatBox.scrollHeight, 100);
             });
         };
@@ -507,35 +648,12 @@
             const input = document.getElementById('chatInputCourier');
             const msg = input.value.trim();
             if(!msg || !currentChatMerchant) return;
-
             input.value = ""; 
-            try {
-                await addDoc(collection(db, "internal_chats"), {
-                    from: currentCaptain,
-                    to: currentChatMerchant,
-                    message: msg,
-                    timestamp: new Date()
-                });
-            } catch(e) {
-                Swal.fire('خطأ', 'لم يتم إرسال الرسالة', 'error');
-            }
+            try { await addDoc(collection(db, "internal_chats"), { from: currentCaptain, to: currentChatMerchant, message: msg, timestamp: new Date() }); } catch(e) {}
         };
 
-        window.openMap = (addr) => window.open(`https://www.google.com/maps/search/?api=1&query=${addr}`, '_blank');
         window.logout = () => signOut(auth).then(() => window.location.reload());
         window.toggleTheme = () => document.body.classList.toggle('dark-mode');
-        window.ignoreOrder = (id) => { ignored.add(id); loadRadar(); };
-        
-        window.completeTask = async (id, linkedShipmentId) => {
-            const r = await Swal.fire({title:'تأكيد الاستلام؟', text:'هل قمت بتنفيذ المهمة وتسليمها بنجاح؟', icon:'question', showCancelButton:true, confirmButtonText:'نعم، تمت ✅', cancelButtonText:'إلغاء'});
-            if(r.isConfirmed) {
-                await updateDoc(doc(db, "eshteryly_orders", id), {status:"تم التسليم بنجاح"});
-                if(linkedShipmentId) {
-                    await updateDoc(doc(db, "shipments", linkedShipmentId), {status: "تم التسليم"});
-                }
-                Swal.fire({toast:true, position:'top', icon:'success', title:'عاش يا بطل', showConfirmButton:false, timer:2000});
-            }
-        };
 
     </script>
 </body>
