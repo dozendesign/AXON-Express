@@ -21,7 +21,7 @@
             --soft-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
         
-        body { font-family: 'Cairo', sans-serif; background: var(--bg-color); margin: 0; color: var(--dark-text); overflow-x: hidden; transition: 0.3s; padding-bottom: 70px; /* مساحة للـ Bottom Nav */ }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg-color); margin: 0; color: var(--dark-text); overflow-x: hidden; transition: 0.3s; padding-bottom: 70px; }
         
         .app-container { max-width: 600px; margin: 0 auto; background: var(--bg-color); min-height: 100vh; position: relative;}
         
@@ -44,24 +44,26 @@
         }
         .login-btn:disabled { background: #888; cursor: not-allowed; }
 
-        /* الهيدر */
+        /* الهيدر والنجوم */
         .app-header {
             background: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; 
             align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: var(--soft-shadow);
             border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;
         }
         .profile-area { display: flex; align-items: center; gap: 10px; }
-        .avatar { width: 45px; height: 45px; background: var(--primary-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
+        .avatar { width: 45px; height: 45px; background: var(--primary-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size:18px;}
+        .c-stars { color: #ffc107; font-size: 11px; margin-top: 2px;}
+        .c-stars .empty-star { color: #d1d5db; }
 
-        /* شريط الحالة والوردية */
+        /* شريط الحالة */
         .status-container {
             margin: 15px; background: var(--white); padding: 15px 20px; border-radius: 20px;
             display: flex; justify-content: space-between; align-items: center; box-shadow: var(--soft-shadow);
         }
-        .status-badge { display: flex; align-items: center; gap: 8px; font-weight: bold; }
+        .status-badge { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size:15px;}
         .pulse-online { width: 12px; height: 12px; background: #10B981; border-radius: 50%; animation: pulse 1.5s infinite; }
         
-        /* التابات السفلية (Bottom Navigation) */
+        /* التابات السفلية */
         .bottom-nav {
             position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 600px;
             background: var(--white); display: flex; justify-content: space-around; padding: 10px 5px;
@@ -76,54 +78,54 @@
         .nav-item.active i { transform: translateY(-3px); }
         .nav-badge { position: absolute; top: -5px; right: 20px; background: var(--primary-red); color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; display: none;}
 
-        /* حاويات الصفحات */
         .page-tab { display: none; padding: 0 15px 20px 15px; animation: fadeIn 0.3s ease; }
         .page-tab.active { display: block; }
         
-        /* تصميم الكارت المدمج (InDrive Style) */
+        /* تصميم الكارت المدمج */
         .compact-card {
             background: var(--white); padding: 12px 15px; border-radius: 15px; display: flex; align-items: center; 
             justify-content: space-between; box-shadow: var(--soft-shadow); margin-bottom: 12px; cursor: pointer;
-            border-right: 4px solid var(--primary-blue); transition: 0.2s;
+            border-right: 4px solid var(--primary-blue); transition: 0.2s; position: relative;
         }
         .compact-card:active { transform: scale(0.98); }
-        .card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-left: 10px; }
-        .card-info { flex: 1; }
-        .card-title { font-weight: 900; font-size: 15px; margin: 0; color: var(--dark-text); }
-        .card-sub { font-size: 12px; color: #6B7280; margin: 2px 0 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
-        .card-price { font-weight: 900; color: var(--primary-red); font-size: 16px; text-align: left;}
-        .card-dist { font-size: 11px; background: #e0eaf5; color: var(--primary-blue); padding: 2px 6px; border-radius: 5px; font-weight: bold; }
+        .card-icon { width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-left: 12px; flex-shrink: 0;}
+        .card-info { flex: 1; overflow: hidden;}
+        .card-title { font-weight: 900; font-size: 15px; margin: 0; color: var(--dark-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        .card-sub { font-size: 12px; color: #6B7280; margin: 3px 0 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold;}
+        .card-time { font-size: 10px; color: #9CA3AF; margin-top: 4px; display: flex; align-items: center; gap: 4px;}
+        .card-price { font-weight: 900; color: var(--primary-red); font-size: 16px; text-align: left; white-space: nowrap;}
+        .card-dist { font-size: 11px; background: #e0eaf5; color: var(--primary-blue); padding: 2px 6px; border-radius: 5px; font-weight: bold; margin-right: 5px;}
 
         /* المودال الشامل للتفاصيل */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); align-items: flex-end; justify-content: center; z-index: 2000; padding: 0; backdrop-filter: blur(3px);}
-        .modal-content { background: var(--white); padding: 25px; border-top-left-radius: 25px; border-top-right-radius: 25px; width: 100%; max-width: 600px; position: relative; transition: 0.3s; animation: slideUp 0.3s ease; max-height: 85vh; overflow-y: auto;}
+        .modal-content { background: var(--bg-color); padding: 25px; border-top-left-radius: 25px; border-top-right-radius: 25px; width: 100%; max-width: 600px; position: relative; transition: 0.3s; animation: slideUp 0.3s ease; max-height: 90vh; overflow-y: auto;}
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
-        .close-btn { position: absolute; top: 15px; left: 15px; background: #f3f4f6; border: none; font-size: 18px; cursor: pointer; color: var(--primary-red); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center;}
+        .close-btn { position: absolute; top: -50px; left: 50%; transform: translateX(-50%); background: var(--white); border: none; font-size: 20px; cursor: pointer; color: var(--primary-red); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
         
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px;}
-        .btn-u { padding: 12px; border-radius: 12px; border: none; font-family: 'Cairo'; font-weight: 900; cursor: pointer; transition: 0.2s; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px;}
+        .detail-box { background: var(--white); padding: 15px; border-radius: 15px; margin-bottom: 15px; box-shadow: var(--soft-shadow);}
+        
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;}
+        .btn-u { padding: 12px; border-radius: 12px; border: none; font-family: 'Cairo'; font-weight: 900; cursor: pointer; transition: 0.2s; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px;}
         .btn-claim { background: var(--primary-blue); color: white; grid-column: span 2; font-size: 18px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
         .btn-claim:hover { background: var(--secondary-blue); }
         .btn-ignore { background: #FEE2E2; color: var(--primary-red); }
         .btn-nav { background: #E0E7FF; color: var(--primary-blue); }
-        .btn-done { background: #D1FAE5; color: #065F46; }
+        .btn-done { background: #10B981; color: white; grid-column: span 2; font-size: 16px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
         .btn-contact { background: #374151; color: white; grid-column: span 2; }
 
         /* الشات */
-        .chat-bubble { padding: 10px 15px; border-radius: 15px; max-width: 80%; font-size: 13px; line-height: 1.4; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 5px; clear: both;}
+        .chat-bubble { padding: 10px 15px; border-radius: 15px; max-width: 80%; font-size: 13px; line-height: 1.4; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 8px; clear: both;}
         .chat-mine { background: #dcf8c6; float: left; border-bottom-left-radius: 0; color: #000; }
         .chat-other { background: #ffffff; float: right; border-bottom-right-radius: 0; color: #000; border: 1px solid #eee;}
 
-        /* الدارك مود */
         body.dark-mode { --bg-color: #000; --white: #111827; --dark-text: #F9FAFB; --soft-shadow: none; }
         body.dark-mode .app-container { background: #000; }
-        body.dark-mode .app-header, body.dark-mode .status-container, body.dark-mode .bottom-nav { border-top: 1px solid #374151; border-bottom: 1px solid #374151;}
-        body.dark-mode .compact-card { background: #1F2937; border-color: #374151; border-right-color: var(--primary-blue);}
+        body.dark-mode .app-header, body.dark-mode .status-container, body.dark-mode .bottom-nav { border: 1px solid #374151;}
+        body.dark-mode .compact-card, body.dark-mode .detail-box { background: #1F2937; border-color: #374151; border-right-color: var(--primary-blue);}
         body.dark-mode .card-sub { color: #9CA3AF; }
         body.dark-mode .modal-content { background: #111827; border-top: 1px solid #374151;}
-        body.dark-mode .close-btn { background: #374151; }
         body.dark-mode .chat-other { background: #1F2937; color: #fff; border-color: #374151;}
 
         @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.7; } 70% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.7; } }
@@ -147,8 +149,9 @@
             <div class="profile-area">
                 <div class="avatar" id="cInitials">AX</div>
                 <div>
-                    <div style="font-size:12px; color:gray;">كابتن أكسون</div>
-                    <div style="font-size:15px; font-weight:900;" id="cDisplayName">...</div>
+                    <div style="font-size:12px; color:gray; font-weight:bold;">كابتن أكسون</div>
+                    <div style="font-size:16px; font-weight:900; line-height:1;" id="cDisplayName">...</div>
+                    <div class="c-stars" id="cStars"></div>
                 </div>
             </div>
             <div style="display:flex; gap:15px;">
@@ -162,29 +165,27 @@
                 <div id="statusDot" class=""></div>
                 <span id="statusTxt">خارج الوردية</span>
             </div>
-            <button id="shiftBtn" onclick="window.toggleShift()" style="background:var(--primary-blue); color:white; border:none; padding:10px 25px; border-radius:12px; font-weight:bold; font-family:'Cairo';">بدء الوردية</button>
+            <button id="shiftBtn" onclick="window.toggleShift()" style="background:var(--primary-blue); color:white; border:none; padding:10px 25px; border-radius:12px; font-weight:bold; font-family:'Cairo'; font-size:15px;">بدء الوردية</button>
         </div>
 
         <div id="radarTab" class="page-tab active">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                <h3 style="margin:0; color:var(--primary-blue);"><i class="fa-solid fa-satellite-dish"></i> الرادار المفتوح</h3>
-            </div>
+            <h3 style="margin-bottom:15px; color:var(--primary-blue); font-size:16px;"><i class="fa-solid fa-satellite-dish"></i> القريب منك (الرادار)</h3>
             <div id="radarList">
                 <p style="text-align:center; color:gray; margin-top:30px; font-weight:bold;">الرادار مغلق.. ابدأ الوردية يا بطل.</p>
             </div>
         </div>
 
         <div id="myTasksTab" class="page-tab">
-            <h3 style="margin-bottom:15px; color:var(--primary-blue);"><i class="fa-solid fa-motorcycle"></i> مهامي الحالية (رادار)</h3>
+            <h3 style="margin-bottom:15px; color:var(--primary-blue); font-size:16px;"><i class="fa-solid fa-motorcycle"></i> مهامي الحالية (مخطوفة)</h3>
             <div id="myTaskList">
-                <p style="text-align:center; color:gray; margin-top:20px; font-weight:bold;">لا يوجد مهام نشطة</p>
+                <p style="text-align:center; color:gray; margin-top:30px; font-weight:bold;">لا يوجد مهام رادار نشطة</p>
             </div>
         </div>
 
         <div id="manifestTab" class="page-tab">
-            <h3 style="margin-bottom:15px; color:var(--primary-blue);"><i class="fa-solid fa-file-invoice"></i> عهدة البوالص (المانيفست)</h3>
+            <h3 style="margin-bottom:15px; color:var(--primary-blue); font-size:16px;"><i class="fa-solid fa-file-invoice"></i> عهدة البوالص (المانيفست)</h3>
             <div id="manifestList">
-                <p style="text-align:center; color:gray; margin-top:20px; font-weight:bold;">لم يتم تعيين بوالص لك اليوم.</p>
+                <p style="text-align:center; color:gray; margin-top:30px; font-weight:bold;">لم يتم تعيين بوالص لك اليوم.</p>
             </div>
         </div>
 
@@ -214,19 +215,19 @@
     </div>
 
     <div id="chatModal" class="modal">
-        <div class="modal-content" style="height: 80vh;">
+        <div class="modal-content" style="height: 85vh; padding:15px; background:var(--bg-color);">
             <button class="close-btn" onclick="window.closeChatModal()"><i class="fa-solid fa-xmark"></i></button>
-            <h3 style="color:var(--primary-blue); margin-top:0; border-bottom:2px solid var(--primary-red); padding-bottom:10px;">
-                <i class="fa-solid fa-comments"></i> محادثة مع: <span id="chatMerchantEmail" style="color:var(--primary-red); font-size:14px;">...</span>
+            <h3 style="color:var(--primary-blue); margin-top:15px; border-bottom:2px solid var(--primary-red); padding-bottom:10px; text-align:center; font-size:16px;">
+                <i class="fa-solid fa-comments"></i> <span id="chatMerchantEmail">...</span>
             </h3>
             
             <div id="callMerchantBtnArea" style="margin-bottom: 10px;"></div>
 
-            <div style="background: var(--bg-color); border-radius: 12px; border: 1px solid #ccc; display: flex; flex-direction: column; flex: 1; overflow: hidden;">
-                <div id="chatBoxCourier" style="flex: 1; padding: 15px; overflow-y: auto; display: block;"></div>
-                <div style="display: flex; border-top: 1px solid #ccc; padding: 10px; background: white;">
-                    <input type="text" id="chatInputCourier" placeholder="رد هنا..." style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo'; outline: none;">
-                    <button onclick="window.sendChatMessage()" style="background: #25D366; color: white; border: none; padding: 10px 15px; border-radius: 8px; margin-right: 10px; font-family: 'Cairo'; font-weight: bold; cursor: pointer;"><i class="fa-solid fa-paper-plane"></i></button>
+            <div style="background: var(--white); border-radius: 15px; border: 1px solid #e5e7eb; display: flex; flex-direction: column; flex: 1; overflow: hidden; box-shadow:var(--soft-shadow);">
+                <div id="chatBoxCourier" style="flex: 1; padding: 15px; overflow-y: auto; display: block; background:var(--bg-color);"></div>
+                <div style="display: flex; border-top: 1px solid #e5e7eb; padding: 10px; background: var(--white);">
+                    <input type="text" id="chatInputCourier" placeholder="اكتب رسالتك..." style="flex: 1; padding: 12px; border: 1px solid #d1d5db; border-radius: 10px; font-family: 'Cairo'; outline: none; font-weight:bold;">
+                    <button onclick="window.sendChatMessage()" style="background: #25D366; color: white; border: none; padding: 0 20px; border-radius: 10px; margin-right: 10px; font-family: 'Cairo'; font-weight: bold; cursor: pointer; font-size:18px;"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
         </div>
@@ -235,7 +236,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, doc, updateDoc, getDoc, addDoc, query, where, or } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, doc, updateDoc, getDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         
         const app = initializeApp({
             apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
@@ -251,11 +252,18 @@
         
         let currentCaptain = "", currentCaptainId = "", isOnline = false, watchId = null, lat = null, lng = null, ignored = new Set();
         let notifiedTasks = new Set(); 
-        let globalOrdersData = {}; // لتخزين الداتا وعرضها في المودال
+        let globalOrdersData = {}; 
         
         let currentChatMerchant = "";
         let chatUnsubscribe = null;
         let wakeLock = null;
+
+        // دالة التواريخ السهلة
+        function formatTime(ts) {
+            if(!ts) return "";
+            let date = ts.toDate ? ts.toDate() : new Date(ts);
+            return date.toLocaleString('ar-EG', { hour: '2-digit', minute:'2-digit', month:'short', day:'numeric' });
+        }
 
         // إدارة التابات السفلية
         window.switchTab = (tabId, element) => {
@@ -274,7 +282,6 @@
         };
         const releaseWakeLock = () => { if (wakeLock !== null) { wakeLock.release(); wakeLock = null; } };
 
-        // طلب تصريح الإشعارات للخلفية
         if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
             Notification.requestPermission();
         }
@@ -292,12 +299,24 @@
                         currentCaptain = docSnap.data().name || user.email.split('@')[0];
                         currentCaptainId = user.uid;
                         
+                        // حساب النجوم
+                        let successCount = docSnap.data().successfulDeliveries || 0;
+                        let starsHtml = ''; let filledStars = 3;
+                        if (successCount >= 2000) filledStars = 5;
+                        else if (successCount >= 1000) filledStars = 4;
+                        for(let i=0; i<5; i++) {
+                            if(i < filledStars) starsHtml += '<i class="fa-solid fa-star"></i> ';
+                            else starsHtml += '<i class="fa-solid fa-star empty-star"></i> ';
+                        }
+                        document.getElementById('cStars').innerHTML = starsHtml;
+
                         document.getElementById('loginSection').style.display = 'none';
                         document.getElementById('appContent').style.display = 'block';
                         document.getElementById('cDisplayName').innerText = currentCaptain;
                         document.getElementById('cInitials').innerText = currentCaptain.substring(0, 2).toUpperCase();
                         resetLoginBtn();
-                        loadManifest(); // سحب عهدة الصبح
+                        
+                        loadManifest(); // سحب العهدة
                     } else {
                         await signOut(auth);
                         Swal.fire('مرفوض', 'هذا الإيميل غير مسجل ككابتن.', 'error');
@@ -377,31 +396,34 @@
             return (R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)))).toFixed(1);
         }
 
-        // سحب المانيفست (تعديل الأمان بـ where)
+        // سحب المانيفست بسحب عام وفلترة داخلية لتجنب Index error
         function loadManifest() {
-            const q = query(collection(db, "shipments"), where("courierName", "==", currentCaptain));
-            onSnapshot(q, (snap) => {
+            onSnapshot(collection(db, "shipments"), (snap) => {
                 let html = ""; let count = 0;
-                snap.forEach(docSnap => {
-                    const d = docSnap.data(), id = docSnap.id;
-                    if(d.status === "تم التسليم" || d.status === "تمت التسوية" || d.status === "مرتجع") return;
-                    count++;
-                    globalOrdersData[id] = {id, source: 'manifest', ...d};
-                    
-                    const awb = d.awb || "AXN...";
-                    html += `
-                        <div class="compact-card" onclick="window.openOrderDetails('${id}', 'manifest')">
-                            <div class="card-icon" style="background:#e0eaf5; color:var(--primary-blue);"><i class="fa-solid fa-box"></i></div>
-                            <div class="card-info">
-                                <h4 class="card-title">${awb}</h4>
-                                <p class="card-sub">${d.merchantEmail.split('@')[0]} ➡️ ${d.city}</p>
+                let docs = [];
+                snap.forEach(doc => docs.push({id: doc.id, ...doc.data()}));
+                docs.sort((a,b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+
+                docs.forEach(d => {
+                    if(d.courierName === currentCaptain && d.status !== "تم التسليم" && d.status !== "تمت التسوية" && d.status !== "مرتجع") {
+                        count++;
+                        globalOrdersData[d.id] = {id: d.id, source: 'manifest', ...d};
+                        const awb = d.awb || "AXN...";
+                        const timeStr = formatTime(d.timestamp);
+                        html += `
+                            <div class="compact-card" onclick="window.openOrderDetails('${d.id}', 'manifest')">
+                                <div class="card-icon" style="background:#e0eaf5; color:var(--primary-blue);"><i class="fa-solid fa-box"></i></div>
+                                <div class="card-info">
+                                    <h4 class="card-title">${awb}</h4>
+                                    <p class="card-sub">${d.merchantEmail.split('@')[0]} ➡️ ${d.city}</p>
+                                    <div class="card-time"><i class="fa-regular fa-clock"></i> ${timeStr}</div>
+                                </div>
+                                <div class="card-price">${d.amount} ج.م</div>
                             </div>
-                            <div class="card-price">${d.amount} ج.م</div>
-                        </div>
-                    `;
+                        `;
+                    }
                 });
-                document.getElementById('manifestList').innerHTML = html || "<p style='text-align:center; color:gray; font-weight:bold; margin-top:20px;'>لا يوجد عهدة بوالص مفتوحة.</p>";
-                
+                document.getElementById('manifestList').innerHTML = html || "<p style='text-align:center; color:gray; font-weight:bold; margin-top:30px;'>لا يوجد عهدة بوالص مفتوحة.</p>";
                 const badge = document.getElementById('manifestBadge');
                 if(count > 0) { badge.style.display = 'block'; badge.innerText = count; } else { badge.style.display = 'none'; }
             });
@@ -437,7 +459,9 @@
                     let matchAmt = d.details ? d.details.match(/تحصيل:\s*(\d+)/) : null;
                     if(matchAmt) codText = matchAmt[1] + " ج.م";
 
-                    globalOrdersData[id] = {id, source: 'radar', distance, typeIcon, typeColor, codText, ...d};
+                    const timeStr = formatTime(d.timestamp);
+
+                    globalOrdersData[id] = {id, source: 'radar', distance, typeIcon, typeColor, typeBg, codText, timeStr, ...d};
 
                     if(d.status === "جاري البحث عن مندوب" && isOnline && !ignored.has(id)){
                         availableOrders.push(globalOrdersData[id]);
@@ -451,6 +475,7 @@
                                 <div class="card-info">
                                     <h4 class="card-title">${d.merchantEmail.split('@')[0]}</h4>
                                     <p class="card-sub">${d.address.split(',')[0]}</p>
+                                    <div class="card-time"><i class="fa-regular fa-clock"></i> ${timeStr}</div>
                                 </div>
                                 <div class="card-price">${codText}</div>
                             </div>
@@ -466,6 +491,7 @@
                             <div class="card-info">
                                 <h4 class="card-title">${o.merchantEmail.split('@')[0]} <span class="card-dist">${o.distance}</span></h4>
                                 <p class="card-sub">${o.details}</p>
+                                <div class="card-time"><i class="fa-regular fa-clock"></i> ${o.timeStr}</div>
                             </div>
                             <div class="card-price">${o.codText}</div>
                         </div>
@@ -473,7 +499,7 @@
                 });
 
                 document.getElementById('radarList').innerHTML = isOnline ? (radarHtml || "<p style='text-align:center; padding:20px; color:gray; font-weight:bold;'>الرادار خالي.. جاري البحث 📡</p>") : "<p style='text-align:center; padding:20px; color:gray; font-weight:bold;'>الرادار في وضع السكون.</p>";
-                document.getElementById('myTaskList').innerHTML = myTasksHtml || "<p style='text-align:center; padding:20px; color:gray; font-weight:bold;'>لا توجد مهام رادار نشطة</p>";
+                document.getElementById('myTaskList').innerHTML = myTasksHtml || "<p style='text-align:center; padding:20px; color:gray; font-weight:bold;'>لا توجد مهام مخطوفة</p>";
                 
                 const badge = document.getElementById('tasksBadge');
                 if(myTasksCount > 0) { badge.style.display = 'block'; badge.innerText = myTasksCount; } else { badge.style.display = 'none'; }
@@ -496,14 +522,16 @@
             if(source === 'radar') {
                 let isMine = data.status === "تم الاستلام بواسطة المندوب" && data.courierName === currentCaptain;
                 contentHtml += `
-                    <div style="text-align:center; margin-bottom:20px;">
-                        <div style="background:${data.typeColor}; color:white; width:60px; height:60px; border-radius:15px; display:flex; align-items:center; justify-content:center; font-size:24px; margin:0 auto 10px auto;"><i class="fa-solid ${data.typeIcon}"></i></div>
-                        <h2 style="margin:0; color:var(--dark-text);">${data.merchantEmail.split('@')[0]}</h2>
-                        <div style="font-size:22px; font-weight:900; color:var(--primary-red); margin-top:5px;">${data.codText}</div>
+                    <div style="text-align:center; margin-bottom:20px; padding-top:15px;">
+                        <div style="background:${data.typeColor}; color:white; width:70px; height:70px; border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:30px; margin:0 auto 15px auto; box-shadow:0 5px 15px rgba(0,0,0,0.2);"><i class="fa-solid ${data.typeIcon}"></i></div>
+                        <h2 style="margin:0; color:var(--dark-text); font-size:22px;">${data.merchantEmail.split('@')[0]}</h2>
+                        <div style="font-size:26px; font-weight:900; color:var(--primary-red); margin-top:5px;">${data.codText}</div>
                     </div>
-                    <div style="background:var(--bg-color); padding:15px; border-radius:12px; margin-bottom:15px; font-size:14px; line-height:1.6;">
-                        <b><i class="fa-solid fa-circle-info"></i> التفاصيل:</b><br>${data.details}<br><br>
-                        <b><i class="fa-solid fa-location-dot" style="color:var(--primary-red);"></i> العنوان:</b><br>${data.address}
+                    <div class="detail-box">
+                        <b style="color:var(--primary-blue);"><i class="fa-solid fa-circle-info"></i> التفاصيل الدقيقة:</b><br><span style="color:#4B5563; display:block; margin-top:5px;">${data.details}</span>
+                    </div>
+                    <div class="detail-box">
+                        <b style="color:var(--primary-blue);"><i class="fa-solid fa-location-dot"></i> موقع الاستلام/التسليم:</b><br><span style="color:#4B5563; display:block; margin-top:5px;">${data.address}</span>
                     </div>
                 `;
 
@@ -517,29 +545,31 @@
                 } else {
                     contentHtml += `
                         <div class="btn-grid">
-                            <button class="btn-u btn-nav" onclick="window.openNativeMap('${encodeURIComponent(data.address)}')"><i class="fa-solid fa-location-arrow"></i> فتح خرائط جوجل</button>
-                            <button class="btn-u btn-done" onclick="window.completeTask('${id}', '${data.linkedShipmentId || ''}', 'radar')"><i class="fa-solid fa-check-double"></i> إنهاء التسليم</button>
+                            <button class="btn-u btn-nav" onclick="window.openNativeMap('${encodeURIComponent(data.address)}')"><i class="fa-solid fa-location-arrow"></i> خرائط جوجل</button>
                             <button class="btn-u btn-contact" onclick="window.openChatModal('${data.merchantEmail}')"><i class="fa-solid fa-comments"></i> محادثة التاجر</button>
+                            <button class="btn-u btn-done" onclick="window.completeTask('${id}', '${data.linkedShipmentId || ''}', 'radar')"><i class="fa-solid fa-check-double"></i> إنهاء التسليم بنجاح</button>
                         </div>
                     `;
                 }
             } else if (source === 'manifest') {
                 contentHtml += `
-                    <div style="text-align:center; margin-bottom:20px;">
-                        <div style="background:var(--primary-blue); color:white; width:60px; height:60px; border-radius:15px; display:flex; align-items:center; justify-content:center; font-size:24px; margin:0 auto 10px auto;"><i class="fa-solid fa-box"></i></div>
-                        <h2 style="margin:0; color:var(--dark-text);">${data.awb || 'AXN...'}</h2>
-                        <div style="font-size:22px; font-weight:900; color:var(--primary-red); margin-top:5px;">${data.amount} ج.م</div>
+                    <div style="text-align:center; margin-bottom:20px; padding-top:15px;">
+                        <div style="background:var(--primary-blue); color:white; width:70px; height:70px; border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:30px; margin:0 auto 15px auto; box-shadow:0 5px 15px rgba(0,0,0,0.2);"><i class="fa-solid fa-box"></i></div>
+                        <h2 style="margin:0; color:var(--dark-text); font-size:24px;">${data.awb || 'AXN...'}</h2>
+                        <div style="font-size:26px; font-weight:900; color:var(--primary-red); margin-top:5px;">${data.amount} ج.م</div>
                     </div>
-                    <div style="background:var(--bg-color); padding:15px; border-radius:12px; margin-bottom:15px; font-size:14px; line-height:1.6;">
-                        <b><i class="fa-solid fa-user"></i> المستلم:</b> ${data.name}<br>
-                        <b><i class="fa-solid fa-phone"></i> التليفون:</b> <span dir="ltr">${data.phone}</span><br>
-                        <b><i class="fa-solid fa-store"></i> الراسل:</b> ${data.merchantEmail.split('@')[0]}<br><br>
-                        <b><i class="fa-solid fa-location-dot" style="color:var(--primary-red);"></i> العنوان:</b><br>${data.city} - ${data.address}
+                    <div class="detail-box">
+                        <b><i class="fa-solid fa-user" style="color:var(--primary-blue);"></i> المستلم:</b> <span style="color:#4B5563;">${data.name}</span><br><br>
+                        <b><i class="fa-solid fa-phone" style="color:var(--primary-blue);"></i> التليفون:</b> <span dir="ltr" style="font-weight:bold; color:var(--primary-red);">${data.phone}</span><br><br>
+                        <b><i class="fa-solid fa-store" style="color:var(--primary-blue);"></i> التاجر:</b> <span style="color:#4B5563;">${data.merchantEmail.split('@')[0]}</span>
+                    </div>
+                    <div class="detail-box">
+                        <b><i class="fa-solid fa-location-dot" style="color:var(--primary-blue);"></i> العنوان بالتفصيل:</b><br><span style="color:#4B5563; display:block; margin-top:5px;">${data.city} - ${data.address}</span>
                     </div>
                     <div class="btn-grid">
                         <button class="btn-u btn-nav" onclick="window.openNativeMap('${encodeURIComponent(data.city + ' ' + data.address)}')"><i class="fa-solid fa-location-arrow"></i> الملاحة</button>
-                        <button class="btn-u btn-done" onclick="window.completeTask('${id}', null, 'manifest')"><i class="fa-solid fa-check-double"></i> تم التسليم كاش</button>
-                        <button class="btn-u btn-contact" onclick="window.openChatModal('${data.merchantEmail}')"><i class="fa-solid fa-comments"></i> رسالة للتاجر</button>
+                        <button class="btn-u btn-contact" onclick="window.openChatModal('${data.merchantEmail}')"><i class="fa-solid fa-comments"></i> رسالة</button>
+                        <button class="btn-u btn-done" onclick="window.completeTask('${id}', null, 'manifest')"><i class="fa-solid fa-check-double"></i> تم التسليم وقبض الكاش</button>
                         <button class="btn-u btn-ignore" style="grid-column: span 2;" onclick="window.markReturn('${id}')"><i class="fa-solid fa-rotate-left"></i> محاولة فاشلة (تأجيل/مرتجع)</button>
                     </div>
                 `;
@@ -569,6 +599,15 @@
                 } else if(source === 'manifest') {
                     await updateDoc(doc(db, "shipments", id), {status: "تم التسليم"});
                 }
+                
+                // تزويد التقييم للمندوب
+                try {
+                    const cRef = doc(db, "couriers", currentCaptainId);
+                    const cSnap = await getDoc(cRef);
+                    let currentDeliveries = cSnap.data().successfulDeliveries || 0;
+                    await updateDoc(cRef, { successfulDeliveries: currentDeliveries + 1 });
+                } catch(e) {}
+
                 Swal.fire({toast:true, position:'top', icon:'success', title:'عاش يا بطل، مهمة تمت', showConfirmButton:false, timer:2000});
             }
         };
@@ -591,14 +630,11 @@
         // فتح خرائط جوجل كـ Native App 
         window.openNativeMap = (addr) => {
             const isAndroid = /android/i.test(navigator.userAgent || navigator.vendor || window.opera);
-            if(isAndroid) {
-                window.open(`google.navigation:q=${addr}`, '_system');
-            } else {
-                window.open(`https://www.google.com/maps/search/?api=1&query=${addr}`, '_blank');
-            }
+            if(isAndroid) { window.open(`google.navigation:q=${addr}`, '_system'); } 
+            else { window.open(`https://www.google.com/maps/search/?api=1&query=${addr}`, '_blank'); }
         };
 
-        // 🚀 شات المندوب (مؤمن بالـ OR query) 🚀
+        // 🚀 شات المندوب (سحب عام بفلترة داخلية لتجنب مشاكل الفايربيز) 🚀
         window.openChatModal = async (email) => {
             document.getElementById('orderDetailsModal').style.display = 'none';
             currentChatMerchant = email;
@@ -610,17 +646,14 @@
                 const pSnap = await getDoc(doc(db, "merchant_profiles", email));
                 if(pSnap.exists() && pSnap.data().businessPhone) {
                     phone = pSnap.data().businessPhone;
-                    callBtnHtml = `<button onclick="window.location.href='tel:${phone}'" style="width:100%; padding:10px; border-radius:8px; border:none; background:#10B981; color:white; font-family:'Cairo'; font-weight:bold;"><i class="fa-solid fa-phone"></i> اتصال بالتاجر: <span dir="ltr">${phone}</span></button>`;
+                    callBtnHtml = `<button onclick="window.location.href='tel:${phone}'" style="width:100%; padding:12px; border-radius:12px; border:none; background:#10B981; color:white; font-family:'Cairo'; font-weight:bold; font-size:15px; box-shadow:0 4px 10px rgba(0,0,0,0.1);"><i class="fa-solid fa-phone"></i> اتصال بالتاجر: <span dir="ltr">${phone}</span></button>`;
                 }
             } catch(err) {}
             document.getElementById('callMerchantBtnArea').innerHTML = callBtnHtml;
 
             if(chatUnsubscribe) chatUnsubscribe();
             
-            // Query مؤمن يتوافق مع Rules الفايربيز
-            const chatQ = query(collection(db, "internal_chats"), or(where("from", "==", currentCaptain), where("to", "==", currentCaptain)));
-            
-            chatUnsubscribe = onSnapshot(chatQ, (snap) => {
+            chatUnsubscribe = onSnapshot(collection(db, "internal_chats"), (snap) => {
                 let html = ""; let msgs = [];
                 snap.forEach(doc => msgs.push(doc.data()));
                 msgs.sort((a,b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
@@ -629,12 +662,12 @@
                     if((m.from === currentCaptain && m.to === email) || (m.from === email && m.to === currentCaptain)) {
                         const isMe = m.from === currentCaptain;
                         const msgClass = isMe ? "chat-mine" : "chat-other";
-                        html += `<div class="chat-bubble ${msgClass}"><b style="font-size:10px; color:#666; display:block; margin-bottom:2px;">${isMe?'أنت':'التاجر'}</b>${m.message}</div>`;
+                        html += `<div class="chat-bubble ${msgClass}"><b style="font-size:10px; color:#666; display:block; margin-bottom:4px;">${isMe?'أنت':'التاجر'}</b>${m.message}</div>`;
                     }
                 });
                 
                 const chatBox = document.getElementById('chatBoxCourier');
-                chatBox.innerHTML = html || "<div style='text-align:center; color:gray; font-size:13px; margin-top:30px;'>ابدأ المحادثة مع التاجر لتأكيد الأوردر.</div>";
+                chatBox.innerHTML = html || "<div style='text-align:center; color:gray; font-size:14px; margin-top:30px; font-weight:bold;'><i class='fa-solid fa-handshake fa-2x' style='margin-bottom:10px; color:var(--primary-blue);'></i><br>ابدأ المحادثة مع التاجر.</div>";
                 setTimeout(() => chatBox.scrollTop = chatBox.scrollHeight, 100);
             });
         };
