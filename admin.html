@@ -138,14 +138,44 @@
         .adv-filter-select { padding: 6px 15px; border-radius: 20px; border: 1px solid #007bff; background: #e0eaf5; color: #007bff; font-weight: bold; font-family: 'Cairo'; font-size: 13px; outline: none;}
         body.dark-mode .adv-filter-select { background: #062338; color: #66b2ff; border-color: #66b2ff; }
 
-        /* ---------------- CSS الطباعة (ملون إجباري) ---------------- */
+        /* ---------------- CSS الطباعة (مقص الورق والإمضاء المصغر) ---------------- */
         @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             body { background: #fff; margin: 0; padding: 0; color:#000; }
             header, .container, .print-controls-ui, .swal2-container, footer { display: none !important; }
             #printArea { display: block !important; width: 100%; margin: 0; padding: 0; }
-            @page { margin: 5mm; }
+            @page { margin: 5mm; size: A4 portrait; }
+            
+            /* إجبار الجداول تلتزم بحجم الـ A4 */
+            .manifest-table {
+                width: 100% !important;
+                table-layout: fixed !important;
+                font-size: 11px !important;
+                page-break-inside: auto;
+            }
+            .manifest-table th, .manifest-table td {
+                word-wrap: break-word !important;
+                overflow-wrap: break-word !important;
+                white-space: normal !important;
+                padding: 6px 4px !important;
+            }
+            .manifest-table tr { page-break-inside: avoid; page-break-after: auto; }
+            
+            /* إمضاء مصغر تحت كل صفحة تطبع */
+            .manifest-table::after {
+                content: "توقيع مبدئي للمندوب بما في هذه الصفحة: ....................";
+                display: table-caption;
+                caption-side: bottom;
+                text-align: right;
+                font-weight: bold;
+                font-size: 11px;
+                margin-top: 10px;
+                color: #0A3D62;
+            }
+            
+            .legal-manifest-text { page-break-inside: avoid; }
         }
+        
         .a4-wrapper { width: 100%; max-width: 800px; margin: 0 auto; background: #fff; border: 2px solid #0A3D62; padding: 10px; box-sizing: border-box; color: #000; }
         .print-controls-ui { text-align: center; margin-bottom: 20px; padding: 15px; background: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
         .print-controls-ui button { cursor: pointer; padding: 12px 25px; margin: 5px; font-size: 16px; font-weight: bold; border: none; border-radius: 5px; color: white; font-family: 'Cairo';}
@@ -171,7 +201,7 @@
         .manifest-table th { background: #0A3D62 !important; color: #fff !important; }
         .manifest-footer { border: 2px solid #b82329; padding: 15px; text-align: center; margin-bottom: 20px; background: #fff3cd !important; }
         .legal-manifest-text { font-size: 13px; text-align: justify; line-height: 1.8; border: 1px solid #000; padding: 15px; margin-bottom: 20px; background: #fafafa !important;}
-        .sig-box { display: flex; justify-content: space-between; margin-top: 30px; font-weight: bold; }
+        .sig-box { display: flex; justify-content: space-between; margin-top: 30px; font-weight: bold; align-items: flex-end;}
         
         /* نجوم التقييم */
         .courier-stars { color: #ffc107; font-size: 16px; margin-top: 5px; }
@@ -944,9 +974,16 @@
 
                     <div class="legal-manifest-text">
                         <h3 style="margin:0 0 10px 0; color:#0A3D62; text-align:center;">إقرار استلام أمانة وعهدة نقدية</h3>
-                        أنا الموقع أدناه/ <b>${courierName}</b> بصفتي مندوب توصيل بشركة أكسون إكسبريس، أقر بأنني قد تسلمت في تاريخه الطرود المبينة في الكشف أعلاه وعددها (<b>${targetShipments.length}</b>) طرد، وبإجمالي مبالغ نقدية مطلوب تحصيلها وقدرها (<b>${totalCod} ج.م</b>).<br><br>
+                        أنا الموقع أدناه/ <b>.......................................................................................</b> بصفتي مندوب توصيل بشركة أكسون إكسبريس، أقر بأنني قد تسلمت في تاريخه الطرود المبينة في الكشف أعلاه وعددها (<b>${targetShipments.length}</b>) طرد، وبإجمالي مبالغ نقدية مطلوب تحصيلها وقدرها (<b>${totalCod} ج.م</b>).<br><br>
                         وأتعهد بالحفاظ على هذه العهدة وتسليمها لإدارة الفرع/الخزينة في نهاية اليوم العملي بالكامل. وإذا أخللت بذلك أو قمت بالتصرف في العهدة لنفسي، أكون مبدداً للعهدة المسلمة لي على سبيل الأمانة لتوصيلها، وأكون مسئولاً مسئولية جنائية ومدنية طبقاً لنص <b>المادة (341) من قانون العقوبات المصري</b>، وللشركة الحق في اتخاذ الإجراءات القانونية الصارمة ضدي.
-                        <div class="sig-box"><div>توقيع المندوب المُستلم: .......................................</div><div>بصمة الإبهام: ....................</div><div>توقيع وتصديق الإدارة: .......................................</div></div>
+                        <div class="sig-box">
+                            <div>الاسم ثلاثي: .......................................</div>
+                            <div>توقيع المندوب المُستلم: .......................................</div>
+                            <div>بصمة الإبهام: ....................</div>
+                        </div>
+                        <div class="sig-box" style="margin-top:15px; border-top: 1px dashed #ccc; padding-top: 15px;">
+                            <div>توقيع وتصديق الإدارة: .......................................</div>
+                        </div>
                     </div>
                 </div>
             `;
