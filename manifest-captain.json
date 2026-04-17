@@ -2,7 +2,7 @@
   "name": "Axon Captain",
   "short_name": "AXON Captain",
   "description": "رادار ومهام كباتن أكسون إكسبريس",
-  "start_url": "./captain.html", 
+  "start_url": "./courier.html", 
   "display": "standalone",
   "background_color": "#F3F4F6",
   "theme_color": "#1E3A8A",
