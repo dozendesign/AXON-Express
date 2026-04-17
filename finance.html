@@ -105,27 +105,42 @@
             .summary-box { flex-direction: column; gap: 10px; text-align: center; }
         }
 
-        /* ---------------- CSS الطباعة (المحاسبة الإجبارية) ---------------- */
+        /* ---------------- CSS الطباعة (المحاسبة الإجبارية ومقص الجداول) ---------------- */
         #printArea { display: none; }
         @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            body { background: white; color: black; font-size: 12px; }
+            body { background: white; color: black; font-size: 11px; } /* تصغير الخط ليتسع بالورقة */
             header, .branch-filter-box, .tabs, .btn-action, .modal { display: none !important; }
-            .container { display: none !important; } /* إخفاء المحتوى العادي */
+            .container { display: none !important; } 
             #printArea { display: block !important; width: 100%; margin: 0; padding: 0; }
-            @page { margin: 10mm; }
+            @page { margin: 5mm; size: A4 portrait; } /* فرض المقاس وهوامش ضيقة */
             
             .print-wrapper { max-width: 100%; margin: 0 auto; padding: 10px; }
-            .print-header { border-bottom: 3px solid #0A3D62; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-            .print-header h1 { margin: 0; color: #0A3D62; font-size: 24px; }
+            .print-header { border-bottom: 3px solid #0A3D62; padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+            .print-header h1 { margin: 0; color: #0A3D62; font-size: 20px; }
             .print-header p { margin: 5px 0 0 0; font-weight: bold; }
             
-            .print-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-            .print-table th, .print-table td { border: 1px solid #000; padding: 8px; text-align: center; }
+            /* المقص البرمجي للجدول */
+            .print-table { 
+                width: 100% !important; 
+                border-collapse: collapse; 
+                margin-bottom: 20px; 
+                table-layout: fixed !important; /* إجبار الالتزام بعرض الـ A4 */
+                page-break-inside: auto;
+            }
+            .print-table tr { page-break-inside: avoid; page-break-after: auto; }
+            .print-table th, .print-table td { 
+                border: 1px solid #000; 
+                padding: 6px 4px !important; 
+                text-align: center; 
+                word-wrap: break-word !important; 
+                overflow-wrap: break-word !important;
+                white-space: normal !important;
+            }
             .print-table th { background: #0A3D62 !important; color: white !important; }
             
-            .print-summary { display: flex; justify-content: space-between; background: #f0f0f0 !important; padding: 15px; border: 1px solid #000; border-radius: 5px; font-weight: bold; margin-bottom: 20px; font-size: 16px;}
-            .print-signatures { display: flex; justify-content: space-between; margin-top: 40px; font-weight: bold; text-align: center; }
+            .print-summary { display: flex; justify-content: space-between; background: #f0f0f0 !important; padding: 10px; border: 1px solid #000; border-radius: 5px; font-weight: bold; margin-bottom: 15px; font-size: 14px;}
+            .print-signatures { display: flex; justify-content: space-between; margin-top: 30px; font-weight: bold; text-align: center; page-break-inside: avoid; }
             .section-divider { background: #0A3D62 !important; color: white !important; padding: 5px; margin: 15px 0 5px 0; font-weight: bold; text-align: center;}
         }
     </style>
@@ -217,7 +232,7 @@
             <div id="merchants" class="tab-content">
                 <div class="table-responsive">
                     <table>
-                        <thead><tr><th data-i18n="th_merchant">التاجر</th><th data-i18n="th_delivered">بوالص مسلمة</th><th data-i18n="th_total">تحصيلات البوالص</th><th data-i18n="th_fees">مخصومات الشحن</th><th data-i18n="th_net">صافي مستحقات התاجر</th><th data-i18n="th_act">إجراءات التسوية</th></tr></thead>
+                        <thead><tr><th data-i18n="th_merchant">التاجر</th><th data-i18n="th_delivered">بوالص مسلمة</th><th data-i18n="th_total">تحصيلات البوالص</th><th data-i18n="th_fees">مخصومات الشحن</th><th data-i18n="th_net">صافي مستحقات التاجر</th><th data-i18n="th_act">إجراءات التسوية</th></tr></thead>
                         <tbody id="tblMerchants"></tbody>
                     </table>
                 </div>
