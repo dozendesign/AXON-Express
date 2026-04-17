@@ -150,6 +150,22 @@
         @keyframes fadeInRight { from { transform: translateX(15px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         
         .swal2-container { font-family: 'Cairo', sans-serif !important; z-index: 99999 !important; }
+        
+        /* زرار التثبيت الإجباري */
+        #installPwaBtn {
+            display: none; 
+            background: linear-gradient(135deg, #10B981, #059669); 
+            border: none; 
+            color: white; 
+            padding: 6px 15px; 
+            border-radius: 12px; 
+            font-family: 'Cairo'; 
+            font-weight: bold; 
+            font-size: 13px; 
+            cursor: pointer; 
+            box-shadow: 0 4px 10px rgba(16,185,129,0.3);
+            animation: pulse 2s infinite;
+        }
     </style>
 </head>
 <body>
@@ -174,7 +190,9 @@
                     <div class="c-stars" id="cStars"></div>
                 </div>
             </div>
-            <div style="display:flex; gap:18px;">
+            <div style="display:flex; gap:12px; align-items:center;">
+                <button id="installPwaBtn"><i class="fa-solid fa-download"></i> تثبيت</button>
+                
                 <button onclick="window.toggleTheme()" style="background:none; border:none; color:var(--primary-blue); font-size:24px; transition:0.3s;"><i class="fa-solid fa-moon"></i></button>
                 <button onclick="window.logout()" style="background:none; border:none; color:var(--primary-red); font-size:22px; transition:0.3s;"><i class="fa-solid fa-power-off"></i></button>
             </div>
@@ -289,7 +307,6 @@
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             element.classList.add('active');
-            // هزة خفيفة للموبايل لو مدعومة (Haptic feedback)
             if(navigator.vibrate) navigator.vibrate(50);
         };
 
@@ -644,7 +661,7 @@
             loadRadar(); 
         };
 
-        // إصلاح كود الملاحة الأصلي لفتح تطبيق Google Maps مباشرة بأعلى دقة
+        // إصلاح كود الملاحة لفتح تطبيق Google Maps مباشرة بأعلى دقة
         window.openNativeMap = (addr) => {
             const isAndroid = /android/i.test(navigator.userAgent || navigator.vendor || window.opera);
             if(isAndroid) { 
@@ -707,12 +724,34 @@
         window.logout = () => signOut(auth).then(() => window.location.reload());
         window.toggleTheme = () => document.body.classList.toggle('dark-mode');
         
-        // تشغيل محرك تثبيت PWA للكابتن
+        // --- محرك التثبيت الإجباري (الزرار السحري) ---
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // منع كروم من إظهار الرسالة الافتراضية
+            e.preventDefault();
+            // حفظ الحدث عشان نستخدمه لما المندوب يدوس على الزرار
+            deferredPrompt = e;
+            // إظهار زرار التثبيت بتاعنا
+            const installBtn = document.getElementById('installPwaBtn');
+            installBtn.style.display = 'inline-block';
+            
+            installBtn.addEventListener('click', async () => {
+                // إخفاء الزرار
+                installBtn.style.display = 'none';
+                // إظهار رسالة التثبيت
+                deferredPrompt.prompt();
+                // انتظار رد المندوب
+                const { outcome } = await deferredPrompt.userChoice;
+                // تصفير الحدث
+                deferredPrompt = null;
+            });
+        });
+        
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('Captain SW Registered!', reg))
-                    .catch(err => console.log('Captain SW Failed!', err));
+                    .then(reg => console.log('Captain SW Registered!'))
+                    .catch(err => console.log('Captain SW Failed!'));
             });
         }
     </script>
