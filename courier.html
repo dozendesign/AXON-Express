@@ -109,7 +109,7 @@
         .card-price { font-weight: 900; color: var(--primary-red); font-size: 18px; text-align: left; white-space: nowrap; background: #FEF2F2; padding: 5px 10px; border-radius: 10px;}
         .card-dist { font-size: 11px; background: var(--primary-blue); color: white; padding: 3px 8px; border-radius: 8px; font-weight: bold;}
 
-        /* الإشعار الخارجي على الطرد */
+        /* الإشعار الخارجي المربوط برقم الطرد فقط */
         .card-chat-badge {
             position: absolute; top: -8px; left: -8px; background: var(--primary-red); color: white; 
             min-width: 22px; height: 22px; border-radius: 50%; font-size: 11px; display: flex; align-items: center; 
@@ -253,7 +253,7 @@
         <div class="modal-content" style="height: 88vh; padding:20px; background:var(--bg-color);">
             <button class="close-btn" onclick="window.closeChatModal()"><i class="fa-solid fa-xmark"></i></button>
             <h3 style="color:var(--primary-blue); margin-top:10px; border-bottom:2px solid var(--primary-red); padding-bottom:15px; text-align:center; font-size:18px;">
-                <i class="fa-solid fa-comments"></i> محادثة: <span id="chatMerchantEmail">...</span>
+                <i class="fa-solid fa-comments"></i> محادثة بخصوص الطرد
             </h3>
             
             <div id="callMerchantBtnArea" style="margin-bottom: 15px;"></div>
@@ -289,11 +289,13 @@
         let notifiedTasks = new Set(); 
         let globalOrdersData = {}; 
         
+        // التعديل الجوهري: الشات بقى مربوط برقم الطرد مش بالتاجر
+        let currentChatOrderId = "";
         let currentChatMerchant = "";
         let chatUnsubscribe = null;
         let globalChatUnsubscribe = null;
         let wakeLock = null;
-        let unreadMessagesByMerchant = {}; // عداد الرسايل المقروءة
+        let unreadMessagesByOrder = {}; // العداد مربوط برقم الطرد
 
         function formatTime(ts) {
             if(!ts) return "";
@@ -326,11 +328,10 @@
             if(btn) { btn.innerHTML = 'تسجيل الدخول'; btn.disabled = false; }
         }
 
-        // تحديث الإشعارات الخارجية على كروت الطرود في الشاشة الرئيسية
-        window.updateOuterBadges = (merchantEmail) => {
-            const count = unreadMessagesByMerchant[merchantEmail] || 0;
-            // ندور على أي كارت بيحمل إيميل التاجر ده ونعدل النقطة الحمرا اللي عليه
-            document.querySelectorAll(`.out-badge[data-merchant="${merchantEmail}"]`).forEach(el => {
+        // تحديث الإشعارات الخارجية على كروت الطرود في الشاشة الرئيسية بالـ ID
+        window.updateOuterBadges = (orderId) => {
+            const count = unreadMessagesByOrder[orderId] || 0;
+            document.querySelectorAll(`.out-badge[data-order="${orderId}"]`).forEach(el => {
                 if(count > 0) {
                     el.innerText = count;
                     el.style.display = 'flex';
@@ -395,16 +396,17 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الاتصال...'; btn.disabled = true;
 
             try { 
-                // Warmup للـ Audio بمجرد تدخل المستخدم
+                // خدعة فك الحظر عن الصوت (Muted Warmup)
                 const msgAudio = document.getElementById('msgSound');
-                msgAudio.volume = 0; msgAudio.play().then(()=>{msgAudio.pause(); msgAudio.volume=1;}).catch(e=>{});
+                msgAudio.muted = true;
+                msgAudio.play().then(()=>{ msgAudio.pause(); msgAudio.muted = false; }).catch(e=>{});
                 
                 await signInWithEmailAndPassword(auth, u, p); 
             } 
             catch(e) { resetLoginBtn(); Swal.fire('خطأ في الدخول', 'بيانات غير صحيحة.', 'error'); }
         };
 
-        // --- 📡 المراقب الخلفي للرسايل والتنبيهات الصوتية ---
+        // --- 📡 المراقب الخلفي للرسايل (مربوط بالـ ID) ---
         function startGlobalChatListener() {
             if(globalChatUnsubscribe) globalChatUnsubscribe();
             
@@ -415,33 +417,34 @@
                 snap.docChanges().forEach((change) => {
                     if (change.type === "added") {
                         const msgData = change.doc.data();
+                        const targetOrderId = msgData.orderId || 'general'; // دعم لو التاجر لسه محدثش
                         
-                        if(msgData.from !== currentCaptain && !msgData.isRead && currentChatMerchant !== msgData.from) {
+                        if(msgData.from !== currentCaptain && !msgData.isRead && currentChatOrderId !== targetOrderId) {
                             
-                            unreadMessagesByMerchant[msgData.from] = (unreadMessagesByMerchant[msgData.from] || 0) + 1;
+                            unreadMessagesByOrder[targetOrderId] = (unreadMessagesByOrder[targetOrderId] || 0) + 1;
                             
                             if(!initialLoad) {
-                                // تشغيل التنبيه الصوتي بقوة
+                                // تشغيل التنبيه الصوتي الإجباري والاهتزاز العنيف
                                 const snd = document.getElementById('msgSound');
                                 snd.currentTime = 0; 
-                                snd.play().catch(e=>console.log("Audio block:", e));
+                                let playPromise = snd.play();
+                                if (playPromise !== undefined) { playPromise.catch(e => {}); }
                                 
-                                if(navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                                if(navigator.vibrate) navigator.vibrate([300, 100, 300, 100, 300]); // SOS Vibrate
                                 
                                 Swal.fire({
                                     toast: true, position: 'top', icon: 'info',
-                                    title: `رسالة جديدة من التاجر`,
+                                    title: `رسالة بخصوص الطرد`,
                                     text: msgData.message.substring(0, 30) + '...',
                                     showConfirmButton: false, timer: 4000
                                 });
                             }
                             
-                            // تحديث الشاشة عشان النقط الحمرا تظهر
                             if(document.getElementById('orderDetailsModal').style.display === 'flex') {
-                                const badge = document.getElementById(`badge-${msgData.from}`);
-                                if(badge) { badge.innerText = unreadMessagesByMerchant[msgData.from]; badge.style.display = 'flex'; }
+                                const badge = document.getElementById(`badge-${targetOrderId}`);
+                                if(badge) { badge.innerText = unreadMessagesByOrder[targetOrderId]; badge.style.display = 'flex'; }
                             }
-                            window.updateOuterBadges(msgData.from);
+                            window.updateOuterBadges(targetOrderId);
                         }
                     }
                 });
@@ -453,17 +456,14 @@
             isOnline = !isOnline;
             const btn = document.getElementById('shiftBtn'), dot = document.getElementById('statusDot'), txt = document.getElementById('statusTxt');
             
-            // Warmup للصوت عشان يشتغل بعد كده بدون مشاكل
+            // Warmup تاني للتأكيد
             const msgAudio = document.getElementById('msgSound');
-            msgAudio.volume = 0; msgAudio.play().then(()=>{msgAudio.pause(); msgAudio.volume=1;}).catch(e=>{});
+            msgAudio.muted = true; msgAudio.play().then(()=>{msgAudio.pause(); msgAudio.muted=false;}).catch(e=>{});
 
             if(isOnline) {
                 btn.innerText = "إنهاء الوردية"; btn.style.background = "var(--primary-red)";
                 dot.className = "pulse-online"; txt.innerText = "متصل بالرادار 🟢";
                 Swal.fire({toast:true, position:'top', icon:'success', title:'وردية سعيدة يا بطل', showConfirmButton:false, timer:2000});
-                
-                const alertAud = document.getElementById('alertSound');
-                alertAud.volume = 0; alertAud.play().then(()=>{alertAud.pause(); alertAud.volume=1;}).catch(e=>{});
                 
                 requestWakeLock();
                 updateCourierStatus("online");
@@ -517,14 +517,14 @@
                         const awb = d.awb || "AXN...";
                         const timeStr = formatTime(d.timestamp);
                         
-                        let unread = unreadMessagesByMerchant[d.merchantEmail] || 0;
+                        let unread = unreadMessagesByOrder[d.id] || 0;
                         let badgeDisplay = unread > 0 ? 'flex' : 'none';
 
                         html += `
                             <div class="compact-card" onclick="window.openOrderDetails('${d.id}', 'manifest')">
                                 <div class="card-icon" style="color:var(--primary-blue); position:relative;">
                                     <i class="fa-solid fa-box-open"></i>
-                                    <div class="card-chat-badge out-badge" data-merchant="${d.merchantEmail}" style="display:${badgeDisplay};">${unread}</div>
+                                    <div class="card-chat-badge out-badge" data-order="${d.id}" style="display:${badgeDisplay};">${unread}</div>
                                 </div>
                                 <div class="card-info">
                                     <h4 class="card-title">${awb}</h4>
@@ -583,14 +583,14 @@
                     if(d.status === "تم الاستلام بواسطة المندوب" && d.courierName === currentCaptain){
                         myTasksCount++;
                         
-                        let unread = unreadMessagesByMerchant[d.merchantEmail] || 0;
+                        let unread = unreadMessagesByOrder[id] || 0;
                         let badgeDisplay = unread > 0 ? 'flex' : 'none';
 
                         myTasksHtml += `
                             <div class="compact-card" style="border-right-color: ${typeColor};" onclick="window.openOrderDetails('${id}', 'radar')">
                                 <div class="card-icon" style="background:${typeBg}; color:${typeColor}; position:relative;">
                                     <i class="fa-solid ${typeIcon}"></i>
-                                    <div class="card-chat-badge out-badge" data-merchant="${d.merchantEmail}" style="display:${badgeDisplay};">${unread}</div>
+                                    <div class="card-chat-badge out-badge" data-order="${id}" style="display:${badgeDisplay};">${unread}</div>
                                 </div>
                                 <div class="card-info">
                                     <h4 class="card-title">${d.merchantEmail.split('@')[0]}</h4>
@@ -623,13 +623,6 @@
                 
                 const badge = document.getElementById('tasksBadge');
                 if(myTasksCount > 0) { badge.style.display = 'flex'; badge.innerText = myTasksCount; } else { badge.style.display = 'none'; }
-
-                if(newAlert && isOnline) {
-                    const audio = document.getElementById('alertSound');
-                    audio.play().catch(e => {});
-                    if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
-                    if (Notification.permission === "granted") { new Notification("🚨 أكسون رادار", { body: "في أوردر جديد قريب منك، افتح التطبيق!" }); }
-                }
             });
         }
 
@@ -637,7 +630,7 @@
             const data = globalOrdersData[id];
             if(!data) return;
             
-            let unreadCount = unreadMessagesByMerchant[data.merchantEmail] || 0;
+            let unreadCount = unreadMessagesByOrder[id] || 0;
             let badgeDisplay = unreadCount > 0 ? 'flex' : 'none';
 
             let contentHtml = `
@@ -671,9 +664,9 @@
                     contentHtml += `
                         <div class="btn-grid">
                             <button class="btn-u btn-nav" onclick="window.openNativeMap('${encodeURIComponent(data.address)}')"><i class="fa-solid fa-location-arrow"></i> خرائط الملاحة</button>
-                            <button class="btn-u btn-contact" onclick="window.openChatModal('${data.merchantEmail}')">
-                                <i class="fa-solid fa-comments"></i> محادثة التاجر
-                                <span class="chat-notification-badge" id="badge-${data.merchantEmail}" style="display:${badgeDisplay};">${unreadCount}</span>
+                            <button class="btn-u btn-contact" onclick="window.openChatModal('${data.merchantEmail}', '${id}')">
+                                <i class="fa-solid fa-comments"></i> محادثة بخصوص الطرد
+                                <span class="chat-notification-badge" id="badge-${id}" style="display:${badgeDisplay};">${unreadCount}</span>
                             </button>
                             <button class="btn-u btn-done" onclick="window.completeTask('${id}', '${data.linkedShipmentId || ''}', 'radar')"><i class="fa-solid fa-check-double"></i> إنهاء التسليم بنجاح</button>
                         </div>
@@ -691,9 +684,9 @@
                     </div>
                     <div class="btn-grid">
                         <button class="btn-u btn-nav" onclick="window.openNativeMap('${encodeURIComponent(data.city + ' ' + data.address)}')"><i class="fa-solid fa-location-arrow"></i> الملاحة للعنوان</button>
-                        <button class="btn-u btn-contact" onclick="window.openChatModal('${data.merchantEmail}')">
-                            <i class="fa-solid fa-comments"></i> محادثة التاجر
-                            <span class="chat-notification-badge" id="badge-${data.merchantEmail}" style="display:${badgeDisplay};">${unreadCount}</span>
+                        <button class="btn-u btn-contact" onclick="window.openChatModal('${data.merchantEmail}', '${id}')">
+                            <i class="fa-solid fa-comments"></i> محادثة بخصوص الطرد
+                            <span class="chat-notification-badge" id="badge-${id}" style="display:${badgeDisplay};">${unreadCount}</span>
                         </button>
                         <button class="btn-u btn-done" onclick="window.completeTask('${id}', null, 'manifest')"><i class="fa-solid fa-check-double"></i> تم التسليم وقبض الكاش</button>
                         <button class="btn-u btn-ignore" style="grid-column: span 2;" onclick="window.markReturn('${id}')"><i class="fa-solid fa-rotate-left"></i> محاولة فاشلة (تأجيل/مرتجع)</button>
@@ -761,15 +754,16 @@
             }
         };
 
-        window.openChatModal = async (email) => {
+        // التعديل: فتح الشات المخصص للطرد فقط
+        window.openChatModal = async (email, orderId) => {
             document.getElementById('orderDetailsModal').style.display = 'none';
             currentChatMerchant = email;
+            currentChatOrderId = orderId || 'general';
             
-            // تصفير عداد الرسايل المقروءة أول ما يفتح الشات
-            unreadMessagesByMerchant[email] = 0;
-            window.updateOuterBadges(email); // إخفاء النقط الحمرا من الكروت
+            // تصفير عداد الرسايل للطرد ده
+            unreadMessagesByOrder[currentChatOrderId] = 0;
+            window.updateOuterBadges(currentChatOrderId); 
             
-            document.getElementById('chatMerchantEmail').innerText = email.split('@')[0];
             document.getElementById('chatModal').style.display = 'flex';
 
             let phone = "مخفي"; let callBtnHtml = "";
@@ -790,15 +784,15 @@
                     let md = doc.data();
                     msgs.push({id: doc.id, ...md});
                     
-                    // تحويل الرسايل لمقروءة لو كانت جيالي وأنا فاتح الشات
-                    if(md.to === currentCaptain && !md.isRead && md.from === email) {
+                    if(md.to === currentCaptain && !md.isRead && md.from === email && md.orderId === currentChatOrderId) {
                         updateDoc(doc.ref, { isRead: true }).catch(e=>{});
                     }
                 });
                 msgs.sort((a,b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
 
                 msgs.forEach(m => {
-                    if((m.from === currentCaptain && m.to === email) || (m.from === email && m.to === currentCaptain) || (m.to === currentCaptain && m.from === "admin@axon.com")) {
+                    // فلترة الرسايل عشان نعرض رسايل الطرد ده بس (أو الرسايل القديمة لو ملهاش orderId)
+                    if(m.orderId === currentChatOrderId || (!m.orderId && ((m.from === email && m.to === currentCaptain) || (m.from === currentCaptain && m.to === email)))) {
                         
                         let msgClass = "chat-other";
                         let senderName = "التاجر";
@@ -816,7 +810,7 @@
                 });
                 
                 const chatBox = document.getElementById('chatBoxCourier');
-                chatBox.innerHTML = html || "<div style='text-align:center; color:#9CA3AF; margin-top:50px;'><i class='fa-solid fa-handshake fa-3x' style='margin-bottom:15px; color:#E5E7EB;'></i><br><span style='font-weight:bold; font-size:15px;'>ابدأ المحادثة مع التاجر.</span></div>";
+                chatBox.innerHTML = html || "<div style='text-align:center; color:#9CA3AF; margin-top:50px;'><i class='fa-solid fa-handshake fa-3x' style='margin-bottom:15px; color:#E5E7EB;'></i><br><span style='font-weight:bold; font-size:15px;'>ابدأ المحادثة بخصوص الطرد ده.</span></div>";
                 setTimeout(() => chatBox.scrollTop = chatBox.scrollHeight, 100);
             });
         };
@@ -825,6 +819,7 @@
             document.getElementById('chatModal').style.display = 'none';
             if(chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
             currentChatMerchant = ""; 
+            currentChatOrderId = "";
         };
 
         window.sendChatMessage = async () => {
@@ -832,7 +827,16 @@
             const msg = input.value.trim();
             if(!msg || !currentChatMerchant) return;
             input.value = ""; 
-            try { await addDoc(collection(db, "internal_chats"), { from: currentCaptain, to: currentChatMerchant, message: msg, timestamp: new Date(), isRead: false }); } catch(e) {}
+            try { 
+                await addDoc(collection(db, "internal_chats"), { 
+                    from: currentCaptain, 
+                    to: currentChatMerchant, 
+                    orderId: currentChatOrderId, // حفظ الرسالة للـ ID ده
+                    message: msg, 
+                    timestamp: new Date(), 
+                    isRead: false 
+                }); 
+            } catch(e) {}
         };
 
         window.logout = () => signOut(auth).then(() => window.location.reload());
