@@ -75,7 +75,7 @@
         .shift-btn { background: var(--primary-blue); color: white; border: none; padding: 10px 25px; border-radius: 12px; font-weight: bold; font-family:'Cairo'; font-size:15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.3s; }
         .shift-btn:active { transform: scale(0.95); }
         
-        /* التابات السفلية العائمة (Glassmorphism) */
+        /* التابات السفلية العائمة */
         .bottom-nav {
             position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 500px;
             background: var(--glass-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); display: flex; justify-content: space-around; padding: 12px 5px;
@@ -94,14 +94,14 @@
         .page-tab { display: none; padding: 0 20px 20px 20px; animation: fadeInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .page-tab.active { display: block; }
         
-        /* تصميم الكارت المايباخ */
+        /* تصميم الكارت */
         .compact-card {
             background: var(--white); padding: 15px; border-radius: 20px; display: flex; align-items: center; 
             justify-content: space-between; box-shadow: var(--soft-shadow); margin-bottom: 15px; cursor: pointer;
-            border-right: 5px solid var(--primary-blue); transition: all 0.3s ease; position: relative; overflow: hidden;
+            border-right: 5px solid var(--primary-blue); transition: all 0.3s ease; position: relative; overflow: visible;
         }
         .compact-card:active { transform: scale(0.97); }
-        .card-icon { width: 50px; height: 50px; border-radius: 14px; background: #EEF2FF; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-left: 15px; flex-shrink: 0; transition: background 0.3s;}
+        .card-icon { width: 50px; height: 50px; border-radius: 14px; background: #EEF2FF; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-left: 15px; flex-shrink: 0; transition: background 0.3s; position: relative;}
         .card-info { flex: 1; overflow: hidden;}
         .card-title { font-weight: 900; font-size: 16px; margin: 0; color: var(--dark-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 8px;}
         .card-sub { font-size: 13px; color: #6B7280; margin: 4px 0 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 700;}
@@ -109,11 +109,17 @@
         .card-price { font-weight: 900; color: var(--primary-red); font-size: 18px; text-align: left; white-space: nowrap; background: #FEF2F2; padding: 5px 10px; border-radius: 10px;}
         .card-dist { font-size: 11px; background: var(--primary-blue); color: white; padding: 3px 8px; border-radius: 8px; font-weight: bold;}
 
-        /* المودال الانسيابي */
+        /* الإشعار الخارجي على الطرد */
+        .card-chat-badge {
+            position: absolute; top: -8px; left: -8px; background: var(--primary-red); color: white; 
+            min-width: 22px; height: 22px; border-radius: 50%; font-size: 11px; display: flex; align-items: center; 
+            justify-content: center; font-weight: 900; border: 2px solid var(--white); box-shadow: 0 3px 6px rgba(217,4,41,0.5); z-index: 10;
+        }
+
+        /* المودال */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); align-items: flex-end; justify-content: center; z-index: 2000; padding: 0;}
         .modal-content { background: var(--bg-color); padding: 30px 25px; border-top-left-radius: 30px; border-top-right-radius: 30px; width: 100%; max-width: 600px; position: relative; max-height: 92vh; overflow-y: auto; animation: slideUpSmooth 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 -10px 40px rgba(0,0,0,0.15);}
         
-        /* ⚠️ تعديل: زرار الإغلاق بقى جوه المربع عشان ميتقصش في الشاشات الصغيرة */
         .close-btn { position: absolute; top: 15px; left: 15px; background: rgba(217, 4, 41, 0.1); border: none; font-size: 20px; cursor: pointer; color: var(--primary-red); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s; z-index: 10;}
         .close-btn:active { transform: scale(0.9); background: rgba(217, 4, 41, 0.2); }
         
@@ -128,7 +134,6 @@
         .btn-done { background: linear-gradient(135deg, #10B981, #059669); color: white; grid-column: span 2; font-size: 18px; box-shadow: 0 8px 20px rgba(16,185,129,0.3);}
         .btn-contact { background: #1F2937; color: white; grid-column: span 2; }
         
-        /* شارة الإشعار على زرار الشات */
         .chat-notification-badge { position: absolute; top: -5px; right: -5px; background: var(--primary-red); color: white; width: 20px; height: 20px; border-radius: 50%; font-size: 11px; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(217,4,41,0.5); font-weight: bold; border: 2px solid white; display: none; }
 
         /* الشات */
@@ -149,7 +154,6 @@
         body.dark-mode .chat-other { background: #374151; color: #fff; border-color: #4B5563;}
         body.dark-mode .close-btn { background: rgba(217, 4, 41, 0.2); }
 
-        /* Keyframes Animations */
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
         @keyframes slideUpSmooth { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes fadeInUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -157,20 +161,8 @@
         
         .swal2-container { font-family: 'Cairo', sans-serif !important; z-index: 99999 !important; }
         
-        /* زرار التثبيت الإجباري */
         #installPwaBtn {
-            display: none; 
-            background: linear-gradient(135deg, #10B981, #059669); 
-            border: none; 
-            color: white; 
-            padding: 6px 15px; 
-            border-radius: 12px; 
-            font-family: 'Cairo'; 
-            font-weight: bold; 
-            font-size: 13px; 
-            cursor: pointer; 
-            box-shadow: 0 4px 10px rgba(16,185,129,0.3);
-            animation: pulse 2s infinite;
+            display: none; background: linear-gradient(135deg, #10B981, #059669); border: none; color: white; padding: 6px 15px; border-radius: 12px; font-family: 'Cairo'; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 10px rgba(16,185,129,0.3); animation: pulse 2s infinite;
         }
     </style>
 </head>
@@ -254,8 +246,7 @@
     <audio id="msgSound" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3" preload="auto"></audio>
 
     <div id="orderDetailsModal" class="modal">
-        <div class="modal-content" id="orderDetailsContent">
-            </div>
+        <div class="modal-content" id="orderDetailsContent"></div>
     </div>
 
     <div id="chatModal" class="modal">
@@ -302,7 +293,7 @@
         let chatUnsubscribe = null;
         let globalChatUnsubscribe = null;
         let wakeLock = null;
-        let unreadMessagesByMerchant = {}; // عداد الرسايل اللي متقرتش
+        let unreadMessagesByMerchant = {}; // عداد الرسايل المقروءة
 
         function formatTime(ts) {
             if(!ts) return "";
@@ -321,7 +312,7 @@
         const requestWakeLock = async () => {
             if ('wakeLock' in navigator) {
                 try { wakeLock = await navigator.wakeLock.request('screen'); } 
-                catch (err) { console.log('WakeLock error:', err); }
+                catch (err) {}
             }
         };
         const releaseWakeLock = () => { if (wakeLock !== null) { wakeLock.release(); wakeLock = null; } };
@@ -334,6 +325,20 @@
             const btn = document.getElementById('loginBtn');
             if(btn) { btn.innerHTML = 'تسجيل الدخول'; btn.disabled = false; }
         }
+
+        // تحديث الإشعارات الخارجية على كروت الطرود في الشاشة الرئيسية
+        window.updateOuterBadges = (merchantEmail) => {
+            const count = unreadMessagesByMerchant[merchantEmail] || 0;
+            // ندور على أي كارت بيحمل إيميل التاجر ده ونعدل النقطة الحمرا اللي عليه
+            document.querySelectorAll(`.out-badge[data-merchant="${merchantEmail}"]`).forEach(el => {
+                if(count > 0) {
+                    el.innerText = count;
+                    el.style.display = 'flex';
+                } else {
+                    el.style.display = 'none';
+                }
+            });
+        };
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -359,9 +364,7 @@
                         document.getElementById('cInitials').innerText = currentCaptain.substring(0, 2).toUpperCase();
                         resetLoginBtn();
                         
-                        // تشغيل رادار الرسايل الخلفي
                         startGlobalChatListener();
-                        
                         loadManifest(); 
                     } else {
                         await signOut(auth);
@@ -391,16 +394,21 @@
             if(!u || !p) return Swal.fire('بيانات ناقصة', 'أدخل الإيميل كاملاً والباسورد', 'warning');
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الاتصال...'; btn.disabled = true;
 
-            try { await signInWithEmailAndPassword(auth, u, p); } 
+            try { 
+                // Warmup للـ Audio بمجرد تدخل المستخدم
+                const msgAudio = document.getElementById('msgSound');
+                msgAudio.volume = 0; msgAudio.play().then(()=>{msgAudio.pause(); msgAudio.volume=1;}).catch(e=>{});
+                
+                await signInWithEmailAndPassword(auth, u, p); 
+            } 
             catch(e) { resetLoginBtn(); Swal.fire('خطأ في الدخول', 'بيانات غير صحيحة.', 'error'); }
         };
 
-        // --- 📡 المراقب الخلفي للرسايل (الإنذارات اللحظية) ---
+        // --- 📡 المراقب الخلفي للرسايل والتنبيهات الصوتية ---
         function startGlobalChatListener() {
             if(globalChatUnsubscribe) globalChatUnsubscribe();
             
             const chatQ = query(collection(db, "internal_chats"), or(where("from", "==", currentCaptain), where("to", "==", currentCaptain)));
-            
             let initialLoad = true;
             
             globalChatUnsubscribe = onSnapshot(chatQ, (snap) => {
@@ -408,30 +416,32 @@
                     if (change.type === "added") {
                         const msgData = change.doc.data();
                         
-                        // لو الرسالة مش مني، ومش مقروءة، والشات مش مفتوح دلوقتي مع نفس الشخص
                         if(msgData.from !== currentCaptain && !msgData.isRead && currentChatMerchant !== msgData.from) {
                             
-                            // زيادة العداد للتاجر ده
                             unreadMessagesByMerchant[msgData.from] = (unreadMessagesByMerchant[msgData.from] || 0) + 1;
                             
-                            // تشغيل إنذارات (لو مش أول تحميل للصفحة)
                             if(!initialLoad) {
-                                document.getElementById('msgSound').play().catch(e=>{});
+                                // تشغيل التنبيه الصوتي بقوة
+                                const snd = document.getElementById('msgSound');
+                                snd.currentTime = 0; 
+                                snd.play().catch(e=>console.log("Audio block:", e));
+                                
                                 if(navigator.vibrate) navigator.vibrate([100, 50, 100]);
                                 
                                 Swal.fire({
                                     toast: true, position: 'top', icon: 'info',
                                     title: `رسالة جديدة من التاجر`,
                                     text: msgData.message.substring(0, 30) + '...',
-                                    showConfirmButton: false, timer: 3000
+                                    showConfirmButton: false, timer: 4000
                                 });
                             }
                             
                             // تحديث الشاشة عشان النقط الحمرا تظهر
                             if(document.getElementById('orderDetailsModal').style.display === 'flex') {
-                                // لو فاتح تفاصيل الأوردر حدث الزرار
-                                updateChatBadgeInModal(msgData.from);
+                                const badge = document.getElementById(`badge-${msgData.from}`);
+                                if(badge) { badge.innerText = unreadMessagesByMerchant[msgData.from]; badge.style.display = 'flex'; }
                             }
+                            window.updateOuterBadges(msgData.from);
                         }
                     }
                 });
@@ -439,24 +449,21 @@
             });
         }
 
-        function updateChatBadgeInModal(merchantEmail) {
-            const badge = document.getElementById(`badge-${merchantEmail}`);
-            if(badge && unreadMessagesByMerchant[merchantEmail] > 0) {
-                badge.innerText = unreadMessagesByMerchant[merchantEmail];
-                badge.style.display = 'flex';
-            }
-        }
-
         window.toggleShift = () => {
             isOnline = !isOnline;
             const btn = document.getElementById('shiftBtn'), dot = document.getElementById('statusDot'), txt = document.getElementById('statusTxt');
+            
+            // Warmup للصوت عشان يشتغل بعد كده بدون مشاكل
+            const msgAudio = document.getElementById('msgSound');
+            msgAudio.volume = 0; msgAudio.play().then(()=>{msgAudio.pause(); msgAudio.volume=1;}).catch(e=>{});
+
             if(isOnline) {
                 btn.innerText = "إنهاء الوردية"; btn.style.background = "var(--primary-red)";
                 dot.className = "pulse-online"; txt.innerText = "متصل بالرادار 🟢";
                 Swal.fire({toast:true, position:'top', icon:'success', title:'وردية سعيدة يا بطل', showConfirmButton:false, timer:2000});
                 
-                const audio = document.getElementById('alertSound');
-                audio.volume = 0; audio.play().catch(e=>{}); setTimeout(()=>{audio.pause(); audio.volume = 1;}, 100);
+                const alertAud = document.getElementById('alertSound');
+                alertAud.volume = 0; alertAud.play().then(()=>{alertAud.pause(); alertAud.volume=1;}).catch(e=>{});
                 
                 requestWakeLock();
                 updateCourierStatus("online");
@@ -509,9 +516,16 @@
                         globalOrdersData[d.id] = {id: d.id, source: 'manifest', ...d};
                         const awb = d.awb || "AXN...";
                         const timeStr = formatTime(d.timestamp);
+                        
+                        let unread = unreadMessagesByMerchant[d.merchantEmail] || 0;
+                        let badgeDisplay = unread > 0 ? 'flex' : 'none';
+
                         html += `
                             <div class="compact-card" onclick="window.openOrderDetails('${d.id}', 'manifest')">
-                                <div class="card-icon" style="color:var(--primary-blue);"><i class="fa-solid fa-box-open"></i></div>
+                                <div class="card-icon" style="color:var(--primary-blue); position:relative;">
+                                    <i class="fa-solid fa-box-open"></i>
+                                    <div class="card-chat-badge out-badge" data-merchant="${d.merchantEmail}" style="display:${badgeDisplay};">${unread}</div>
+                                </div>
                                 <div class="card-info">
                                     <h4 class="card-title">${awb}</h4>
                                     <p class="card-sub">${d.merchantEmail.split('@')[0]} ➡️ ${d.city}</p>
@@ -568,9 +582,16 @@
 
                     if(d.status === "تم الاستلام بواسطة المندوب" && d.courierName === currentCaptain){
                         myTasksCount++;
+                        
+                        let unread = unreadMessagesByMerchant[d.merchantEmail] || 0;
+                        let badgeDisplay = unread > 0 ? 'flex' : 'none';
+
                         myTasksHtml += `
                             <div class="compact-card" style="border-right-color: ${typeColor};" onclick="window.openOrderDetails('${id}', 'radar')">
-                                <div class="card-icon" style="background:${typeBg}; color:${typeColor};"><i class="fa-solid ${typeIcon}"></i></div>
+                                <div class="card-icon" style="background:${typeBg}; color:${typeColor}; position:relative;">
+                                    <i class="fa-solid ${typeIcon}"></i>
+                                    <div class="card-chat-badge out-badge" data-merchant="${d.merchantEmail}" style="display:${badgeDisplay};">${unread}</div>
+                                </div>
                                 <div class="card-info">
                                     <h4 class="card-title">${d.merchantEmail.split('@')[0]}</h4>
                                     <p class="card-sub">${d.address.split(',')[0]}</p>
@@ -619,7 +640,6 @@
             let unreadCount = unreadMessagesByMerchant[data.merchantEmail] || 0;
             let badgeDisplay = unreadCount > 0 ? 'flex' : 'none';
 
-            // ⚠️ زرار الإغلاق (X) بقى جوه المربع بدل ما يطير
             let contentHtml = `
                 <button class="close-btn" onclick="document.getElementById('orderDetailsModal').style.display='none'"><i class="fa-solid fa-chevron-down"></i></button>
                 <div style="text-align:center; margin-bottom:25px; padding-top:35px;">
@@ -745,12 +765,11 @@
             document.getElementById('orderDetailsModal').style.display = 'none';
             currentChatMerchant = email;
             
-            // تصفير عداد الرسايل المقروءة
+            // تصفير عداد الرسايل المقروءة أول ما يفتح الشات
             unreadMessagesByMerchant[email] = 0;
+            window.updateOuterBadges(email); // إخفاء النقط الحمرا من الكروت
             
             document.getElementById('chatMerchantEmail').innerText = email.split('@')[0];
-            
-            // ⚠️ زرار الإغلاق (X) جوه المودال هنا كمان
             document.getElementById('chatModal').style.display = 'flex';
 
             let phone = "مخفي"; let callBtnHtml = "";
@@ -805,7 +824,7 @@
         window.closeChatModal = () => {
             document.getElementById('chatModal').style.display = 'none';
             if(chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
-            currentChatMerchant = ""; // تصفير الشات الحالي
+            currentChatMerchant = ""; 
         };
 
         window.sendChatMessage = async () => {
@@ -819,7 +838,6 @@
         window.logout = () => signOut(auth).then(() => window.location.reload());
         window.toggleTheme = () => document.body.classList.toggle('dark-mode');
         
-        // --- محرك التثبيت الإجباري (الزرار السحري) ---
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
