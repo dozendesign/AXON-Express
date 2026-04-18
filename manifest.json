@@ -2,7 +2,7 @@
   "name": "Axon Express Merchant",
   "short_name": "AXON",
   "description": "بوابة تجار أكسون إكسبريس لإدارة الشحنات",
-  "start_url": "./",
+  "start_url": "./merchant.html",
   "display": "standalone",
   "background_color": "#f4f7f6",
   "theme_color": "#0A3D62",
@@ -10,7 +10,7 @@
   "icons": [
     {
       "src": "icon-512.png",
-      "sizes": "512x512",
+      "sizes": "192x192 512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
