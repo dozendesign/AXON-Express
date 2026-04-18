@@ -198,7 +198,7 @@
     </header>
 
     <div class="container" id="mainContainer">
-        <div id="authLoading" style="text-align:center; padding:50px; display:none;">
+        <div id="authLoading" style="text-align:center; padding:50px; display:block;">
             <i class="fa-solid fa-spinner fa-spin fa-3x" style="color:var(--primary-blue); margin-bottom:15px;"></i>
             <h3 style="color:var(--primary-blue); font-family:'Cairo';">جاري مزامنة المحطة...</h3>
         </div>
@@ -479,7 +479,7 @@
         
         const auth = getAuth(app);
         
-        // التعديل: إجبار التخزين على الذاكرة الدائمة عشان تسجيل الخروج ميطيرش مع الـ PWA
+        // إجبار التخزين على الذاكرة الدائمة عشان تسجيل الخروج ميطيرش مع الـ PWA
         setPersistence(auth, browserLocalPersistence).catch(e => console.log("Persistence error:", e));
 
         const db = getFirestore(app);
@@ -514,10 +514,9 @@
         document.getElementById('authLoading').style.display = 'block';
 
         onAuthStateChanged(auth, async (user) => {
-            document.getElementById('authLoading').style.display = 'none'; // نخفي التحميل
-
             if (user) {
-                document.getElementById('mainDashboard').style.display = 'block'; // نظهر التطبيق
+                document.getElementById('authLoading').style.display = 'none';
+                document.getElementById('mainDashboard').style.display = 'block';
                 
                 merchantEmail = user.email;
                 merchantName = merchantEmail.split('@')[0];
@@ -552,7 +551,10 @@
                 loadShipments();
                 loadMerchantRadar();
             } else { 
-                window.location.href = "index.html"; // لو مفيش يوزر فعلا بعد البحث، وديه يسجل دخول
+                // تأخير بسيط لمنع الوميض قبل التحويل لصفحة الدخول
+                setTimeout(() => {
+                    if(!auth.currentUser) window.location.href = "index.html"; 
+                }, 800);
             }
         });
 
