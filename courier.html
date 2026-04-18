@@ -113,24 +113,29 @@
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); align-items: flex-end; justify-content: center; z-index: 2000; padding: 0;}
         .modal-content { background: var(--bg-color); padding: 30px 25px; border-top-left-radius: 30px; border-top-right-radius: 30px; width: 100%; max-width: 600px; position: relative; max-height: 92vh; overflow-y: auto; animation: slideUpSmooth 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 -10px 40px rgba(0,0,0,0.15);}
         
-        .close-btn { position: absolute; top: -55px; left: 50%; transform: translateX(-50%); background: var(--white); border: none; font-size: 20px; cursor: pointer; color: var(--primary-red); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: 0.3s;}
-        .close-btn:active { transform: translateX(-50%) scale(0.9); }
+        /* ⚠️ تعديل: زرار الإغلاق بقى جوه المربع عشان ميتقصش في الشاشات الصغيرة */
+        .close-btn { position: absolute; top: 15px; left: 15px; background: rgba(217, 4, 41, 0.1); border: none; font-size: 20px; cursor: pointer; color: var(--primary-red); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s; z-index: 10;}
+        .close-btn:active { transform: scale(0.9); background: rgba(217, 4, 41, 0.2); }
         
         .detail-box { background: var(--white); padding: 18px; border-radius: 20px; margin-bottom: 15px; box-shadow: var(--soft-shadow); border: 1px solid rgba(0,0,0,0.02);}
         
         .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px;}
-        .btn-u { padding: 14px; border-radius: 15px; border: none; font-family: 'Cairo'; font-weight: 900; cursor: pointer; transition: 0.3s; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px;}
+        .btn-u { padding: 14px; border-radius: 15px; border: none; font-family: 'Cairo'; font-weight: 900; cursor: pointer; transition: 0.3s; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; position: relative;}
         .btn-u:active { transform: scale(0.96); }
         .btn-claim { background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue)); color: white; grid-column: span 2; font-size: 18px; box-shadow: 0 8px 20px rgba(30,58,138,0.3);}
         .btn-ignore { background: #FEF2F2; color: var(--primary-red); }
         .btn-nav { background: #EEF2FF; color: var(--primary-blue); }
         .btn-done { background: linear-gradient(135deg, #10B981, #059669); color: white; grid-column: span 2; font-size: 18px; box-shadow: 0 8px 20px rgba(16,185,129,0.3);}
         .btn-contact { background: #1F2937; color: white; grid-column: span 2; }
+        
+        /* شارة الإشعار على زرار الشات */
+        .chat-notification-badge { position: absolute; top: -5px; right: -5px; background: var(--primary-red); color: white; width: 20px; height: 20px; border-radius: 50%; font-size: 11px; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(217,4,41,0.5); font-weight: bold; border: 2px solid white; display: none; }
 
         /* الشات */
         .chat-bubble { padding: 12px 18px; border-radius: 20px; max-width: 82%; font-size: 14px; line-height: 1.5; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 10px; clear: both; font-weight: 600;}
         .chat-mine { background: #DCF8C6; float: left; border-bottom-left-radius: 5px; color: #000; }
         .chat-other { background: #ffffff; float: right; border-bottom-right-radius: 5px; color: #000; border: 1px solid #E5E7EB;}
+        .chat-admin { background: #FEF2F2; float: right; border-bottom-right-radius: 5px; color: #D90429; border: 1px solid #FCA5A5; }
 
         body.dark-mode { --bg-color: #0F172A; --white: #1F2937; --dark-text: #F9FAFB; --soft-shadow: 0 10px 25px rgba(0,0,0,0.2); --glass-bg: rgba(31, 41, 55, 0.85); }
         body.dark-mode .app-container { background: #0F172A; }
@@ -142,6 +147,7 @@
         body.dark-mode .card-price { background: #450a0a; }
         body.dark-mode .modal-content { background: #0F172A; border-top: 1px solid #374151;}
         body.dark-mode .chat-other { background: #374151; color: #fff; border-color: #4B5563;}
+        body.dark-mode .close-btn { background: rgba(217, 4, 41, 0.2); }
 
         /* Keyframes Animations */
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
@@ -192,7 +198,6 @@
             </div>
             <div style="display:flex; gap:12px; align-items:center;">
                 <button id="installPwaBtn"><i class="fa-solid fa-download"></i> تثبيت</button>
-                
                 <button onclick="window.toggleTheme()" style="background:none; border:none; color:var(--primary-blue); font-size:24px; transition:0.3s;"><i class="fa-solid fa-moon"></i></button>
                 <button onclick="window.logout()" style="background:none; border:none; color:var(--primary-red); font-size:22px; transition:0.3s;"><i class="fa-solid fa-power-off"></i></button>
             </div>
@@ -246,6 +251,7 @@
     </div>
 
     <audio id="alertSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+    <audio id="msgSound" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3" preload="auto"></audio>
 
     <div id="orderDetailsModal" class="modal">
         <div class="modal-content" id="orderDetailsContent">
@@ -274,7 +280,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, doc, updateDoc, getDoc, addDoc, query, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, doc, updateDoc, getDoc, addDoc, query, where, or } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         
         const app = initializeApp({
             apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
@@ -294,7 +300,9 @@
         
         let currentChatMerchant = "";
         let chatUnsubscribe = null;
+        let globalChatUnsubscribe = null;
         let wakeLock = null;
+        let unreadMessagesByMerchant = {}; // عداد الرسايل اللي متقرتش
 
         function formatTime(ts) {
             if(!ts) return "";
@@ -351,6 +359,9 @@
                         document.getElementById('cInitials').innerText = currentCaptain.substring(0, 2).toUpperCase();
                         resetLoginBtn();
                         
+                        // تشغيل رادار الرسايل الخلفي
+                        startGlobalChatListener();
+                        
                         loadManifest(); 
                     } else {
                         await signOut(auth);
@@ -366,6 +377,7 @@
                 document.getElementById('loginSection').style.display = 'flex';
                 document.getElementById('appContent').style.display = 'none';
                 if(watchId) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+                if(globalChatUnsubscribe) { globalChatUnsubscribe(); globalChatUnsubscribe = null; }
                 releaseWakeLock();
                 resetLoginBtn();
             }
@@ -382,6 +394,58 @@
             try { await signInWithEmailAndPassword(auth, u, p); } 
             catch(e) { resetLoginBtn(); Swal.fire('خطأ في الدخول', 'بيانات غير صحيحة.', 'error'); }
         };
+
+        // --- 📡 المراقب الخلفي للرسايل (الإنذارات اللحظية) ---
+        function startGlobalChatListener() {
+            if(globalChatUnsubscribe) globalChatUnsubscribe();
+            
+            const chatQ = query(collection(db, "internal_chats"), or(where("from", "==", currentCaptain), where("to", "==", currentCaptain)));
+            
+            let initialLoad = true;
+            
+            globalChatUnsubscribe = onSnapshot(chatQ, (snap) => {
+                snap.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        const msgData = change.doc.data();
+                        
+                        // لو الرسالة مش مني، ومش مقروءة، والشات مش مفتوح دلوقتي مع نفس الشخص
+                        if(msgData.from !== currentCaptain && !msgData.isRead && currentChatMerchant !== msgData.from) {
+                            
+                            // زيادة العداد للتاجر ده
+                            unreadMessagesByMerchant[msgData.from] = (unreadMessagesByMerchant[msgData.from] || 0) + 1;
+                            
+                            // تشغيل إنذارات (لو مش أول تحميل للصفحة)
+                            if(!initialLoad) {
+                                document.getElementById('msgSound').play().catch(e=>{});
+                                if(navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                                
+                                Swal.fire({
+                                    toast: true, position: 'top', icon: 'info',
+                                    title: `رسالة جديدة من التاجر`,
+                                    text: msgData.message.substring(0, 30) + '...',
+                                    showConfirmButton: false, timer: 3000
+                                });
+                            }
+                            
+                            // تحديث الشاشة عشان النقط الحمرا تظهر
+                            if(document.getElementById('orderDetailsModal').style.display === 'flex') {
+                                // لو فاتح تفاصيل الأوردر حدث الزرار
+                                updateChatBadgeInModal(msgData.from);
+                            }
+                        }
+                    }
+                });
+                initialLoad = false;
+            });
+        }
+
+        function updateChatBadgeInModal(merchantEmail) {
+            const badge = document.getElementById(`badge-${merchantEmail}`);
+            if(badge && unreadMessagesByMerchant[merchantEmail] > 0) {
+                badge.innerText = unreadMessagesByMerchant[merchantEmail];
+                badge.style.display = 'flex';
+            }
+        }
 
         window.toggleShift = () => {
             isOnline = !isOnline;
@@ -551,17 +615,23 @@
         window.openOrderDetails = (id, source) => {
             const data = globalOrdersData[id];
             if(!data) return;
+            
+            let unreadCount = unreadMessagesByMerchant[data.merchantEmail] || 0;
+            let badgeDisplay = unreadCount > 0 ? 'flex' : 'none';
 
-            let contentHtml = `<button class="close-btn" onclick="document.getElementById('orderDetailsModal').style.display='none'"><i class="fa-solid fa-chevron-down"></i></button>`;
+            // ⚠️ زرار الإغلاق (X) بقى جوه المربع بدل ما يطير
+            let contentHtml = `
+                <button class="close-btn" onclick="document.getElementById('orderDetailsModal').style.display='none'"><i class="fa-solid fa-chevron-down"></i></button>
+                <div style="text-align:center; margin-bottom:25px; padding-top:35px;">
+                    <div style="background:${data.typeColor || 'var(--primary-blue)'}; color:white; width:80px; height:80px; border-radius:25px; display:flex; align-items:center; justify-content:center; font-size:35px; margin:0 auto 15px auto; box-shadow:0 10px 20px rgba(0,0,0,0.15);"><i class="fa-solid ${data.typeIcon || 'fa-box-open'}"></i></div>
+                    <h2 style="margin:0; color:var(--dark-text); font-size:24px; font-weight:900;">${data.merchantEmail.split('@')[0]}</h2>
+                    <div style="font-size:28px; font-weight:900; color:var(--primary-red); margin-top:8px;">${data.amount || data.codText} ${source === 'manifest' ? 'ج.م' : ''}</div>
+                </div>
+            `;
             
             if(source === 'radar') {
                 let isMine = data.status === "تم الاستلام بواسطة المندوب" && data.courierName === currentCaptain;
                 contentHtml += `
-                    <div style="text-align:center; margin-bottom:25px; padding-top:15px;">
-                        <div style="background:${data.typeColor}; color:white; width:80px; height:80px; border-radius:25px; display:flex; align-items:center; justify-content:center; font-size:35px; margin:0 auto 15px auto; box-shadow:0 10px 20px rgba(0,0,0,0.15);"><i class="fa-solid ${data.typeIcon}"></i></div>
-                        <h2 style="margin:0; color:var(--dark-text); font-size:24px; font-weight:900;">${data.merchantEmail.split('@')[0]}</h2>
-                        <div style="font-size:28px; font-weight:900; color:var(--primary-red); margin-top:8px;">${data.codText}</div>
-                    </div>
                     <div class="detail-box">
                         <b style="color:var(--primary-blue); font-size:15px;"><i class="fa-solid fa-circle-info"></i> التفاصيل الدقيقة:</b><br><span style="color:#4B5563; display:block; margin-top:8px; font-weight:600; line-height:1.6;">${data.details}</span>
                     </div>
@@ -581,18 +651,16 @@
                     contentHtml += `
                         <div class="btn-grid">
                             <button class="btn-u btn-nav" onclick="window.openNativeMap('${encodeURIComponent(data.address)}')"><i class="fa-solid fa-location-arrow"></i> خرائط الملاحة</button>
-                            <button class="btn-u btn-contact" onclick="window.openChatModal('${data.merchantEmail}')"><i class="fa-solid fa-comments"></i> محادثة التاجر</button>
+                            <button class="btn-u btn-contact" onclick="window.openChatModal('${data.merchantEmail}')">
+                                <i class="fa-solid fa-comments"></i> محادثة التاجر
+                                <span class="chat-notification-badge" id="badge-${data.merchantEmail}" style="display:${badgeDisplay};">${unreadCount}</span>
+                            </button>
                             <button class="btn-u btn-done" onclick="window.completeTask('${id}', '${data.linkedShipmentId || ''}', 'radar')"><i class="fa-solid fa-check-double"></i> إنهاء التسليم بنجاح</button>
                         </div>
                     `;
                 }
             } else if (source === 'manifest') {
                 contentHtml += `
-                    <div style="text-align:center; margin-bottom:25px; padding-top:15px;">
-                        <div style="background:var(--primary-blue); color:white; width:80px; height:80px; border-radius:25px; display:flex; align-items:center; justify-content:center; font-size:35px; margin:0 auto 15px auto; box-shadow:0 10px 20px rgba(30,58,138,0.2);"><i class="fa-solid fa-box-open"></i></div>
-                        <h2 style="margin:0; color:var(--dark-text); font-size:26px; font-weight:900; letter-spacing:1px;">${data.awb || 'AXN...'}</h2>
-                        <div style="font-size:28px; font-weight:900; color:var(--primary-red); margin-top:8px;">${data.amount} ج.م</div>
-                    </div>
                     <div class="detail-box">
                         <div style="margin-bottom:12px;"><b><i class="fa-solid fa-user" style="color:var(--primary-blue); width:20px;"></i> المستلم:</b> <span style="color:#4B5563; font-weight:700;">${data.name}</span></div>
                         <div style="margin-bottom:12px;"><b><i class="fa-solid fa-phone" style="color:var(--primary-blue); width:20px;"></i> التليفون:</b> <span dir="ltr" style="font-weight:900; color:var(--primary-red); font-size:16px;">${data.phone}</span></div>
@@ -603,7 +671,10 @@
                     </div>
                     <div class="btn-grid">
                         <button class="btn-u btn-nav" onclick="window.openNativeMap('${encodeURIComponent(data.city + ' ' + data.address)}')"><i class="fa-solid fa-location-arrow"></i> الملاحة للعنوان</button>
-                        <button class="btn-u btn-contact" onclick="window.openChatModal('${data.merchantEmail}')"><i class="fa-solid fa-comments"></i> رسالة للتاجر</button>
+                        <button class="btn-u btn-contact" onclick="window.openChatModal('${data.merchantEmail}')">
+                            <i class="fa-solid fa-comments"></i> محادثة التاجر
+                            <span class="chat-notification-badge" id="badge-${data.merchantEmail}" style="display:${badgeDisplay};">${unreadCount}</span>
+                        </button>
                         <button class="btn-u btn-done" onclick="window.completeTask('${id}', null, 'manifest')"><i class="fa-solid fa-check-double"></i> تم التسليم وقبض الكاش</button>
                         <button class="btn-u btn-ignore" style="grid-column: span 2;" onclick="window.markReturn('${id}')"><i class="fa-solid fa-rotate-left"></i> محاولة فاشلة (تأجيل/مرتجع)</button>
                     </div>
@@ -661,7 +732,6 @@
             loadRadar(); 
         };
 
-        // إصلاح كود الملاحة لفتح تطبيق Google Maps مباشرة بأعلى دقة
         window.openNativeMap = (addr) => {
             const isAndroid = /android/i.test(navigator.userAgent || navigator.vendor || window.opera);
             if(isAndroid) { 
@@ -674,7 +744,13 @@
         window.openChatModal = async (email) => {
             document.getElementById('orderDetailsModal').style.display = 'none';
             currentChatMerchant = email;
+            
+            // تصفير عداد الرسايل المقروءة
+            unreadMessagesByMerchant[email] = 0;
+            
             document.getElementById('chatMerchantEmail').innerText = email.split('@')[0];
+            
+            // ⚠️ زرار الإغلاق (X) جوه المودال هنا كمان
             document.getElementById('chatModal').style.display = 'flex';
 
             let phone = "مخفي"; let callBtnHtml = "";
@@ -691,14 +767,32 @@
             
             chatUnsubscribe = onSnapshot(collection(db, "internal_chats"), (snap) => {
                 let html = ""; let msgs = [];
-                snap.forEach(doc => msgs.push(doc.data()));
+                snap.forEach(doc => {
+                    let md = doc.data();
+                    msgs.push({id: doc.id, ...md});
+                    
+                    // تحويل الرسايل لمقروءة لو كانت جيالي وأنا فاتح الشات
+                    if(md.to === currentCaptain && !md.isRead && md.from === email) {
+                        updateDoc(doc.ref, { isRead: true }).catch(e=>{});
+                    }
+                });
                 msgs.sort((a,b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
 
                 msgs.forEach(m => {
-                    if((m.from === currentCaptain && m.to === email) || (m.from === email && m.to === currentCaptain)) {
-                        const isMe = m.from === currentCaptain;
-                        const msgClass = isMe ? "chat-mine" : "chat-other";
-                        html += `<div class="chat-bubble ${msgClass}"><b style="font-size:11px; color:#9CA3AF; display:block; margin-bottom:5px;">${isMe?'أنت':'التاجر'}</b>${m.message}</div>`;
+                    if((m.from === currentCaptain && m.to === email) || (m.from === email && m.to === currentCaptain) || (m.to === currentCaptain && m.from === "admin@axon.com")) {
+                        
+                        let msgClass = "chat-other";
+                        let senderName = "التاجر";
+                        
+                        if(m.from === currentCaptain) {
+                            msgClass = "chat-mine";
+                            senderName = "أنت";
+                        } else if(m.from === "admin@axon.com" || m.from.includes('AXON')) {
+                            msgClass = "chat-admin";
+                            senderName = "🚨 الإدارة العليا";
+                        }
+
+                        html += `<div class="chat-bubble ${msgClass}"><b style="font-size:11px; opacity:0.7; display:block; margin-bottom:5px;">${senderName}</b>${m.message}</div>`;
                     }
                 });
                 
@@ -711,6 +805,7 @@
         window.closeChatModal = () => {
             document.getElementById('chatModal').style.display = 'none';
             if(chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
+            currentChatMerchant = ""; // تصفير الشات الحالي
         };
 
         window.sendChatMessage = async () => {
@@ -718,7 +813,7 @@
             const msg = input.value.trim();
             if(!msg || !currentChatMerchant) return;
             input.value = ""; 
-            try { await addDoc(collection(db, "internal_chats"), { from: currentCaptain, to: currentChatMerchant, message: msg, timestamp: new Date() }); } catch(e) {}
+            try { await addDoc(collection(db, "internal_chats"), { from: currentCaptain, to: currentChatMerchant, message: msg, timestamp: new Date(), isRead: false }); } catch(e) {}
         };
 
         window.logout = () => signOut(auth).then(() => window.location.reload());
@@ -727,22 +822,15 @@
         // --- محرك التثبيت الإجباري (الزرار السحري) ---
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
-            // منع كروم من إظهار الرسالة الافتراضية
             e.preventDefault();
-            // حفظ الحدث عشان نستخدمه لما المندوب يدوس على الزرار
             deferredPrompt = e;
-            // إظهار زرار التثبيت بتاعنا
             const installBtn = document.getElementById('installPwaBtn');
             installBtn.style.display = 'inline-block';
             
             installBtn.addEventListener('click', async () => {
-                // إخفاء الزرار
                 installBtn.style.display = 'none';
-                // إظهار رسالة التثبيت
                 deferredPrompt.prompt();
-                // انتظار رد المندوب
                 const { outcome } = await deferredPrompt.userChoice;
-                // تصفير الحدث
                 deferredPrompt = null;
             });
         });
