@@ -109,13 +109,19 @@
         #printArea { display: none; }
         @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            body { background: white; color: black; font-size: 11px; } /* تصغير الخط ليتسع بالورقة */
+            body { background: white; color: black; font-size: 11px; width: 100%; } /* تصغير الخط ليتسع بالورقة */
             header, .branch-filter-box, .tabs, .btn-action, .modal { display: none !important; }
             .container { display: none !important; } 
             #printArea { display: block !important; width: 100%; margin: 0; padding: 0; }
             @page { margin: 5mm; size: A4 portrait; } /* فرض المقاس وهوامش ضيقة */
             
-            .print-wrapper { max-width: 100%; margin: 0 auto; padding: 10px; }
+            .print-wrapper { 
+                width: 100% !important; 
+                max-width: 100% !important; 
+                margin: 0 !important; 
+                padding: 5mm !important;
+                box-sizing: border-box !important;
+            }
             .print-header { border-bottom: 3px solid #0A3D62; padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
             .print-header h1 { margin: 0; color: #0A3D62; font-size: 20px; }
             .print-header p { margin: 5px 0 0 0; font-weight: bold; }
@@ -135,6 +141,7 @@
                 text-align: center; 
                 word-wrap: break-word !important; 
                 overflow-wrap: break-word !important;
+                word-break: break-word !important;
                 white-space: normal !important;
             }
             .print-table th { background: #0A3D62 !important; color: white !important; }
@@ -340,7 +347,7 @@
         
         let gD = { shipments: [], radar: [] };
         let lP = {}; 
-        let sD = { merchants: {}, couriers: {} }; // الهيكل الجديد اللي هيشيل التفاصيل
+        let sD = { merchants: {}, couriers: {} }; 
 
         let adminRole = localStorage.getItem('axon_user_role') || 'super_admin';
         let adminBranch = localStorage.getItem('axon_branch') || 'all';
@@ -591,13 +598,13 @@
 
                     <div class="section-divider">📦 أولاً: المانيفست (بوالص الشحن)</div>
                     <table class="print-table">
-                        <thead><tr><th>البوليصة</th><th>التاجر</th><th>المستلم</th><th>المبلغ المحصل</th><th>الحالة التي أقرها المندوب</th></tr></thead>
+                        <thead><tr><th style="width:20%;">البوليصة</th><th style="width:20%;">التاجر</th><th style="width:25%;">المستلم</th><th style="width:15%;">المبلغ المحصل</th><th style="width:20%;">الحالة التي أقرها المندوب</th></tr></thead>
                         <tbody>${document.getElementById('cmShipmentsBody').innerHTML}</tbody>
                     </table>
 
                     <div class="section-divider">📡 ثانياً: مهام الرادار والبيكب السريعة</div>
                     <table class="print-table">
-                        <thead><tr><th>التفاصيل</th><th>العنوان</th><th>نظام الدفع</th><th>الحالة</th></tr></thead>
+                        <thead><tr><th style="width:30%;">التفاصيل</th><th style="width:30%;">العنوان</th><th style="width:20%;">نظام الدفع</th><th style="width:20%;">الحالة</th></tr></thead>
                         <tbody>${document.getElementById('cmRadarBody').innerHTML}</tbody>
                     </table>
 
@@ -633,7 +640,7 @@
 
                     <div class="section-divider">بيان البوالص المُسلمة بنجاح</div>
                     <table class="print-table">
-                        <thead><tr><th>التاريخ</th><th>البوليصة</th><th>المستلم (المدينة)</th><th>COD</th><th>مخصوم شحن</th><th>الصافي</th></tr></thead>
+                        <thead><tr><th style="width:15%;">التاريخ</th><th style="width:20%;">البوليصة</th><th style="width:25%;">المستلم (المدينة)</th><th style="width:12%;">COD</th><th style="width:13%;">مخصوم شحن</th><th style="width:15%;">الصافي</th></tr></thead>
                         <tbody>${document.getElementById('mmShipmentsBody').innerHTML}</tbody>
                     </table>
 
