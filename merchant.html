@@ -455,7 +455,7 @@
         }
         document.addEventListener('DOMContentLoaded', () => { applyLang(localStorage.getItem('axon_lang') || 'ar'); });
 
-        // تفعيل الإذن للصوت فور لمس الشاشة لأول مرة
+        // تفعيل الإذن للصوت
         document.body.addEventListener('click', function unlockAudio() {
             const snd = document.getElementById('msgSound');
             if(snd) { snd.muted = true; snd.play().then(()=>{ snd.pause(); snd.muted=false; }).catch(e=>{}); }
@@ -478,8 +478,6 @@
         });
         
         const auth = getAuth(app);
-        
-        // إجبار التخزين على الذاكرة الدائمة عشان تسجيل الخروج ميطيرش مع الـ PWA
         setPersistence(auth, browserLocalPersistence).catch(e => console.log("Persistence error:", e));
 
         const db = getFirestore(app);
@@ -510,11 +508,14 @@
             });
         };
 
-        // نظهر شاشة التحميل الأول لحد ما Firebase يقرر فيه يوزر مسجل ولا لأ
-        document.getElementById('authLoading').style.display = 'block';
+        // حارس الذاكرة (Gatekeeper) لتأخير التحويل وتجنب الخروج الوهمي
+        let isAuthChecked = false;
 
         onAuthStateChanged(auth, async (user) => {
+            isAuthChecked = true;
             if (user) {
+                // حفظ علم الدخول
+                localStorage.setItem('axon_merchant_remember', 'yes');
                 document.getElementById('authLoading').style.display = 'none';
                 document.getElementById('mainDashboard').style.display = 'block';
                 
@@ -551,14 +552,30 @@
                 loadShipments();
                 loadMerchantRadar();
             } else { 
-                // تأخير بسيط لمنع الوميض قبل التحويل لصفحة الدخول
-                setTimeout(() => {
-                    if(!auth.currentUser) window.location.href = "index.html"; 
-                }, 800);
+                const remembered = localStorage.getItem('axon_merchant_remember');
+                if (remembered === 'yes') {
+                    // ندي للفايربيز فرصة يقرأ الكوكيز لو الموبايل بطيء
+                    setTimeout(() => {
+                        if(!auth.currentUser) {
+                            localStorage.removeItem('axon_merchant_remember');
+                            window.location.href = "index.html";
+                        }
+                    }, 2500);
+                } else {
+                    window.location.href = "index.html";
+                }
             }
         });
 
-        // --- 📡 المراقب الخلفي للرسايل (الإنذارات اللحظية للتاجر) ---
+        // حماية إضافية لو الـ Firebase نام خالص
+        setTimeout(() => {
+            if(!isAuthChecked) {
+                if(localStorage.getItem('axon_merchant_remember') !== 'yes') {
+                    window.location.href = "index.html";
+                }
+            }
+        }, 5000);
+
         function startGlobalChatListener() {
             if(globalChatUnsubscribe) globalChatUnsubscribe();
             
@@ -599,13 +616,15 @@
             });
         }
 
-        window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
+        window.logout = () => {
+            localStorage.removeItem('axon_merchant_remember');
+            signOut(auth).then(() => window.location.href = "index.html");
+        };
 
         window.showCourierTrack = (courierName, orderId) => {
             currentChatCourier = courierName;
             currentChatOrderId = orderId || 'general';
             
-            // تصفير وإخفاء اللمبة الحمرا
             unreadMessagesByOrder[currentChatOrderId] = 0;
             window.updateOuterBadges(currentChatOrderId);
 
@@ -706,7 +725,6 @@
             window.updateShippingCalc();
         };
 
-        // هندسة الحاسبة وتعديل التأمين
         window.updateShippingCalc = () => {
             const city = document.getElementById('recCity').value.trim().toLowerCase();
             const cod = Number(document.getElementById('codAmount').value) || 0;
@@ -714,21 +732,16 @@
             
             let baseFee = window.getCityPrice(city);
             
-            // حساب الوزن الزائد (2 كيلو مجاناً، بعد كده 10 جنيه للكيلو)
             let overWeightFee = 0;
             if (weight > 2) { overWeightFee = Math.ceil(weight - 2) * 10; }
 
-            // حساب التأمين لو مختار VIP
             let insuranceFee = 0;
             if (document.getElementById('fragileType').value === 'insured') {
                 const realVal = Number(document.getElementById('itemRealValue').value) || 0;
-                insuranceFee = realVal * 0.10; // 10%
+                insuranceFee = realVal * 0.10; 
             }
             
-            // مصاريف الشحن الكلية (بدون التأمين)
             let totalShippingFee = baseFee + overWeightFee;
-            
-            // الـ COD الإجمالي (البضاعة + مصاريف الشحن فقط)
             let finalAmount = cod + totalShippingFee;
             
             document.getElementById('lblCodAmount').innerText = cod + " ج.م";
@@ -738,14 +751,12 @@
             
             document.getElementById('lblShippingFee').innerHTML = feeString + ` = <b>${totalShippingFee} ج.م</b>`;
             
-            // إظهار الإجمالي ولو في تأمين يظهر في سطر مستقل
             let totalHTML = `${finalAmount} ج.م`;
             if(insuranceFee > 0) {
                 totalHTML += `<br><span style="font-size:13px; color:#0A3D62; display:block; margin-top:5px; background:#e0f7fa; padding:5px; border-radius:5px; border:1px solid #00acc1;"><i class="fa-solid fa-hand-holding-dollar"></i> رسوم تأمين (${insuranceFee} ج.م) تُدفع كاش للمندوب الآن</span>`;
             }
             document.getElementById('lblTotalAmount').innerHTML = totalHTML;
             
-            // حفظ المتغيرات عشان نستدعيها وقت الإرسال للفايربيز
             window.currentCalculatedShipping = totalShippingFee;
             window.currentInsuranceFee = insuranceFee;
             window.checkCityFilter(); 
