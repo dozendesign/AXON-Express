@@ -106,12 +106,19 @@
         .track-btn:hover, .print-btn:hover { opacity: 0.9; transform: translateY(-2px); }
         .awb-badge { background: #e0eaf5; color: var(--primary-blue); padding: 5px 12px; border-radius: 6px; font-weight: bold;}
         
+        /* بادج الإشعارات المخصص للطرد */
+        .card-chat-badge {
+            position: absolute; background: var(--primary-red); color: white;
+            min-width: 22px; height: 22px; border-radius: 50%; font-size: 11px; display: flex; align-items: center;
+            justify-content: center; font-weight: 900; border: 2px solid var(--white); box-shadow: 0 3px 6px rgba(217,4,41,0.5); z-index: 10; display: none;
+        }
+
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; z-index: 2000; padding: 15px; backdrop-filter: blur(5px);}
         .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto; position: relative; animation: fadeIn 0.4s ease;}
         .input-group label { font-size: 14px; font-weight: bold; color: var(--primary-blue); margin-top: 12px; display: block; }
         .input-group input, .input-group select, .modal-content textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo'; background: var(--white); color: var(--dark-text); transition: 0.3s;}
         .input-group input:focus, .input-group select:focus { border-color: var(--primary-blue); }
-        .close-btn { position: absolute; top: 15px; left: 15px; border: none; background: none; font-size: 24px; cursor: pointer; color: var(--primary-red); transition: 0.3s;}
+        .close-btn { position: absolute; top: 15px; left: 15px; border: none; background: none; font-size: 24px; cursor: pointer; color: var(--primary-red); transition: 0.3s; z-index: 10;}
         .close-btn:hover { transform: rotate(90deg); }
 
         .floating-chat { position: fixed; bottom: 20px; right: 20px; background: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999; text-decoration: none; transition: 0.3s;}
@@ -124,6 +131,7 @@
         .chat-bubble { padding: 10px 15px; border-radius: 15px; max-width: 80%; font-size: 13px; line-height: 1.4; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 5px; clear: both;}
         .chat-mine { background: #dcf8c6; float: left; border-bottom-left-radius: 0; color: #000; }
         .chat-other { background: #ffffff; float: right; border-bottom-right-radius: 0; color: #000; border: 1px solid #eee;}
+        .chat-admin { background: #FEF2F2; float: right; border-bottom-right-radius: 0; color: #D90429; border: 1px solid #FCA5A5; }
 
         @media (max-width: 600px) {
             header { padding: 12px 10px; flex-direction: column; align-items: center; gap: 12px; }
@@ -143,6 +151,7 @@
         body.dark-mode .calc-summary { background: #1a1a2e; border-color: #333; }
         body.dark-mode .radar-card p { background: #1a1a2e; color: #ccc;}
         body.dark-mode .chat-other { background: #16213e; color: #fff; border-color: #333;}
+        body.dark-mode .chat-admin { background: #4a1919; color: #ff8a8a; border-color: #ff8a8a; }
 
         /* الطباعة الإجبارية بالألوان */
         @media print {
@@ -175,6 +184,8 @@
     </style>
 </head>
 <body>
+    <audio id="msgSound" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3" preload="auto"></audio>
+
     <header id="mainHeader">
         <a href="#" class="logo"><i class="fa-solid fa-truck-fast"></i> AXON <span data-i18n="logo_span">EXPRESS</span></a>
         <div class="header-actions">
@@ -263,7 +274,7 @@
     <div id="trackChatModal" class="modal">
         <div class="modal-content" style="padding: 15px; max-width: 600px; height: 90vh; display: flex; flex-direction: column;">
             <button class="close-btn" onclick="window.closeTrackChat()">✖</button>
-            <h3 style="color:var(--primary-blue); margin-top:0; border-bottom:2px solid var(--primary-red); padding-bottom:10px;">
+            <h3 style="color:var(--primary-blue); margin-top:0; border-bottom:2px solid var(--primary-red); padding-bottom:10px; position:relative;">
                 <i class="fa-solid fa-map-location-dot"></i> تتبع وتواصل مع: <span id="chatCourierName" style="color:var(--primary-red);">...</span>
             </h3>
             <div id="merchantMap" style="height: 200px; width: 100%; border-radius: 12px; border: 2px solid var(--primary-blue); margin-bottom: 15px; z-index: 1;"></div>
@@ -437,11 +448,18 @@
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { let key = el.getAttribute('data-i18n-placeholder'); if(i18nDict[lang] && i18nDict[lang][key]) el.setAttribute('placeholder', i18nDict[lang][key]); });
         }
         document.addEventListener('DOMContentLoaded', () => { applyLang(localStorage.getItem('axon_lang') || 'ar'); });
+
+        // تفعيل الإذن للصوت فور لمس الشاشة لأول مرة
+        document.body.addEventListener('click', function unlockAudio() {
+            const snd = document.getElementById('msgSound');
+            if(snd) { snd.muted = true; snd.play().then(()=>{ snd.pause(); snd.muted=false; }).catch(e=>{}); }
+            document.body.removeEventListener('click', unlockAudio);
+        }, { once: true });
     </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, where, or, setDoc, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const app = initializeApp({
@@ -454,18 +472,36 @@
         });
         
         const auth = getAuth(app);
+        // التعديل: إجبار التخزين على الذاكرة الدائمة عشان تسجيل الخروج ميطيرش مع الـ PWA
+        setPersistence(auth, browserLocalPersistence).catch(e => console.log("Persistence error:", e));
+
         const db = getFirestore(app);
         
         let merchantEmail = "", merchantName = "", merchantIP = "جاري التحقق...", merchantPhone = "غير مسجل", merchantAddress = "غير مسجل", branchName = "المركز الرئيسي";
         let livePrices = { alex: 0, cairo: 0, beheira: 0, delta: 0, saeed: 0 };
         
         let currentChatCourier = "";
+        let currentChatOrderId = "";
+        let unreadMessagesByOrder = {}; 
         let chatUnsubscribe = null;
+        let globalChatUnsubscribe = null;
         let merchantMap = null;
         let courierMarker = null;
 
         fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ merchantIP = d.ip; }).catch(e=>{ merchantIP = "غير معروف"; });
         const deviceInfo = navigator.userAgent.substring(0, 40) + "..."; 
+
+        window.updateOuterBadges = (orderId) => {
+            const count = unreadMessagesByOrder[orderId] || 0;
+            document.querySelectorAll(`.out-badge[data-order="${orderId}"]`).forEach(el => {
+                if(count > 0) {
+                    el.innerText = count;
+                    el.style.display = 'flex';
+                } else {
+                    el.style.display = 'none';
+                }
+            });
+        };
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -498,15 +534,63 @@
                     }
                 });
 
+                startGlobalChatListener();
                 loadShipments();
                 loadMerchantRadar();
             } else { window.location.href = "index.html"; }
         });
 
+        // --- 📡 المراقب الخلفي للرسايل (الإنذارات اللحظية للتاجر) ---
+        function startGlobalChatListener() {
+            if(globalChatUnsubscribe) globalChatUnsubscribe();
+            
+            const chatQ = query(collection(db, "internal_chats"), where("to", "==", merchantEmail));
+            let initialLoad = true;
+            
+            globalChatUnsubscribe = onSnapshot(chatQ, (snap) => {
+                snap.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        const msgData = change.doc.data();
+                        const targetOrderId = msgData.orderId || 'general';
+                        
+                        if(!msgData.isRead && currentChatOrderId !== targetOrderId) {
+                            
+                            unreadMessagesByOrder[targetOrderId] = (unreadMessagesByOrder[targetOrderId] || 0) + 1;
+                            
+                            if(!initialLoad) {
+                                const snd = document.getElementById('msgSound');
+                                snd.currentTime = 0; 
+                                let playPromise = snd.play();
+                                if (playPromise !== undefined) { playPromise.catch(e => {}); }
+                                
+                                if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
+                                
+                                Swal.fire({
+                                    toast: true, position: 'top', icon: 'info',
+                                    title: `رسالة بخصوص الطرد`,
+                                    text: msgData.message.substring(0, 30) + '...',
+                                    showConfirmButton: false, timer: 4000
+                                });
+                            }
+                            
+                            window.updateOuterBadges(targetOrderId);
+                        }
+                    }
+                });
+                initialLoad = false;
+            });
+        }
+
         window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
 
-        window.showCourierTrack = (courierName) => {
+        window.showCourierTrack = (courierName, orderId) => {
             currentChatCourier = courierName;
+            currentChatOrderId = orderId || 'general';
+            
+            // تصفير وإخفاء اللمبة الحمرا
+            unreadMessagesByOrder[currentChatOrderId] = 0;
+            window.updateOuterBadges(currentChatOrderId);
+
             document.getElementById('chatCourierName').innerText = courierName;
             document.getElementById('trackChatModal').style.display = 'flex';
 
@@ -519,25 +603,32 @@
 
             if(chatUnsubscribe) chatUnsubscribe();
             
-            const chatQ = query(
-                collection(db, "internal_chats"),
-                or(
-                    where("from", "==", merchantEmail),
-                    where("to", "==", merchantEmail)
-                )
-            );
+            const chatQ = query(collection(db, "internal_chats"), or(where("from", "==", merchantEmail), where("to", "==", merchantEmail)));
             
             chatUnsubscribe = onSnapshot(chatQ, (snap) => {
                 let html = "";
                 let msgs = [];
-                snap.forEach(doc => msgs.push(doc.data()));
+                snap.forEach(doc => {
+                    let md = doc.data();
+                    msgs.push({id: doc.id, ...md});
+                    
+                    if(md.to === merchantEmail && !md.isRead && md.orderId === currentChatOrderId) {
+                        updateDoc(doc.ref, { isRead: true }).catch(e=>{});
+                    }
+                });
                 msgs.sort((a,b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
 
                 msgs.forEach(m => {
-                    if((m.from === merchantEmail && m.to === courierName) || (m.from === courierName && m.to === merchantEmail)) {
-                        const isMe = m.from === merchantEmail;
-                        const msgClass = isMe ? "chat-mine" : "chat-other";
-                        const senderName = isMe ? "أنت" : "الكابتن";
+                    if(m.orderId === currentChatOrderId || (!m.orderId && ((m.from === merchantEmail && m.to === courierName) || (m.from === courierName && m.to === merchantEmail)))) {
+                        
+                        let isMe = m.from === merchantEmail;
+                        let msgClass = isMe ? "chat-mine" : "chat-other";
+                        let senderName = isMe ? "أنت" : "الكابتن";
+                        
+                        if(m.from === "admin@axon.com" || m.from.includes('AXON')) {
+                            msgClass = "chat-admin";
+                            senderName = "🚨 الإدارة العليا";
+                        }
                         
                         html += `<div class="chat-bubble ${msgClass}">
                                     <b style="font-size: 10px; color: #666; display: block; margin-bottom: 2px;">${senderName}</b>
@@ -547,7 +638,7 @@
                 });
                 
                 const chatBox = document.getElementById('chatBox');
-                chatBox.innerHTML = html || "<div style='text-align:center; color:gray; font-size:13px; margin-top:30px;'><i class='fa-solid fa-comments fa-2x'></i><br><br>الخط الآمن مفتوح.. ابدأ المحادثة مع الكابتن الآن.</div>";
+                chatBox.innerHTML = html || "<div style='text-align:center; color:gray; font-size:13px; margin-top:30px;'><i class='fa-solid fa-comments fa-2x'></i><br><br>الخط الآمن مفتوح.. ابدأ المحادثة بخصوص هذا الطرد.</div>";
                 setTimeout(() => chatBox.scrollTop = chatBox.scrollHeight, 100);
             });
         };
@@ -555,6 +646,7 @@
         window.closeTrackChat = () => {
             document.getElementById('trackChatModal').style.display = 'none';
             if(chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
+            currentChatOrderId = "";
         };
 
         window.sendChatMessage = async () => {
@@ -567,8 +659,10 @@
                 await addDoc(collection(db, "internal_chats"), {
                     from: merchantEmail,
                     to: currentChatCourier,
+                    orderId: currentChatOrderId,
                     message: msg,
-                    timestamp: new Date()
+                    timestamp: new Date(),
+                    isRead: false
                 });
             } catch(e) {
                 Swal.fire('خطأ', e.message, 'error');
@@ -805,7 +899,6 @@
                 return Swal.fire('عنوان الاستلام مفقود', 'برجاء كتابة عنوان متجرك في الخانة العلوية وحفظه أولاً عشان المندوب يعرف هيستلم منين!', 'warning');
             }
 
-            // سحب الرسوم الكلية والتأمين من المتغيرات العامة
             const totalShippingFee = window.currentCalculatedShipping || window.getCityPrice(city);
             const insuranceFee = window.currentInsuranceFee || 0;
             const finalAmount = cod + totalShippingFee;
@@ -813,7 +906,6 @@
             const btn = document.getElementById('btnSave'); btn.disabled = true; btn.innerHTML = "جاري الإرسال...";
 
             try {
-                // تعديل النينجا: دمج الإنشاء وإضافة الـ AWB في خطوة واحدة لتجنب الاصطدام بالقواعد الأمنية
                 const newShipmentRef = doc(collection(db, "shipments"));
                 const awb = "AXN" + newShipmentRef.id.substring(0,5).toUpperCase();
                 
@@ -869,8 +961,14 @@
                         ? `<span class="radar-status-badge" style="background:#d4edda; color:#155724;"><i class="fa-solid fa-motorcycle"></i> مع الكابتن</span>` 
                         : `<span class="radar-status-badge"><i class="fa-solid fa-satellite-dish fa-beat"></i> مذاع للرادار</span>`;
                     
+                    let unread = unreadMessagesByOrder[d.id] || 0;
+                    let badgeDisplay = unread > 0 ? 'flex' : 'none';
+
                     let trackBtn = d.status.includes('مندوب') 
-                        ? `<button class="track-btn" onclick="window.showCourierTrack('${d.courierName || 'المندوب'}')"><i class="fa-solid fa-map-location-dot"></i> تتبع وتواصل مع المندوب</button>` 
+                        ? `<button class="track-btn" style="position:relative;" onclick="window.showCourierTrack('${d.courierName || 'المندوب'}', '${d.id}')">
+                            <i class="fa-solid fa-map-location-dot"></i> تتبع وتواصل مع المندوب
+                            <span class="card-chat-badge out-badge" data-order="${d.id}" style="display:${badgeDisplay}; right:-5px; top:-8px; left:auto;">${unread}</span>
+                           </button>` 
                         : `<button class="track-btn" style="background:#ccc; color:#666; cursor:not-allowed;" disabled><i class="fa-solid fa-spinner fa-spin"></i> في انتظار القبول...</button>`;
 
                     html += `
@@ -909,9 +1007,15 @@
                     const mAdd = d.merchantAddress || merchantAddress;
                     const mPh = d.merchantPhone || merchantPhone;
                     
+                    let unread = unreadMessagesByOrder[d.id] || 0;
+                    let badgeDisplay = unread > 0 ? 'flex' : 'none';
+
                     let trackButton = "";
                     if(d.status === "مع المندوب" || d.status.includes("مندوب")) {
-                        trackButton = `<button class="track-btn" onclick="window.showCourierTrack('${d.courierName || 'الكابتن'}')"><i class="fa-solid fa-map-location-dot"></i> تتبع الكابتن</button>`;
+                        trackButton = `<button class="track-btn" style="position:relative;" onclick="window.showCourierTrack('${d.courierName || 'الكابتن'}', '${d.id}')">
+                            <i class="fa-solid fa-map-location-dot"></i> تتبع الكابتن
+                            <span class="card-chat-badge out-badge" data-order="${d.id}" style="display:${badgeDisplay}; right:-5px; top:-8px; left:auto;">${unread}</span>
+                        </button>`;
                     }
 
                     html += `<tr>
@@ -1057,7 +1161,6 @@
             setTimeout(() => { document.getElementById('themeIcon').className = 'fa-solid fa-sun'; }, 100);
         }
         
-        // تسجيل محرك الـ Service Worker لتمكين التثبيت كـ PWA
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
