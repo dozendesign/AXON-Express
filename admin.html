@@ -141,12 +141,22 @@
         /* ---------------- CSS الطباعة (مقص الورق والإمضاء المصغر) ---------------- */
         @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            body { background: #fff; margin: 0; padding: 0; color:#000; }
+            body { background: #fff; margin: 0; padding: 0; color:#000; width: 100%; }
             header, .container, .print-controls-ui, .swal2-container, footer { display: none !important; }
             #printArea { display: block !important; width: 100%; margin: 0; padding: 0; }
             @page { margin: 5mm; size: A4 portrait; }
             
-            /* إجبار الجداول تلتزم بحجم الـ A4 */
+            /* إجبار الغلاف يتلم جوه حدود الصفحة */
+            .a4-wrapper { 
+                width: 100% !important; 
+                max-width: 100% !important; 
+                margin: 0 !important; 
+                padding: 5mm !important;
+                border: 2px solid #0A3D62 !important;
+                box-sizing: border-box !important;
+            }
+
+            /* إجبار الجداول تلتزم بحجم الـ A4 وكسر الكلام الطويل */
             .manifest-table {
                 width: 100% !important;
                 table-layout: fixed !important;
@@ -156,6 +166,7 @@
             .manifest-table th, .manifest-table td {
                 word-wrap: break-word !important;
                 overflow-wrap: break-word !important;
+                word-break: break-word !important;
                 white-space: normal !important;
                 padding: 6px 4px !important;
             }
@@ -955,7 +966,7 @@
                         <i class="fa-solid fa-quote-right"></i> أنت لست مندوباً، أنت "سفير" للشركة! إظهارك للود والاحترام للعميل أمر واجب لا نقاش فيه <i class="fa-solid fa-quote-left"></i>
                     </div>
 
-                    <table class="manifest-table"><thead><tr><th style="width:30px;">م</th><th style="width:120px;">رقم البوليصة</th><th style="width:120px;">الراسل (التاجر)</th><th>بيانات المستلم (المرسل إليه)</th><th style="width:80px;">مبلغ التحصيل</th><th style="width:100px;">الحالة (توقيع العميل)</th></tr></thead><tbody>${tableRows}</tbody></table>
+                    <table class="manifest-table"><thead><tr><th style="width:5%;">م</th><th style="width:18%;">رقم البوليصة</th><th style="width:18%;">الراسل (التاجر)</th><th style="width:34%;">بيانات المستلم (المرسل إليه)</th><th style="width:12%;">مبلغ التحصيل</th><th style="width:13%;">الحالة (توقيع العميل)</th></tr></thead><tbody>${tableRows}</tbody></table>
                     
                     <div class="manifest-footer"><h2 style="margin:0; color:#b82329;">إجمالي المبالغ النقدية بعهدة المندوب المطلوب تحصيلها: ${totalCod} ج.م</h2><p style="margin:5px 0 0 0; font-weight:bold;">(إجمالي عدد الطرود: ${targetShipments.length} طرد)</p></div>
                     
