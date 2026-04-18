@@ -198,64 +198,70 @@
     </header>
 
     <div class="container" id="mainContainer">
-        <div class="top-panel">
-            <div class="merchant-badge" id="merchantEmailDisplay">تهيئة المحطة...</div>
-            <div class="business-info-wrapper">
-                <i class="fa-solid fa-store" style="color:var(--primary-blue);"></i>
-                <input type="text" id="merchantBusinessAddress" data-i18n-placeholder="m_addr_ph" placeholder="عنوان المتجر (لاستلام الشحنات)">
-                <i class="fa-solid fa-phone" style="color:var(--primary-blue);"></i>
-                <input type="tel" id="merchantBusinessPhone" data-i18n-placeholder="m_phone_ph" placeholder="رقم المتجر (للتواصل)">
-                <button id="saveInfoBtn" style="background:var(--primary-red); color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-family:'Cairo'; font-weight:bold;" onclick="window.saveBusinessInfo()"><i class="fa-solid fa-floppy-disk"></i> <span data-i18n="save">حفظ</span></button>
+        <div id="authLoading" style="text-align:center; padding:50px; display:none;">
+            <i class="fa-solid fa-spinner fa-spin fa-3x" style="color:var(--primary-blue); margin-bottom:15px;"></i>
+            <h3 style="color:var(--primary-blue); font-family:'Cairo';">جاري مزامنة المحطة...</h3>
+        </div>
+
+        <div id="mainDashboard" style="display:none;">
+            <div class="top-panel">
+                <div class="merchant-badge" id="merchantEmailDisplay">تهيئة المحطة...</div>
+                <div class="business-info-wrapper">
+                    <i class="fa-solid fa-store" style="color:var(--primary-blue);"></i>
+                    <input type="text" id="merchantBusinessAddress" data-i18n-placeholder="m_addr_ph" placeholder="عنوان المتجر (لاستلام الشحنات)">
+                    <i class="fa-solid fa-phone" style="color:var(--primary-blue);"></i>
+                    <input type="tel" id="merchantBusinessPhone" data-i18n-placeholder="m_phone_ph" placeholder="رقم المتجر (للتواصل)">
+                    <button id="saveInfoBtn" style="background:var(--primary-red); color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-family:'Cairo'; font-weight:bold;" onclick="window.saveBusinessInfo()"><i class="fa-solid fa-floppy-disk"></i> <span data-i18n="save">حفظ</span></button>
+                </div>
             </div>
-        </div>
 
-        <div class="stats-grid">
-            <div class="stat-card"><h3 data-i18n="stat_active">إجمالي شحناتك النشطة</h3><div class="value" id="totalShipments">0</div></div>
-            <div class="stat-card"><h3 data-i18n="stat_cod">التحصيلات المتوقعة (COD)</h3><div class="value" id="totalMoney" style="color:var(--primary-red);">0 ج.م</div></div>
-        </div>
-
-        <div class="axon-plus-section">
-            <div class="axon-plus-title"><i class="fa-solid fa-layer-group"></i> <span data-i18n="srv_title">مركز العمليات وخدمات أكسون بلس</span></div>
-            <div class="services-grid">
-                <button class="btn-service btn-main-action" onclick="document.getElementById('addModal').style.display='flex'">
-                    <i class="fa-solid fa-file-invoice"></i> <span data-i18n="srv_awb">إصدار بوليصة شحن</span>
-                </button>
-                <button class="btn-service btn-eshteryly" onclick="document.getElementById('eshterylyModal').style.display='flex'">
-                    <i class="fa-solid fa-cart-shopping"></i> <span data-i18n="srv_buy">طلبات تسوق (اشتريلي)</span>
-                </button>
-                <button class="btn-service" style="background: #0EA5E9;" onclick="document.getElementById('coldModal').style.display='flex'">
-                    <i class="fa-solid fa-temperature-arrow-down"></i> <span data-i18n="srv_cold">أكسون كولد/فريش</span>
-                </button>
-                <button class="btn-service btn-home" onclick="document.getElementById('homeModal').style.display='flex'">
-                    <i class="fa-solid fa-truck-ramp-box"></i> <span data-i18n="srv_furniture">أكسون هوم (نقل الأثاث)</span>
-                </button>
-                <button class="btn-service btn-rescue" onclick="document.getElementById('rescueModal').style.display='flex'">
-                    <i class="fa-solid fa-truck-pickup"></i> <span data-i18n="srv_rescue">أكسون إنقاذ (ونش سيارات)</span>
-                </button>
+            <div class="stats-grid">
+                <div class="stat-card"><h3 data-i18n="stat_active">إجمالي شحناتك النشطة</h3><div class="value" id="totalShipments">0</div></div>
+                <div class="stat-card"><h3 data-i18n="stat_cod">التحصيلات المتوقعة (COD)</h3><div class="value" id="totalMoney" style="color:var(--primary-red);">0 ج.م</div></div>
             </div>
-        </div>
 
-        <div class="radar-merchant-section" id="merchantRadarSection">
-            <h2 class="radar-title"><i class="fa-solid fa-satellite-dish fa-beat"></i> مهام الرادار الخاصة بك (متابعة حية)</h2>
-            <div class="radar-grid" id="radarGridBody">
+            <div class="axon-plus-section">
+                <div class="axon-plus-title"><i class="fa-solid fa-layer-group"></i> <span data-i18n="srv_title">مركز العمليات وخدمات أكسون بلس</span></div>
+                <div class="services-grid">
+                    <button class="btn-service btn-main-action" onclick="document.getElementById('addModal').style.display='flex'">
+                        <i class="fa-solid fa-file-invoice"></i> <span data-i18n="srv_awb">إصدار بوليصة شحن</span>
+                    </button>
+                    <button class="btn-service btn-eshteryly" onclick="document.getElementById('eshterylyModal').style.display='flex'">
+                        <i class="fa-solid fa-cart-shopping"></i> <span data-i18n="srv_buy">طلبات تسوق (اشتريلي)</span>
+                    </button>
+                    <button class="btn-service" style="background: #0EA5E9;" onclick="document.getElementById('coldModal').style.display='flex'">
+                        <i class="fa-solid fa-temperature-arrow-down"></i> <span data-i18n="srv_cold">أكسون كولد/فريش</span>
+                    </button>
+                    <button class="btn-service btn-home" onclick="document.getElementById('homeModal').style.display='flex'">
+                        <i class="fa-solid fa-truck-ramp-box"></i> <span data-i18n="srv_furniture">أكسون هوم (نقل الأثاث)</span>
+                    </button>
+                    <button class="btn-service btn-rescue" onclick="document.getElementById('rescueModal').style.display='flex'">
+                        <i class="fa-solid fa-truck-pickup"></i> <span data-i18n="srv_rescue">أكسون إنقاذ (ونش سيارات)</span>
+                    </button>
+                </div>
             </div>
-        </div>
 
-        <input type="text" id="searchInput" class="search-box" placeholder="🔍 ابحث في سجل البوالص برقم البوليصة، الاسم، المحافظة...">
-        
-        <div class="table-responsive">
-            <table>
-                <thead><tr>
-                    <th data-i18n="th_awb">رقم البوليصة</th>
-                    <th data-i18n="th_rec">المستلم</th>
-                    <th data-i18n="th_phone">الموبايل</th>
-                    <th data-i18n="th_city">المحافظة</th>
-                    <th data-i18n="th_amt">المبلغ الإجمالي</th>
-                    <th data-i18n="th_status">الحالة</th>
-                    <th data-i18n="th_act">إجراء</th>
-                </tr></thead>
-                <tbody id="tableBody"></tbody>
-            </table>
+            <div class="radar-merchant-section" id="merchantRadarSection">
+                <h2 class="radar-title"><i class="fa-solid fa-satellite-dish fa-beat"></i> مهام الرادار الخاصة بك (متابعة حية)</h2>
+                <div class="radar-grid" id="radarGridBody"></div>
+            </div>
+
+            <input type="text" id="searchInput" class="search-box" placeholder="🔍 ابحث في سجل البوالص برقم البوليصة، الاسم، المحافظة...">
+            
+            <div class="table-responsive">
+                <table>
+                    <thead><tr>
+                        <th data-i18n="th_awb">رقم البوليصة</th>
+                        <th data-i18n="th_rec">المستلم</th>
+                        <th data-i18n="th_phone">الموبايل</th>
+                        <th data-i18n="th_city">المحافظة</th>
+                        <th data-i18n="th_amt">المبلغ الإجمالي</th>
+                        <th data-i18n="th_status">الحالة</th>
+                        <th data-i18n="th_act">إجراء</th>
+                    </tr></thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -472,6 +478,7 @@
         });
         
         const auth = getAuth(app);
+        
         // التعديل: إجبار التخزين على الذاكرة الدائمة عشان تسجيل الخروج ميطيرش مع الـ PWA
         setPersistence(auth, browserLocalPersistence).catch(e => console.log("Persistence error:", e));
 
@@ -503,8 +510,15 @@
             });
         };
 
+        // نظهر شاشة التحميل الأول لحد ما Firebase يقرر فيه يوزر مسجل ولا لأ
+        document.getElementById('authLoading').style.display = 'block';
+
         onAuthStateChanged(auth, async (user) => {
+            document.getElementById('authLoading').style.display = 'none'; // نخفي التحميل
+
             if (user) {
+                document.getElementById('mainDashboard').style.display = 'block'; // نظهر التطبيق
+                
                 merchantEmail = user.email;
                 merchantName = merchantEmail.split('@')[0];
                 document.getElementById('merchantEmailDisplay').innerHTML = `مرحباً بك: ${merchantName} <i class="fa-solid fa-bolt" style="color:#ffc107;"></i>`;
@@ -537,7 +551,9 @@
                 startGlobalChatListener();
                 loadShipments();
                 loadMerchantRadar();
-            } else { window.location.href = "index.html"; }
+            } else { 
+                window.location.href = "index.html"; // لو مفيش يوزر فعلا بعد البحث، وديه يسجل دخول
+            }
         });
 
         // --- 📡 المراقب الخلفي للرسايل (الإنذارات اللحظية للتاجر) ---
