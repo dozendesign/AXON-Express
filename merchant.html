@@ -484,7 +484,6 @@
         
         let merchantEmail = "", merchantName = "", merchantIP = "جاري التحقق...", merchantPhone = "غير مسجل", merchantAddress = "غير مسجل", branchName = "المركز الرئيسي";
         
-        // --- المصفوفة الشاملة لتسعير المحافظات بدقة ---
         let livePrices = {
             "القاهرة": 85, "الجيزة": 85, "الإسكندرية": 85,
             "الدقهلية": 100, "الغربية": 100, "المنوفية": 100, "الشرقية": 100, "القليوبية": 100,
@@ -517,13 +516,11 @@
             });
         };
 
-        // حارس الذاكرة (Gatekeeper) لتأخير التحويل وتجنب الخروج الوهمي
         let isAuthChecked = false;
 
         onAuthStateChanged(auth, async (user) => {
             isAuthChecked = true;
             if (user) {
-                // حفظ علم الدخول
                 localStorage.setItem('axon_merchant_remember', 'yes');
                 document.getElementById('authLoading').style.display = 'none';
                 document.getElementById('mainDashboard').style.display = 'block';
@@ -547,11 +544,9 @@
                     }
                 }
 
-                // قراءة البورصة المحدثة من الفايربيز
                 onSnapshot(doc(db, "settings", "shipping_prices"), (snap) => {
                     if(snap.exists()) { 
                         let data = snap.data();
-                        // تحديث الأسعار لو موجودة في الفايربيز
                         for (let gov in livePrices) {
                             if (data[gov]) { livePrices[gov] = data[gov]; }
                         }
@@ -569,7 +564,6 @@
             } else { 
                 const remembered = localStorage.getItem('axon_merchant_remember');
                 if (remembered === 'yes') {
-                    // ندي للفايربيز فرصة يقرأ الكوكيز لو الموبايل بطيء
                     setTimeout(() => {
                         if(!auth.currentUser) {
                             localStorage.removeItem('axon_merchant_remember');
@@ -582,7 +576,6 @@
             }
         });
 
-        // حماية إضافية لو الـ Firebase نام خالص
         setTimeout(() => {
             if(!isAuthChecked) {
                 if(localStorage.getItem('axon_merchant_remember') !== 'yes') {
@@ -721,25 +714,32 @@
             }
         };
 
-        // --- دالة التسعير المحدثة (مباشرة وبدون فلسفة) ---
+        // --- دالة الفلترة اللغوية ---
+        function normalizeArabic(text) {
+            return text.replace(/\s+/g, '') // إزالة المسافات (بور سعيد -> بورسعيد)
+                       .replace(/[أإآ]/g, 'ا') // توحيد الهمزات (إسكندرية -> اسكندريه)
+                       .replace(/ة/g, 'ه'); // توحيد التاء المربوطة (الدقهلية -> الدقهليه)
+        }
+
+        // --- دالة التسعير المحدثة ---
         window.getCityPrice = (cityName) => {
             if(!cityName) return 85; 
-            let name = cityName.trim();
+            let normalizedInput = normalizeArabic(cityName);
             
-            // لو الاسم اللي كتبه التاجر موجود بالحرف في البورصة، هاته على طول
+            // مقارنة مدخلات التاجر بالبورصة بعد الفلترة
             for (let gov in livePrices) {
-                if (name.includes(gov) || gov.includes(name)) {
+                let normalizedGov = normalizeArabic(gov);
+                if (normalizedInput.includes(normalizedGov) || normalizedGov.includes(normalizedInput)) {
                     return Number(livePrices[gov]);
                 }
             }
             
-            // تحسباً لأي أسماء دلع (Backups)
-            if(['قاهرة', 'cairo'].some(k => name.includes(k)) && livePrices['القاهرة']) return Number(livePrices['القاهرة']);
-            if(['جيزة', 'giza'].some(k => name.includes(k)) && livePrices['الجيزة']) return Number(livePrices['الجيزة']);
-            if(['اسكندرية', 'إسكندرية', 'alex'].some(k => name.includes(k)) && livePrices['الإسكندرية']) return Number(livePrices['الإسكندرية']);
+            // احتياطي لكلمات بالإنجليزية أو أسماء دلع سريعة
+            if(['cairo'].some(k => cityName.toLowerCase().includes(k)) && livePrices['القاهرة']) return Number(livePrices['القاهرة']);
+            if(['giza'].some(k => cityName.toLowerCase().includes(k)) && livePrices['الجيزة']) return Number(livePrices['الجيزة']);
+            if(['alex'].some(k => cityName.toLowerCase().includes(k)) && livePrices['الإسكندرية']) return Number(livePrices['الإسكندرية']);
             
-            // لو ملقاش، يرجع لـ 85 كحد أدنى عشان السيستم ميضربش
-            return 85;
+            return 85; // السعر الافتراضي لو فشل كل ده
         };
 
         window.handleFragileChange = () => {
@@ -752,7 +752,7 @@
         };
 
         window.updateShippingCalc = () => {
-            const city = document.getElementById('recCity').value.trim().toLowerCase();
+            const city = document.getElementById('recCity').value.trim();
             const cod = Number(document.getElementById('codAmount').value) || 0;
             const weight = Number(document.getElementById('recWeight').value) || 1;
             
