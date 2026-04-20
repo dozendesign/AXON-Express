@@ -105,15 +105,16 @@
             .summary-box { flex-direction: column; gap: 10px; text-align: center; }
         }
 
-        /* ---------------- CSS الطباعة (المحاسبة الإجبارية ومقص الجداول) ---------------- */
+        /* ---------------- CSS الطباعة ---------------- */
         #printArea { display: none; }
         @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            body { background: white; color: black; font-size: 11px; width: 100%; } /* تصغير الخط ليتسع بالورقة */
+            body { background: white; color: black; font-size: 11px; width: 100%; } 
             header, .branch-filter-box, .tabs, .btn-action, .modal { display: none !important; }
             .container { display: none !important; } 
             #printArea { display: block !important; width: 100%; margin: 0; padding: 0; }
-            @page { margin: 5mm; size: A4 portrait; } /* فرض المقاس وهوامش ضيقة */
+            /* جعل كل المانيفستات في الخزنة تطبع بالعرض أوتوماتيك */
+            @page { margin: 5mm; size: A4 landscape !important; } 
             
             .print-wrapper { 
                 width: 100% !important; 
@@ -122,22 +123,22 @@
                 padding: 5mm !important;
                 box-sizing: border-box !important;
             }
-            .print-header { border-bottom: 3px solid #0A3D62; padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+            .print-header { border-bottom: 3px solid #0A3D62; padding-bottom: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
             .print-header h1 { margin: 0; color: #0A3D62; font-size: 20px; }
-            .print-header p { margin: 5px 0 0 0; font-weight: bold; }
+            .print-header p { margin: 5px 0 0 0; font-weight: bold; font-size: 11px; }
             
-            /* المقص البرمجي للجدول */
             .print-table { 
                 width: 100% !important; 
                 border-collapse: collapse; 
-                margin-bottom: 20px; 
-                table-layout: fixed !important; /* إجبار الالتزام بعرض الـ A4 */
+                margin-bottom: 10px; 
+                table-layout: fixed !important; 
                 page-break-inside: auto;
+                font-size: 11px !important;
             }
             .print-table tr { page-break-inside: avoid; page-break-after: auto; }
             .print-table th, .print-table td { 
                 border: 1px solid #000; 
-                padding: 6px 4px !important; 
+                padding: 4px !important; 
                 text-align: center; 
                 word-wrap: break-word !important; 
                 overflow-wrap: break-word !important;
@@ -145,10 +146,6 @@
                 white-space: normal !important;
             }
             .print-table th { background: #0A3D62 !important; color: white !important; }
-            
-            .print-summary { display: flex; justify-content: space-between; background: #f0f0f0 !important; padding: 10px; border: 1px solid #000; border-radius: 5px; font-weight: bold; margin-bottom: 15px; font-size: 14px;}
-            .print-signatures { display: flex; justify-content: space-between; margin-top: 30px; font-weight: bold; text-align: center; page-break-inside: avoid; }
-            .section-divider { background: #0A3D62 !important; color: white !important; padding: 5px; margin: 15px 0 5px 0; font-weight: bold; text-align: center;}
         }
     </style>
 </head>
@@ -583,12 +580,38 @@
             const data = sD.couriers[currentViewedCourier];
             const timestamp = new Date().toLocaleString('ar-EG');
             
+            let tableRows = '';
+            let index = 1;
+            // طباعة الشحنات مع إجبار عدم النزول للسطر التالي في خانة الفلوس
+            data.shipments.forEach(s => {
+                tableRows += `<tr>
+                    <td style="border:1px solid #000; padding:3px; text-align:center; font-size:11px;">${index++}</td>
+                    <td style="border:1px solid #000; padding:3px; text-align:center; font-size:11px;"><b>${s.awb}</b></td>
+                    <td style="border:1px solid #000; padding:3px; text-align:center; font-size:11px;">${s.merchantEmail.split('@')[0]}</td>
+                    <td style="border:1px solid #000; padding:3px; text-align:center; font-size:11px; word-break:break-word;">${s.name} (${s.phone})<br>${s.city} - ${s.address}</td>
+                    <td style="border:1px solid #000; padding:3px; text-align:center; color:#b82329; font-weight:bold; font-size:12px; white-space:nowrap !important;">${s.totalCollected} ج.م</td>
+                </tr>`;
+            });
+            
+            // إضافة مهام الرادار في نفس الجدول
+            data.radar.forEach(r => {
+                tableRows += `<tr style="background:#f8f9fa;">
+                    <td style="border:1px solid #000; padding:3px; text-align:center; font-size:11px;">${index++}</td>
+                    <td style="border:1px solid #000; padding:3px; text-align:center; font-size:11px;"><b>رادار</b></td>
+                    <td style="border:1px solid #000; padding:3px; text-align:center; font-size:11px;">-</td>
+                    <td style="border:1px solid #000; padding:3px; text-align:center; font-size:11px; word-break:break-word;">${r.details}<br>${r.address}</td>
+                    <td style="border:1px solid #000; padding:3px; text-align:center; color:#b82329; font-weight:bold; font-size:12px; white-space:nowrap !important;">${r.paymentMethod === 'pickup' ? '0' : r.totalCollected} ج.م</td>
+                </tr>`;
+            });
+
+            if(tableRows === '') tableRows = "<tr><td colspan='5' style='text-align:center; border:1px solid #000;'>لا يوجد عهد مسجلة</td></tr>";
+
             let printHtml = `
                 <div class="print-wrapper" dir="rtl">
                     <div class="print-header">
-                        <div><h1>AXON EXPRESS</h1><p>الخزينة المركزية - فرع ${adminBranch}</p></div>
-                        <div style="text-align:center;"><h2>تصفية عهدة كابتن (يومية)</h2><p>تاريخ الجرد: ${timestamp}</p></div>
-                        <div><h2 style="color:#D90429;">${currentViewedCourier}</h2></div>
+                        <div><h1 style="color:#0A3D62; margin:0;">AXON EXPRESS</h1><p style="margin:0;">الخزينة المركزية - فرع ${adminBranch}</p></div>
+                        <div style="text-align:center;"><h2 style="margin:0;">تصفية عهدة كابتن (يومية)</h2><p style="margin:0;">تاريخ الجرد: ${timestamp}</p></div>
+                        <div><h2 style="color:#D90429; margin:0;">${currentViewedCourier}</h2></div>
                     </div>
                     
                     <div class="print-summary">
@@ -596,21 +619,28 @@
                         <div style="color:#D90429;">الخزينة المطلوبة (كاش): ${data.totalCollected} ج.م</div>
                     </div>
 
-                    <div class="section-divider">📦 أولاً: المانيفست (بوالص الشحن)</div>
                     <table class="print-table">
-                        <thead><tr><th style="width:20%;">البوليصة</th><th style="width:20%;">التاجر</th><th style="width:25%;">المستلم</th><th style="width:15%;">المبلغ المحصل</th><th style="width:20%;">الحالة التي أقرها المندوب</th></tr></thead>
-                        <tbody>${document.getElementById('cmShipmentsBody').innerHTML}</tbody>
+                        <thead>
+                            <tr>
+                                <th style="width:5%;">م</th>
+                                <th style="width:15%;">رقم البوليصة</th>
+                                <th style="width:15%;">التاجر</th>
+                                <th style="width:50%;">بيانات المستلم (العنوان)</th>
+                                <th style="width:15%;">المبلغ المحصل</th>
+                            </tr>
+                        </thead>
+                        <tbody>${tableRows}</tbody>
                     </table>
 
-                    <div class="section-divider">📡 ثانياً: مهام الرادار والبيكب السريعة</div>
-                    <table class="print-table">
-                        <thead><tr><th style="width:30%;">التفاصيل</th><th style="width:30%;">العنوان</th><th style="width:20%;">نظام الدفع</th><th style="width:20%;">الحالة</th></tr></thead>
-                        <tbody>${document.getElementById('cmRadarBody').innerHTML}</tbody>
-                    </table>
-
-                    <div class="print-signatures">
-                        <div>توقيع الكابتن بتسليم العهدة:<br><br>...........................</div>
-                        <div>توقيع المحاسب بالاستلام (خالص):<br><br>...........................</div>
+                    <div class="legal-manifest-text" style="display: flex; gap: 15px;">
+                        <div style="flex:2; text-align:justify; line-height:1.5;">
+                            <h4 style="margin:0 0 5px 0; text-align:center; color:#0A3D62;">إقرار تسوية وتوريد نقدية</h4>
+                            أقر أنا المندوب المذكور أعلاه بأنني قمت بتوريد كامل العهدة النقدية المبينة في هذا الكشف لإدارة الخزينة، وبذلك تعتبر ذمتي خالصة من هذه المبالغ المحددة.
+                        </div>
+                        <div class="print-signatures" style="flex:3; display:flex; justify-content:space-around; margin-top: 0;">
+                            <div>توقيع المندوب المُورّد:<br><br>...........................</div>
+                            <div>توقيع المحاسب بالاستلام:<br><br>...........................</div>
+                        </div>
                     </div>
                 </div>
             `;
@@ -624,29 +654,56 @@
             const timestamp = new Date().toLocaleString('ar-EG');
             let net = data.totalCod - data.totalFees;
             
+            let tableRows = '';
+            data.items.forEach(i => {
+                tableRows += `<tr>
+                    <td style="border:1px solid #000; padding:3px; text-align:center; font-size:11px;">${i.timestamp?.toDate().toLocaleDateString('ar-EG') || '-'}</td>
+                    <td style="border:1px solid #000; padding:3px; text-align:center; font-size:11px;"><b>${i.awb}</b></td>
+                    <td style="border:1px solid #000; padding:3px; text-align:center; font-size:11px; word-break:break-word;">${i.name} (${i.city})</td>
+                    <td style="border:1px solid #000; padding:3px; text-align:center; font-weight:bold; font-size:11px; white-space:nowrap !important;">${i.amount} ج.م</td>
+                    <td style="border:1px solid #000; padding:3px; text-align:center; color:var(--primary-red); font-size:11px; white-space:nowrap !important;">${i.totalShippingDeduction} ج.م</td>
+                    <td style="border:1px solid #000; padding:3px; text-align:center; color:#10B981; font-weight:bold; font-size:12px; white-space:nowrap !important;">${i.netForThisItem} ج.م</td>
+                </tr>`;
+            });
+
             let printHtml = `
                 <div class="print-wrapper" dir="rtl">
                     <div class="print-header">
-                        <div><h1>AXON EXPRESS</h1><p>إدارة الحسابات - فرع ${adminBranch}</p></div>
-                        <div style="text-align:center;"><h2>كشف حساب وتسوية تاجر</h2><p>تاريخ الإصدار: ${timestamp}</p></div>
-                        <div><h2 style="color:#0A3D62;">${currentViewedMerchant.split('@')[0]}</h2></div>
+                        <div><h1 style="color:#0A3D62; margin:0;">AXON EXPRESS</h1><p style="margin:0;">إدارة الحسابات - فرع ${adminBranch}</p></div>
+                        <div style="text-align:center;"><h2 style="margin:0;">كشف حساب وتسوية تاجر</h2><p style="margin:0;">تاريخ الإصدار: ${timestamp}</p></div>
+                        <div><h2 style="color:#0A3D62; margin:0;">${currentViewedMerchant.split('@')[0]}</h2></div>
                     </div>
                     
                     <div class="print-summary">
                         <div>التحصيل: ${data.totalCod} ج.م</div>
                         <div style="color:#D90429;">الرسوم المخصومة: ${data.totalFees} ج.م</div>
-                        <div style="color:#10B981; font-size:20px;">الصافي المستحق: ${net} ج.م</div>
+                        <div style="color:#10B981; font-size:16px;">الصافي المستحق: ${net} ج.م</div>
                     </div>
 
                     <div class="section-divider">بيان البوالص المُسلمة بنجاح</div>
                     <table class="print-table">
-                        <thead><tr><th style="width:15%;">التاريخ</th><th style="width:20%;">البوليصة</th><th style="width:25%;">المستلم (المدينة)</th><th style="width:12%;">COD</th><th style="width:13%;">مخصوم شحن</th><th style="width:15%;">الصافي</th></tr></thead>
-                        <tbody>${document.getElementById('mmShipmentsBody').innerHTML}</tbody>
+                        <thead>
+                            <tr>
+                                <th style="width:15%;">التاريخ</th>
+                                <th style="width:15%;">البوليصة</th>
+                                <th style="width:35%;">المستلم (المدينة)</th>
+                                <th style="width:10%;">COD</th>
+                                <th style="width:10%;">مخصوم</th>
+                                <th style="width:15%;">الصافي</th>
+                            </tr>
+                        </thead>
+                        <tbody>${tableRows}</tbody>
                     </table>
 
-                    <div class="print-signatures">
-                        <div>توقيع التاجر بالاستلام:<br><br>...........................</div>
-                        <div>توقيع المحاسب (تمت التسوية):<br><br>...........................</div>
+                    <div class="legal-manifest-text" style="display: flex; gap: 15px;">
+                        <div style="flex:2; text-align:justify; line-height:1.5;">
+                            <h4 style="margin:0 0 5px 0; text-align:center; color:#0A3D62;">إقرار استلام مستحقات</h4>
+                            أقر أنا التاجر المذكور أعلاه باستلامي مبلغ وقدره (<b>${net} ج.م</b>) كصافي مستحقات، وبذلك تعتبر ذمة أكسون إكسبريس خالصة.
+                        </div>
+                        <div class="print-signatures" style="flex:3; display:flex; justify-content:space-around; margin-top: 0;">
+                            <div>توقيع التاجر بالاستلام:<br><br>...........................</div>
+                            <div>توقيع المحاسب:<br><br>...........................</div>
+                        </div>
                     </div>
                 </div>
             `;
