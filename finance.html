@@ -107,46 +107,34 @@
 
         /* ---------------- CSS الطباعة الاحترافية بالذيل المتكرر ---------------- */
         #printArea { display: none; }
+        
         @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            body { background: white; color: black; font-size: 11px; width: 100%; counter-reset: printpage; } 
+            body { background: white; color: black; font-size: 11px; width: 100%; } 
             header, .branch-filter-box, .tabs, .btn-action, .modal { display: none !important; }
             .container { display: none !important; } 
             #printArea { display: block !important; width: 100%; margin: 0; padding: 0; }
-            @page { margin: 5mm; size: A4 portrait; }
             
-            .print-wrapper { 
-                width: 100% !important; 
-                max-width: 100% !important; 
-                margin: 0 !important; 
-                padding: 5mm !important;
-                box-sizing: border-box !important;
-            }
+            /* الوضع الافتراضي للطباعة (بالعرض) عشان الكشوفات تشيل وتفرد براحتها */
+            @page { margin: 5mm; size: landscape; }
+            
+            .print-wrapper { width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 5mm !important; box-sizing: border-box !important; }
             .print-header { border-bottom: 3px solid #0A3D62; padding-bottom: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
             .print-header h1 { margin: 0; color: #0A3D62; font-size: 20px; }
             .print-header p { margin: 5px 0 0 0; font-weight: bold; font-size: 11px; }
             
-            .print-table { 
-                width: 100% !important; 
-                border-collapse: collapse; 
-                table-layout: fixed !important; 
-                font-size: 10px !important; 
-            }
-            .print-table tr { page-break-inside: avoid; }
-            .print-table th, .print-table td { 
-                border: 1px solid #000; 
-                padding: 4px !important; 
-                text-align: center; 
-                word-wrap: break-word !important; 
-                overflow-wrap: break-word !important;
-                word-break: break-word !important;
-                white-space: normal !important;
-            }
+            /* الجدول وتكرار الذيل */
+            .print-table { width: 100% !important; border-collapse: collapse; table-layout: fixed !important; font-size: 11px !important; margin-bottom: 0 !important; }
+            .print-table th, .print-table td { border: 1px solid #000; padding: 5px !important; text-align: center; word-wrap: break-word !important; }
             .print-table th { background: #0A3D62 !important; color: white !important; }
-
-            /* السر هنا: تكرار ذيل الجدول في كل صفحة مطبوعة */
-            .print-footer { display: table-footer-group; }
-            .page-number::before { counter-increment: printpage; content: "صفحة " counter(printpage); }
+            .print-table tr { page-break-inside: avoid; }
+            
+            /* ده الكود السحري اللي بيكرر التوقيعات تحت كل ورقة */
+            .print-table tfoot { display: table-footer-group; }
+            
+            /* عداد الصفحات */
+            #printArea { counter-reset: page; }
+            .page-number::after { counter-increment: page; content: "صفحة " counter(page); }
         }
     </style>
 </head>
@@ -436,7 +424,7 @@
                     <td>${status}</td>
                 </tr>`;
 
-                // --- 1. تجميع داتا المندوب (كل المهام اللي في عهدته بغض النظر عن الحالة عشان التصفية) ---
+                // --- 1. تجميع داتا المندوب ---
                 if(v.courierName && v.courierName !== "") {
                     if(!sD.couriers[courier]) sD.couriers[courier] = { shipments: [], radar: [], totalCollected: 0, count: 0 };
                     sD.couriers[courier].count += 1;
@@ -447,13 +435,12 @@
                         sD.couriers[courier].radar.push({...v, totalCollected: totalCollectedFromClient});
                     }
 
-                    // الفلوس اللي المفروض يوردها دلوقتي هي اللي (تم التسليم)
                     if(status === "تم التسليم" || status === "تم التسليم بنجاح") {
                         sD.couriers[courier].totalCollected += totalCollectedFromClient;
                     }
                 }
 
-                // --- 2. تجميع داتا التاجر (فقط البوالص اللي تم تسليمها لعمل كشف حساب) ---
+                // --- 2. تجميع داتا التاجر ---
                 if((status === "تم التسليم" || status === "تم التسليم بنجاح") && v.type === 'shipment') {
                     if(!sD.merchants[merchant]) sD.merchants[merchant] = { items: [], totalCod: 0, totalFees: 0, count: 0 };
                     
@@ -464,7 +451,6 @@
                     sD.merchants[merchant].totalFees += totalShippingDeduction;
                     sD.merchants[merchant].count += 1;
 
-                    // إحصائيات الخزنة المركزية (مبنية على المورد فعلياً)
                     totalCash += totalCollectedFromClient;
                     totalProfit += totalCompanyProfit;
                 }
@@ -482,7 +468,6 @@
         };
 
         function renderSubTables() {
-            // جدول الكباتن
             let courierHtml = "";
             for(let c in sD.couriers) {
                 courierHtml += `<tr>
@@ -494,7 +479,6 @@
             }
             document.getElementById('tblCouriers').innerHTML = courierHtml || "<tr><td colspan='4' style='text-align:center;'>لا يوجد عهد مسندة حالية</td></tr>";
 
-            // جدول التجار
             let merchantHtml = "";
             for(let m in sD.merchants) {
                 let mData = sD.merchants[m];
@@ -511,7 +495,6 @@
             document.getElementById('tblMerchants').innerHTML = merchantHtml || "<tr><td colspan='6' style='text-align:center;'>لا يوجد مستحقات حالية (البوالص إما قيد التوصيل أو تمت تسويتها)</td></tr>";
         }
 
-        // --- دوال فتح المودالات وتوليد الجداول الداخلية ---
         window.openCourierModal = (courierName) => {
             currentViewedCourier = courierName;
             const data = sD.couriers[courierName];
@@ -520,7 +503,6 @@
             document.getElementById('cmTotalCash').innerText = data.totalCollected + " ج.م";
             document.getElementById('cmTotalTasks').innerText = data.count;
 
-            // بناء جدول المانيفست (الشحنات)
             let sHtml = "";
             data.shipments.forEach(s => {
                 let statusColor = s.status.includes('تم التسليم') ? '#10B981' : (s.status.includes('مرتجع') ? '#6c757d' : '#f59e0b');
@@ -534,7 +516,6 @@
             });
             document.getElementById('cmShipmentsBody').innerHTML = sHtml || "<tr><td colspan='5' style='text-align:center;'>لا يوجد بوالص</td></tr>";
 
-            // بناء جدول الرادار
             let rHtml = "";
             data.radar.forEach(r => {
                 let statusColor = r.status.includes('تم التسليم') ? '#10B981' : '#f59e0b';
@@ -576,41 +557,42 @@
             document.getElementById('merchantModal').style.display = 'flex';
         };
 
-        // --- دوال الطباعة بالذيل المتكرر (<tfoot>) ---
+        // --- دوال الطباعة بالذيل المتكرر <tfoot> ---
         window.printCourierSheet = () => {
             const data = sD.couriers[currentViewedCourier];
             const timestamp = new Date().toLocaleString('ar-EG');
             
             let tableRows = '';
             let index = 1;
-            let totalSheetCash = 0; 
+            let totalTasksCount = 0;
             
             data.shipments.forEach(s => {
-                totalSheetCash += Number(s.totalCollected) || 0;
+                totalTasksCount++;
                 tableRows += `<tr>
                     <td>${index++}</td>
                     <td><b>${s.awb}</b></td>
                     <td>${s.merchantEmail.split('@')[0]}</td>
                     <td>${s.name} (${s.phone})<br>${s.city} - ${s.address}</td>
-                    <td style="color:#b82329; font-weight:bold; font-size:12px; white-space:nowrap !important;">${s.totalCollected} ج.م</td>
+                    <td style="color:#b82329; font-weight:bold; font-size:14px; white-space:nowrap !important;">${s.totalCollected} ج.م</td>
                 </tr>`;
             });
             
             data.radar.forEach(r => {
+                totalTasksCount++;
                 let rCash = r.paymentMethod === 'pickup' ? 0 : (Number(r.totalCollected) || 0);
-                totalSheetCash += rCash;
                 tableRows += `<tr style="background:#f8f9fa;">
                     <td>${index++}</td>
                     <td><b>رادار</b></td>
                     <td>-</td>
                     <td>${r.details}<br>${r.address}</td>
-                    <td style="color:#b82329; font-weight:bold; font-size:12px; white-space:nowrap !important;">${rCash} ج.م</td>
+                    <td style="color:#b82329; font-weight:bold; font-size:14px; white-space:nowrap !important;">${rCash} ج.م</td>
                 </tr>`;
             });
 
             if(tableRows === '') tableRows = "<tr><td colspan='5' style='text-align:center;'>لا يوجد عهد مسجلة</td></tr>";
 
             let printHtml = `
+                <style>@media print { @page { size: landscape !important; } }</style>
                 <div class="print-wrapper" dir="rtl">
                     <div class="print-header">
                         <div><h1 style="color:#0A3D62; margin:0;">AXON EXPRESS</h1><p style="margin:0;">الخزينة المركزية - فرع ${adminBranch}</p></div>
@@ -618,11 +600,6 @@
                         <div><h2 style="color:#D90429; margin:0;">${currentViewedCourier}</h2></div>
                     </div>
                     
-                    <div class="print-summary" style="display:flex; justify-content:space-between; background:#f0f0f0; padding:10px; border:1px solid #000; border-radius:5px; font-weight:bold; margin-bottom:15px; font-size:14px;">
-                        <div>إجمالي المهام المسندة: ${data.count}</div>
-                        <div style="color:#D90429;">الخزينة المطلوبة (كاش): ${data.totalCollected} ج.م</div>
-                    </div>
-
                     <table class="print-table">
                         <thead>
                             <tr>
@@ -636,11 +613,12 @@
                         <tbody>${tableRows}</tbody>
                         <tfoot class="print-footer">
                             <tr>
-                                <td colspan="5" style="border:none; padding-top: 15px;">
+                                <td colspan="5" style="border:none; padding-top: 15px !important;">
                                     <div style="border:2px solid #b82329; padding:5px; text-align:center; background:#fff3cd; margin-bottom:5px;">
-                                        <h2 style="margin:0; color:#b82329; font-size:16px;">إجمالي العهدة المطبوعة: ${totalSheetCash} ج.م</h2>
+                                        <h2 style="margin:0; color:#b82329; font-size:16px;">إجمالي المطلوب توريده: ${data.totalCollected} ج.م</h2>
+                                        <p style="margin:0; font-weight:bold; font-size:11px;">(إجمالي المهام: ${totalTasksCount} مهمة)</p>
                                     </div>
-                                    <div style="display:flex; justify-content:space-between; border: 1px solid #000; padding: 10px; background: #fafafa; font-size: 11px; font-weight: bold; align-items: flex-end;">
+                                    <div style="display:flex; justify-content:space-between; border: 1px solid #000; padding: 10px; background: #fafafa; font-size: 13px; font-weight: bold; align-items: center; page-break-inside: avoid;">
                                         <div>إقرار توريد: أقر بتسليم كامل العهدة النقدية المبينة أعلاه.</div>
                                         <div>توقيع المندوب: ..........................</div>
                                         <div>توقيع الخزينة: ..........................</div>
@@ -660,26 +638,22 @@
         window.printMerchantSheet = () => {
             const data = sD.merchants[currentViewedMerchant];
             const timestamp = new Date().toLocaleString('ar-EG');
+            let net = data.totalCod - data.totalFees;
             
             let tableRows = '';
-            let calcCod = 0, calcFees = 0, calcNet = 0;
-            
             data.items.forEach(i => {
-                calcCod += Number(i.amount) || 0;
-                calcFees += Number(i.totalShippingDeduction) || 0;
-                calcNet += Number(i.netForThisItem) || 0;
-                
                 tableRows += `<tr>
                     <td>${i.timestamp?.toDate().toLocaleDateString('ar-EG') || '-'}</td>
                     <td><b>${i.awb}</b></td>
                     <td>${i.name} (${i.city})</td>
                     <td style="font-weight:bold; white-space:nowrap !important;">${i.amount} ج.م</td>
                     <td style="color:var(--primary-red); white-space:nowrap !important;">${i.totalShippingDeduction} ج.م</td>
-                    <td style="color:#10B981; font-weight:bold; font-size:12px; white-space:nowrap !important;">${i.netForThisItem} ج.م</td>
+                    <td style="color:#10B981; font-weight:bold; font-size:14px; white-space:nowrap !important;">${i.netForThisItem} ج.م</td>
                 </tr>`;
             });
 
             let printHtml = `
+                <style>@media print { @page { size: landscape !important; } }</style>
                 <div class="print-wrapper" dir="rtl">
                     <div class="print-header">
                         <div><h1 style="color:#0A3D62; margin:0;">AXON EXPRESS</h1><p style="margin:0;">إدارة الحسابات - فرع ${adminBranch}</p></div>
@@ -687,33 +661,31 @@
                         <div><h2 style="color:#0A3D62; margin:0;">${currentViewedMerchant.split('@')[0]}</h2></div>
                     </div>
                     
-                    <div class="print-summary" style="display:flex; justify-content:space-between; background:#f0f0f0; padding:10px; border:1px solid #000; border-radius:5px; font-weight:bold; margin-bottom:15px; font-size:14px;">
-                        <div>التحصيل: ${data.totalCod} ج.م</div>
-                        <div style="color:#D90429;">الرسوم المخصومة: ${data.totalFees} ج.م</div>
-                        <div style="color:#10B981; font-size:16px;">الصافي المستحق: ${data.totalCod - data.totalFees} ج.م</div>
-                    </div>
-
                     <table class="print-table">
                         <thead>
                             <tr>
                                 <th style="width:15%;">التاريخ</th>
                                 <th style="width:20%;">البوليصة</th>
-                                <th style="width:25%;">المستلم (المدينة)</th>
-                                <th style="width:12%;">COD</th>
-                                <th style="width:13%;">مخصوم شحن</th>
-                                <th style="width:15%;">الصافي</th>
+                                <th style="width:35%;">المستلم (المدينة)</th>
+                                <th style="width:10%;">COD</th>
+                                <th style="width:10%;">مخصوم شحن</th>
+                                <th style="width:10%;">الصافي</th>
                             </tr>
                         </thead>
                         <tbody>${tableRows}</tbody>
                         <tfoot class="print-footer">
                             <tr>
-                                <td colspan="6" style="border:none; padding-top: 15px;">
-                                    <div style="border:2px solid #10B981; padding:5px; text-align:center; background:#d1fae5; margin-bottom:5px;">
-                                        <h2 style="margin:0; color:#10B981; font-size:16px;">صافي المستحق للتاجر: ${calcNet} ج.م</h2>
+                                <td colspan="6" style="border:none; padding-top: 15px !important;">
+                                    <div style="display:flex; justify-content:space-between; background:#f0f0f0; padding:10px; border:1px solid #000; border-radius:5px; font-weight:bold; margin-bottom:10px; font-size:14px;">
+                                        <div>إجمالي التحصيل: ${data.totalCod} ج.م</div>
+                                        <div style="color:#D90429;">الرسوم المخصومة: ${data.totalFees} ج.م</div>
                                     </div>
-                                    <div style="display:flex; justify-content:space-between; border: 1px solid #000; padding: 10px; background: #fafafa; font-size: 11px; font-weight: bold; align-items: flex-end;">
+                                    <div style="border:2px solid #10B981; padding:5px; text-align:center; background:#d1fae5; margin-bottom:5px;">
+                                        <h2 style="margin:0; color:#10B981; font-size:18px;">صافي المستحق للتاجر: ${net} ج.م</h2>
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between; border: 1px solid #000; padding: 10px; background: #fafafa; font-size: 13px; font-weight: bold; align-items: center; page-break-inside: avoid;">
                                         <div>إقرار: أقر باستلامي المبالغ المبينة أعلاه، وبذلك تعتبر ذمة أكسون خالصة.</div>
-                                        <div>توقيع التاجر بالاستلام: ..........................</div>
+                                        <div>توقيع التاجر: ..........................</div>
                                         <div>توقيع المحاسب: ..........................</div>
                                         <div class="page-number"></div>
                                     </div>
@@ -728,7 +700,7 @@
             window.print();
         };
 
-        // --- دالة المانيفست للأدمن (الثالثة) ---
+        // --- المانيفست اللي في صفحة الأدمن ---
         window.generateManifest = () => {
             const courierName = document.getElementById('manifestCourierSelect').value;
             if(!courierName) return Swal.fire('خطأ', 'الرجاء اختيار المندوب أولاً', 'error');
@@ -736,7 +708,6 @@
             let targetShipments = [];
             let totalCod = 0;
             let courierData = window.branchCouriersList.find(c => c.name === courierName);
-            let successCount = courierData ? (courierData.successfulDeliveries || 0) : 0;
 
             for(let key in window.loadedShipmentsData) {
                 let s = window.loadedShipmentsData[key];
@@ -754,70 +725,53 @@
             const timestamp = new Date().toLocaleString('ar-EG');
             
             let tableRows = '';
-            let calcCod = 0;
             targetShipments.forEach((s, index) => {
-                calcCod += Number(s.amount) || 0;
                 tableRows += `<tr>
                     <td>${index + 1}</td>
                     <td><b>${s.awb}</b></td>
                     <td>${s.merchant}</td>
                     <td>${s.name} (${s.phone})<br>${s.city} - ${s.address}</td>
-                    <td style="color:#b82329; font-weight:bold; font-size:12px; white-space:nowrap !important;">${s.amount} ج.م</td>
+                    <td style="color:#b82329; font-weight:bold; font-size:14px; white-space:nowrap !important;">${s.amount} ج.م</td>
                 </tr>`;
             });
-            
-            let starsHtml = '';
-            let filledStars = 3; 
-            if (successCount >= 2000) filledStars = 5;
-            else if (successCount >= 1000) filledStars = 4;
-            
-            for(let i=0; i<5; i++) {
-                if(i < filledStars) starsHtml += '<i class="fa-solid fa-star" style="color:#ffc107 !important;"></i> ';
-                else starsHtml += '<i class="fa-regular fa-star" style="color:#ccc !important;"></i> ';
-            }
 
-            document.getElementById('printArea').innerHTML = `
+            let printHtml = `
+                <style>@media print { @page { size: landscape !important; } }</style>
                 <div class="print-controls-ui no-print">
-                    <button onclick="window.print()" style="background:#0A3D62;">🖨️ طباعة كشف العهدة (A4)</button>
+                    <button onclick="window.print()" style="background:#0A3D62;">🖨️ طباعة كشف العهدة (A4 بالعرض)</button>
                     <button onclick="window.closePrintView()" style="background:#b82329;">رجوع للسيستم</button>
                 </div>
                 <div class="a4-wrapper" dir="rtl">
                     <div class="print-header">
                         <div><h1 style="color:#0A3D62; margin:0;">AXON EXPRESS</h1><p style="margin:0;">إدارة العمليات - فرع ${adminBranch}</p></div>
                         <div style="text-align:center;"><h2 style="margin:0;">كشف عهدة تسليم (Manifest)</h2><p style="margin:0;">تاريخ الطباعة: ${timestamp}</p></div>
-                        <div style="text-align:center;">
-                            <h2 style="color:#D90429; margin:0;">${courierName}</h2>
-                            <div title="تقييم الكابتن" style="font-size:12px; margin-top:2px;">${starsHtml}</div>
-                        </div>
-                    </div>
-                    
-                    <div style="font-size:11px; font-weight:bold; color:#0A3D62; text-align:center; background:#e0eaf5; padding:5px; border-radius:5px; margin-bottom:10px; border:1px dashed #0A3D62;">
-                        <i class="fa-solid fa-quote-right"></i> أنت لست مندوباً، أنت "سفير" للشركة! إظهارك للود والاحترام للعميل أمر واجب <i class="fa-solid fa-quote-left"></i>
+                        <div><h2 style="color:#D90429; margin:0;">${courierName}</h2></div>
                     </div>
 
                     <table class="print-table">
                         <thead>
                             <tr>
                                 <th style="width:5%;">م</th>
-                                <th style="width:18%;">رقم البوليصة</th>
-                                <th style="width:18%;">الراسل (التاجر)</th>
-                                <th style="width:44%;">بيانات المستلم (المرسل إليه)</th>
-                                <th style="width:15%;">المبلغ</th>
+                                <th style="width:15%;">رقم البوليصة</th>
+                                <th style="width:15%;">الراسل (التاجر)</th>
+                                <th style="width:50%;">بيانات المستلم (المرسل إليه)</th>
+                                <th style="width:15%;">المبلغ المحصل</th>
                             </tr>
                         </thead>
                         <tbody>${tableRows}</tbody>
                         <tfoot class="print-footer">
                             <tr>
-                                <td colspan="5" style="border:none; padding-top: 15px;">
+                                <td colspan="5" style="border:none; padding-top: 15px !important;">
                                     <div style="border:2px solid #b82329; padding:5px; text-align:center; background:#fff3cd; margin-bottom:5px;">
-                                        <h2 style="margin:0; color:#b82329; font-size:16px;">إجمالي المبالغ النقدية بعهدة المندوب المطلوب تحصيلها: ${calcCod} ج.م</h2>
+                                        <h2 style="margin:0; color:#b82329; font-size:16px;">إجمالي المبالغ النقدية المطلوبة: ${totalCod} ج.م</h2>
+                                        <p style="margin:0; font-weight:bold; font-size:11px;">(إجمالي الطرود: ${targetShipments.length} طرد)</p>
                                     </div>
-                                    <div style="display:flex; justify-content:space-between; border: 1px solid #000; padding: 10px; background: #fafafa; font-size: 11px; font-weight: bold; align-items: flex-end;">
-                                        <div style="width: 30%;">
-                                            <span style="color:#b82329;">تحذير:</span> الإخطار الكاذب للعميل يعرضك لخصم 100 جنيه.
+                                    <div style="display:flex; justify-content:space-between; border: 1px solid #000; padding: 10px; background: #fafafa; font-size: 12px; font-weight: bold; align-items: center; page-break-inside: avoid;">
+                                        <div style="width: 40%;">
+                                            <span style="color:#b82329;">تحذير:</span> الإخطار الكاذب يعرضك لخصم 100 جنيه.
                                         </div>
-                                        <div style="width: 70%; display: flex; justify-content: space-between;">
-                                            <div>توقيع المندوب باستلام العهدة: ..........................</div>
+                                        <div style="width: 60%; display: flex; justify-content: space-between;">
+                                            <div>توقيع المندوب بالاستلام: ..........................</div>
                                             <div>توقيع الإدارة: ..........................</div>
                                             <div class="page-number"></div>
                                         </div>
@@ -829,9 +783,10 @@
                 </div>
             `;
             document.getElementById('printArea').style.display = 'block';
+            document.getElementById('printArea').innerHTML = printHtml;
         };
 
-        // دالة التسوية الشاملة
+        // دالة التسوية الشاملة (مؤقتاً للنسخة القادمة)
         window.settleAccount = (type, name) => {
             Swal.fire({
                 title: 'تأكيد التصفية',
