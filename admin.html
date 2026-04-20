@@ -155,36 +155,6 @@
                 border: 2px solid #0A3D62 !important;
                 box-sizing: border-box !important;
             }
-
-            /* إجبار الجداول تلتزم بحجم الـ A4 وكسر الكلام الطويل */
-            .manifest-table {
-                width: 100% !important;
-                table-layout: fixed !important;
-                font-size: 11px !important;
-                page-break-inside: auto;
-            }
-            .manifest-table th, .manifest-table td {
-                word-wrap: break-word !important;
-                overflow-wrap: break-word !important;
-                word-break: break-word !important;
-                white-space: normal !important;
-                padding: 6px 4px !important;
-            }
-            .manifest-table tr { page-break-inside: avoid; page-break-after: auto; }
-            
-            /* إمضاء مصغر تحت كل صفحة تطبع */
-            .manifest-table::after {
-                content: "توقيع مبدئي للمندوب بما في هذه الصفحة: ....................";
-                display: table-caption;
-                caption-side: bottom;
-                text-align: right;
-                font-weight: bold;
-                font-size: 11px;
-                margin-top: 10px;
-                color: #0A3D62;
-            }
-            
-            .legal-manifest-text { page-break-inside: avoid; }
         }
         
         .a4-wrapper { width: 100%; max-width: 800px; margin: 0 auto; background: #fff; border: 2px solid #0A3D62; padding: 10px; box-sizing: border-box; color: #000; }
@@ -206,18 +176,6 @@
         .safeer-name-badge h2 { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 1px;}
         .branch-badge-print { font-weight: bold; font-size: 14px; color: #000; text-transform: uppercase; background: #f0f0f0; border: 2px solid #000; padding: 3px 10px; display: inline-block; margin-bottom: 5px;}
         .fragile-banner { color: white; text-align: center; font-size: 14px; font-weight: bold; padding: 8px; border-radius: 5px; margin-bottom: 10px; border: 2px dashed #000;}
-        
-        .manifest-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; }
-        .manifest-table th, .manifest-table td { border: 1px solid #000; padding: 8px; text-align: center; }
-        .manifest-table th { background: #0A3D62 !important; color: #fff !important; }
-        .manifest-footer { border: 2px solid #b82329; padding: 15px; text-align: center; margin-bottom: 20px; background: #fff3cd !important; }
-        .legal-manifest-text { font-size: 13px; text-align: justify; line-height: 1.8; border: 1px solid #000; padding: 15px; margin-bottom: 20px; background: #fafafa !important;}
-        .sig-box { display: flex; justify-content: space-between; margin-top: 30px; font-weight: bold; align-items: flex-end;}
-        
-        /* نجوم التقييم */
-        .courier-stars { color: #ffc107; font-size: 16px; margin-top: 5px; }
-        .courier-stars .empty-star { color: #ccc; }
-        .ambassador-quote { font-size: 16px; font-weight: bold; color: #0A3D62; text-align: center; background: #e0eaf5; padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 2px dashed #0A3D62; }
     </style>
 </head>
 <body>
@@ -936,12 +894,18 @@
             
             let tableRows = '';
             targetShipments.forEach((s, index) => {
-                tableRows += `<tr><td>${index + 1}</td><td><b>${s.awb}</b></td><td>${s.merchant}</td><td>${s.name} (${s.phone})<br>${s.city} - ${s.address}</td><td style="color:#b82329; font-weight:bold; font-size:14px;">${s.amount} ج.م</td><td></td></tr>`;
+                tableRows += `<tr>
+                    <td style="border:1px solid #000; padding:4px; text-align:center;">${index + 1}</td>
+                    <td style="border:1px solid #000; padding:4px; text-align:center;"><b>${s.awb}</b></td>
+                    <td style="border:1px solid #000; padding:4px; text-align:center;">${s.merchant}</td>
+                    <td style="border:1px solid #000; padding:4px; text-align:center;">${s.name} (${s.phone})<br>${s.city} - ${s.address}</td>
+                    <td style="border:1px solid #000; padding:4px; text-align:center; color:#b82329; font-weight:bold;">${s.amount} ج.م</td>
+                </tr>`;
             });
             
             // حساب النجوم بناءً على التسليمات الناجحة
             let starsHtml = '';
-            let filledStars = 3; // افتراضي للمبتدئ
+            let filledStars = 3; 
             if (successCount >= 2000) filledStars = 5;
             else if (successCount >= 1000) filledStars = 4;
             
@@ -951,49 +915,57 @@
             }
 
             document.getElementById('printArea').innerHTML = `
-                <div class="print-controls-ui no-print"><button onclick="window.print()" style="background:#0A3D62;">🖨️ طباعة كشف العهدة (A4)</button><button onclick="window.closePrintView()" style="background:#b82329;">رجوع للسيستم</button></div>
-                <div class="a4-wrapper" dir="rtl">
-                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid #0A3D62; padding-bottom:10px; margin-bottom:15px;">
-                        <div><h1 style="margin:0; color:#0A3D62; font-size:28px;">AXON <span style="color:#b82329;">EXPRESS</span></h1><p style="margin:0; font-weight:bold;">الفرع: ${adminBranch === 'all' ? 'إدارة عامة' : adminBranch}</p></div>
-                        <div style="text-align:center;"><h2 style="margin:0; text-decoration:underline;">كشف عهدة تسليم يومي (Manifest)</h2><p style="margin:0; font-size:12px;">تاريخ الطباعة: ${timestamp}</p></div>
+                <div class="print-controls-ui no-print">
+                    <button onclick="window.print()" style="background:#0A3D62;">🖨️ طباعة كشف العهدة (A4)</button>
+                    <button onclick="window.closePrintView()" style="background:#b82329;">رجوع للسيستم</button>
+                </div>
+                <div class="a4-wrapper" dir="rtl" style="font-size:11px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid #0A3D62; padding-bottom:5px; margin-bottom:8px;">
+                        <div><h1 style="margin:0; color:#0A3D62; font-size:20px;">AXON <span style="color:#b82329;">EXPRESS</span></h1><p style="margin:0; font-weight:bold;">الفرع: ${adminBranch === 'all' ? 'إدارة عامة' : adminBranch}</p></div>
+                        <div style="text-align:center;"><h2 style="margin:0; text-decoration:underline; font-size:16px;">كشف عهدة تسليم يومي (Manifest)</h2><p style="margin:0; font-size:10px;">تاريخ الطباعة: ${timestamp}</p></div>
                         <div style="text-align:center;">
-                            <p style="margin:0; font-size:16px; font-weight:bold; background:#e0eaf5; padding:5px 10px; border:1px solid #0A3D62; border-radius:5px;">كابتن: ${courierName}</p>
-                            <div class="courier-stars" title="تقييم بناءً على التسليمات الناجحة">${starsHtml}</div>
+                            <p style="margin:0; font-size:14px; font-weight:bold; background:#e0eaf5; padding:3px 8px; border:1px solid #0A3D62; border-radius:5px;">كابتن: ${courierName}</p>
+                            <div class="courier-stars" title="تقييم بناءً على التسليمات الناجحة" style="font-size:12px; margin-top:2px;">${starsHtml}</div>
                         </div>
                     </div>
                     
-                    <div class="ambassador-quote">
+                    <div style="font-size:11px; font-weight:bold; color:#0A3D62; text-align:center; background:#e0eaf5; padding:5px; border-radius:5px; margin-bottom:8px; border:1px dashed #0A3D62;">
                         <i class="fa-solid fa-quote-right"></i> أنت لست مندوباً، أنت "سفير" للشركة! إظهارك للود والاحترام للعميل أمر واجب لا نقاش فيه <i class="fa-solid fa-quote-left"></i>
                     </div>
 
-                    <table class="manifest-table"><thead><tr><th style="width:5%;">م</th><th style="width:18%;">رقم البوليصة</th><th style="width:18%;">الراسل (التاجر)</th><th style="width:34%;">بيانات المستلم (المرسل إليه)</th><th style="width:12%;">مبلغ التحصيل</th><th style="width:13%;">الحالة (توقيع العميل)</th></tr></thead><tbody>${tableRows}</tbody></table>
+                    <table style="width:100%; border-collapse:collapse; margin-bottom:10px; table-layout:fixed; font-size:11px;">
+                        <thead>
+                            <tr>
+                                <th style="width:5%; border:1px solid #000; padding:5px; background:#0A3D62; color:#fff; text-align:center;">م</th>
+                                <th style="width:20%; border:1px solid #000; padding:5px; background:#0A3D62; color:#fff; text-align:center;">رقم البوليصة</th>
+                                <th style="width:20%; border:1px solid #000; padding:5px; background:#0A3D62; color:#fff; text-align:center;">الراسل (التاجر)</th>
+                                <th style="width:40%; border:1px solid #000; padding:5px; background:#0A3D62; color:#fff; text-align:center;">بيانات المستلم (المرسل إليه)</th>
+                                <th style="width:15%; border:1px solid #000; padding:5px; background:#0A3D62; color:#fff; text-align:center;">المبلغ</th>
+                            </tr>
+                        </thead>
+                        <tbody>${tableRows}</tbody>
+                    </table>
                     
-                    <div class="manifest-footer"><h2 style="margin:0; color:#b82329;">إجمالي المبالغ النقدية بعهدة المندوب المطلوب تحصيلها: ${totalCod} ج.م</h2><p style="margin:5px 0 0 0; font-weight:bold;">(إجمالي عدد الطرود: ${targetShipments.length} طرد)</p></div>
+                    <div style="border:2px solid #b82329; padding:8px; text-align:center; margin-bottom:10px; background:#fff3cd;">
+                        <h2 style="margin:0; color:#b82329; font-size:16px;">إجمالي المطلوب تحصيله: ${totalCod} ج.م</h2>
+                        <p style="margin:2px 0 0 0; font-weight:bold; font-size:11px;">(إجمالي الطرود: ${targetShipments.length} طرد)</p>
+                    </div>
                     
-                    <div style="background:#ffeaea; border:2px solid #b82329; padding:10px; border-radius:8px; margin-bottom:15px; color:#b82329;">
-                        <h4 style="margin:0 0 5px 0; text-align:center;"><i class="fa-solid fa-triangle-exclamation"></i> تحذير وقوانين صارمة للمندوبين</h4>
-                        <ul style="margin:0; padding-right:20px; font-size:12px; font-weight:bold;">
-                            <li>في حالة الإخطار الكاذب عن حالة شحنة (مثال: العميل لا يرد وهو لم يُتصل به) <b>يتم خصم 100 جنيه من مستحقاتك فوراً</b>.</li>
-                            <li><b>حقوق العميل المُلزمة لك:</b>
-                                <ol style="margin-top:3px; padding-right:15px;">
-                                    <li>إخطاره صباحاً بأن الطرد في حيازتك والتنسيق معه بخصوص موعد الاستلام.</li>
-                                    <li>محاولة الاتصال بالعميل (3 مرات) على فترات متباعدة لا تقل عن 30 دقيقة في حالة كان الموبايل مغلق أو خارج النطاق.</li>
-                                </ol>
-                            </li>
+                    <div style="background:#ffeaea; border:1px solid #b82329; padding:6px; border-radius:5px; margin-bottom:10px; color:#b82329; font-size:10px;">
+                        <h4 style="margin:0 0 3px 0; text-align:center;"><i class="fa-solid fa-triangle-exclamation"></i> تعليمات المندوبين</h4>
+                        <ul style="margin:0; padding-right:15px; font-weight:bold;">
+                            <li>الإخطار الكاذب (العميل لا يرد بدون اتصال حقيقي) يعرضك لخصم 100 جنيه.</li>
+                            <li>التواصل مع العميل صباحاً للتنسيق، وفي حال عدم الرد المحاولة 3 مرات على فترات.</li>
                         </ul>
                     </div>
 
-                    <div class="legal-manifest-text">
-                        <h3 style="margin:0 0 10px 0; color:#0A3D62; text-align:center;">إقرار استلام أمانة وعهدة نقدية</h3>
-                        أنا الموقع أدناه/ <b>.......................................................................................</b> بصفتي مندوب توصيل بشركة أكسون إكسبريس، أقر بأنني قد تسلمت في تاريخه الطرود المبينة في الكشف أعلاه وعددها (<b>${targetShipments.length}</b>) طرد، وبإجمالي مبالغ نقدية مطلوب تحصيلها وقدرها (<b>${totalCod} ج.م</b>).<br><br>
-                        وأتعهد بالحفاظ على هذه العهدة وتسليمها لإدارة الفرع/الخزينة في نهاية اليوم العملي بالكامل. وإذا أخللت بذلك أو قمت بالتصرف في العهدة لنفسي، أكون مبدداً للعهدة المسلمة لي على سبيل الأمانة لتوصيلها، وأكون مسئولاً مسئولية جنائية ومدنية طبقاً لنص <b>المادة (341) من قانون العقوبات المصري</b>، وللشركة الحق في اتخاذ الإجراءات القانونية الصارمة ضدي.
-                        <div class="sig-box">
-                            <div>الاسم ثلاثي: .......................................</div>
-                            <div>توقيع المندوب المُستلم: .......................................</div>
-                            <div>بصمة الإبهام: ....................</div>
-                        </div>
-                        <div class="sig-box" style="margin-top:15px; border-top: 1px dashed #ccc; padding-top: 15px;">
-                            <div>توقيع وتصديق الإدارة: .......................................</div>
+                    <div style="page-break-inside: avoid; font-size:11px; text-align:justify; line-height:1.4; border:1px solid #000; padding:8px; background:#fafafa;">
+                        <h3 style="margin:0 0 5px 0; color:#0A3D62; text-align:center; font-size:13px;">إقرار استلام عهدة نقدية</h3>
+                        أقر أنا المندوب/ <b>........................................</b> بتسلمي الطرود المبينة أعلاه وعددها (<b>${targetShipments.length}</b>) وبإجمالي تحصيل (<b>${totalCod} ج.م</b>). وأتعهد بتسليمها للخزينة بالكامل بنهاية اليوم. وإلا أكون مسئولاً قانونياً وفقاً للمادة (341) عقوبات.
+                        <div style="display:flex; justify-content:space-between; margin-top:15px; font-weight:bold;">
+                            <div>توقيع المندوب: ..............................</div>
+                            <div>البصمة: ............</div>
+                            <div>توقيع الإدارة: ..............................</div>
                         </div>
                     </div>
                 </div>
