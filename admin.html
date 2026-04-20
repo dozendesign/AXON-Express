@@ -138,7 +138,7 @@
         .adv-filter-select { padding: 6px 15px; border-radius: 20px; border: 1px solid #007bff; background: #e0eaf5; color: #007bff; font-weight: bold; font-family: 'Cairo'; font-size: 13px; outline: none;}
         body.dark-mode .adv-filter-select { background: #062338; color: #66b2ff; border-color: #66b2ff; }
 
-        /* ---------------- CSS الطباعة (مقص الورق والإمضاء المصغر) ---------------- */
+        /* ---------------- CSS الطباعة ---------------- */
         @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             body { background: #fff; margin: 0; padding: 0; color:#000; width: 100%; }
@@ -146,7 +146,6 @@
             #printArea { display: block !important; width: 100%; margin: 0; padding: 0; }
             @page { margin: 5mm; size: A4 portrait; }
             
-            /* إجبار الغلاف يتلم جوه حدود الصفحة */
             .a4-wrapper { 
                 width: 100% !important; 
                 max-width: 100% !important; 
@@ -176,11 +175,6 @@
         .safeer-name-badge h2 { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 1px;}
         .branch-badge-print { font-weight: bold; font-size: 14px; color: #000; text-transform: uppercase; background: #f0f0f0; border: 2px solid #000; padding: 3px 10px; display: inline-block; margin-bottom: 5px;}
         .fragile-banner { color: white; text-align: center; font-size: 14px; font-weight: bold; padding: 8px; border-radius: 5px; margin-bottom: 10px; border: 2px dashed #000;}
-        
-        /* نجوم التقييم */
-        .courier-stars { color: #ffc107; font-size: 16px; margin-top: 5px; }
-        .courier-stars .empty-star { color: #ccc; }
-        .ambassador-quote { font-size: 16px; font-weight: bold; color: #0A3D62; text-align: center; background: #e0eaf5; padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 2px dashed #0A3D62; }
     </style>
 </head>
 <body>
@@ -899,25 +893,23 @@
             
             let tableRows = '';
             targetShipments.forEach((s, index) => {
-                // شلنا خانة التوقيع خالص وضيقنا الهوامش الداخلية للخلايا
                 tableRows += `<tr>
-                    <td style="border:1px solid #000; padding:2px; text-align:center;">${index + 1}</td>
-                    <td style="border:1px solid #000; padding:2px; text-align:center;"><b>${s.awb}</b></td>
-                    <td style="border:1px solid #000; padding:2px; text-align:center;">${s.merchant}</td>
-                    <td style="border:1px solid #000; padding:2px; text-align:center;">${s.name} (${s.phone})<br>${s.city} - ${s.address}</td>
-                    <td style="border:1px solid #000; padding:2px; text-align:center; color:#b82329; font-weight:bold; white-space:nowrap !important;">${s.amount} ج.م</td>
+                    <td style="border:1px solid #000; padding:2px; text-align:center; font-size:10px;">${index + 1}</td>
+                    <td style="border:1px solid #000; padding:2px; text-align:center; font-size:10px;"><b>${s.awb}</b></td>
+                    <td style="border:1px solid #000; padding:2px; text-align:center; font-size:10px;">${s.merchant}</td>
+                    <td style="border:1px solid #000; padding:2px; text-align:center; font-size:10px; word-break:break-word;">${s.name} (${s.phone})<br>${s.city} - ${s.address}</td>
+                    <td style="border:1px solid #000; padding:2px; text-align:center; color:#b82329; font-weight:bold; font-size:11px;">${s.amount} ج.م</td>
                 </tr>`;
             });
             
-            // حساب النجوم بناءً على التسليمات الناجحة (صفرا وفاضية)
             let starsHtml = '';
             let filledStars = 3; 
             if (successCount >= 2000) filledStars = 5;
             else if (successCount >= 1000) filledStars = 4;
             
             for(let i=0; i<5; i++) {
-                if(i < filledStars) starsHtml += '<i class="fa-solid fa-star" style="color:#ffc107;"></i> ';
-                else starsHtml += '<i class="fa-regular fa-star" style="color:#ccc;"></i> ';
+                if(i < filledStars) starsHtml += '<i class="fa-solid fa-star" style="color:#ffc107 !important;"></i> ';
+                else starsHtml += '<i class="fa-regular fa-star" style="color:#ccc !important;"></i> ';
             }
 
             document.getElementById('printArea').innerHTML = `
@@ -925,7 +917,7 @@
                     <button onclick="window.print()" style="background:#0A3D62;">🖨️ طباعة كشف العهدة (A4)</button>
                     <button onclick="window.closePrintView()" style="background:#b82329;">رجوع للسيستم</button>
                 </div>
-                <div class="a4-wrapper" dir="rtl" style="font-size:11px; padding:5px;">
+                <div class="a4-wrapper" dir="rtl" style="font-size:10px; padding:5px; box-sizing:border-box; width:100%;">
                     <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #0A3D62; padding-bottom:3px; margin-bottom:5px;">
                         <div><h1 style="margin:0; color:#0A3D62; font-size:18px;">AXON <span style="color:#b82329;">EXPRESS</span></h1><p style="margin:0; font-weight:bold; font-size:10px;">الفرع: ${adminBranch === 'all' ? 'إدارة عامة' : adminBranch}</p></div>
                         <div style="text-align:center;"><h2 style="margin:0; text-decoration:underline; font-size:14px;">كشف عهدة تسليم يومي (Manifest)</h2><p style="margin:0; font-size:9px;">تاريخ الطباعة: ${timestamp}</p></div>
@@ -939,14 +931,14 @@
                         <i class="fa-solid fa-quote-right"></i> أنت لست مندوباً، أنت "سفير" للشركة! إظهارك للود والاحترام للعميل أمر واجب <i class="fa-solid fa-quote-left"></i>
                     </div>
 
-                    <table style="width:100%; border-collapse:collapse; margin-bottom:5px; table-layout:fixed; font-size:11px;">
+                    <table style="width:100%; border-collapse:collapse; margin-bottom:5px; table-layout:fixed; font-size:10px; box-sizing:border-box;">
                         <thead>
                             <tr>
-                                <th style="width:5%; border:1px solid #000; padding:3px; background:#0A3D62; color:#fff; text-align:center;">م</th>
-                                <th style="width:20%; border:1px solid #000; padding:3px; background:#0A3D62; color:#fff; text-align:center;">رقم البوليصة</th>
-                                <th style="width:20%; border:1px solid #000; padding:3px; background:#0A3D62; color:#fff; text-align:center;">الراسل (التاجر)</th>
-                                <th style="width:40%; border:1px solid #000; padding:3px; background:#0A3D62; color:#fff; text-align:center;">بيانات المستلم (المرسل إليه)</th>
-                                <th style="width:15%; border:1px solid #000; padding:3px; background:#0A3D62; color:#fff; text-align:center;">المبلغ</th>
+                                <th style="width:5%; border:1px solid #000; padding:2px; background:#0A3D62; color:#fff; text-align:center;">م</th>
+                                <th style="width:17%; border:1px solid #000; padding:2px; background:#0A3D62; color:#fff; text-align:center;">رقم البوليصة</th>
+                                <th style="width:18%; border:1px solid #000; padding:2px; background:#0A3D62; color:#fff; text-align:center;">الراسل (التاجر)</th>
+                                <th style="width:45%; border:1px solid #000; padding:2px; background:#0A3D62; color:#fff; text-align:center;">بيانات المستلم (المرسل إليه)</th>
+                                <th style="width:15%; border:1px solid #000; padding:2px; background:#0A3D62; color:#fff; text-align:center;">المبلغ</th>
                             </tr>
                         </thead>
                         <tbody>${tableRows}</tbody>
