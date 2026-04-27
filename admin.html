@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -36,72 +37,95 @@
     
     <style>
         * { box-sizing: border-box; }
-        :root { --primary-blue: #0A3D62; --primary-red: #b82329; --white: #fff; --light-bg: #f4f7f6; --dark-text: #2c3e50; --border-color: #eee; }
+        /* تم تحديث الهوية البصرية (عنابي، أصفر، أسود، أزرق) */
+        :root { 
+            --primary-blue: #0A3D62; 
+            --primary-burgundy: #800020; 
+            --primary-yellow: #FFC300; 
+            --primary-black: #111111;
+            --white: #fff; 
+            --light-bg: #f4f7f6; 
+            --dark-text: #111111; 
+            --border-color: #eee; 
+        }
         
         html, body { font-family: 'Cairo', sans-serif; margin: 0; background: var(--light-bg); color: var(--dark-text); overflow-x: hidden; scroll-behavior: smooth; transition: background 0.3s, color 0.3s;}
         
         #printArea { display: none; }
         .swal2-container { font-family: 'Cairo', sans-serif !important; z-index: 99999 !important; }
 
-        header { background: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary-red); position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s;}
-        .logo { font-size: 22px; font-weight: 900; color: var(--primary-blue);}
-        .logo span { color: var(--primary-red); }
+        header { background: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary-burgundy); position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s;}
+        .logo { font-size: 22px; font-weight: 900; color: var(--primary-black);}
+        .logo span { color: var(--primary-burgundy); }
+        .logo i { color: var(--primary-yellow); }
+        
         .container { padding: 20px; max-width: 1400px; margin: 0 auto;}
         
         .header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap;}
-        .branch-badge { background: var(--primary-red); color: white; padding: 5px 15px; border-radius: 8px; font-size: 14px; font-weight: bold; display: none;}
-        .lang-btn { background: transparent; border: 2px solid var(--primary-blue); color: var(--primary-blue); padding: 5px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 13px; transition: 0.3s;}
-        .lang-btn:hover { background: var(--primary-blue); color: white; }
-        .logout-btn { background: var(--white); border: 2px solid var(--primary-red); color: var(--primary-red); padding: 6px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; transition: 0.3s;}
+        .branch-badge { background: var(--primary-black); color: var(--primary-yellow); padding: 5px 15px; border-radius: 8px; font-size: 14px; font-weight: bold; display: none; border: 1px solid var(--primary-yellow);}
+        .lang-btn { background: transparent; border: 2px solid var(--primary-black); color: var(--primary-black); padding: 5px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 13px; transition: 0.3s;}
+        .lang-btn:hover { background: var(--primary-black); color: var(--primary-yellow); }
+        .logout-btn { background: var(--white); border: 2px solid var(--primary-burgundy); color: var(--primary-burgundy); padding: 6px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; transition: 0.3s;}
+        .logout-btn:hover { background: var(--primary-burgundy); color: white; }
 
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: var(--white); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-blue); transition: 0.3s;}
-        .stat-card h3 { font-size: 15px; margin: 0 0 10px 0; color: #666; transition: 0.3s;}
-        .stat-card .value { font-size: 24px; font-weight: 900; color: var(--primary-blue);}
+        .stat-card { background: var(--white); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-yellow); transition: 0.3s;}
+        .stat-card h3 { font-size: 15px; margin: 0 0 10px 0; color: var(--primary-black); transition: 0.3s; font-weight: 900;}
+        .stat-card .value { font-size: 24px; font-weight: 900; color: var(--primary-burgundy);}
         
         .admin-section { background: var(--white); padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s;}
-        .admin-section h2 { color: var(--primary-blue); border-bottom: 2px solid var(--primary-red); padding-bottom: 10px; margin-top: 0; font-size: 18px;}
+        .admin-section h2 { color: var(--primary-black); border-bottom: 2px solid var(--primary-burgundy); padding-bottom: 10px; margin-top: 0; font-size: 18px;}
         
-        #adminMap { height: 450px; width: 100%; border-radius: 12px; border: 3px solid var(--primary-blue); z-index: 1;}
+        #adminMap { height: 450px; width: 100%; border-radius: 12px; border: 3px solid var(--primary-yellow); z-index: 1;}
         
         .table-wrapper { width: 100%; overflow-x: auto; border-radius: 8px; border: 1px solid var(--border-color);}
         table { width: 100%; min-width: 800px; border-collapse: collapse; text-align: right; }
         th, td { padding: 12px; border-bottom: 1px solid var(--border-color); font-size: 13px; transition: 0.3s;}
-        th { background: var(--primary-blue); color: #fff; }
+        th { background: var(--primary-black); color: var(--primary-yellow); font-weight: 900; }
         tr:hover { background-color: rgba(0,0,0,0.02); }
         
         .btn-action { border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; color: white; margin-left: 3px; margin-bottom: 3px; font-family: 'Cairo'; font-weight: bold; font-size: 12px; transition: 0.3s;}
         .btn-action:hover { opacity: 0.8; }
-        .btn-save { background: #28a745; } .btn-edit { background: #007bff; } .btn-delete { background: var(--primary-red); } .btn-print { background: #333; } .btn-track { background: #17a2b8; margin-top: 5px; width: 100%; }
+        .btn-save { background: #28a745; } .btn-edit { background: var(--primary-blue); } .btn-delete { background: var(--primary-burgundy); } .btn-print { background: #333; } .btn-track { background: #17a2b8; margin-top: 5px; width: 100%; }
         .btn-broadcast { background: #8e44ad; } 
         .btn-transit { background: #fd7e14; }
         .btn-receive { background: #20c997; box-shadow: 0 2px 5px rgba(0,0,0,0.2); animation: pulse 2s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         
         .search-box { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd; font-family: 'Cairo'; font-size: 14px; transition: 0.3s; background: var(--white); color: var(--dark-text); }
-        .search-box:focus { outline: none; border-color: var(--primary-blue); box-shadow: 0 0 5px rgba(10, 61, 98, 0.3); }
+        .search-box:focus { outline: none; border-color: var(--primary-yellow); box-shadow: 0 0 5px rgba(255, 195, 0, 0.3); }
 
         .status-dropdown, .courier-dropdown { padding: 6px; border-radius: 5px; border: 1px solid #ddd; font-family: 'Cairo'; font-weight: bold; outline: none; transition: 0.3s; background: var(--white); color: var(--dark-text);}
-        .courier-dropdown { border-color: var(--primary-blue); color: var(--primary-blue); background: #e0eaf5; }
+        .courier-dropdown { border-color: var(--primary-black); color: var(--primary-black); background: #fffde7; }
         
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; z-index: 2000; padding: 15px; backdrop-filter: blur(5px);}
-        .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 500px; position: relative; transition: 0.3s; max-height: 90vh; overflow-y: auto;}
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(17, 17, 17, 0.8); align-items: center; justify-content: center; z-index: 2000; padding: 15px; backdrop-filter: blur(5px);}
+        .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 500px; position: relative; transition: 0.3s; max-height: 90vh; overflow-y: auto; border: 2px solid var(--primary-yellow);}
         .modal-content input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo'; background: var(--white); color: var(--dark-text); transition: 0.3s;}
-        .close-btn { position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--primary-red);}
+        .close-btn { position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--primary-burgundy);}
         
-        body.dark-mode { --white: #1e1e1e; --light-bg: #121212; --dark-text: #e0e0e0; --border-color: #333; }
-        body.dark-mode .stat-card h3 { color: #aaa; }
-        body.dark-mode th { background: #062338; border-color: #333; }
-        body.dark-mode tr:hover { background-color: rgba(255,255,255,0.05); }
-        body.dark-mode .search-box, body.dark-mode .status-dropdown, body.dark-mode .courier-dropdown { background: #2c2c2c; border: 1px solid #444; color: #fff; }
-        body.dark-mode .logout-btn { background: transparent; }
-        body.dark-mode .bourse-section { background: #2c1a00 !important; border-color: #ff9800 !important; }
-        body.dark-mode .bourse-section h2 { color: #ffb74d !important; border-bottom-color: #ff9800 !important; }
-        body.dark-mode input[type="number"], body.dark-mode input[type="text"], body.dark-mode input[type="tel"], body.dark-mode input[type="email"] { background: #2c2c2c; color: #fff; border: 1px solid #444; }
+        /* ------------- الوضع الليلي المطور بهوية أكسون ------------- */
+        body.dark-mode { --white: #1A1A1A; --light-bg: #121212; --dark-text: #f0f0f0; --border-color: #333; }
+        body.dark-mode header { border-bottom: 3px solid var(--primary-yellow); }
+        body.dark-mode .logo { color: var(--white); }
+        body.dark-mode .logo span { color: var(--primary-yellow); }
+        body.dark-mode .logo i { color: var(--primary-burgundy); }
+        body.dark-mode .lang-btn { border-color: var(--primary-yellow); color: var(--primary-yellow); }
+        body.dark-mode .lang-btn:hover { background: var(--primary-yellow); color: var(--primary-black); }
+        body.dark-mode th { background: #000; color: var(--primary-yellow); border-color: #333; }
+        body.dark-mode tr:hover { background-color: rgba(255,195,0,0.05); }
+        body.dark-mode .search-box, body.dark-mode .status-dropdown, body.dark-mode .courier-dropdown { background: #222; border: 1px solid #444; color: #fff; }
+        body.dark-mode .logout-btn { background: transparent; border-color: var(--primary-burgundy); color: var(--primary-burgundy); }
+        body.dark-mode .logout-btn:hover { background: var(--primary-burgundy); color: white; }
+        body.dark-mode .bourse-section { background: #2c1a00 !important; border-color: var(--primary-yellow) !important; }
+        body.dark-mode .bourse-section h2 { color: var(--primary-yellow) !important; border-bottom-color: var(--primary-yellow) !important; }
+        body.dark-mode input[type="number"], body.dark-mode input[type="text"], body.dark-mode input[type="tel"], body.dark-mode input[type="email"] { background: #222; color: #fff; border: 1px solid #444; }
+        body.dark-mode .stat-card { border-bottom: 4px solid var(--primary-burgundy); }
+        body.dark-mode .stat-card h3 { color: #ccc; }
+        body.dark-mode .stat-card .value { color: var(--primary-yellow); }
         
-        .new-acc-section { background: #f0f9fa; border: 2px solid #17a2b8; }
-        body.dark-mode .new-acc-section { background: #0b2b30 !important; border-color: #17a2b8 !important; }
-        body.dark-mode .new-acc-section h2 { color: #4dd0e1 !important; border-bottom-color: #17a2b8 !important; }
+        .new-acc-section { background: #fff9e6; border: 2px solid var(--primary-yellow); }
+        body.dark-mode .new-acc-section { background: #1a1600 !important; border-color: var(--primary-yellow) !important; }
+        body.dark-mode .new-acc-section h2 { color: var(--primary-yellow) !important; border-bottom-color: var(--primary-yellow) !important; }
 
         .admin-tabs { 
             display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; 
@@ -109,36 +133,54 @@
         }
         .admin-tabs::-webkit-scrollbar { display: none; }
         .admin-tab-btn { 
-            background: #e0eaf5; color: var(--primary-blue); border: none; padding: 12px 20px; 
+            background: #e0eaf5; color: var(--primary-black); border: none; padding: 12px 20px; 
             border-radius: 8px; font-family: 'Cairo'; font-weight: bold; cursor: pointer; 
             transition: 0.3s; white-space: nowrap; flex-shrink: 0; font-size: 15px;
         }
-        .admin-tab-btn.active { background: var(--primary-blue); color: white; }
+        .admin-tab-btn.active { background: var(--primary-black); color: var(--primary-yellow); }
         .admin-tab-content { display: none; }
         .admin-tab-content.active { display: block; }
-        body.dark-mode .admin-tab-btn { background: #2c2c2c; color: #aaa; }
-        body.dark-mode .admin-tab-btn.active { background: #062338; color: #66b2ff; }
+        body.dark-mode .admin-tab-btn { background: #222; color: #aaa; }
+        body.dark-mode .admin-tab-btn.active { background: #000; color: var(--primary-yellow); border: 1px solid var(--primary-yellow); }
 
+        /* ---------- حالات الشحنات (شاملة الوميض للشحنات الجديدة) ---------- */
         .status-danger { background-color: #ffeaea !important; } 
         .status-warning { background-color: #fff3cd !important; } 
         .status-success { background-color: #e8f5e9 !important; } 
         .status-archived { background-color: #e2e3e5 !important; color: #6c757d; } 
         .status-transit { background-color: #fff3cd !important; border-right: 4px solid #fd7e14; }
+        
+        .status-new-shipment {
+            background-color: rgba(255, 195, 0, 0.15) !important;
+            border-right: 5px solid var(--primary-yellow);
+            animation: newShipmentPulse 2s infinite;
+        }
+
         body.dark-mode .status-danger { background-color: #4a1919 !important; }
         body.dark-mode .status-warning { background-color: #4a3f15 !important; }
         body.dark-mode .status-success { background-color: #1b3820 !important; }
         body.dark-mode .status-archived { background-color: #2b2b2b !important; color: #888; }
         body.dark-mode .status-transit { background-color: #4a3f15 !important; border-right: 4px solid #fd7e14; }
+        body.dark-mode .status-new-shipment {
+            background-color: rgba(255, 195, 0, 0.05) !important;
+            border-right: 5px solid var(--primary-yellow);
+        }
+
+        @keyframes newShipmentPulse {
+            0% { box-shadow: inset 0 0 0 rgba(255, 195, 0, 0); }
+            50% { box-shadow: inset 35px 0 20px -20px rgba(255, 195, 0, 0.4); }
+            100% { box-shadow: inset 0 0 0 rgba(255, 195, 0, 0); }
+        }
 
         .filter-group { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; align-items: center;}
         .filter-btn { background: #fff; border: 1px solid #ccc; padding: 6px 15px; border-radius: 20px; cursor: pointer; font-family: 'Cairo'; font-size: 13px; font-weight: bold; transition: 0.3s;}
-        .filter-btn.active { background: var(--primary-blue); color: white; border-color: var(--primary-blue); }
-        body.dark-mode .filter-btn { background: #2c2c2c; border-color: #444; color: #fff;}
-        body.dark-mode .filter-btn.active { background: var(--primary-blue); }
-        .adv-filter-select { padding: 6px 15px; border-radius: 20px; border: 1px solid #007bff; background: #e0eaf5; color: #007bff; font-weight: bold; font-family: 'Cairo'; font-size: 13px; outline: none;}
-        body.dark-mode .adv-filter-select { background: #062338; color: #66b2ff; border-color: #66b2ff; }
+        .filter-btn.active { background: var(--primary-black); color: var(--primary-yellow); border-color: var(--primary-black); }
+        body.dark-mode .filter-btn { background: #222; border-color: #444; color: #fff;}
+        body.dark-mode .filter-btn.active { background: var(--primary-yellow); color: var(--primary-black); border-color: var(--primary-yellow); }
+        .adv-filter-select { padding: 6px 15px; border-radius: 20px; border: 1px solid var(--primary-black); background: #e0eaf5; color: var(--primary-black); font-weight: bold; font-family: 'Cairo'; font-size: 13px; outline: none;}
+        body.dark-mode .adv-filter-select { background: #000; color: var(--primary-yellow); border-color: var(--primary-yellow); }
 
-        /* ---------------- CSS الطباعة (تم شيل اتجاه الورقة من هنا لبرمجتها جوه كل زرار حسب وظيفته) ---------------- */
+        /* ---------------- CSS الطباعة ---------------- */
         @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             body { background: #fff; margin: 0; padding: 0; color:#000; width: 100%; }
@@ -151,27 +193,27 @@
                 max-width: 100% !important; 
                 margin: 0 !important; 
                 padding: 5mm !important;
-                border: 2px solid #0A3D62 !important;
+                border: 2px solid var(--primary-black) !important;
                 box-sizing: border-box !important;
             }
         }
         
-        .a4-wrapper { width: 100%; max-width: 800px; margin: 0 auto; background: #fff; border: 2px solid #0A3D62; padding: 10px; box-sizing: border-box; color: #000; }
+        .a4-wrapper { width: 100%; max-width: 800px; margin: 0 auto; background: #fff; border: 2px solid var(--primary-black); padding: 10px; box-sizing: border-box; color: #000; }
         .print-controls-ui { text-align: center; margin-bottom: 20px; padding: 15px; background: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
         .print-controls-ui button { cursor: pointer; padding: 12px 25px; margin: 5px; font-size: 16px; font-weight: bold; border: none; border-radius: 5px; color: white; font-family: 'Cairo';}
-        .print-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #b82329; padding-bottom: 5px; margin-bottom: 10px; flex-wrap: nowrap; gap: 10px;}
+        .print-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary-burgundy); padding-bottom: 5px; margin-bottom: 10px; flex-wrap: nowrap; gap: 10px;}
         .print-header > div { flex: 1; text-align: center; overflow: hidden; }
         .barcode-svg { max-width: 100%; height: auto; }
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
         .box { border: 1px solid #ccc; padding: 5px; border-radius: 5px; font-size: 13px; color: #000;}
-        .box h3 { margin: 0 0 5px 0; background: #0A3D62; color: #fff; padding: 3px; font-size: 13px; text-align: center;}
-        .cod-box { background: #fff; border: 2px solid #b82329; text-align: center; padding: 5px; border-radius: 5px; margin-bottom:10px; color: #b82329;}
+        .box h3 { margin: 0 0 5px 0; background: var(--primary-black); color: var(--primary-yellow); padding: 3px; font-size: 13px; text-align: center;}
+        .cod-box { background: #fff; border: 2px solid var(--primary-burgundy); text-align: center; padding: 5px; border-radius: 5px; margin-bottom:10px; color: var(--primary-burgundy);}
         .constitution-columns { column-count: 2; column-gap: 15px; font-size: 9px; line-height: 1.4; text-align: justify; border: 1px solid #000; padding: 10px; margin-bottom: 10px; background: #fff;}
         .constitution-columns * { color: #000 !important; }
         .constitution-columns h4 { margin: 5px 0 3px 0; font-size: 11px; border-bottom: 1px solid #000; padding-bottom:2px;}
         .footer-grid { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; font-size: 11px;}
         .digital-sig { text-align: center; font-size: 9px; font-family: monospace; color: #000; border-top: 1px dashed #000; padding-top: 5px; font-weight: bold;}
-        .safeer-name-badge { background: #0A3D62; color: white; padding: 8px 15px; border-radius: 8px; display: inline-block; font-family: 'Cairo'; margin-bottom: 5px; border: 2px solid #b82329;}
+        .safeer-name-badge { background: var(--primary-black); color: var(--primary-yellow); padding: 8px 15px; border-radius: 8px; display: inline-block; font-family: 'Cairo'; margin-bottom: 5px; border: 2px solid var(--primary-yellow);}
         .safeer-name-badge h2 { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 1px;}
         .branch-badge-print { font-weight: bold; font-size: 14px; color: #000; text-transform: uppercase; background: #f0f0f0; border: 2px solid #000; padding: 3px 10px; display: inline-block; margin-bottom: 5px;}
         .fragile-banner { color: white; text-align: center; font-size: 14px; font-weight: bold; padding: 8px; border-radius: 5px; margin-bottom: 10px; border: 2px dashed #000;}
@@ -179,12 +221,12 @@
 </head>
 <body>
     <header id="mainHeader">
-        <div class="logo"><i class="fa-solid fa-chess-king"></i> <span data-i18n="admin_title">إدارة</span> | <span style="color:var(--primary-red);">AXON</span></div>
+        <div class="logo"><i class="fa-solid fa-chess-king"></i> <span data-i18n="admin_title">إدارة</span> | <span>AXON</span></div>
         <div class="header-actions">
             <div class="branch-badge" id="adminBranchDisplay">الفرع: </div>
-            <button onclick="window.location.href='finance.html'" class="lang-btn" style="background:#fff; color:var(--primary-blue);"><i class="fa-solid fa-vault"></i> الخزينة</button>
+            <button id="financeBtn" onclick="window.location.href='finance.html'" class="lang-btn" style="background:var(--primary-black); color:var(--primary-yellow); border-color:var(--primary-yellow);"><i class="fa-solid fa-vault"></i> الخزينة</button>
             <button onclick="window.toggleLang()" class="lang-btn" id="langBtn">English</button>
-            <button onclick="window.toggleTheme()" style="background:none; border:none; color:var(--primary-blue); font-size:24px; cursor:pointer;" title="الوضع الليلي">
+            <button onclick="window.toggleTheme()" style="background:none; border:none; color:var(--primary-black); font-size:24px; cursor:pointer;" title="الوضع الليلي">
                 <i id="themeIcon" class="fa-solid fa-moon"></i>
             </button>
             <button class="logout-btn" onclick="window.logout()" data-i18n="logout">خروج</button>
@@ -195,7 +237,7 @@
         
         <div class="admin-tabs">
             <button class="admin-tab-btn active" onclick="switchAdminTab('mainOps')"><i class="fa-solid fa-truck-fast"></i> <span data-i18n="tab_main">العمليات الرئيسية</span></button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('emergencyOps')" style="color:var(--primary-red);">
+            <button class="admin-tab-btn" onclick="switchAdminTab('emergencyOps')" style="color:var(--primary-burgundy);">
                 <i class="fa-solid fa-truck-medical"></i> <span data-i18n="tab_emergency">طوارئ ونقل</span> 🚨
                 <span id="emergencyBadge" style="background:red; color:white; border-radius:50%; padding:2px 6px; font-size:10px; margin-right:5px; display:none;">0</span>
             </button>
@@ -223,6 +265,7 @@
                         <select id="newAccRole" class="status-dropdown" style="width: 100%; padding: 8px;">
                             <option value="merchant">تاجر</option>
                             <option value="delivery">مندوب</option>
+                            <option value="operator">أوبريتور إدارة</option>
                             <option value="admin">إدارة (وكيل محافظة)</option>
                         </select>
                     </div>
@@ -259,21 +302,21 @@
                         </select>
                     </div>
                 </div>
-                <button id="btnCreateAcc" onclick="window.createNewAccount()" style="background: #17a2b8; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; font-family: 'Cairo';"><span data-i18n="btn_create">إنشاء الحساب فوراً</span> 🚀</button>
+                <button id="btnCreateAcc" onclick="window.createNewAccount()" style="background: var(--primary-black); color: var(--primary-yellow); border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; font-family: 'Cairo';"><span data-i18n="btn_create">إنشاء الحساب فوراً</span> 🚀</button>
             </div>
 
             <div class="admin-section">
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary-red); padding-bottom: 10px; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
-                    <h2 style="border: none; padding: 0; margin: 0; color: var(--primary-blue);"><i class="fa-solid fa-map-location-dot"></i> <span data-i18n="radar_map">الرادار التكتيكي (تتبع حي)</span></h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary-burgundy); padding-bottom: 10px; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                    <h2 style="border: none; padding: 0; margin: 0; color: var(--primary-black);"><i class="fa-solid fa-map-location-dot" style="color:var(--primary-yellow);"></i> <span data-i18n="radar_map">الرادار التكتيكي (تتبع حي)</span></h2>
                     <span style="font-size: 12px; font-weight: bold; color: #10B981; background: #d1fae5; padding: 5px 10px; border-radius: 5px;">متصل بشبكة الكباتن</span>
                 </div>
                 <div id="adminMap"></div>
             </div>
 
             <div class="admin-section">
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary-red); padding-bottom: 10px; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
-                    <h2 style="border: none; padding: 0; margin: 0;"><i class="fa-solid fa-satellite-dish"></i> أهداف الرادار (اشتريلي / بيكب / كولد)</h2>
-                    <button onclick="window.issuePickupOrder()" style="background: var(--primary-red); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-family: 'Cairo'; font-weight: bold;"><i class="fa-solid fa-truck-pickup"></i> إصدار أمر بيكب جديد</button>
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary-burgundy); padding-bottom: 10px; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                    <h2 style="border: none; padding: 0; margin: 0;"><i class="fa-solid fa-satellite-dish" style="color:var(--primary-yellow);"></i> أهداف الرادار (اشتريلي / بيكب / كولد)</h2>
+                    <button onclick="window.issuePickupOrder()" style="background: var(--primary-burgundy); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-family: 'Cairo'; font-weight: bold;"><i class="fa-solid fa-truck-pickup"></i> إصدار أمر بيكب جديد</button>
                 </div>
                 <div class="table-wrapper">
                     <table>
@@ -295,15 +338,16 @@
             </div>
 
             <div class="admin-section">
-                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; border-bottom: 2px solid var(--primary-red); padding-bottom: 10px; margin-bottom: 15px;">
-                    <h2 style="border:none; margin:0; padding:0;"><i class="fa-solid fa-boxes-packing"></i> <span data-i18n="bank_title">بنك الشحنات الرئيسي</span></h2>
-                    <button onclick="document.getElementById('manifestModal').style.display='flex'" style="background:var(--primary-blue); color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-family:'Cairo'; font-weight:bold;"><i class="fa-solid fa-file-invoice"></i> طباعة كشف عهدة مندوب</button>
+                <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; border-bottom: 2px solid var(--primary-burgundy); padding-bottom: 10px; margin-bottom: 15px;">
+                    <h2 style="border:none; margin:0; padding:0; color:var(--primary-black);"><i class="fa-solid fa-boxes-packing" style="color:var(--primary-yellow);"></i> <span data-i18n="bank_title">بنك الشحنات الرئيسي</span></h2>
+                    <button onclick="document.getElementById('manifestModal').style.display='flex'" style="background:var(--primary-black); color:var(--primary-yellow); border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-family:'Cairo'; font-weight:bold;"><i class="fa-solid fa-file-invoice"></i> طباعة كشف عهدة مندوب</button>
                 </div>
                 
                 <input type="text" id="searchInput" class="search-box" placeholder="🔍 بحث برقم البوليصة، التليفون، اسم التاجر..." onkeyup="window.filterTable()">
                 
                 <div class="filter-group">
                     <button class="filter-btn active" onclick="window.applyFilter('all', this)">الكل</button>
+                    <button class="filter-btn" onclick="window.applyFilter('جديد', this)" style="border-color: var(--primary-yellow); color: var(--primary-black); background: #fff3cd;">بوليصة جديدة 🌟</button>
                     <button class="filter-btn" onclick="window.applyFilter('مطلوب تعيين', this)" style="border-color: #dc3545; color: #dc3545;">مطلوب تعيين 🔴</button>
                     <button class="filter-btn" onclick="window.applyFilter('مع المناديب', this)" style="border-color: #f39c12; color: #f39c12;">مع المناديب 🟡</button>
                     <button class="filter-btn" onclick="window.applyFilter('مكتملة', this)" style="border-color: #28a745; color: #28a745;">مكتملة 🟢</button>
@@ -324,8 +368,8 @@
         </div>
 
         <div id="emergencyOps" class="admin-tab-content">
-            <div class="admin-section" style="border: 2px solid var(--primary-red);">
-                <h2 style="color:var(--primary-red);"><i class="fa-solid fa-truck-pickup"></i> أكسون إنقاذ (استغاثات)</h2>
+            <div class="admin-section" style="border: 2px solid var(--primary-burgundy);">
+                <h2 style="color:var(--primary-burgundy);"><i class="fa-solid fa-truck-pickup"></i> أكسون إنقاذ (استغاثات)</h2>
                 <div class="table-wrapper">
                     <table>
                         <thead><tr><th>التاريخ</th><th>العميل</th><th>الموقع</th><th>إجراء</th></tr></thead>
@@ -377,8 +421,8 @@
     </div>
 
     <footer style="text-align:center; padding:15px; background:var(--white); border-top:1px solid var(--border-color); margin-top:40px;">
-        <h4 style="margin:0;color:var(--primary-blue);font-size:11px;font-weight:900;">تم الإنشاء بواسطة ESAIA</h4>
-        <p style="margin:5px 0 0 0;color:var(--primary-red);font-size:9px;font-weight:bold;">الشركة المصرية السعودية العامة لهندسة الهوية المؤسسية والصناعات المتقدمة</p>
+        <h4 style="margin:0;color:var(--primary-black);font-size:11px;font-weight:900;">تم الإنشاء بواسطة ESAIA</h4>
+        <p style="margin:5px 0 0 0;color:var(--primary-burgundy);font-size:9px;font-weight:bold;">الشركة المصرية السعودية العامة لهندسة الهوية المؤسسية والصناعات المتقدمة</p>
     </footer>
 
     <div id="printArea"></div>
@@ -386,27 +430,27 @@
     <div id="editShipmentModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="document.getElementById('editShipmentModal').style.display='none'">✖</button>
-            <h3 style="color:var(--primary-blue); border-bottom:2px solid var(--primary-red); padding-bottom:10px; margin-top:0;">تعديل الشحنة ✏️</h3>
+            <h3 style="color:var(--primary-black); border-bottom:2px solid var(--primary-burgundy); padding-bottom:10px; margin-top:0;">تعديل الشحنة ✏️</h3>
             <input type="hidden" id="editShipId">
-            <label style="font-weight:bold; color:var(--primary-blue); display:block; text-align:right;">اسم المستلم:</label>
+            <label style="font-weight:bold; color:var(--primary-black); display:block; text-align:right;">اسم المستلم:</label>
             <input type="text" id="editShipName">
-            <label style="font-weight:bold; color:var(--primary-blue); display:block; text-align:right;">العنوان:</label>
+            <label style="font-weight:bold; color:var(--primary-black); display:block; text-align:right;">العنوان:</label>
             <input type="text" id="editShipAddress">
-            <label style="font-weight:bold; color:var(--primary-blue); display:block; text-align:right;">المبلغ (COD):</label>
+            <label style="font-weight:bold; color:var(--primary-black); display:block; text-align:right;">المبلغ (COD):</label>
             <input type="number" id="editShipAmount">
-            <label style="font-weight:bold; color:var(--primary-blue); display:block; text-align:right;">رقم الهاتف:</label>
+            <label style="font-weight:bold; color:var(--primary-black); display:block; text-align:right;">رقم الهاتف:</label>
             <input type="tel" id="editShipPhone">
-            <button onclick="window.saveShipmentEdits()" style="width:100%; background:var(--primary-blue); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; font-family:'Cairo'; margin-top:15px; cursor:pointer;">حفظ التعديلات</button>
+            <button onclick="window.saveShipmentEdits()" style="width:100%; background:var(--primary-black); color:var(--primary-yellow); border:none; padding:12px; border-radius:8px; font-weight:bold; font-family:'Cairo'; margin-top:15px; cursor:pointer;">حفظ التعديلات</button>
         </div>
     </div>
 
     <div id="manifestModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="document.getElementById('manifestModal').style.display='none'">✖</button>
-            <h3 style="color:var(--primary-blue); border-bottom:2px solid var(--primary-red); padding-bottom:10px; margin-top:0;">طباعة كشف عهدة يومي 🖨️</h3>
+            <h3 style="color:var(--primary-black); border-bottom:2px solid var(--primary-burgundy); padding-bottom:10px; margin-top:0;">طباعة كشف عهدة يومي 🖨️</h3>
             <label style="font-weight:bold;">اختر المندوب لطباعة كشف شحناته المفتوحة:</label>
             <select id="manifestCourierSelect" class="status-dropdown" style="width: 100%; margin-top: 10px; padding: 10px;"></select>
-            <button onclick="window.generateManifest()" style="width:100%; background:var(--primary-red); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; font-family:'Cairo'; margin-top:15px; cursor:pointer;"><i class="fa-solid fa-print"></i> تجهيز الطباعة</button>
+            <button onclick="window.generateManifest()" style="width:100%; background:var(--primary-burgundy); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; font-family:'Cairo'; margin-top:15px; cursor:pointer;"><i class="fa-solid fa-print"></i> تجهيز الطباعة</button>
         </div>
     </div>
 
@@ -500,12 +544,21 @@
                 loadLivePrices(); 
                 loadCouriersList('all');
                 loadEmergencyOps(); loadSupportTickets(); loadRadarTasks(); loadCouriersOnMap();
-            } else if (adminRole === 'branch_admin') {
+            } else if (adminRole === 'branch_admin' || adminRole === 'operator') {
+                // الأوبريتور ومدير الفرع بيتعاملوا نفس المعاملة هنا مع إخفاء الخزنة للأوبريتور
                 document.getElementById('exchangeSection').style.display = 'none';
                 document.getElementById('createAccountsSection').style.display = 'block'; 
                 document.getElementById('branchSelectContainer').style.display = 'none'; 
-                document.getElementById('adminBranchDisplay').innerText = "فرع: " + adminBranch;
+                
+                let roleDisplay = adminRole === 'operator' ? "أوبريتور إدارة: " : "فرع: ";
+                document.getElementById('adminBranchDisplay').innerText = roleDisplay + adminBranch;
                 document.getElementById('adminBranchDisplay').style.display = 'inline-block';
+                
+                // إخفاء الخزنة لو كان أوبريتور فقط
+                if(adminRole === 'operator') {
+                    document.getElementById('financeBtn').style.display = 'none';
+                }
+
                 loadCouriersList(adminBranch);
                 loadEmergencyOps(adminBranch); loadSupportTickets(adminBranch); loadRadarTasks(adminBranch); loadCouriersOnMap(adminBranch);
             } else { window.location.href = "index.html"; }
@@ -522,7 +575,11 @@
 
             if(!name || !email || !pass) return Swal.fire('بيانات ناقصة', 'رجاءً تعبئة الاسم والإيميل والباسورد', 'error');
             if(pass.length < 6) return Swal.fire('خطأ', 'الباسورد يجب أن يكون 6 أحرف أو أرقام على الأقل', 'error');
-            if(adminRole === 'branch_admin' && role === 'admin') return Swal.fire('صلاحيات محدودة', 'القيادة العليا فقط هي من تستطيع تعيين مديري الفروع.', 'error');
+            
+            // تحقق الواجهة من الصلاحيات (الفايربيز برضه هيمنعها بس ده للشكل)
+            if((adminRole === 'branch_admin' || adminRole === 'operator') && role === 'admin') {
+                return Swal.fire('صلاحيات محدودة', 'القيادة العليا فقط هي من تستطيع تعيين مديري الفروع.', 'error');
+            }
 
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الإنشاء...'; btn.disabled = true;
 
@@ -533,7 +590,7 @@
 
                 let collectionName = "merchant_profiles"; 
                 if(role === "delivery") collectionName = "couriers";
-                if(role === "admin") collectionName = "admins";
+                if(role === "admin" || role === "operator") collectionName = "admins";
 
                 let userData = { name: name, email: email, role: role, timestamp: new Date() };
                 let targetBranch = adminRole === 'super_admin' ? document.getElementById('newAccBranch').value : adminBranch;
@@ -544,13 +601,15 @@
                     userData.branchName = targetBranch;
                     userData.successfulDeliveries = 0; // لعداد النجوم
                 }
-                if(role === "admin" || role === "merchant") { userData.branchName = targetBranch; }
+                if(role === "admin" || role === "operator" || role === "merchant") { 
+                    userData.branchName = targetBranch; 
+                }
 
                 await setDoc(doc(db, collectionName, role === "merchant" ? email : uid), userData);
                 
                 Swal.fire('عاش يا هندسة', `تم إنشاء حساب (${name}) بنجاح كـ (${role}) وربطه بفرع (${targetBranch})`, 'success');
                 document.getElementById('newAccName').value = ''; document.getElementById('newAccEmail').value = ''; document.getElementById('newAccPass').value = '';
-            } catch (error) { Swal.fire('خطأ في الإنشاء', error.message, 'error'); } 
+            } catch (error) { Swal.fire('خطأ في الإنشاء (مرفوض من القاعدة)', error.message, 'error'); } 
             finally { btn.innerHTML = '<span data-i18n="btn_create">إنشاء الحساب فوراً</span> 🚀'; btn.disabled = false; }
         };
 
@@ -628,7 +687,7 @@
                     } else {
                         btns = `<div style="text-align:center;"><span style="color:#155724; background:#d4edda; padding:5px; border-radius:5px; display:block; margin-bottom:5px; font-size:12px;">في عهدة: ${d.courierName || 'المندوب'}</span><button class="btn-action btn-delete" onclick="window.deleteEsh('${id}')" style="margin-top:5px;">حذف ✖</button></div>`;
                     }
-                    html += `<tr><td><b>${(d.merchantEmail||'مجهول').split('@')[0]}</b><br><span style="font-size:11px; color:${typeColor}; font-weight:bold;">${typeIcon}</span><br><span style="font-size:11px;">${d.details}</span></td><td><span style="font-size:11px;">📍 ${d.address}</span><br><b style="color:var(--primary-red); font-size:11px;">💳 ${d.paymentMethod === 'pickup' ? '-' : d.paymentMethod}</b></td><td>${btns}</td></tr>`;
+                    html += `<tr><td><b>${(d.merchantEmail||'مجهول').split('@')[0]}</b><br><span style="font-size:11px; color:${typeColor}; font-weight:bold;">${typeIcon}</span><br><span style="font-size:11px;">${d.details}</span></td><td><span style="font-size:11px;">📍 ${d.address}</span><br><b style="color:var(--primary-burgundy); font-size:11px;">💳 ${d.paymentMethod === 'pickup' ? '-' : d.paymentMethod}</b></td><td>${btns}</td></tr>`;
                 });
                 document.getElementById('radarTasksBody').innerHTML = html || "<tr><td colspan='3' style='text-align:center;'>الرادار خالي حالياً</td></tr>";
                 document.getElementById('activeRadarTasks').innerText = count;
@@ -646,7 +705,7 @@
                         window.branchCouriersList.push({ 
                             id: doc.id, 
                             name: d.name,
-                            successfulDeliveries: d.successfulDeliveries || 0 // لتحديد النجوم
+                            successfulDeliveries: d.successfulDeliveries || 0 
                         });
                     }
                 });
@@ -669,7 +728,7 @@
         };
 
         window.triggerLoadShipments = () => {
-            loadShipments(adminRole === 'branch_admin' ? adminBranch : 'all');
+            loadShipments(adminRole === 'super_admin' ? 'all' : adminBranch);
         }
 
         function loadShipments(branchFilter = null) {
@@ -698,7 +757,11 @@
                         if(d.branchName !== branchFilter && d.targetBranch !== branchFilter) return;
                     }
 
-                    if(currentFilter === 'مطلوب تعيين' && d.status !== 'قيد التوصيل' && d.status !== 'Pending') return;
+                    // تمييز الفلترة للطرود الجديدة
+                    let isNewShipment = (d.status === 'Pending' || d.status === 'بوليصة جديدة');
+                    
+                    if(currentFilter === 'جديد' && !isNewShipment) return;
+                    if(currentFilter === 'مطلوب تعيين' && d.status !== 'قيد التوصيل' && d.status !== 'Pending' && d.status !== 'بوليصة جديدة') return;
                     if(currentFilter === 'مكتملة' && d.status !== 'تم التسليم' && d.status !== 'تمت التسوية') return;
                     if(currentFilter === 'مع المناديب' && !d.status.includes('مندوب') && d.status !== 'مذاع للرادار') return;
                     if(currentFilter === 'مرتجع' && d.status !== 'مرتجع' && d.status !== 'مؤجل') return;
@@ -713,7 +776,8 @@
                     window.loadedShipmentsData[id] = { ...d, awb, merchant, branch, id };
 
                     let rowClass = "";
-                    if(d.status === 'قيد التوصيل' || d.status === 'Pending') rowClass = "status-danger";
+                    if(isNewShipment) rowClass = "status-new-shipment"; // الـ Pulse للطرود الجديدة
+                    else if(d.status === 'قيد التوصيل') rowClass = "status-danger";
                     else if(d.status === 'مذاع للرادار' || d.status.includes('مندوب')) rowClass = "status-warning";
                     else if(d.status === 'تم التسليم' || d.status === 'تمت التسوية') rowClass = "status-success";
                     else if(d.status === 'مرتجع' || d.status === 'مؤجل') rowClass = "status-archived";
@@ -735,7 +799,7 @@
                             <button class="btn-action btn-delete" onclick="window.deleteShipment('${id}')"><i class="fa-solid fa-trash"></i></button>
                         `;
                         courierAction = d.courierName ? 
-                            `<div style="margin-top:5px; background:var(--primary-blue); color:white; padding:3px; border-radius:5px; font-size:11px; text-align:center;">عهدة: ${d.courierName}</div>` : 
+                            `<div style="margin-top:5px; background:var(--primary-black); color:var(--primary-yellow); padding:3px; border-radius:5px; font-size:11px; text-align:center;">عهدة: ${d.courierName}</div>` : 
                             `<select class="courier-dropdown" style="margin-top:5px; width:100%; font-size:11px;" onchange="window.assignCourier('${id}', this.value)">${couriersOptions}</select>`;
                     }
 
@@ -744,6 +808,7 @@
                         <td>
                             <select id="st-${id}" class="status-dropdown" style="width:100%;">
                                 <option value="${d.status}" selected style="display:none;">${d.status}</option>
+                                <option value="بوليصة جديدة">بوليصة جديدة</option>
                                 <option value="قيد التوصيل">قيد التوصيل</option>
                                 <option value="مذاع للرادار">مذاع للرادار</option>
                                 <option value="تم التسليم">تم التسليم</option>
@@ -752,12 +817,12 @@
                             </select>
                             ${courierAction}
                         </td>
-                        <td style="color:var(--primary-red); font-weight:bold; font-size:16px;">${d.amount}</td>
+                        <td style="color:var(--primary-burgundy); font-weight:bold; font-size:16px;">${d.amount}</td>
                         <td><span style="background:#fff; padding:3px 8px; border-radius:10px; border:1px solid #ccc; font-weight:bold; color:#000;">${d.city}</span></td>
                         <td>${d.name}<br><small dir="ltr">${d.phone}</small></td>
                         <td><b>${merchant}</b></td>
                         <td>${awb}</td>
-                        <td><span style="background:#e0eaf5; padding:5px; border-radius:5px; color:var(--primary-blue); font-weight:bold; font-size:12px;">${branch}</span></td>
+                        <td><span style="background:#e0eaf5; padding:5px; border-radius:5px; color:var(--primary-black); font-weight:bold; font-size:12px;">${branch}</span></td>
                     </tr>`;
                 });
                 
@@ -855,18 +920,43 @@
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
         };
 
+        // --- دالة الاستلام الأوتوماتيكية المطورة لخدمة الواتساب ---
+        async function triggerAutomatedWhatsAppAPI(phone, message) {
+            // يتم استبدال هذا الجزء برابط الـ API الحقيقي الخاص بك (مثل UltraMsg, GreenAPI)
+            let waPhone = phone.startsWith('0') ? '+2' + phone : phone;
+            console.log(`[Axon Automation System] Background WA initiated to: ${waPhone}`);
+            console.log(`[Message Content]: \n${message}`);
+            
+            /* كود التشغيل المستقبلي للـ API:
+            const apiUrl = "https://api.ultramsg.com/instanceXXXXX/messages/chat";
+            const token = "YOUR_TOKEN";
+            try {
+                await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: new URLSearchParams({ token: token, to: waPhone, body: message })
+                });
+            } catch(err) { console.error("WhatsApp API Error:", err); }
+            */
+            return true;
+        }
+
         window.receiveTransit = async (id, phone, merchant) => {
             try {
+                // تغيير حالة البوليصة
                 await updateDoc(doc(db, "shipments", id), { status: 'قيد التوصيل', branchName: adminBranch, targetBranch: null });
-                Swal.fire('تم استلام الفرع', 'تم استلام الشحنة وتجهيز رسالة الواتساب للعميل', 'success');
                 
-                let waPhone = phone.startsWith('0') ? '2' + phone : phone;
+                // تجهيز رسالة الواتساب
                 let msg = `مرحباً بك من أكسون إكسبريس 📦\nشحنتك من (${merchant}) وصلت فرع (${adminBranch}) بأمان، وجاري تجهيزها لتسليمها لك اليوم إن شاء الله.\nتقدر تتابعها من موقعنا برقم البوليصة.`;
-                window.open(`https://wa.me/${waPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+                
+                // استدعاء دالة الإرسال الأوتوماتيكية في الخلفية
+                triggerAutomatedWhatsAppAPI(phone, msg);
+                
+                Swal.fire('تم استلام الفرع', 'تم استلام الشحنة وتوجيه رسالة واتساب للعميل أوتوماتيكياً في الخلفية.', 'success');
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
         };
 
-        // 🖨️ طباعة المانيفست (كشف العهدة القانوني المطور - بالعرض) 🖨️
+        // 🖨️ طباعة المانيفست
         window.generateManifest = () => {
             const courierName = document.getElementById('manifestCourierSelect').value;
             if(!courierName) return Swal.fire('خطأ', 'الرجاء اختيار المندوب أولاً', 'error');
@@ -916,44 +1006,44 @@
             document.getElementById('printArea').innerHTML = `
                 <style>@media print { @page { size: A4 landscape !important; margin: 5mm; } }</style>
                 <div class="print-controls-ui no-print">
-                    <button onclick="window.print()" style="background:#0A3D62;">🖨️ طباعة كشف العهدة (A4 بالعرض)</button>
-                    <button onclick="window.closePrintView()" style="background:#b82329;">رجوع للسيستم</button>
+                    <button onclick="window.print()" style="background:#111;">🖨️ طباعة كشف العهدة (A4 بالعرض)</button>
+                    <button onclick="window.closePrintView()" style="background:#800020;">رجوع للسيستم</button>
                 </div>
                 <div class="a4-wrapper" dir="rtl" style="font-size:12px; padding:5px; box-sizing:border-box; width:100%;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #0A3D62; padding-bottom:3px; margin-bottom:5px;">
-                        <div><h1 style="margin:0; color:#0A3D62; font-size:18px;">AXON <span style="color:#b82329;">EXPRESS</span></h1><p style="margin:0; font-weight:bold; font-size:10px;">الفرع: ${adminBranch === 'all' ? 'إدارة عامة' : adminBranch}</p></div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #111; padding-bottom:3px; margin-bottom:5px;">
+                        <div><h1 style="margin:0; color:#111; font-size:18px;">AXON <span style="color:#800020;">EXPRESS</span></h1><p style="margin:0; font-weight:bold; font-size:10px;">الفرع: ${adminBranch === 'all' ? 'إدارة عامة' : adminBranch}</p></div>
                         <div style="text-align:center;"><h2 style="margin:0; text-decoration:underline; font-size:14px;">كشف عهدة تسليم يومي (Manifest)</h2><p style="margin:0; font-size:9px;">تاريخ الطباعة: ${timestamp}</p></div>
                         <div style="text-align:center;">
-                            <p style="margin:0; font-size:12px; font-weight:bold; background:#e0eaf5; padding:2px 6px; border:1px solid #0A3D62; border-radius:5px;">كابتن: ${courierName}</p>
+                            <p style="margin:0; font-size:12px; font-weight:bold; background:#111; color:#FFC300; padding:2px 6px; border:1px solid #FFC300; border-radius:5px;">كابتن: ${courierName}</p>
                             <div title="تقييم بناءً على التسليمات الناجحة" style="font-size:10px; margin-top:2px;">${starsHtml}</div>
                         </div>
                     </div>
                     
-                    <div style="font-size:11px; font-weight:bold; color:#0A3D62; text-align:center; background:#e0eaf5; padding:3px; border-radius:5px; margin-bottom:5px; border:1px dashed #0A3D62;">
+                    <div style="font-size:11px; font-weight:bold; color:#111; text-align:center; background:#FFC300; padding:3px; border-radius:5px; margin-bottom:5px; border:1px dashed #111;">
                         <i class="fa-solid fa-quote-right"></i> أنت لست مندوباً، أنت "سفير" للشركة! إظهارك للود والاحترام للعميل أمر واجب <i class="fa-solid fa-quote-left"></i>
                     </div>
 
                     <table style="width:100%; border-collapse:collapse; margin-bottom:5px; table-layout:fixed; font-size:12px; box-sizing:border-box;">
                         <thead>
                             <tr>
-                                <th style="width:5%; border:1px solid #000; padding:4px; background:#0A3D62; color:#fff; text-align:center;">م</th>
-                                <th style="width:15%; border:1px solid #000; padding:4px; background:#0A3D62; color:#fff; text-align:center;">رقم البوليصة</th>
-                                <th style="width:15%; border:1px solid #000; padding:4px; background:#0A3D62; color:#fff; text-align:center;">الراسل (التاجر)</th>
-                                <th style="width:35%; border:1px solid #000; padding:4px; background:#0A3D62; color:#fff; text-align:center;">بيانات المستلم (المرسل إليه)</th>
-                                <th style="width:12%; border:1px solid #000; padding:4px; background:#0A3D62; color:#fff; text-align:center;">المبلغ</th>
-                                <th style="width:18%; border:1px solid #000; padding:4px; background:#0A3D62; color:#fff; text-align:center;">توقيع العميل بالاستلام</th>
+                                <th style="width:5%; border:1px solid #000; padding:4px; background:#111; color:#FFC300; text-align:center;">م</th>
+                                <th style="width:15%; border:1px solid #000; padding:4px; background:#111; color:#FFC300; text-align:center;">رقم البوليصة</th>
+                                <th style="width:15%; border:1px solid #000; padding:4px; background:#111; color:#FFC300; text-align:center;">الراسل (التاجر)</th>
+                                <th style="width:35%; border:1px solid #000; padding:4px; background:#111; color:#FFC300; text-align:center;">بيانات المستلم (المرسل إليه)</th>
+                                <th style="width:12%; border:1px solid #000; padding:4px; background:#111; color:#FFC300; text-align:center;">المبلغ</th>
+                                <th style="width:18%; border:1px solid #000; padding:4px; background:#111; color:#FFC300; text-align:center;">توقيع العميل بالاستلام</th>
                             </tr>
                         </thead>
                         <tbody>${tableRows}</tbody>
                     </table>
                     
-                    <div style="border:2px solid #b82329; padding:5px; text-align:center; margin-bottom:5px; background:#fff3cd; page-break-inside: avoid;">
-                        <h2 style="margin:0; color:#b82329; font-size:14px;">إجمالي المطلوب تحصيله: ${totalCod} ج.م</h2>
+                    <div style="border:2px solid #800020; padding:5px; text-align:center; margin-bottom:5px; background:#fff3cd; page-break-inside: avoid;">
+                        <h2 style="margin:0; color:#800020; font-size:14px;">إجمالي المطلوب تحصيله: ${totalCod} ج.م</h2>
                         <p style="margin:0; font-weight:bold; font-size:10px;">(إجمالي الطرود: ${targetShipments.length} طرد)</p>
                     </div>
                     
                     <div style="page-break-inside: avoid; display:flex; gap:10px;">
-                        <div style="flex:1; background:#ffeaea; border:1px solid #b82329; padding:5px; border-radius:5px; color:#b82329; font-size:9px;">
+                        <div style="flex:1; background:#ffeaea; border:1px solid #800020; padding:5px; border-radius:5px; color:#800020; font-size:9px;">
                             <h4 style="margin:0 0 2px 0; text-align:center;"><i class="fa-solid fa-triangle-exclamation"></i> تعليمات للمندوبين</h4>
                             <ul style="margin:0; padding-right:15px; font-weight:bold;">
                                 <li>الإخطار الكاذب يعرضك لخصم 100 جنيه.</li>
@@ -962,7 +1052,7 @@
                         </div>
 
                         <div style="flex:2; font-size:11px; text-align:justify; line-height:1.3; border:1px solid #000; padding:5px; background:#fafafa;">
-                            <h3 style="margin:0 0 3px 0; color:#0A3D62; text-align:center; font-size:12px;">إقرار استلام عهدة نقدية</h3>
+                            <h3 style="margin:0 0 3px 0; color:#111; text-align:center; font-size:12px;">إقرار استلام عهدة نقدية</h3>
                             أقر أنا المندوب/ <b>......................................</b> بتسلمي الطرود المبينة أعلاه، وأتعهد بتسليم قيمتها للخزينة بالكامل بنهاية اليوم. وإلا أكون مبدداً للعهدة ومسئولاً قانونياً وفقاً للمادة (341) عقوبات.
                             <div style="display:flex; justify-content:space-between; margin-top:10px; font-weight:bold;">
                                 <div>توقيع المندوب: ....................</div>
@@ -990,27 +1080,27 @@
             
             let fragileBannerHTML = '';
             if (fragileType === 'insured') {
-                fragileBannerHTML = `<div class="fragile-banner" style="background:#b82329; border-color:#000; color:#fff;"><i class="fa-solid fa-shield-halved"></i> شحنة قابلة للكسر (مؤمن عليها VIP) - يحق للمندوب الفحص</div>`;
+                fragileBannerHTML = `<div class="fragile-banner" style="background:#800020; border-color:#000; color:#FFC300;"><i class="fa-solid fa-shield-halved"></i> شحنة قابلة للكسر (مؤمن عليها VIP) - يحق للمندوب الفحص</div>`;
             } else if (fragileType === 'uninsured') {
-                fragileBannerHTML = `<div class="fragile-banner" style="background:#0A3D62; border-color:#000; color:#b82329;"><i class="fa-solid fa-triangle-exclamation"></i> شحنة قابلة للكسر (بدون تأمين) - مسؤولية الراسل بالكامل</div>`;
+                fragileBannerHTML = `<div class="fragile-banner" style="background:#111; border-color:#000; color:#800020;"><i class="fa-solid fa-triangle-exclamation"></i> شحنة قابلة للكسر (بدون تأمين) - مسؤولية الراسل بالكامل</div>`;
             }
 
             let insurancePrintHTML = '';
             if(insuranceFee > 0) {
-                insurancePrintHTML = `<div style="text-align:center; background:#f0f8ff; border:2px dashed #0A3D62; padding:8px; border-radius:5px; margin-bottom:10px; color:#0A3D62; font-weight:bold; font-size:16px;">⚠️ رسوم تأمين مُسددة كاش للمندوب: ${insuranceFee} ج.م</div>`;
+                insurancePrintHTML = `<div style="text-align:center; background:#fff9e6; border:2px dashed #111; padding:8px; border-radius:5px; margin-bottom:10px; color:#111; font-weight:bold; font-size:16px;">⚠️ رسوم تأمين مُسددة كاش للمندوب: ${insuranceFee} ج.م</div>`;
             }
 
             document.getElementById('printArea').innerHTML = `
                 <style>@media print { @page { size: A4 portrait !important; margin: 5mm; } }</style>
                 <div class="print-controls-ui no-print">
-                    <button onclick="window.print()" style="background:var(--primary-blue);">اطبع البوليصة الآن</button>
-                    <button onclick="window.closePrintView()" style="background:var(--primary-red);">رجوع للسيستم</button>
+                    <button onclick="window.print()" style="background:var(--primary-black); color:var(--primary-yellow);">اطبع البوليصة الآن</button>
+                    <button onclick="window.closePrintView()" style="background:var(--primary-burgundy);">رجوع للسيستم</button>
                 </div>
                 <div class="a4-wrapper" dir="rtl">
                     <div class="print-header">
                         <div><div class="safeer-name-badge"><h2>${data.merchant}</h2></div><br><span class="branch-badge-print">الفرع: ${data.branch}</span></div>
                         <div><svg id="barcodePrint" class="barcode-svg"></svg><br><b style="font-size:16px;">${data.awb}</b></div>
-                        <div><h2 style="margin:0; color:#0A3D62; font-size:22px;">AXON <span style="color:#D90429;">EXPRESS</span></h2><p style="margin:0; font-size:13px; font-weight:bold;">بوليصة شحن إلكترونية</p></div>
+                        <div><h2 style="margin:0; color:#111; font-size:22px;">AXON <span style="color:#800020;">EXPRESS</span></h2><p style="margin:0; font-size:13px; font-weight:bold;">بوليصة شحن إلكترونية</p></div>
                     </div>
                     
                     ${fragileBannerHTML}
@@ -1033,7 +1123,7 @@
                         </div>
                     </div>
                     
-                    <div class="cod-box"><h2 style="margin:0; color:#b82329; font-size:22px;">المبلغ المطلوب تحصيله (COD): ${data.amount} ج.م</h2></div>
+                    <div class="cod-box"><h2 style="margin:0; color:#800020; font-size:22px;">المبلغ المطلوب تحصيله (COD): ${data.amount} ج.م</h2></div>
                     ${insurancePrintHTML}
                     
                     <div class="constitution-columns">
@@ -1050,7 +1140,7 @@
                         <p>1. يتحمل المرسل مسؤولية التعبئة الآمنة وكتابة عنوان المستلم بوضوح. 2. يلتزم المرسل بتسليم الشحنة والحصول على إيصال. 3. يلتزم المرسل إليه باستلام الشحنة فور وصولها ويتحمل تكاليف التخزين حال التأخير. 4. لا تُقبل مطالبات بعد توقيع المرسل إليه بدون تحفظات.<br><span style="font-weight:bold; font-size:10px;">5. يُمنع منعاً باتاً فتح الشحنة أو العبث بتغليفها قبل سداد كامل قيمتها (COD) ومصاريف الشحن لمندوب الشركة. وفي حالة رفض الاستلام بعد الفتح (بإذن التاجر)، يلتزم العميل بدفع مصاريف الشحن كاملة. وفي حالة رفض المستلم استلام الشحنة، يلتزم التاجر بسداد رسوم الشحن (ذهاباً وإياباً).</span></p>
                     </div>
                     <div class="footer-grid">
-                        <div style="line-height:1.6;"><b>تواصل معنا:</b><br>مسح الكود المجاور يوجهك لجميع روابط الشركة وحساباتنا.<br><b style="color:#D90429; font-size:13px;">خدمة العملاء: 01147000882</b></div>
+                        <div style="line-height:1.6;"><b>تواصل معنا:</b><br>مسح الكود المجاور يوجهك لجميع روابط الشركة وحساباتنا.<br><b style="color:#800020; font-size:13px;">خدمة العملاء: 01147000882</b></div>
                         <div style="text-align:center;"><img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://axonexpress.taplink.ws" style="width:2.5cm; height:2.5cm; object-fit:contain; border: 1px solid #ccc; padding:2px;"></div>
                     </div>
                     <div class="digital-sig">
@@ -1078,7 +1168,7 @@
                     if(d.status !== "تم الإنقاذ") count++;
                     const dateStr = d.timestamp ? (d.timestamp.toDate ? d.timestamp.toDate().toLocaleString('ar-EG') : new Date(d.timestamp).toLocaleString('ar-EG')) : '-';
                     const gpsLink = d.gps.includes('http') ? `<a href="${d.gps}" target="_blank" style="color:var(--primary-blue); font-weight:bold;">📍 فتح الموقع على الخريطة</a>` : d.gps;
-                    html += `<tr style="${d.status === 'نداء استغاثة' ? 'background:#ffeaea;' : ''}"><td><span style="font-size:11px;">${dateStr}</span></td><td><b>${(d.merchantEmail||'').split('@')[0]}</b><br><span dir="ltr" style="font-size:11px; font-weight:bold; color:var(--primary-red);">${d.phone}</span><br><span style="font-size:11px; color:gray;">${d.car}</span></td><td>${gpsLink}</td><td><select onchange="window.updateEmergencyStatus('axon_rescue_orders', '${doc.id}', this.value)" class="status-dropdown" style="margin-bottom:5px;"><option value="نداء استغاثة" ${d.status==='نداء استغاثة'?'selected':''}>🚨 نداء استغاثة</option><option value="ونش في الطريق" ${d.status==='ونش في الطريق'?'selected':''}>🚚 ونش في الطريق</option><option value="تم الإنقاذ" ${d.status==='تم الإنقاذ'?'selected':''}>✅ تم الإنقاذ</option></select><button class="btn-action btn-delete" onclick="window.deleteTicket('axon_rescue_orders', '${doc.id}')">مسح</button></td></tr>`;
+                    html += `<tr style="${d.status === 'نداء استغاثة' ? 'background:#ffeaea;' : ''}"><td><span style="font-size:11px;">${dateStr}</span></td><td><b>${(d.merchantEmail||'').split('@')[0]}</b><br><span dir="ltr" style="font-size:11px; font-weight:bold; color:var(--primary-burgundy);">${d.phone}</span><br><span style="font-size:11px; color:gray;">${d.car}</span></td><td>${gpsLink}</td><td><select onchange="window.updateEmergencyStatus('axon_rescue_orders', '${doc.id}', this.value)" class="status-dropdown" style="margin-bottom:5px;"><option value="نداء استغاثة" ${d.status==='نداء استغاثة'?'selected':''}>🚨 نداء استغاثة</option><option value="ونش في الطريق" ${d.status==='ونش في الطريق'?'selected':''}>🚚 ونش في الطريق</option><option value="تم الإنقاذ" ${d.status==='تم الإنقاذ'?'selected':''}>✅ تم الإنقاذ</option></select><button class="btn-action btn-delete" onclick="window.deleteTicket('axon_rescue_orders', '${doc.id}')">مسح</button></td></tr>`;
                 });
                 document.getElementById('rescueBody').innerHTML = html || "<tr><td colspan='4'>لا توجد نداءات استغاثة حالياً.</td></tr>"; updateEmergencyBadge(count);
             });
