@@ -572,7 +572,7 @@
             "أسوان", "أسوان - كوم أمبو", "أسوان - إدفو", "أسوان - دراو", "أسوان - أبو سمبل",
             "الوادي الجديد", "الوادي الجديد - الخارجة", "الوادي الجديد - الداخلة", "الوادي الجديد - الفرافرة", "الوادي الجديد - باريس"
         ];
-        
+
         let currentChatCourier = "";
         let currentChatOrderId = "";
         let unreadMessagesByOrder = {}; 
@@ -875,7 +875,9 @@
         window.updateShippingCalc = () => {
             const city = document.getElementById('recCity').value.trim();
             const cod = Number(document.getElementById('codAmount').value) || 0;
-            const weight = Number(document.getElementById('recWeight').value) || 1;
+            
+            let weightInput = document.getElementById('recWeight').value;
+            const weight = weightInput && Number(weightInput) > 0 ? Number(weightInput) : 1;
             
             let baseFee = window.getCityPrice(city);
             
@@ -906,6 +908,7 @@
             
             window.currentCalculatedShipping = totalShippingFee;
             window.currentInsuranceFee = insuranceFee;
+            window.currentWeight = weight; // تخزين الوزن بدقة هنا
             window.checkCityFilter(); 
         };
 
@@ -1069,6 +1072,10 @@
             const paymentType = document.getElementById('shipmentPaymentType').value;
             const fragileType = document.getElementById('fragileType').value; 
 
+            // التقاط الوزن هنا لضمان دقته قبل الإرسال مباشرة
+            let weightInput = document.getElementById('recWeight').value;
+            const weight = weightInput && Number(weightInput) > 0 ? Number(weightInput) : 1;
+
             if(name === "" || phone === "" || city === "" || address === "" || cod === 0) {
                 return Swal.fire('نقص بيانات', 'يوجد حقل أو أكثر فارغ، برجاء المراجعة!', 'warning');
             }
@@ -1076,8 +1083,18 @@
                 return Swal.fire('عنوان الاستلام مفقود', 'برجاء كتابة عنوان متجرك في الخانة العلوية وحفظه أولاً عشان المندوب يعرف هيستلم منين!', 'warning');
             }
 
-            const totalShippingFee = window.currentCalculatedShipping || window.getCityPrice(city);
-            const insuranceFee = window.currentInsuranceFee || 0;
+            // إعادة حساب الرسوم لضمان 100% أن الداتا صح
+            let baseFee = window.getCityPrice(city);
+            let overWeightFee = 0;
+            if (weight > 2) { overWeightFee = Math.ceil(weight - 2) * 8; }
+
+            let insuranceFee = 0;
+            if (fragileType === 'insured') {
+                const realVal = Number(document.getElementById('itemRealValue').value) || 0;
+                insuranceFee = realVal * 0.10;
+            }
+
+            const totalShippingFee = baseFee + overWeightFee;
             const finalAmount = cod + totalShippingFee;
 
             const btn = document.getElementById('btnSave'); btn.disabled = true; btn.innerHTML = "جاري الإرسال...";
@@ -1088,7 +1105,8 @@
                 
                 await setDoc(newShipmentRef, {
                     merchantEmail: merchantEmail, name, phone, phone2: document.getElementById('recPhone2').value.trim() || "لا يوجد",
-                    city, address, weight: Number(document.getElementById('recWeight').value||1),
+                    city, address, 
+                    weight: weight, // هنا بعتنا الوزن المظبوط
                     pieces: pieces, 
                     amount: finalAmount, 
                     insuranceFee: insuranceFee,
@@ -1111,7 +1129,8 @@
                 document.getElementById('uninsuredDiv').style.display = 'none';
                 window.updateShippingCalc(); 
                 
-                window.printWB(awb, name, phone, document.getElementById('recPhone2').value, city, address, document.getElementById('recWeight').value||1, pieces, finalAmount, fragileType, merchantAddress, merchantPhone, insuranceFee);
+                // وطبعاً هنبعت الوزن المظبوط لدالة الطباعة
+                window.printWB(awb, name, phone, document.getElementById('recPhone2').value, city, address, weight, pieces, finalAmount, fragileType, merchantAddress, merchantPhone, insuranceFee);
 
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
             btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span data-i18n="btn_submit_awb">إرسال الشحنة وتوليد البوليصة بالإجمالي</span>';
