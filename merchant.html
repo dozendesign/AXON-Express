@@ -638,10 +638,10 @@
                         let data = snap.data();
                         livePrices = { ...livePrices, ...data };
 
-                        // سحب أسعار الأطراف من الفايربيز للتاجر
+                        // سحب أسعار الأطراف من الفايربيز للتاجر (تم إضافة شرط الفلترة هنا)
                         extraZones = {};
                         shippingZonesList.forEach(zone => {
-                            if(data[zone]) { extraZones[zone] = data[zone]; }
+                            if(zone.includes('-') && data[zone]) { extraZones[zone] = data[zone]; }
                         });
 
                         // بناء القائمة المنسدلة الذكية للتاجر بالأسعار الحية
@@ -836,11 +836,12 @@
             
             // الفحص هل هي "طرف" ليها سعر إضافي؟
             for (let zone in extraZones) {
+                let parts = zone.split('-');
                 let normalizedZone = normalizeArabic(zone);
-                let subCityName = normalizeArabic(zone.split('-')[1] || ""); 
+                let subCityName = normalizeArabic(parts[1] || ""); 
                 
                 if (normalizedZone === normalizedInput || (subCityName && normalizedInput.includes(subCityName))) {
-                    let parentGov = zone.split('-')[0].trim();
+                    let parentGov = parts[0].trim();
                     let basePrice = Number(livePrices[parentGov] || 85);
                     let extraFee = Number(extraZones[zone]);
                     return basePrice + extraFee; 
@@ -908,7 +909,7 @@
             
             window.currentCalculatedShipping = totalShippingFee;
             window.currentInsuranceFee = insuranceFee;
-            window.currentWeight = weight; // تخزين الوزن بدقة هنا
+            window.currentWeight = weight;
             window.checkCityFilter(); 
         };
 
@@ -1072,7 +1073,6 @@
             const paymentType = document.getElementById('shipmentPaymentType').value;
             const fragileType = document.getElementById('fragileType').value; 
 
-            // التقاط الوزن هنا لضمان دقته قبل الإرسال مباشرة
             let weightInput = document.getElementById('recWeight').value;
             const weight = weightInput && Number(weightInput) > 0 ? Number(weightInput) : 1;
 
@@ -1083,7 +1083,6 @@
                 return Swal.fire('عنوان الاستلام مفقود', 'برجاء كتابة عنوان متجرك في الخانة العلوية وحفظه أولاً عشان المندوب يعرف هيستلم منين!', 'warning');
             }
 
-            // إعادة حساب الرسوم لضمان 100% أن الداتا صح
             let baseFee = window.getCityPrice(city);
             let overWeightFee = 0;
             if (weight > 2) { overWeightFee = Math.ceil(weight - 2) * 8; }
@@ -1106,7 +1105,7 @@
                 await setDoc(newShipmentRef, {
                     merchantEmail: merchantEmail, name, phone, phone2: document.getElementById('recPhone2').value.trim() || "لا يوجد",
                     city, address, 
-                    weight: weight, // هنا بعتنا الوزن المظبوط
+                    weight: weight, 
                     pieces: pieces, 
                     amount: finalAmount, 
                     insuranceFee: insuranceFee,
@@ -1129,7 +1128,6 @@
                 document.getElementById('uninsuredDiv').style.display = 'none';
                 window.updateShippingCalc(); 
                 
-                // وطبعاً هنبعت الوزن المظبوط لدالة الطباعة
                 window.printWB(awb, name, phone, document.getElementById('recPhone2').value, city, address, weight, pieces, finalAmount, fragileType, merchantAddress, merchantPhone, insuranceFee);
 
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
