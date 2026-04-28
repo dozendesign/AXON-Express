@@ -32,66 +32,68 @@
     <style>
         * { box-sizing: border-box; }
         :root { 
-            --primary-blue: #1E3A8A; 
-            --primary-red: #D90429; 
+            --primary-black: #111111; 
+            --primary-yellow: #E1E715; 
+            --primary-burgundy: #800020; 
             --bg-color: #F8F9FA; 
             --card-bg: #ffffff; 
-            --text-dark: #2C3333; 
+            --text-dark: #111111; 
             --border-color: #E2E8F0;
         }
         body { font-family: 'Cairo', sans-serif; margin: 0; background: var(--bg-color); color: var(--text-dark); transition: 0.3s; }
         
-        header { background: var(--primary-blue); padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; transition: 0.3s;}
+        header { background: var(--primary-black); border-bottom: 3px solid var(--primary-yellow); padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; transition: 0.3s;}
         header h1 { margin: 0; font-size: 20px; font-weight: 900; display: flex; align-items: center; gap: 10px;}
-        header h1 span { color: var(--primary-red); }
+        header h1 img { height: 35px; object-fit: contain; }
+        header h1 span { color: var(--primary-yellow); border-right: 2px solid var(--border-color); padding-right: 10px;}
         
         .header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap;}
-        .lang-btn { background: transparent; border: 1px solid white; color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 12px; transition: 0.3s;}
-        .lang-btn:hover { background: rgba(255,255,255,0.2); }
-        .logout-btn { background: var(--primary-red); border: none; color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 12px; transition: 0.3s;}
-        .logout-btn:hover { background: #b80322; }
+        .lang-btn { background: transparent; border: 1px solid var(--primary-yellow); color: var(--primary-yellow); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 12px; transition: 0.3s;}
+        .lang-btn:hover { background: rgba(225, 231, 21, 0.1); }
+        .logout-btn { background: var(--primary-burgundy); border: none; color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 12px; transition: 0.3s;}
+        .logout-btn:hover { background: #5a0016; }
 
         .container { padding: 20px; max-width: 1300px; margin: 0 auto; }
         
         .branch-filter-box { background: var(--card-bg); padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border-color); display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); transition: 0.3s;}
-        .branch-select { padding: 10px; border-radius: 8px; border: 2px solid var(--primary-blue); font-family: 'Cairo'; font-weight: bold; flex: 1; outline: none; transition: 0.3s;}
-        .branch-select:focus { box-shadow: 0 0 5px rgba(30, 58, 138, 0.3); }
+        .branch-select { padding: 10px; border-radius: 8px; border: 2px solid var(--primary-black); font-family: 'Cairo'; font-weight: bold; flex: 1; outline: none; transition: 0.3s;}
+        .branch-select:focus { box-shadow: 0 0 5px rgba(17, 17, 17, 0.3); border-color: var(--primary-yellow);}
 
         .tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; -webkit-overflow-scrolling: touch;}
         .tabs::-webkit-scrollbar { display: none; }
-        .tab-btn { background: #e0eaf5; border: none; padding: 10px 20px; border-radius: 8px; font-family: 'Cairo'; font-weight: bold; color: var(--primary-blue); cursor: pointer; transition: 0.3s; white-space: nowrap; flex-shrink: 0;}
-        .tab-btn.active { background: var(--primary-blue); color: white; }
+        .tab-btn { background: #e2e8f0; border: none; padding: 10px 20px; border-radius: 8px; font-family: 'Cairo'; font-weight: bold; color: var(--primary-black); cursor: pointer; transition: 0.3s; white-space: nowrap; flex-shrink: 0;}
+        .tab-btn.active { background: var(--primary-black); color: var(--primary-yellow); }
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.4s ease forwards; }
         
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: var(--card-bg); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-blue); transition: transform 0.3s, box-shadow 0.3s;}
+        .stat-card { background: var(--card-bg); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-black); transition: transform 0.3s, box-shadow 0.3s;}
         .stat-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-        .stat-card.red { border-bottom-color: var(--primary-red); }
+        .stat-card.red { border-bottom-color: var(--primary-burgundy); }
         .stat-card.green { border-bottom-color: #10B981; }
-        .stat-card .value { font-size: 26px; font-weight: 900; color: var(--primary-blue); margin-top: 5px;}
+        .stat-card .value { font-size: 26px; font-weight: 900; color: var(--primary-black); margin-top: 5px;}
 
         .table-responsive { width: 100%; overflow-x: auto; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.03);}
         table { width: 100%; min-width: 900px; border-collapse: collapse; }
-        th { background: var(--primary-blue); color: white; padding: 15px; text-align: inherit;}
+        th { background: var(--primary-black); color: var(--primary-yellow); padding: 15px; text-align: inherit;}
         td { padding: 12px; border-bottom: 1px solid var(--border-color); font-size: 14px;}
-        tr:hover { background-color: rgba(30, 58, 138, 0.05); }
+        tr:hover { background-color: rgba(17, 17, 17, 0.05); }
 
         .btn-action { border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; color: white; transition: 0.3s; margin: 2px;}
         .btn-action:hover { opacity: 0.8; transform: translateY(-2px); }
-        .btn-print { background: #333; }
+        .btn-print { background: var(--primary-black); color: var(--primary-yellow); }
         .btn-settle { background: #10B981; }
         .btn-view { background: #17a2b8; }
         
         /* Modals */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; z-index: 2000; padding: 15px; backdrop-filter: blur(5px);}
         .modal-content { background: var(--card-bg); padding: 25px; border-radius: 15px; width: 100%; max-width: 800px; max-height: 90vh; overflow-y: auto; position: relative; animation: fadeIn 0.3s ease;}
-        .close-btn { position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--primary-red);}
-        .details-header { border-bottom: 2px solid var(--primary-red); padding-bottom: 10px; margin-bottom: 15px; color: var(--primary-blue); display: flex; justify-content: space-between; align-items: center;}
-        .summary-box { background: #f0f4f8; padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-around; font-weight: bold; border: 1px solid #c2d1e0;}
-        .section-title { background: var(--primary-blue); color: white; padding: 5px 10px; border-radius: 5px; font-size: 14px; margin-top: 15px; display: inline-block;}
+        .close-btn { position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--primary-burgundy);}
+        .details-header { border-bottom: 2px solid var(--primary-burgundy); padding-bottom: 10px; margin-bottom: 15px; color: var(--primary-black); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;}
+        .summary-box { background: #f4f4f4; padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-around; font-weight: bold; border: 1px solid #dcdcdc;}
+        .section-title { background: var(--primary-black); color: var(--primary-yellow); padding: 5px 10px; border-radius: 5px; font-size: 14px; margin-top: 15px; display: inline-block;}
         
         body.dark-mode { --bg-color: #0D1117; --card-bg: #161B22; --text-dark: #E2E8F0; --border-color: #30363D; }
         body.dark-mode .summary-box { background: #1c232b; border-color: #30363D; color: #fff;}
@@ -101,8 +103,9 @@
             .header-actions { justify-content: center; width: 100%; }
             .branch-filter-box { flex-direction: column; align-items: stretch; text-align: center; }
             .branch-select { width: 100%; }
-            .btn-print { width: 100%; }
+            .btn-print, .btn-settle { width: 100%; }
             .summary-box { flex-direction: column; gap: 10px; text-align: center; }
+            .details-header { flex-direction: column; align-items: center; text-align: center; }
         }
 
         /* ---------------- CSS الطباعة الاحترافية ---------------- */
@@ -115,21 +118,19 @@
             .container { display: none !important; } 
             #printArea { display: block !important; width: 100%; margin: 0; padding: 0; }
             
-            /* إجبار الطباعة بالعرض لكشوفات الخزنة */
             @page { margin: 5mm; size: landscape; }
             
             .print-wrapper { width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 5mm !important; box-sizing: border-box !important; }
-            .print-header { border-bottom: 3px solid #0A3D62; padding-bottom: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-            .print-header h1 { margin: 0; color: #0A3D62; font-size: 20px; }
+            .print-header { border-bottom: 3px solid #111111; padding-bottom: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+            .print-header h1 { margin: 0; color: #111111; font-size: 20px; display: flex; align-items: center; gap: 10px;}
+            .print-header h1 img { height: 30px; object-fit: contain; }
             .print-header p { margin: 5px 0 0 0; font-weight: bold; font-size: 11px; }
             
-            /* الجدول مكبوس ومنظم */
             .print-table { width: 100% !important; border-collapse: collapse; table-layout: fixed !important; font-size: 12px !important; margin-bottom: 0 !important; }
             .print-table th, .print-table td { border: 1px solid #000; padding: 5px !important; text-align: center; word-wrap: break-word !important; }
-            .print-table th { background: #0A3D62 !important; color: white !important; }
+            .print-table th { background: #111111 !important; color: white !important; }
             .print-table tr { page-break-inside: avoid; }
             
-            /* تكرار الذيل في كل صفحة */
             .print-footer { display: table-footer-group; }
         }
     </style>
@@ -137,17 +138,20 @@
 <body>
 
     <header>
-        <h1><i class="fa-solid fa-vault"></i> AXON <span data-i18n="fin_title">FINANCE</span></h1>
+        <h1>
+            <img src="axon-logo.png" alt="Axon Logo">
+            <span data-i18n="fin_title">FINANCE</span>
+        </h1>
         <div class="header-actions">
-            <button onclick="window.location.href='admin.html'" class="lang-btn" style="background:#fff; color:var(--primary-blue);"><i class="fa-solid fa-arrow-right"></i> رجوع للإدارة</button>
-            <button onclick="window.toggleTheme()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;" title="الوضع الليلي"><i id="themeIcon" class="fa-solid fa-moon"></i></button>
+            <button onclick="window.location.href='admin.html'" class="lang-btn"><i class="fa-solid fa-arrow-right"></i> رجوع للإدارة</button>
+            <button onclick="window.toggleTheme()" style="background:none; border:none; color:var(--primary-yellow); font-size:20px; cursor:pointer;" title="الوضع الليلي"><i id="themeIcon" class="fa-solid fa-moon"></i></button>
             <button onclick="window.logout()" class="logout-btn"><i class="fa-solid fa-power-off"></i> خروج</button>
         </div>
     </header>
 
     <div class="container" id="mainWrapper">
         <div class="branch-filter-box">
-            <i class="fa-solid fa-city" style="color:var(--primary-blue); font-size: 20px;"></i>
+            <i class="fa-solid fa-city" style="color:var(--primary-black); font-size: 20px;"></i>
             <span style="font-weight:bold;" data-i18n="review_branch">مراجعة حسابات فرع:</span>
             <select id="branchFilter" class="branch-select" onchange="window.rAS()">
                 <option value="all">الجمهورية (الكل)</option>
@@ -181,7 +185,7 @@
             </select>
         </div>
 
-        <div id="loading" style="text-align:center; padding:50px;"><i class="fa-solid fa-spinner fa-spin"></i> <span data-i18n="sync">جاري جرد الخزينة...</span></div>
+        <div id="loading" style="text-align:center; padding:50px;"><i class="fa-solid fa-spinner fa-spin" style="color:var(--primary-black);"></i> <span data-i18n="sync">جاري جرد الخزينة...</span></div>
 
         <div id="dashboard" style="display:none;">
             <div class="tabs">
@@ -229,7 +233,7 @@
 
             <div id="expenses" class="tab-content">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
-                    <button class="btn-action" style="background:var(--primary-red);" onclick="alert('مودال المصروفات')">+ <span data-i18n="add_exp">تسجيل مصروف</span></button>
+                    <button class="btn-action" style="background:var(--primary-burgundy);" onclick="alert('مودال المصروفات')">+ <span data-i18n="add_exp">تسجيل مصروف</span></button>
                 </div>
                 <div class="table-responsive">
                     <table>
@@ -245,13 +249,13 @@
         <div class="modal-content" style="max-width: 900px;">
             <button class="close-btn" onclick="document.getElementById('courierModal').style.display='none'">✖</button>
             <div class="details-header">
-                <h2 style="margin:0;"><i class="fa-solid fa-motorcycle"></i> تصفية عهدة الكابتن: <span id="cmName" style="color:var(--primary-red);"></span></h2>
+                <h2 style="margin:0;"><i class="fa-solid fa-motorcycle"></i> تصفية عهدة الكابتن: <span id="cmName" style="color:var(--primary-burgundy);"></span></h2>
                 <button class="btn-action btn-print" onclick="printCourierSheet()"><i class="fa-solid fa-print"></i> طباعة مانيفست التصفية</button>
             </div>
             
             <div class="summary-box">
-                <div>إجمالي النقدية المطلوبة: <span id="cmTotalCash" style="color:var(--primary-red); font-size:20px;">0 ج.م</span></div>
-                <div>إجمالي مهام اليوم: <span id="cmTotalTasks" style="color:var(--primary-blue); font-size:20px;">0</span></div>
+                <div>إجمالي النقدية المطلوبة: <span id="cmTotalCash" style="color:var(--primary-burgundy); font-size:20px;">0 ج.م</span></div>
+                <div>إجمالي مهام اليوم: <span id="cmTotalTasks" style="color:var(--primary-black); font-size:20px;">0</span></div>
             </div>
 
             <div class="section-title">📦 المانيفست الصباحي (بوالص الشحن)</div>
@@ -276,13 +280,16 @@
         <div class="modal-content" style="max-width: 900px;">
             <button class="close-btn" onclick="document.getElementById('merchantModal').style.display='none'">✖</button>
             <div class="details-header">
-                <h2 style="margin:0;"><i class="fa-solid fa-store"></i> كشف حساب التاجر: <span id="mmName" style="color:var(--primary-red);"></span></h2>
-                <button class="btn-action btn-print" onclick="printMerchantSheet()"><i class="fa-solid fa-print"></i> طباعة كشف الحساب</button>
+                <h2 style="margin:0;"><i class="fa-solid fa-store"></i> كشف حساب التاجر: <span id="mmName" style="color:var(--primary-burgundy);"></span></h2>
+                <div>
+                    <button class="btn-action btn-settle" onclick="window.settleAccount(currentViewedMerchant)"><i class="fa-solid fa-check-double"></i> اعتماد وتسوية الكشف</button>
+                    <button class="btn-action btn-print" onclick="printMerchantSheet()"><i class="fa-solid fa-print"></i> طباعة كشف الحساب</button>
+                </div>
             </div>
             
             <div class="summary-box">
-                <div>التحصيل (COD): <span id="mmTotalCod" style="color:#0A3D62; font-size:18px;">0 ج.م</span></div>
-                <div>مخصومات (شحن+وزن): <span id="mmTotalFees" style="color:#D90429; font-size:18px;">0 ج.م</span></div>
+                <div>التحصيل (COD): <span id="mmTotalCod" style="color:var(--primary-black); font-size:18px;">0 ج.م</span></div>
+                <div>مخصومات (شحن+وزن): <span id="mmTotalFees" style="color:var(--primary-burgundy); font-size:18px;">0 ج.م</span></div>
                 <div>الصافي المستحق: <span id="mmNet" style="color:#10B981; font-size:22px;">0 ج.م</span></div>
             </div>
 
@@ -313,9 +320,10 @@
     </script>
 
     <script type="module">
+        // تم إضافة getDocs, writeBatch, increment لمكتبة الفايرستور هنا
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, doc, query, where, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, doc, query, where, updateDoc, writeBatch, increment, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         
         const app = initializeApp({
             apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
@@ -407,14 +415,14 @@
 
                 let feeDetailsHTML = `${baseFee} (شحن)`;
                 if(overWeightFee > 0) feeDetailsHTML += `<br><span style="color:#fd7e14;">+${overWeightFee} (وزن)</span>`;
-                if(insuranceFee > 0) feeDetailsHTML += `<br><span style="color:#0A3D62;">+${insuranceFee} (تأمين VIP)</span>`;
+                if(insuranceFee > 0) feeDetailsHTML += `<br><span style="color:var(--primary-black);">+${insuranceFee} (تأمين VIP)</span>`;
 
                 htmlJournal += `<tr>
                     <td>${v.timestamp?.toDate().toLocaleDateString('ar-EG') || '-'}</td>
                     <td>${type}</td>
                     <td>${merchant.split('@')[0]}</td>
                     <td>${courier}</td>
-                    <td style="color:var(--primary-red);font-weight:bold; font-size:16px;">${totalCollectedFromClient}</td>
+                    <td style="color:var(--primary-burgundy);font-weight:bold; font-size:16px;">${totalCollectedFromClient}</td>
                     <td>${feeDetailsHTML}</td>
                     <td>${status}</td>
                 </tr>`;
@@ -466,7 +474,7 @@
                 courierHtml += `<tr>
                     <td><b>${c}</b></td>
                     <td>${sD.couriers[c].count} مهمة مسندة</td>
-                    <td style="color:var(--primary-red);font-weight:bold; font-size:16px;">${sD.couriers[c].totalCollected} ج.م (مُحصل)</td>
+                    <td style="color:var(--primary-burgundy);font-weight:bold; font-size:16px;">${sD.couriers[c].totalCollected} ج.م (مُحصل)</td>
                     <td><button class="btn-action btn-view" onclick="window.openCourierModal('${c}')"><i class="fa-solid fa-list-check"></i> فتح المانيفست والتصفية</button></td>
                 </tr>`;
             }
@@ -480,7 +488,7 @@
                     <td><b>${m.split('@')[0]}</b></td>
                     <td>${mData.count} بوليصة</td>
                     <td style="font-weight:bold;">${mData.totalCod} ج.م</td>
-                    <td style="color:var(--primary-red);">${mData.totalFees} ج.م</td>
+                    <td style="color:var(--primary-burgundy);">${mData.totalFees} ج.م</td>
                     <td style="color:#10B981;font-weight:bold; font-size:16px;">${net} ج.م</td>
                     <td><button class="btn-action btn-view" onclick="window.openMerchantModal('${m}')"><i class="fa-solid fa-file-invoice-dollar"></i> كشف الحساب والتسوية</button></td>
                 </tr>`;
@@ -541,7 +549,7 @@
                     <td><b>${i.awb}</b></td>
                     <td>${i.name} (${i.city})</td>
                     <td style="font-weight:bold;">${i.amount}</td>
-                    <td style="color:var(--primary-red);">${i.totalShippingDeduction}</td>
+                    <td style="color:var(--primary-burgundy);">${i.totalShippingDeduction}</td>
                     <td style="color:#10B981; font-weight:bold;">${i.netForThisItem} ج.م</td>
                 </tr>`;
             });
@@ -560,7 +568,6 @@
             let index = 1;
             let totalManifestCash = 0; 
             
-            // هنا بنحسب كل العهدة المطبوعة (المتوقعة) مش بس المحصلة
             data.shipments.forEach(s => {
                 let sCash = Number(s.totalCollected) || 0;
                 totalManifestCash += sCash;
@@ -569,7 +576,7 @@
                     <td><b>${s.awb}</b></td>
                     <td>${s.merchantEmail.split('@')[0]}</td>
                     <td>${s.name} (${s.phone})<br>${s.city} - ${s.address}</td>
-                    <td style="color:#b82329; font-weight:bold; font-size:14px; white-space:nowrap !important;">${sCash} ج.م</td>
+                    <td style="color:#800020; font-weight:bold; font-size:14px; white-space:nowrap !important;">${sCash} ج.م</td>
                 </tr>`;
             });
             
@@ -581,7 +588,7 @@
                     <td><b>رادار</b></td>
                     <td>-</td>
                     <td>${r.details}<br>${r.address}</td>
-                    <td style="color:#b82329; font-weight:bold; font-size:14px; white-space:nowrap !important;">${rCash} ج.م</td>
+                    <td style="color:#800020; font-weight:bold; font-size:14px; white-space:nowrap !important;">${rCash} ج.م</td>
                 </tr>`;
             });
 
@@ -590,9 +597,12 @@
             let printHtml = `
                 <div class="print-wrapper" dir="rtl">
                     <div class="print-header">
-                        <div><h1 style="color:#0A3D62; margin:0;">AXON EXPRESS</h1><p style="margin:0;">الخزينة المركزية - فرع ${adminBranch}</p></div>
+                        <div>
+                            <h1 style="color:#111111; margin:0;"><img src="axon-logo.png" alt="Axon Logo" style="height:30px; object-fit:contain; margin-left:8px;"> AXON EXPRESS</h1>
+                            <p style="margin:0;">الخزينة المركزية - فرع ${adminBranch}</p>
+                        </div>
                         <div style="text-align:center;"><h2 style="margin:0;">تصفية عهدة كابتن (يومية)</h2><p style="margin:0;">تاريخ الجرد: ${timestamp}</p></div>
-                        <div><h2 style="color:#D90429; margin:0;">${currentViewedCourier}</h2></div>
+                        <div><h2 style="color:#800020; margin:0;">${currentViewedCourier}</h2></div>
                     </div>
 
                     <table class="print-table">
@@ -609,15 +619,15 @@
                         <tfoot class="print-footer">
                             <tr>
                                 <td colspan="5" style="border:none; padding-top: 15px !important;">
-                                    <div style="border:2px solid #b82329; padding:5px; text-align:center; background:#fff3cd; margin-bottom:5px;">
-                                        <h2 style="margin:0; color:#b82329; font-size:18px;">إجمالي العهدة المطبوعة المطلوب توريدها: ${totalManifestCash} ج.م</h2>
+                                    <div style="border:2px solid #800020; padding:5px; text-align:center; background:#fff3cd; margin-bottom:5px;">
+                                        <h2 style="margin:0; color:#800020; font-size:18px;">إجمالي العهدة المطبوعة المطلوب توريدها: ${totalManifestCash} ج.م</h2>
                                     </div>
                                     <div style="display:flex; justify-content:space-between; border: 2px solid #000; padding: 12px; background: #fafafa; font-size: 13px; font-weight: bold; align-items: center; page-break-inside: avoid;">
                                         <div style="width: 30%;">
                                             إقرار: أقر بتسليم العهدة المبينة أعلاه.
                                         </div>
                                         <div style="width: 70%; display: flex; justify-content: space-between;">
-                                            <div>توقيع المندوب: <span style="color:#D90429;">${currentViewedCourier}</span> (........)</div>
+                                            <div>توقيع المندوب: <span style="color:#800020;">${currentViewedCourier}</span> (........)</div>
                                             <div>توقيع الخزينة: ..........................</div>
                                             <div>التاريخ: ${timestamp.split(',')[0]}</div>
                                         </div>
@@ -647,7 +657,7 @@
                     <td><b>${i.awb}</b></td>
                     <td>${i.name} (${i.city})</td>
                     <td style="font-weight:bold; white-space:nowrap !important;">${i.amount} ج.م</td>
-                    <td style="color:var(--primary-red); white-space:nowrap !important;">${i.totalShippingDeduction} ج.م</td>
+                    <td style="color:var(--primary-burgundy); white-space:nowrap !important;">${i.totalShippingDeduction} ج.م</td>
                     <td style="color:#10B981; font-weight:bold; font-size:14px; white-space:nowrap !important;">${i.netForThisItem} ج.م</td>
                 </tr>`;
             });
@@ -655,9 +665,12 @@
             let printHtml = `
                 <div class="print-wrapper" dir="rtl">
                     <div class="print-header">
-                        <div><h1 style="color:#0A3D62; margin:0;">AXON EXPRESS</h1><p style="margin:0;">إدارة الحسابات - فرع ${adminBranch}</p></div>
+                        <div>
+                            <h1 style="color:#111111; margin:0;"><img src="axon-logo.png" alt="Axon Logo" style="height:30px; object-fit:contain; margin-left:8px;"> AXON EXPRESS</h1>
+                            <p style="margin:0;">إدارة الحسابات - فرع ${adminBranch}</p>
+                        </div>
                         <div style="text-align:center;"><h2 style="margin:0;">كشف حساب وتسوية تاجر</h2><p style="margin:0;">تاريخ الإصدار: ${timestamp}</p></div>
-                        <div><h2 style="color:#0A3D62; margin:0;">${currentViewedMerchant.split('@')[0]}</h2></div>
+                        <div><h2 style="color:#111111; margin:0;">${currentViewedMerchant.split('@')[0]}</h2></div>
                     </div>
                     
                     <div style="display:flex; justify-content:space-between; background:#f0f0f0; padding:10px; border:1px solid #000; border-radius:5px; font-weight:bold; margin-bottom:15px; font-size:14px;">
@@ -687,7 +700,7 @@
                                             إقرار: أقر باستلامي المستحقات، وبذلك تعتبر ذمة أكسون خالصة.
                                         </div>
                                         <div style="width: 60%; display: flex; justify-content: space-between;">
-                                            <div>توقيع التاجر: <span style="color:#0A3D62;">${currentViewedMerchant.split('@')[0]}</span> (........)</div>
+                                            <div>توقيع التاجر: <span style="color:#111111;">${currentViewedMerchant.split('@')[0]}</span> (........)</div>
                                             <div>توقيع الخزينة: ..........................</div>
                                             <div>التاريخ: ${timestamp.split(',')[0]}</div>
                                         </div>
@@ -703,7 +716,6 @@
             window.print();
         };
 
-        // --- المانيفست اللي في صفحة الأدمن ---
         window.generateManifest = () => {
             const courierName = document.getElementById('manifestCourierSelect').value;
             if(!courierName) return Swal.fire('خطأ', 'الرجاء اختيار المندوب أولاً', 'error');
@@ -735,16 +747,19 @@
                     <td><b>${s.awb}</b></td>
                     <td>${s.merchant}</td>
                     <td>${s.name} (${s.phone})<br>${s.city} - ${s.address}</td>
-                    <td style="color:#b82329; font-weight:bold; font-size:14px; white-space:nowrap !important;">${s.amount} ج.م</td>
+                    <td style="color:#800020; font-weight:bold; font-size:14px; white-space:nowrap !important;">${s.amount} ج.م</td>
                 </tr>`;
             });
 
             let printHtml = `
                 <div class="print-wrapper" dir="rtl">
                     <div class="print-header">
-                        <div><h1 style="color:#0A3D62; margin:0;">AXON EXPRESS</h1><p style="margin:0;">إدارة العمليات - فرع ${adminBranch}</p></div>
+                        <div>
+                            <h1 style="color:#111111; margin:0;"><img src="axon-logo.png" alt="Axon Logo" style="height:30px; object-fit:contain; margin-left:8px;"> AXON EXPRESS</h1>
+                            <p style="margin:0;">إدارة العمليات - فرع ${adminBranch}</p>
+                        </div>
                         <div style="text-align:center;"><h2 style="margin:0;">كشف عهدة تسليم (Manifest)</h2><p style="margin:0;">تاريخ الطباعة: ${timestamp}</p></div>
-                        <div><h2 style="color:#D90429; margin:0;">${courierName}</h2></div>
+                        <div><h2 style="color:#800020; margin:0;">${courierName}</h2></div>
                     </div>
 
                     <table class="print-table">
@@ -761,15 +776,15 @@
                         <tfoot class="print-footer">
                             <tr>
                                 <td colspan="5" style="border:none; padding-top: 15px !important;">
-                                    <div style="border:2px solid #b82329; padding:5px; text-align:center; background:#fff3cd; margin-bottom:5px;">
-                                        <h2 style="margin:0; color:#b82329; font-size:18px;">إجمالي العهدة المطبوعة (متوقع تحصيلها): ${calcCod} ج.م</h2>
+                                    <div style="border:2px solid #800020; padding:5px; text-align:center; background:#fff3cd; margin-bottom:5px;">
+                                        <h2 style="margin:0; color:#800020; font-size:18px;">إجمالي العهدة المطبوعة (متوقع تحصيلها): ${calcCod} ج.م</h2>
                                     </div>
                                     <div style="display:flex; justify-content:space-between; border: 2px solid #000; padding: 12px; background: #fafafa; font-size: 13px; font-weight: bold; align-items: center; page-break-inside: avoid;">
                                         <div style="width: 30%;">
-                                            <span style="color:#b82329;">تحذير:</span> الإخطار الكاذب يعرضك لخصم.
+                                            <span style="color:#800020;">تحذير:</span> الإخطار الكاذب يعرضك لخصم.
                                         </div>
                                         <div style="width: 70%; display: flex; justify-content: space-between;">
-                                            <div>توقيع المندوب: <span style="color:#D90429;">${courierName}</span> (........)</div>
+                                            <div>توقيع المندوب: <span style="color:#800020;">${courierName}</span> (........)</div>
                                             <div>توقيع الإدارة: ..........................</div>
                                             <div>التاريخ: ${timestamp.split(',')[0]}</div>
                                         </div>
@@ -784,13 +799,65 @@
             document.getElementById('printArea').innerHTML = printHtml;
         };
 
-        // دالة التسوية الشاملة
-        window.settleAccount = (type, name) => {
+        // دالة التسوية الشاملة اللي بتغذي حائط بطولات التاجر
+        window.settleAccount = async (merchantEmail) => {
+            const data = sD.merchants[merchantEmail];
+            if(!data || data.items.length === 0) {
+                return Swal.fire('تنبيه', 'لا يوجد بوالص لتسويتها', 'warning');
+            }
+
+            // الرقم اللي هيتضاف لدولاب بطولات التاجر (إجمالي مبيعاته)
+            let totalSalesToAddToWall = data.totalCod; 
+
             Swal.fire({
-                title: 'تأكيد التصفية',
-                text: `وظيفة التسوية الآلية في قاعدة البيانات سيتم تفعيلها في الإصدار القادم. حالياً، قم بطباعة الكشف واعتماده ورقياً.`,
-                icon: 'info',
-                confirmButtonText: 'حسناً، فهمت'
+                title: 'تأكيد التسوية المالية',
+                text: `هل أنت متأكد من تسوية مستحقات التاجر؟ سيتم تحديث حالة البوالص وإضافة ${totalSalesToAddToWall} ج.م إلى حائط بطولاته!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'نعم، قم بالتسوية',
+                cancelButtonText: 'إلغاء',
+                confirmButtonColor: '#10B981'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({ title: 'جاري التسوية...', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
+                    
+                    try {
+                        const batch = writeBatch(db);
+
+                        // 1. تحديث حالة كل البوالص اللي في الكشف إلى "تمت التسوية"
+                        data.items.forEach(item => {
+                            const shipRef = doc(db, "shipments", item.id);
+                            batch.update(shipRef, { status: "تمت التسوية" });
+                        });
+
+                        // 2. البحث عن التاجر وتزويد حائط البطولات (lifetime_sales)
+                        const q = query(collection(db, "users"), where("email", "==", merchantEmail));
+                        const querySnapshot = await getDocs(q);
+                        
+                        if (!querySnapshot.empty) {
+                            const merchantDoc = querySnapshot.docs[0];
+                            batch.update(merchantDoc.ref, {
+                                lifetime_sales: increment(totalSalesToAddToWall)
+                            });
+                        } else {
+                            console.warn("لم يتم العثور على التاجر في كوليكشن users لتحديث رصيد النجاح.");
+                        }
+
+                        // تنفيذ العمليات كلها في نفس اللحظة
+                        await batch.commit();
+
+                        Swal.fire('تم بنجاح!', 'تمت التسوية بنجاح، وتمت إضافة المبيعات لدولاب بطولات التاجر.', 'success');
+                        document.getElementById('merchantModal').style.display = 'none';
+                        
+                        // الفايربيز snapshot هيحدث الواجهة لوحده لأن الداتا اتغيرت، 
+                        // بس عشان نضمن إن الداتا اتمسحت من الكشف الحالي:
+                        window.rAS(); 
+
+                    } catch (error) {
+                        console.error("Error settling account: ", error);
+                        Swal.fire('خطأ', 'حدث خطأ أثناء التسوية، يرجى مراجعة الصلاحيات (Rules).', 'error');
+                    }
+                }
             });
         };
     </script>
