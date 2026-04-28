@@ -6,7 +6,7 @@
     <title>بوابة التجار | Axon Express Premium</title>
     
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0A3D62">
+    <meta name="theme-color" content="#111111">
     <link rel="apple-touch-icon" href="icon-512.png">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -42,57 +42,69 @@
     
     <style>
         * { box-sizing: border-box; }
-        :root { --primary-blue: #0A3D62; --primary-red: #b82329; --white: #ffffff; --light-bg: #f4f7f6; --dark-text: #2c3e50; --border-color: #eee; }
+        :root { 
+            --primary-black: #111111; 
+            --primary-yellow: #E1E715; 
+            --primary-burgundy: #800020; 
+            --white: #ffffff; 
+            --light-bg: #f4f7f6; 
+            --dark-text: #111111; 
+            --border-color: #eee; 
+        }
         html, body { font-family: 'Cairo', sans-serif; margin: 0; background: var(--light-bg); color: var(--dark-text); overflow-x: hidden; scroll-behavior: smooth; transition: 0.3s;}
         
         #printArea { display: none; }
         .swal2-container { z-index: 99999 !important; }
 
-        header { background: var(--white); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--primary-blue); position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.08); flex-wrap: wrap; gap: 10px;}
-        .logo { font-size: 22px; font-weight: 900; color: var(--primary-blue); text-decoration: none; display: flex; align-items: center; gap: 8px;}
-        .logo span { color: var(--primary-red); }
+        header { background: var(--primary-black); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--primary-yellow); position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.08); flex-wrap: wrap; gap: 10px;}
+        .logo { font-size: 22px; font-weight: 900; color: var(--white); text-decoration: none; display: flex; align-items: center; gap: 8px;}
+        .logo img { height: 35px; object-fit: contain; }
+        .logo span { color: var(--primary-yellow); }
         .header-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end;}
         
-        .lang-btn { background: transparent; border: 2px solid var(--primary-blue); color: var(--primary-blue); padding: 5px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 13px; transition: 0.3s;}
-        .lang-btn:hover { background: var(--primary-blue); color: white; }
-        #logoutBtn { background: var(--white); border: 2px solid var(--primary-red); color: var(--primary-red); padding: 6px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; transition: 0.3s;}
-        #logoutBtn:hover { background: var(--primary-red); color: white;}
+        .lang-btn { background: transparent; border: 2px solid var(--primary-yellow); color: var(--primary-yellow); padding: 5px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 13px; transition: 0.3s;}
+        .lang-btn:hover { background: rgba(225, 231, 21, 0.1); }
+        #logoutBtn { background: var(--primary-burgundy); border: 2px solid var(--primary-burgundy); color: var(--white); padding: 6px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; transition: 0.3s;}
+        #logoutBtn:hover { background: #5a0016; border-color: #5a0016; }
 
         .container { padding: 20px; max-width: 1200px; margin: 0 auto; min-height: 80vh;}
         
         .top-panel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;}
-        .merchant-badge { background: var(--primary-blue); padding: 8px 20px; border-radius: 30px; font-size: 14px; color: white; font-weight: bold;}
+        .merchant-badge { background: var(--primary-black); padding: 8px 20px; border-radius: 30px; font-size: 14px; color: var(--primary-yellow); font-weight: bold;}
         .business-info-wrapper { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: var(--white); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
         .business-info-wrapper input { padding: 8px 12px; border-radius: 5px; border: 1px solid #ccc; font-family: 'Cairo'; outline: none; flex: 1; min-width: 150px;}
-        .business-info-wrapper input:focus { border-color: var(--primary-blue); }
+        .business-info-wrapper input:focus { border-color: var(--primary-black); }
         
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: var(--white); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-blue); animation: fadeIn 0.5s ease;}
+        .stat-card { background: var(--white); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-black); animation: fadeIn 0.5s ease;}
+        .stat-card.trophy-card { background: var(--primary-black); border-bottom-color: var(--primary-yellow); }
+        .stat-card.trophy-card h3 { color: var(--primary-yellow); margin-bottom: 5px;}
+        .stat-card.trophy-card .value { color: var(--white); font-size: 28px;}
         .stat-card h3 { font-size: 15px; margin: 0 0 10px 0; color: #666;}
-        .stat-card .value { font-size: 26px; font-weight: 900; color: var(--primary-blue);}
+        .stat-card .value { font-size: 26px; font-weight: 900; color: var(--primary-black);}
         
         .axon-plus-section { background: var(--white); padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--border-color); animation: fadeIn 0.6s ease;}
-        .axon-plus-title { font-size: 16px; font-weight: 900; margin-bottom: 15px; color: var(--primary-blue); display: flex; align-items: center; gap: 8px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;}
+        .axon-plus-title { font-size: 16px; font-weight: 900; margin-bottom: 15px; color: var(--primary-black); display: flex; align-items: center; gap: 8px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;}
         .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
         
         .btn-service { border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; color: white; transition: 0.3s;}
         .btn-service:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-        .btn-main-action { background: var(--primary-blue); grid-column: 1 / -1; font-size: 18px; padding: 18px; } 
+        .btn-main-action { background: var(--primary-black); color: var(--primary-yellow); grid-column: 1 / -1; font-size: 18px; padding: 18px; } 
         .btn-eshteryly { background: #28a745; }
         .btn-home { background: #d39e00; } 
-        .btn-rescue { background: var(--primary-red); } 
+        .btn-rescue { background: var(--primary-burgundy); } 
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         
-        .radar-merchant-section { background: var(--white); padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 2px dashed var(--primary-red); animation: fadeIn 0.5s ease; display: none; position: relative; overflow: hidden;}
-        .radar-merchant-section::before { content: ''; position: absolute; top: 0; right: 0; width: 5px; height: 100%; background: var(--primary-red); }
-        .radar-title { color: var(--primary-red); margin-top: 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; font-size: 18px; }
+        .radar-merchant-section { background: var(--white); padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 2px dashed var(--primary-burgundy); animation: fadeIn 0.5s ease; display: none; position: relative; overflow: hidden;}
+        .radar-merchant-section::before { content: ''; position: absolute; top: 0; right: 0; width: 5px; height: 100%; background: var(--primary-burgundy); }
+        .radar-title { color: var(--primary-burgundy); margin-top: 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; font-size: 18px; }
         .radar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 15px; }
         .radar-card { background: #fdfdfd; border: 1px solid #e0e0e0; border-radius: 10px; padding: 15px; display: flex; flex-direction: column; gap: 10px; transition: 0.3s; position: relative;}
-        .radar-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-color: var(--primary-blue);}
+        .radar-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-color: var(--primary-black);}
         .radar-card.type-cold { border-right: 4px solid #0EA5E9; }
         .radar-card.type-buy { border-right: 4px solid #28a745; }
-        .radar-card h4 { margin: 0; font-size: 15px; color: var(--primary-blue); display: flex; justify-content: space-between; align-items: center;}
+        .radar-card h4 { margin: 0; font-size: 15px; color: var(--primary-black); display: flex; justify-content: space-between; align-items: center;}
         .radar-card p { margin: 0; font-size: 13px; color: #555; line-height: 1.5; background: #f4f7f6; padding: 8px; border-radius: 6px;}
         .radar-status-badge { font-size: 11px; padding: 4px 8px; border-radius: 4px; font-weight: bold; background: #fff3cd; color: #856404; }
         
@@ -100,25 +112,25 @@
         .table-responsive { width: 100%; overflow-x: auto; background: var(--white); border-radius: 12px; border: 1px solid var(--border-color); animation: fadeIn 0.8s ease;}
         table { width: 100%; min-width: 900px; border-collapse: collapse; }
         th, td { padding: 15px 12px; text-align: right; border-bottom: 1px solid var(--border-color); font-size: 14px;}
-        th { background: var(--primary-blue); color: var(--white); font-weight: bold;}
-        .print-btn { background: #333; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; margin-bottom: 5px; width: 100%; transition: 0.3s;}
+        th { background: var(--primary-black); color: var(--primary-yellow); font-weight: bold;}
+        .print-btn { background: var(--primary-black); color: var(--primary-yellow); border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; margin-bottom: 5px; width: 100%; transition: 0.3s;}
         .track-btn { background: #17a2b8; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; width: 100%; transition: 0.3s;}
         .track-btn:hover, .print-btn:hover { opacity: 0.9; transform: translateY(-2px); }
-        .awb-badge { background: #e0eaf5; color: var(--primary-blue); padding: 5px 12px; border-radius: 6px; font-weight: bold;}
+        .awb-badge { background: #e0eaf5; color: var(--primary-black); padding: 5px 12px; border-radius: 6px; font-weight: bold;}
         
         /* بادج الإشعارات المخصص للطرد */
         .card-chat-badge {
-            position: absolute; background: var(--primary-red); color: white;
+            position: absolute; background: var(--primary-burgundy); color: white;
             min-width: 22px; height: 22px; border-radius: 50%; font-size: 11px; display: flex; align-items: center;
-            justify-content: center; font-weight: 900; border: 2px solid var(--white); box-shadow: 0 3px 6px rgba(217,4,41,0.5); z-index: 10; display: none;
+            justify-content: center; font-weight: 900; border: 2px solid var(--white); box-shadow: 0 3px 6px rgba(128,0,32,0.5); z-index: 10; display: none;
         }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; z-index: 2000; padding: 15px; backdrop-filter: blur(5px);}
-        .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto; position: relative; animation: fadeIn 0.4s ease;}
-        .input-group label { font-size: 14px; font-weight: bold; color: var(--primary-blue); margin-top: 12px; display: block; }
+        .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; position: relative; animation: fadeIn 0.4s ease;}
+        .input-group label { font-size: 14px; font-weight: bold; color: var(--primary-black); margin-top: 12px; display: block; }
         .input-group input, .input-group select, .modal-content textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo'; background: var(--white); color: var(--dark-text); transition: 0.3s;}
-        .input-group input:focus, .input-group select:focus { border-color: var(--primary-blue); }
-        .close-btn { position: absolute; top: 15px; left: 15px; border: none; background: none; font-size: 24px; cursor: pointer; color: var(--primary-red); transition: 0.3s; z-index: 10;}
+        .input-group input:focus, .input-group select:focus { border-color: var(--primary-black); }
+        .close-btn { position: absolute; top: 15px; left: 15px; border: none; background: none; font-size: 24px; cursor: pointer; color: var(--primary-burgundy); transition: 0.3s; z-index: 10;}
         .close-btn:hover { transform: rotate(90deg); }
 
         .floating-chat { position: fixed; bottom: 20px; right: 20px; background: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999; text-decoration: none; transition: 0.3s;}
@@ -126,12 +138,12 @@
         
         .calc-summary { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 15px; border: 2px dashed #ccc; }
         .calc-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; font-weight: bold; }
-        .calc-total { font-size: 18px; color: var(--primary-red); border-top: 1px solid #ddd; padding-top: 8px; margin-top: 8px; }
+        .calc-total { font-size: 18px; color: var(--primary-burgundy); border-top: 1px solid #ddd; padding-top: 8px; margin-top: 8px; }
 
         .chat-bubble { padding: 10px 15px; border-radius: 15px; max-width: 80%; font-size: 13px; line-height: 1.4; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 5px; clear: both;}
         .chat-mine { background: #dcf8c6; float: left; border-bottom-left-radius: 0; color: #000; }
         .chat-other { background: #ffffff; float: right; border-bottom-right-radius: 0; color: #000; border: 1px solid #eee;}
-        .chat-admin { background: #FEF2F2; float: right; border-bottom-right-radius: 0; color: #D90429; border: 1px solid #FCA5A5; }
+        .chat-admin { background: #FEF2F2; float: right; border-bottom-right-radius: 0; color: #800020; border: 1px solid #FCA5A5; }
 
         @media (max-width: 600px) {
             header { padding: 12px 10px; flex-direction: column; align-items: center; gap: 12px; }
@@ -143,8 +155,8 @@
             .business-info-wrapper { flex-direction: column; align-items: stretch; }
         }
 
-        body.dark-mode { --white: #1a1a2e; --light-bg: #16213e; --dark-text: #e0e0e0; --border-color: #0f3460; --primary-blue: #4a90e2;}
-        body.dark-mode header { background: #1a1a2e; border-bottom: 4px solid var(--primary-red); }
+        body.dark-mode { --white: #1a1a2e; --light-bg: #16213e; --dark-text: #e0e0e0; --border-color: #0f3460; --primary-black: #111111;}
+        body.dark-mode header { background: #1a1a2e; border-bottom: 4px solid var(--primary-burgundy); }
         body.dark-mode .input-group input, body.dark-mode .input-group select, body.dark-mode .modal-content textarea { background: #16213e; border-color: #0f3460; color: white;}
         body.dark-mode .business-info-wrapper, body.dark-mode .radar-merchant-section, body.dark-mode .radar-card { background: #16213e; border-color: #0f3460; }
         body.dark-mode .business-info-wrapper input { background: #1a1a2e; color: white; border-color: #333; }
@@ -162,22 +174,22 @@
             @page { margin: 5mm; }
         }
         
-        .a4-wrapper { width: 100%; max-width: 800px; margin: 0 auto; background: #fff; border: 2px solid #0A3D62; padding: 10px; box-sizing: border-box; color: #000; }
+        .a4-wrapper { width: 100%; max-width: 800px; margin: 0 auto; background: #fff; border: 2px solid #111111; padding: 10px; box-sizing: border-box; color: #000; }
         .print-controls { text-align: center; margin-bottom: 20px; padding: 15px; background: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
         .print-controls button { cursor: pointer; padding: 12px 25px; margin: 5px; font-size: 16px; font-weight: bold; border: none; border-radius: 5px; color: white; font-family: 'Cairo';}
-        .print-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #b82329; padding-bottom: 5px; margin-bottom: 10px; flex-wrap: nowrap; gap: 10px;}
+        .print-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #800020; padding-bottom: 5px; margin-bottom: 10px; flex-wrap: nowrap; gap: 10px;}
         .print-header > div { flex: 1; text-align: center; overflow: hidden; }
         .barcode-svg { max-width: 100%; height: auto; }
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
         .box { border: 1px solid #ccc; padding: 5px; border-radius: 5px; font-size: 13px; color: #000;}
-        .box h3 { margin: 0 0 5px 0; background: #0A3D62; color: #fff; padding: 3px; font-size: 13px; text-align: center;}
-        .cod-box { background: #fff; border: 2px solid #b82329; text-align: center; padding: 5px; border-radius: 5px; margin-bottom:10px; color: #b82329;}
+        .box h3 { margin: 0 0 5px 0; background: #111111; color: #E1E715; padding: 3px; font-size: 13px; text-align: center;}
+        .cod-box { background: #fff; border: 2px solid #800020; text-align: center; padding: 5px; border-radius: 5px; margin-bottom:10px; color: #800020;}
         .constitution-columns { column-count: 2; column-gap: 15px; font-size: 9px; line-height: 1.4; text-align: justify; border: 1px solid #000; padding: 10px; margin-bottom: 10px; background: #fff;}
         .constitution-columns * { color: #000 !important; }
         .constitution-columns h4 { margin: 5px 0 3px 0; font-size: 11px; border-bottom: 1px solid #000; padding-bottom:2px;}
         .footer-grid { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; font-size: 11px;}
         .digital-sig { text-align: center; font-size: 9px; font-family: monospace; color: #000; border-top: 1px dashed #000; padding-top: 5px; font-weight: bold;}
-        .safeer-name-badge { background: #0A3D62; color: white; padding: 8px 15px; border-radius: 8px; display: inline-block; font-family: 'Cairo'; margin-bottom: 5px; border: 2px solid #b82329;}
+        .safeer-name-badge { background: #111111; color: var(--primary-yellow); padding: 8px 15px; border-radius: 8px; display: inline-block; font-family: 'Cairo'; margin-bottom: 5px; border: 2px solid #800020;}
         .safeer-name-badge h2 { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 1px;}
         .branch-badge-print { font-weight: bold; font-size: 14px; color: #000; text-transform: uppercase; background: #f0f0f0; border: 2px solid #000; padding: 3px 10px; display: inline-block; margin-bottom: 5px;}
         .fragile-banner { color: white; text-align: center; font-size: 14px; font-weight: bold; padding: 8px; border-radius: 5px; margin-bottom: 10px; border: 2px dashed #000;}
@@ -187,10 +199,10 @@
     <audio id="msgSound" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3" preload="auto"></audio>
 
     <header id="mainHeader">
-        <a href="#" class="logo"><i class="fa-solid fa-truck-fast"></i> AXON <span data-i18n="logo_span">EXPRESS</span></a>
+        <a href="#" class="logo"><img src="axon-logo.png" alt="Axon Logo"> AXON <span data-i18n="logo_span">EXPRESS</span></a>
         <div class="header-actions">
             <button onclick="window.toggleLang()" class="lang-btn" id="langBtn">English</button>
-            <button onclick="window.toggleTheme()" style="background:none; border:none; color:var(--primary-blue); font-size:24px; cursor:pointer;" title="الوضع الليلي">
+            <button onclick="window.toggleTheme()" style="background:none; border:none; color:var(--primary-yellow); font-size:24px; cursor:pointer;" title="الوضع الليلي">
                 <i id="themeIcon" class="fa-solid fa-moon"></i>
             </button>
             <button id="logoutBtn" onclick="window.logout()" data-i18n="logout">خروج</button>
@@ -199,25 +211,29 @@
 
     <div class="container" id="mainContainer">
         <div id="authLoading" style="text-align:center; padding:50px; display:block;">
-            <i class="fa-solid fa-spinner fa-spin fa-3x" style="color:var(--primary-blue); margin-bottom:15px;"></i>
-            <h3 style="color:var(--primary-blue); font-family:'Cairo';">جاري مزامنة المحطة...</h3>
+            <i class="fa-solid fa-spinner fa-spin fa-3x" style="color:var(--primary-black); margin-bottom:15px;"></i>
+            <h3 style="color:var(--primary-black); font-family:'Cairo';">جاري مزامنة المحطة...</h3>
         </div>
 
         <div id="mainDashboard" style="display:none;">
             <div class="top-panel">
                 <div class="merchant-badge" id="merchantEmailDisplay">تهيئة المحطة...</div>
                 <div class="business-info-wrapper">
-                    <i class="fa-solid fa-store" style="color:var(--primary-blue);"></i>
+                    <i class="fa-solid fa-store" style="color:var(--primary-black);"></i>
                     <input type="text" id="merchantBusinessAddress" data-i18n-placeholder="m_addr_ph" placeholder="عنوان المتجر (لاستلام الشحنات)">
-                    <i class="fa-solid fa-phone" style="color:var(--primary-blue);"></i>
+                    <i class="fa-solid fa-phone" style="color:var(--primary-black);"></i>
                     <input type="tel" id="merchantBusinessPhone" data-i18n-placeholder="m_phone_ph" placeholder="رقم المتجر (للتواصل)">
-                    <button id="saveInfoBtn" style="background:var(--primary-red); color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-family:'Cairo'; font-weight:bold;" onclick="window.saveBusinessInfo()"><i class="fa-solid fa-floppy-disk"></i> <span data-i18n="save">حفظ</span></button>
+                    <button id="saveInfoBtn" style="background:var(--primary-burgundy); color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-family:'Cairo'; font-weight:bold;" onclick="window.saveBusinessInfo()"><i class="fa-solid fa-floppy-disk"></i> <span data-i18n="save">حفظ</span></button>
                 </div>
             </div>
 
             <div class="stats-grid">
+                <div class="stat-card trophy-card">
+                    <h3><i class="fa-solid fa-trophy"></i> حائط البطولات (إجمالي مبيعاتك)</h3>
+                    <div class="value" id="lifetimeSales">0 ج.م</div>
+                </div>
                 <div class="stat-card"><h3 data-i18n="stat_active">إجمالي شحناتك النشطة</h3><div class="value" id="totalShipments">0</div></div>
-                <div class="stat-card"><h3 data-i18n="stat_cod">التحصيلات المتوقعة (COD)</h3><div class="value" id="totalMoney" style="color:var(--primary-red);">0 ج.م</div></div>
+                <div class="stat-card"><h3 data-i18n="stat_cod">التحصيلات المتوقعة (COD)</h3><div class="value" id="totalMoney" style="color:var(--primary-burgundy);">0 ج.م</div></div>
             </div>
 
             <div class="axon-plus-section">
@@ -227,7 +243,7 @@
                         <i class="fa-solid fa-file-invoice"></i> <span data-i18n="srv_awb">إصدار بوليصة شحن</span>
                     </button>
                     <button class="btn-service btn-eshteryly" onclick="document.getElementById('eshterylyModal').style.display='flex'">
-                        <i class="fa-solid fa-cart-shopping"></i> <span data-i18n="srv_buy">طلبات تسوق (اشتريلي)</span>
+                        <i class="fa-solid fa-cart-shopping"></i> <span data-i18n="srv_buy">AXON BUY (شراء خامات الإنتاج و طلبات المنزل)</span>
                     </button>
                     <button class="btn-service" style="background: #0EA5E9;" onclick="document.getElementById('coldModal').style.display='flex'">
                         <i class="fa-solid fa-temperature-arrow-down"></i> <span data-i18n="srv_cold">أكسون كولد/فريش</span>
@@ -266,8 +282,8 @@
     </div>
 
     <footer style="text-align:center; padding:15px; background:var(--white); border-top:1px solid var(--border-color); margin-top:40px;">
-        <h4 style="margin:0;color:var(--primary-blue);font-size:11px;font-weight:900;">تم الإنشاء بواسطة ESAIA</h4>
-        <p style="margin:5px 0 0 0;color:var(--primary-red);font-size:9px;font-weight:bold;">الشركة المصرية السعودية العامة لهندسة الهوية المؤسسية والصناعات المتقدمة</p>
+        <h4 style="margin:0;color:var(--primary-black);font-size:11px;font-weight:900;">تم الإنشاء بواسطة ESAIA</h4>
+        <p style="margin:5px 0 0 0;color:var(--primary-burgundy);font-size:9px;font-weight:bold;">الشركة المصرية السعودية العامة لهندسة الهوية المؤسسية والصناعات المتقدمة</p>
         <p style="margin:5px 0 0 0;color:#666;font-size:8px;font-family:Tahoma,sans-serif;">The Egyptian Saudi General Company for Corporate Identity Engineering and Advanced Industries</p>
     </footer>
 
@@ -280,10 +296,10 @@
     <div id="trackChatModal" class="modal">
         <div class="modal-content" style="padding: 15px; max-width: 600px; height: 90vh; display: flex; flex-direction: column;">
             <button class="close-btn" onclick="window.closeTrackChat()">✖</button>
-            <h3 style="color:var(--primary-blue); margin-top:0; border-bottom:2px solid var(--primary-red); padding-bottom:10px; position:relative;">
-                <i class="fa-solid fa-map-location-dot"></i> تتبع وتواصل مع: <span id="chatCourierName" style="color:var(--primary-red);">...</span>
+            <h3 style="color:var(--primary-black); margin-top:0; border-bottom:2px solid var(--primary-burgundy); padding-bottom:10px; position:relative;">
+                <i class="fa-solid fa-map-location-dot"></i> تتبع وتواصل مع: <span id="chatCourierName" style="color:var(--primary-burgundy);">...</span>
             </h3>
-            <div id="merchantMap" style="height: 200px; width: 100%; border-radius: 12px; border: 2px solid var(--primary-blue); margin-bottom: 15px; z-index: 1;"></div>
+            <div id="merchantMap" style="height: 200px; width: 100%; border-radius: 12px; border: 2px solid var(--primary-black); margin-bottom: 15px; z-index: 1;"></div>
             <div style="background: #f4f7f6; border-radius: 12px; border: 1px solid #ccc; display: flex; flex-direction: column; flex: 1; min-height: 250px; overflow: hidden;">
                 <div id="chatBox" style="flex: 1; padding: 15px; overflow-y: auto; display: block;"></div>
                 <div style="display: flex; border-top: 1px solid #ccc; padding: 10px; background: white;">
@@ -297,7 +313,7 @@
     <div id="addModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="document.getElementById('addModal').style.display='none'">✖</button>
-            <h3 style="color:var(--primary-blue); border-bottom: 2px solid var(--primary-red); padding-bottom:10px; margin-top:0;" data-i18n="srv_awb">إصدار بوليصة شحن</h3>
+            <h3 style="color:var(--primary-black); border-bottom: 2px solid var(--primary-burgundy); padding-bottom:10px; margin-top:0;" data-i18n="srv_awb">إصدار بوليصة شحن</h3>
             
             <div class="input-group"><label>اسم المستلم</label><input type="text" id="recName" placeholder="الاسم ثلاثي"></div>
             
@@ -308,9 +324,9 @@
             
             <div class="input-group"><label>المحافظة (الوجهة)</label><input type="text" id="recCity" placeholder="اكتب المحافظة لحساب الشحن آلياً" onkeyup="window.updateShippingCalc()"></div>
             
-            <div class="input-group" id="paymentTypeGroup" style="display:none; background:#e0eaf5; padding:12px; border-radius:8px; border:1px solid var(--primary-blue); margin-top:10px;">
-                <label style="color:var(--primary-red); font-size: 14px;"><i class="fa-solid fa-bolt"></i> نظام التحصيل (متاح للداخل فقط)</label>
-                <select id="shipmentPaymentType" style="border-color:var(--primary-blue); font-weight:bold;">
+            <div class="input-group" id="paymentTypeGroup" style="display:none; background:#e0eaf5; padding:12px; border-radius:8px; border:1px solid var(--primary-black); margin-top:10px;">
+                <label style="color:var(--primary-burgundy); font-size: 14px;"><i class="fa-solid fa-bolt"></i> نظام التحصيل (متاح للداخل فقط)</label>
+                <select id="shipmentPaymentType" style="border-color:var(--primary-black); font-weight:bold;">
                     <option value="normal">تحصيل عادي (التسوية مع الشركة)</option>
                     <option value="prepaid">دفع مقدم (الكابتن يدفع للتاجر عند الاستلام)</option>
                 </select>
@@ -322,6 +338,10 @@
                 <div class="input-group" style="flex:1;">
                     <label>الوزن (كجم)</label>
                     <input type="number" id="recWeight" value="1" min="1" oninput="window.updateShippingCalc()">
+                </div>
+                <div class="input-group" style="flex:1;">
+                    <label>عدد القطع (اختياري)</label>
+                    <input type="number" id="recPieces" placeholder="مثال: 3" min="1">
                 </div>
                 <div class="input-group" style="flex:1;">
                     <label>قيمة البضاعة المطلوبة</label>
@@ -350,11 +370,11 @@
 
             <div class="calc-summary">
                 <div class="calc-row"><span>قيمة البضاعة:</span> <span id="lblCodAmount">0 ج.م</span></div>
-                <div class="calc-row"><span>رسوم الشحن المقررة:</span> <span id="lblShippingFee" style="color:var(--primary-blue);">0 ج.م</span></div>
+                <div class="calc-row"><span>رسوم الشحن المقررة:</span> <span id="lblShippingFee" style="color:var(--primary-black);">0 ج.م</span></div>
                 <div class="calc-row calc-total"><span>الإجمالي للتحصيل (بالبوليصة):</span> <span id="lblTotalAmount">0 ج.م</span></div>
             </div>
             
-            <button class="btn-service btn-main-action" id="btnSave" style="width:100%; margin-top:15px; justify-content:center; background: var(--primary-blue);" onclick="window.saveShipment()">
+            <button class="btn-service btn-main-action" id="btnSave" style="width:100%; margin-top:15px; justify-content:center;" onclick="window.saveShipment()">
                 <i class="fa-solid fa-paper-plane"></i> <span data-i18n="btn_submit_awb">إرسال الشحنة وتوليد البوليصة بالإجمالي</span>
             </button>
         </div>
@@ -363,8 +383,8 @@
     <div id="eshterylyModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="document.getElementById('eshterylyModal').style.display='none'">✖</button>
-            <h3 style="color:var(--primary-blue); border-bottom: 2px solid var(--primary-red); padding-bottom:10px; margin-top:0;">🛒 مهمة تسوق (اشتريلي)</h3>
-            <p style="font-size:13px; font-weight:bold; color:var(--primary-red); background:#ffeeba; padding:8px; border-radius:5px;">رسوم الخدمة المقررة: <span id="eshLocalPrice">يتم حسابها...</span> ج.م</p>
+            <h3 style="color:var(--primary-black); border-bottom: 2px solid var(--primary-burgundy); padding-bottom:10px; margin-top:0;">🛒 مهمة تسوق (AXON BUY)</h3>
+            <p style="font-size:13px; font-weight:bold; color:var(--primary-burgundy); background:#ffeeba; padding:8px; border-radius:5px;">رسوم الخدمة المقررة: <span id="eshLocalPrice">يتم حسابها...</span> ج.م</p>
             <textarea id="eshDetails" placeholder="اكتب طلباتك بالتفصيل الدقيق..." rows="3"></textarea>
             <div class="input-group"><label>عنوان توصيل المشتريات</label><input type="text" id="eshAddress" placeholder="العنوان أو الصق رابط اللوكيشن"></div>
             <div class="input-group">
@@ -379,11 +399,11 @@
             </div>
             
             <div id="balanceDetails" style="display:none; background:#fff3cd; padding:12px; border-radius:8px; margin-top:10px; border:1px solid #ffeeba;">
-                <p style="margin:0; font-weight:bold; color:#856404; font-size:13px;"><i class="fa-solid fa-scale-balanced"></i> تنبيه قانوني: في حالة اختيار الدفع من المستحقات، يتم منحك فترة سماح 7 أيام للسداد. في حالة التأخير، يتم تطبيق غرامة تأخير قدرها 2% يومياً من إجمالي المبلغ.</p>
+                <p style="margin:0; font-weight:bold; color:#856404; font-size:13px;"><i class="fa-solid fa-scale-balanced"></i> تنبيه قانوني: في حالة اختيار الدفع من المستحقات، يتم منحك فترة سماح 7 أيام للسداد. في حالة التأخير، يتم تطبيق غرامة تأخير قدرها 1% يومياً بعد اليوم السابع من إجمالي المبلغ.</p>
             </div>
             
-            <div id="instapayDetails" style="display:none; background:#f0f8ff; padding:12px; border-radius:8px; margin-top:10px;"><p style="margin:0; font-weight:bold; color:var(--primary-blue);">حساب InstaPay: <span style="color:red;">01027660260</span></p></div>
-            <div id="vfcashDetails" style="display:none; background:#ffebeb; padding:12px; border-radius:8px; margin-top:10px;"><p style="margin:0; font-weight:bold; color:var(--primary-blue);">محفظة فودافون: <span style="font-size:16px; color:var(--primary-red);">01030013810</span></p></div>
+            <div id="instapayDetails" style="display:none; background:#f0f8ff; padding:12px; border-radius:8px; margin-top:10px;"><p style="margin:0; font-weight:bold; color:var(--primary-black);">حساب InstaPay: <span style="color:red;">01027660260</span></p></div>
+            <div id="vfcashDetails" style="display:none; background:#ffebeb; padding:12px; border-radius:8px; margin-top:10px;"><p style="margin:0; font-weight:bold; color:var(--primary-black);">محفظة فودافون: <span style="font-size:16px; color:var(--primary-burgundy);">01030013810</span></p></div>
             
             <button class="btn-service btn-eshteryly" style="width:100%; justify-content:center; margin-top:15px;" onclick="window.submitEshteryly()">إرسال الطلب للرادار</button>
         </div>
@@ -404,7 +424,7 @@
     <div id="homeModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="document.getElementById('homeModal').style.display='none'">✖</button>
-            <h3 style="color:#d39e00; border-bottom: 2px solid var(--primary-blue); padding-bottom:10px; margin-top:0;">🚚 أكسون هوم (نقل الأثاث)</h3>
+            <h3 style="color:#d39e00; border-bottom: 2px solid var(--primary-black); padding-bottom:10px; margin-top:0;">🚚 أكسون هوم (نقل الأثاث)</h3>
             <div class="input-group"><label>نقل من</label><input type="text" id="homeFrom" placeholder="المنطقة والدور"></div>
             <div class="input-group"><label>نقل إلى</label><input type="text" id="homeTo" placeholder="المنطقة والدور"></div>
             <div class="input-group"><label>الخدمة</label><select id="homeService"><option value="سيارة وعمال">نقل + عمال</option><option value="سيارة وونش وعمال">نقل + ونش + عمال</option></select></div>
@@ -416,7 +436,7 @@
     <div id="rescueModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="document.getElementById('rescueModal').style.display='none'">✖</button>
-            <h3 style="color:var(--primary-red); border-bottom: 2px solid var(--primary-blue); padding-bottom:10px; margin-top:0;">🚨 طوارئ: أكسون إنقاذ</h3>
+            <h3 style="color:var(--primary-burgundy); border-bottom: 2px solid var(--primary-black); padding-bottom:10px; margin-top:0;">🚨 طوارئ: أكسون إنقاذ</h3>
             <div class="input-group"><label>رقم التليفون للتواصل (إلزامي)</label><input type="tel" id="rescuePhone" placeholder="01xxxxxxxxx"></div>
             <div class="input-group"><label>نوع السيارة (اختياري)</label><input type="text" id="rescueCar" placeholder="مثال: كيا سيراتو"></div>
             <div class="input-group">
@@ -433,14 +453,14 @@
             ar: { 
                 logo_span: "EXPRESS", logout: "خروج", save: "حفظ", m_addr_ph: "عنوان المتجر (لاستلام الشحنات)", m_phone_ph: "رقم المتجر (للتواصل)",
                 stat_active: "إجمالي شحناتك النشطة", stat_cod: "التحصيلات المتوقعة (COD)", srv_title: "مركز العمليات وخدمات أكسون بلس",
-                srv_awb: "إصدار بوليصة شحن", srv_buy: "طلبات تسوق (اشتريلي)", srv_furniture: "أكسون هوم (نقل الأثاث)", srv_rescue: "أكسون إنقاذ (ونش سيارات)", srv_cold: "أكسون كولد/فريش",
+                srv_awb: "إصدار بوليصة شحن", srv_buy: "AXON BUY (شراء خامات الإنتاج و طلبات المنزل)", srv_furniture: "أكسون هوم (نقل الأثاث)", srv_rescue: "أكسون إنقاذ (ونش سيارات)", srv_cold: "أكسون كولد/فريش",
                 th_awb: "رقم البوليصة", th_rec: "المستلم", th_phone: "الموبايل", th_city: "المحافظة", th_amt: "المبلغ الإجمالي", th_status: "الحالة", th_act: "إجراء",
                 btn_submit_awb: "إرسال الشحنة وتوليد البوليصة بالإجمالي" 
             },
             en: { 
                 logo_span: "EXPRESS", logout: "Logout", save: "Save", m_addr_ph: "Store Address (For Pickups)", m_phone_ph: "Store Phone",
                 stat_active: "Active Shipments", stat_cod: "Expected COD", srv_title: "Operations Center & Axon Plus",
-                srv_awb: "Issue Waybill", srv_buy: "Shopping Request (Eshteryly)", srv_furniture: "Axon Home (Furniture)", srv_rescue: "Axon Rescue (Towing)", srv_cold: "Axon Cold/Fresh",
+                srv_awb: "Issue Waybill", srv_buy: "AXON BUY", srv_furniture: "Axon Home (Furniture)", srv_rescue: "Axon Rescue (Towing)", srv_cold: "Axon Cold/Fresh",
                 th_awb: "AWB", th_rec: "Receiver", th_phone: "Phone", th_city: "City", th_amt: "Total Amount", th_status: "Status", th_act: "Action",
                 btn_submit_awb: "Submit Shipment & Generate AWB" 
             }
@@ -529,6 +549,7 @@
                 merchantName = merchantEmail.split('@')[0];
                 document.getElementById('merchantEmailDisplay').innerHTML = `مرحباً بك: ${merchantName} <i class="fa-solid fa-bolt" style="color:#ffc107;"></i>`;
                 
+                // جلب بيانات البروفايل
                 const profileSnap = await getDoc(doc(db, "merchant_profiles", merchantEmail));
                 if(profileSnap.exists()) {
                     if(profileSnap.data().businessPhone) {
@@ -543,6 +564,15 @@
                         branchName = profileSnap.data().branchName;
                     }
                 }
+
+                // سحب حائط البطولات من كوليكشن users أوتوماتيك وعرضه لايف
+                const userQ = query(collection(db, "users"), where("email", "==", merchantEmail));
+                onSnapshot(userQ, (userSnap) => {
+                    if(!userSnap.empty) {
+                        const userData = userSnap.docs[0].data();
+                        document.getElementById('lifetimeSales').innerText = (userData.lifetime_sales || 0).toLocaleString('en-US') + " ج.م";
+                    }
+                });
 
                 onSnapshot(doc(db, "settings", "shipping_prices"), (snap) => {
                     if(snap.exists()) { 
@@ -716,17 +746,15 @@
 
         // --- دالة الفلترة اللغوية ---
         function normalizeArabic(text) {
-            return text.replace(/\s+/g, '') // إزالة المسافات (بور سعيد -> بورسعيد)
-                       .replace(/[أإآ]/g, 'ا') // توحيد الهمزات (إسكندرية -> اسكندريه)
-                       .replace(/ة/g, 'ه'); // توحيد التاء المربوطة (الدقهلية -> الدقهليه)
+            return text.replace(/\s+/g, '') 
+                       .replace(/[أإآ]/g, 'ا') 
+                       .replace(/ة/g, 'ه'); 
         }
 
-        // --- دالة التسعير المحدثة ---
         window.getCityPrice = (cityName) => {
             if(!cityName) return 85; 
             let normalizedInput = normalizeArabic(cityName);
             
-            // مقارنة مدخلات التاجر بالبورصة بعد الفلترة
             for (let gov in livePrices) {
                 let normalizedGov = normalizeArabic(gov);
                 if (normalizedInput.includes(normalizedGov) || normalizedGov.includes(normalizedInput)) {
@@ -734,12 +762,11 @@
                 }
             }
             
-            // احتياطي لكلمات بالإنجليزية أو أسماء دلع سريعة
             if(['cairo'].some(k => cityName.toLowerCase().includes(k)) && livePrices['القاهرة']) return Number(livePrices['القاهرة']);
             if(['giza'].some(k => cityName.toLowerCase().includes(k)) && livePrices['الجيزة']) return Number(livePrices['الجيزة']);
             if(['alex'].some(k => cityName.toLowerCase().includes(k)) && livePrices['الإسكندرية']) return Number(livePrices['الإسكندرية']);
             
-            return 85; // السعر الافتراضي لو فشل كل ده
+            return 85; 
         };
 
         window.handleFragileChange = () => {
@@ -759,7 +786,8 @@
             let baseFee = window.getCityPrice(city);
             
             let overWeightFee = 0;
-            if (weight > 2) { overWeightFee = Math.ceil(weight - 2) * 10; }
+            // تعديل سعر الكيلو الزايد ليكون 8 جنيه بدلاً من 10
+            if (weight > 2) { overWeightFee = Math.ceil(weight - 2) * 8; }
 
             let insuranceFee = 0;
             if (document.getElementById('fragileType').value === 'insured') {
@@ -944,6 +972,7 @@
             const city = document.getElementById('recCity').value.trim();
             const address = document.getElementById('recAddress').value.trim();
             const cod = Number(document.getElementById('codAmount').value) || 0;
+            const pieces = document.getElementById('recPieces').value.trim() || "غير محدد"; // سحب عدد القطع
             const paymentType = document.getElementById('shipmentPaymentType').value;
             const fragileType = document.getElementById('fragileType').value; 
 
@@ -967,6 +996,7 @@
                 await setDoc(newShipmentRef, {
                     merchantEmail: merchantEmail, name, phone, phone2: document.getElementById('recPhone2').value.trim() || "لا يوجد",
                     city, address, weight: Number(document.getElementById('recWeight').value||1),
+                    pieces: pieces, // حفظ عدد القطع
                     amount: finalAmount, 
                     insuranceFee: insuranceFee,
                     paymentType: paymentType, fragile: fragileType, 
@@ -988,7 +1018,7 @@
                 document.getElementById('uninsuredDiv').style.display = 'none';
                 window.updateShippingCalc(); 
                 
-                window.printWB(awb, name, phone, document.getElementById('recPhone2').value, city, address, document.getElementById('recWeight').value||1, finalAmount, fragileType, merchantAddress, merchantPhone, insuranceFee);
+                window.printWB(awb, name, phone, document.getElementById('recPhone2').value, city, address, document.getElementById('recWeight').value||1, pieces, finalAmount, fragileType, merchantAddress, merchantPhone, insuranceFee);
 
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
             btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span data-i18n="btn_submit_awb">إرسال الشحنة وتوليد البوليصة بالإجمالي</span>';
@@ -1010,7 +1040,7 @@
                     let isBuy = !isCold && d.paymentMethod !== 'pickup' && !d.details.includes('بوليصة');
                     
                     let cardClass = isCold ? 'type-cold' : (isBuy ? 'type-buy' : '');
-                    let icon = isCold ? '<i class="fa-solid fa-temperature-arrow-down"></i> كولد' : (isBuy ? '<i class="fa-solid fa-cart-shopping"></i> اشتريلي' : '<i class="fa-solid fa-box"></i> أمر مباشر');
+                    let icon = isCold ? '<i class="fa-solid fa-temperature-arrow-down"></i> كولد' : (isBuy ? '<i class="fa-solid fa-cart-shopping"></i> AXON BUY' : '<i class="fa-solid fa-box"></i> أمر مباشر');
                     
                     let statusBadge = d.status.includes('مندوب') 
                         ? `<span class="radar-status-badge" style="background:#d4edda; color:#155724;"><i class="fa-solid fa-motorcycle"></i> مع الكابتن</span>` 
@@ -1061,6 +1091,7 @@
                     const insuranceFee = d.insuranceFee || 0;
                     const mAdd = d.merchantAddress || merchantAddress;
                     const mPh = d.merchantPhone || merchantPhone;
+                    const pieces = d.pieces || "غير محدد"; // سحب عدد القطع
                     
                     let unread = unreadMessagesByOrder[d.id] || 0;
                     let badgeDisplay = unread > 0 ? 'flex' : 'none';
@@ -1078,10 +1109,10 @@
                         <td><b>${d.name}</b></td>
                         <td dir="ltr">${d.phone}</td>
                         <td>${d.city}</td>
-                        <td style="color:var(--primary-red); font-weight:bold;">${d.amount}</td>
+                        <td style="color:var(--primary-burgundy); font-weight:bold;">${d.amount}</td>
                         <td style="font-weight:bold;">${d.status}</td>
                         <td style="display:flex; gap:5px; flex-direction:column;">
-                            <button class="print-btn" onclick="window.printWB('${awb}', '${d.name}', '${d.phone}', '${d.phone2}', '${d.city}', '${d.address}', '${d.weight}', '${d.amount}', '${fragileType}', '${mAdd}', '${mPh}', ${insuranceFee})"><i class="fa-solid fa-print"></i> طباعة</button>
+                            <button class="print-btn" onclick="window.printWB('${awb}', '${d.name}', '${d.phone}', '${d.phone2}', '${d.city}', '${d.address}', '${d.weight}', '${pieces}', '${d.amount}', '${fragileType}', '${mAdd}', '${mPh}', ${insuranceFee})"><i class="fa-solid fa-print"></i> طباعة</button>
                             ${trackButton}
                         </td>
                     </tr>`;
@@ -1092,7 +1123,7 @@
             });
         }
 
-        window.printWB = (awb, name, p1, p2, city, addr, w, amt, fragileType, mAddress, mPhone, insuranceFee) => {
+        window.printWB = (awb, name, p1, p2, city, addr, w, pieces, amt, fragileType, mAddress, mPhone, insuranceFee) => {
             document.getElementById('mainHeader').style.display = 'none';
             document.getElementById('mainContainer').style.display = 'none';
             document.getElementById('floatingChatBtn').style.display = 'none';
@@ -1105,20 +1136,20 @@
             
             let fragileBannerHTML = '';
             if (fragileType === 'insured') {
-                fragileBannerHTML = `<div class="fragile-banner" style="background:#b82329; border-color:#000; color:#fff;"><i class="fa-solid fa-shield-halved"></i> شحنة قابلة للكسر (مؤمن عليها VIP) - يحق للمندوب الفحص</div>`;
+                fragileBannerHTML = `<div class="fragile-banner" style="background:#800020; border-color:#000; color:#fff;"><i class="fa-solid fa-shield-halved"></i> شحنة قابلة للكسر (مؤمن عليها VIP) - يحق للمندوب الفحص</div>`;
             } else if (fragileType === 'uninsured') {
-                fragileBannerHTML = `<div class="fragile-banner" style="background:#0A3D62; border-color:#000; color:#b82329;"><i class="fa-solid fa-triangle-exclamation"></i> شحنة قابلة للكسر (بدون تأمين) - مسؤولية الراسل بالكامل</div>`;
+                fragileBannerHTML = `<div class="fragile-banner" style="background:#111111; border-color:#000; color:#E1E715;"><i class="fa-solid fa-triangle-exclamation"></i> شحنة قابلة للكسر (بدون تأمين) - مسؤولية الراسل بالكامل</div>`;
             }
             
             let insurancePrintHTML = '';
             if(insuranceFee > 0) {
-                insurancePrintHTML = `<div style="text-align:center; background:#f0f8ff; border:2px dashed #0A3D62; padding:8px; border-radius:5px; margin-bottom:10px; color:#0A3D62; font-weight:bold; font-size:16px;">⚠️ رسوم تأمين مُسددة كاش للمندوب: ${insuranceFee} ج.م</div>`;
+                insurancePrintHTML = `<div style="text-align:center; background:#f0f8ff; border:2px dashed #111111; padding:8px; border-radius:5px; margin-bottom:10px; color:#111111; font-weight:bold; font-size:16px;">⚠️ رسوم تأمين مُسددة كاش للمندوب: ${insuranceFee} ج.م</div>`;
             }
 
             const printHTML = `
                 <div class="print-controls no-print">
-                    <button style="background: #0A3D62;" onclick="window.print()"><i class="fa-solid fa-print"></i> طباعة أو حفظ PDF</button>
-                    <button style="background: #b82329;" onclick="window.closePrintView()"><i class="fa-solid fa-arrow-right"></i> رجوع للسيستم</button>
+                    <button style="background: #111111;" onclick="window.print()"><i class="fa-solid fa-print"></i> طباعة أو حفظ PDF</button>
+                    <button style="background: #800020;" onclick="window.closePrintView()"><i class="fa-solid fa-arrow-right"></i> رجوع للسيستم</button>
                 </div>
 
                 <div class="a4-wrapper" dir="rtl">
@@ -1126,7 +1157,10 @@
                     <div class="print-header">
                         <div>${safeerLogoHTML}<br><small style="font-size:10px;">متجر السفير</small></div>
                         <div><svg id="bc" class="barcode-svg"></svg><br><b style="font-size:14px;">${awb}</b></div>
-                        <div><h2 style="margin:0; color:#0A3D62; font-size:20px;">AXON <span style="color:#b82329;">EXPRESS</span></h2><p style="margin:0; font-size:12px;">بوليصة شحن</p></div>
+                        <div>
+                            <h2 style="margin:0; color:#111111; font-size:20px; display:flex; align-items:center; justify-content:center; gap:5px;"><img src="axon-logo.png" style="height:25px;"> AXON <span style="color:#800020;">EXPRESS</span></h2>
+                            <p style="margin:0; font-size:12px;">بوليصة شحن</p>
+                        </div>
                     </div>
                     
                     ${fragileBannerHTML}
@@ -1138,6 +1172,7 @@
                             <p style="margin:2px 0;">الموبايل: <b dir="ltr">${mPhone}</b></p>
                             <p style="margin:2px 0;">العنوان: <b>${mAddress}</b></p>
                             <p style="margin:2px 0;">الوزن: <b>${w} كجم</b></p>
+                            <p style="margin:2px 0;">عدد القطع: <b>${pieces}</b></p>
                             <p style="margin:2px 0;">التاريخ: <b>${timestampStr.split(',')[0]}</b></p>
                         </div>
                         <div class="box">
@@ -1150,7 +1185,7 @@
                     </div>
                     
                     <div class="cod-box">
-                        <h2 style="margin:0; color:#b82329; font-size:20px;">المبلغ المطلوب تحصيله (COD): ${amt} ج.م</h2>
+                        <h2 style="margin:0; color:#800020; font-size:20px;">المبلغ المطلوب تحصيله (COD): ${amt} ج.م</h2>
                     </div>
                     ${insurancePrintHTML}
 
