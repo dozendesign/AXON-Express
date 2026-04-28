@@ -540,18 +540,8 @@
             "أسيوط": 145, "سوهاج": 155, "قنا": 155, "الأقصر": 195, "أسوان": 215, "الوادي الجديد": 250
         };
 
-        // --- قاعدة بيانات الأطراف والرسوم الإضافية الذكية ---
-        const extraZones = {
-            "القاهرة - التجمع الخامس": 10,
-            "القاهرة - الشروق": 15,
-            "القاهرة - بدر": 20,
-            "القاهرة - العاصمة الإدارية": 25,
-            "الجيزة - الشيخ زايد": 15,
-            "الجيزة - حدائق أكتوبر": 20,
-            "الإسكندرية - برج العرب": 20,
-            "الإسكندرية - الكينج مريوط": 15,
-            "مطروح - الساحل الشمالي": 35
-        };
+        // --- قاعدة بيانات الأطراف والرسوم الإضافية الذكية (سيتم تعبئتها من الآدمن) ---
+        let extraZones = {};
 
         const shippingZonesList = [
             "القاهرة", "القاهرة - مدينة نصر", "القاهرة - مصر الجديدة", "القاهرة - التجمع الأول", "القاهرة - التجمع الثالث", "القاهرة - التجمع الخامس", "القاهرة - الرحاب", "القاهرة - مدينتي", "القاهرة - الشروق", "القاهرة - بدر", "القاهرة - العاصمة الإدارية", "القاهرة - المعادي", "القاهرة - زهراء المعادي", "القاهرة - حلوان", "القاهرة - المرج", "القاهرة - السلام", "القاهرة - عين شمس", "القاهرة - المطرية", "القاهرة - شبرا", "القاهرة - الزيتون", "القاهرة - وسط البلد", "القاهرة - جاردن سيتي", "القاهرة - مدينة بدر الصناعية", "القاهرة - 15 مايو", "القاهرة - القطامية",
@@ -582,17 +572,6 @@
             "أسوان", "أسوان - كوم أمبو", "أسوان - إدفو", "أسوان - دراو", "أسوان - أبو سمبل",
             "الوادي الجديد", "الوادي الجديد - الخارجة", "الوادي الجديد - الداخلة", "الوادي الجديد - الفرافرة", "الوادي الجديد - باريس"
         ];
-
-        // تعبئة القائمة الذكية للمدن
-        const dataList = document.getElementById('egyptCitiesList');
-        if(dataList) {
-            shippingZonesList.forEach(zone => {
-                let option = document.createElement('option');
-                option.value = zone;
-                if(extraZones[zone]) option.text = `(+${extraZones[zone]} ج.م إضافية)`;
-                dataList.appendChild(option);
-            });
-        }
         
         let currentChatCourier = "";
         let currentChatOrderId = "";
@@ -658,6 +637,24 @@
                     if(snap.exists()) { 
                         let data = snap.data();
                         livePrices = { ...livePrices, ...data };
+
+                        // سحب أسعار الأطراف من الفايربيز للتاجر
+                        extraZones = {};
+                        shippingZonesList.forEach(zone => {
+                            if(data[zone]) { extraZones[zone] = data[zone]; }
+                        });
+
+                        // بناء القائمة المنسدلة الذكية للتاجر بالأسعار الحية
+                        const dataList = document.getElementById('egyptCitiesList');
+                        if(dataList) {
+                            dataList.innerHTML = ''; // مسح القديم
+                            shippingZonesList.forEach(zone => {
+                                let option = document.createElement('option');
+                                option.value = zone;
+                                if(extraZones[zone]) option.text = `(+${extraZones[zone]} ج.م إضافية)`;
+                                dataList.appendChild(option);
+                            });
+                        }
                         
                         let localFee = window.getCityPrice(branchName);
                         document.getElementById('eshLocalPrice').innerText = localFee;
