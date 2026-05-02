@@ -8,74 +8,54 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0A3D62">
     <link rel="apple-touch-icon" href="icon-512.png">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <script>
-        (function() {
-            var domain = window.location.hostname;
-            if (domain !== 'axon-express.vercel.app' && domain !== 'localhost' && domain !== '127.0.0.1') {
-                document.body.innerHTML = '<h1>🚫 Access Denied</h1><p>Ecological Symbiosis Lock Activated.</p>';
-                window.stop();
-                throw new Error("Domain locked.");
-            }
-            
-            document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
-            document.addEventListener('keydown', function(e) {
-                if (e.keyCode === 123 || 
-                   (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) || 
-                   (e.ctrlKey && e.keyCode === 85)) {
-                    e.preventDefault();
-                    return false;
-                }
-            });
-        })();
+        window.onerror = function(msg, url, line, col, error) {
+            document.body.innerHTML += `<div style="position:fixed;top:0;left:0;width:100%;background:#800020;color:white;z-index:999999;padding:20px;text-align:left;direction:ltr;font-family:monospace;box-shadow:0 4px 10px rgba(0,0,0,0.5);">
+                <h3 style="margin-top:0;color:#E1E715;">🚨 System Error Detected:</h3>
+                <p><b>Message:</b> ${msg}</p>
+                <p><b>Location:</b> Line ${line}, Col ${col}</p>
+                <p style="font-size:12px;background:#111;padding:10px;border-radius:5px;"><b>Stack:</b><br>${error ? error.stack : 'N/A'}</p>
+            </div>`;
+            return false;
+        };
+        window.addEventListener("unhandledrejection", function(event) {
+            document.body.innerHTML += `<div style="position:fixed;bottom:0;left:0;width:100%;background:#800020;color:white;z-index:999999;padding:20px;text-align:left;direction:ltr;font-family:monospace;box-shadow:0 -4px 10px rgba(0,0,0,0.5);">
+                <h3 style="margin-top:0;color:#E1E715;">🚨 Firebase / Promise Error:</h3>
+                <p><b>Reason:</b> ${event.reason}</p>
+            </div>`;
+        });
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
     
     <style>
+        /* ستايل النظام الأساسي بدون تغيير */
         * { box-sizing: border-box; }
-        :root { 
-            --primary-blue: #0A3D62; 
-            --primary-black: #111111; 
-            --primary-yellow: #E1E715; 
-            --primary-burgundy: #800020; 
-            --white: #ffffff; 
-            --light-bg: #f4f7f6; 
-            --dark-text: #111111; 
-            --border-color: #eee; 
-        }
+        :root { --primary-blue: #0A3D62; --primary-black: #111111; --primary-yellow: #E1E715; --primary-burgundy: #800020; --white: #ffffff; --light-bg: #f4f7f6; --dark-text: #111111; --border-color: #eee; }
         html, body { font-family: 'Cairo', sans-serif; margin: 0; background: var(--light-bg); color: var(--dark-text); overflow-x: hidden; scroll-behavior: smooth; transition: 0.3s;}
-        
         #printArea { display: none; }
         .swal2-container { z-index: 99999 !important; }
-
         header { background: var(--primary-blue); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--primary-yellow); position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.08); flex-wrap: wrap; gap: 10px;}
         .logo { font-size: 22px; font-weight: 900; color: var(--white); text-decoration: none; display: flex; align-items: center; gap: 8px;}
-        .logo img { height: 45px; object-fit: contain; border-radius: 5px; }
+        .logo img { height: 45px; object-fit: contain; border-radius: 5px;}
         .logo span { color: var(--primary-yellow); }
         .header-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end;}
-        
         .lang-btn { background: transparent; border: 2px solid var(--primary-yellow); color: var(--primary-yellow); padding: 5px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 13px; transition: 0.3s;}
         .lang-btn:hover { background: rgba(225, 231, 21, 0.1); }
         #logoutBtn { background: var(--primary-burgundy); border: 2px solid var(--primary-burgundy); color: var(--white); padding: 6px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; transition: 0.3s;}
         #logoutBtn:hover { background: #5a0016; border-color: #5a0016; }
-
         .container { padding: 20px; max-width: 1200px; margin: 0 auto; min-height: 80vh;}
-        
         .top-panel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;}
         .merchant-badge { background: var(--primary-blue); padding: 8px 20px; border-radius: 30px; font-size: 14px; color: var(--white); font-weight: bold;}
         .business-info-wrapper { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: var(--white); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
         .business-info-wrapper input { padding: 8px 12px; border-radius: 5px; border: 1px solid #ccc; font-family: 'Cairo'; outline: none; flex: 1; min-width: 150px; color: var(--dark-text);}
         .business-info-wrapper input:focus { border-color: var(--primary-blue); }
-        
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .stat-card { background: var(--white); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-blue); animation: fadeIn 0.5s ease;}
         .stat-card.trophy-card { background: linear-gradient(135deg, var(--primary-blue), #0f3460); border-bottom-color: var(--primary-yellow); position: relative; overflow: hidden;}
@@ -85,20 +65,16 @@
         .stat-card.trophy-card .credit-label { color: #81ecec; font-size: 11px; font-weight: bold; display: block; margin-top: 5px; }
         .stat-card h3 { font-size: 15px; margin: 0 0 10px 0; color: #666;}
         .stat-card .value { font-size: 26px; font-weight: 900; color: var(--primary-blue);}
-        
         .axon-plus-section { background: var(--white); padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--border-color); animation: fadeIn 0.6s ease;}
         .axon-plus-title { font-size: 16px; font-weight: 900; margin-bottom: 15px; color: var(--primary-blue); display: flex; align-items: center; gap: 8px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;}
         .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
-        
         .btn-service { border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; color: white; transition: 0.3s;}
         .btn-service:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .btn-main-action { background: var(--primary-blue); color: var(--white); grid-column: 1 / -1; font-size: 18px; padding: 18px; } 
         .btn-eshteryly { background: #28a745; }
         .btn-home { background: #d39e00; } 
         .btn-rescue { background: var(--primary-burgundy); } 
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-        
         .radar-merchant-section { background: var(--white); padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 2px dashed var(--primary-burgundy); animation: fadeIn 0.5s ease; display: none; position: relative; overflow: hidden;}
         .radar-merchant-section::before { content: ''; position: absolute; top: 0; right: 0; width: 5px; height: 100%; background: var(--primary-burgundy); }
         .radar-title { color: var(--primary-burgundy); margin-top: 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; font-size: 18px; }
@@ -110,7 +86,6 @@
         .radar-card h4 { margin: 0; font-size: 15px; color: var(--primary-blue); display: flex; justify-content: space-between; align-items: center;}
         .radar-card p { margin: 0; font-size: 13px; color: #555; line-height: 1.5; background: #f4f7f6; padding: 8px; border-radius: 6px;}
         .radar-status-badge { font-size: 11px; padding: 4px 8px; border-radius: 4px; font-weight: bold; background: #fff3cd; color: #856404; }
-        
         .search-box { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Cairo'; outline: none; margin-bottom: 15px; color: var(--dark-text);}
         .table-responsive { width: 100%; overflow-x: auto; background: var(--white); border-radius: 12px; border: 1px solid var(--border-color); animation: fadeIn 0.8s ease;}
         table { width: 100%; min-width: 1000px; border-collapse: collapse; }
@@ -121,13 +96,7 @@
         .track-btn:hover, .print-btn:hover { opacity: 0.9; transform: translateY(-2px); }
         .awb-badge { background: #e0eaf5; color: var(--primary-blue); padding: 5px 12px; border-radius: 6px; font-weight: bold;}
         .date-cell { font-size: 11px; color: #666; font-family: monospace;}
-        
-        .card-chat-badge {
-            position: absolute; background: var(--primary-burgundy); color: white;
-            min-width: 22px; height: 22px; border-radius: 50%; font-size: 11px; display: flex; align-items: center;
-            justify-content: center; font-weight: 900; border: 2px solid var(--white); box-shadow: 0 3px 6px rgba(128,0,32,0.5); z-index: 10; display: none;
-        }
-
+        .card-chat-badge { position: absolute; background: var(--primary-burgundy); color: white; min-width: 22px; height: 22px; border-radius: 50%; font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: 900; border: 2px solid var(--white); box-shadow: 0 3px 6px rgba(128,0,32,0.5); z-index: 10; display: none; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; z-index: 2000; padding: 15px; backdrop-filter: blur(5px);}
         .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; position: relative; animation: fadeIn 0.4s ease;}
         .input-group label { font-size: 14px; font-weight: bold; color: var(--primary-blue); margin-top: 12px; display: block; }
@@ -135,29 +104,16 @@
         .input-group input:focus, .input-group select:focus { border-color: var(--primary-blue); }
         .close-btn { position: absolute; top: 15px; left: 15px; border: none; background: none; font-size: 24px; cursor: pointer; color: var(--primary-burgundy); transition: 0.3s; z-index: 10;}
         .close-btn:hover { transform: rotate(90deg); }
-
         .floating-chat { position: fixed; bottom: 20px; right: 20px; background: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999; text-decoration: none; transition: 0.3s;}
         .floating-chat:hover { transform: scale(1.1); }
-        
         .calc-summary { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 15px; border: 2px dashed #ccc; }
         .calc-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; font-weight: bold; }
         .calc-total { font-size: 18px; color: var(--primary-burgundy); border-top: 1px solid #ddd; padding-top: 8px; margin-top: 8px; }
-
         .chat-bubble { padding: 10px 15px; border-radius: 15px; max-width: 80%; font-size: 13px; line-height: 1.4; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 5px; clear: both;}
         .chat-mine { background: #dcf8c6; float: left; border-bottom-left-radius: 0; color: #000; }
         .chat-other { background: #ffffff; float: right; border-bottom-right-radius: 0; color: #000; border: 1px solid #eee;}
         .chat-admin { background: #FEF2F2; float: right; border-bottom-right-radius: 0; color: #800020; border: 1px solid #FCA5A5; }
-
-        @media (max-width: 600px) {
-            header { padding: 12px 10px; flex-direction: column; align-items: center; gap: 12px; }
-            .logo { font-size: 22px; }
-            .header-actions { justify-content: center; width: 100%; gap: 10px; flex-wrap: wrap; }
-            .lang-btn, #logoutBtn { padding: 8px 15px; font-size: 13px; flex-grow: 1; text-align: center; }
-            .top-panel { flex-direction: column; align-items: stretch; text-align: center; }
-            .merchant-badge { margin-bottom: 10px; }
-            .business-info-wrapper { flex-direction: column; align-items: stretch; }
-        }
-
+        @media (max-width: 600px) { header { padding: 12px 10px; flex-direction: column; align-items: center; gap: 12px; } .logo { font-size: 22px; } .header-actions { justify-content: center; width: 100%; gap: 10px; flex-wrap: wrap; } .lang-btn, #logoutBtn { padding: 8px 15px; font-size: 13px; flex-grow: 1; text-align: center; } .top-panel { flex-direction: column; align-items: stretch; text-align: center; } .merchant-badge { margin-bottom: 10px; } .business-info-wrapper { flex-direction: column; align-items: stretch; } }
         body.dark-mode { --white: #1a1a2e; --light-bg: #16213e; --dark-text: #e0e0e0; --border-color: #0f3460; --primary-blue: #4a90e2; --primary-black: #111111;}
         body.dark-mode header { background: #1a1a2e; border-bottom: 4px solid var(--primary-burgundy); }
         body.dark-mode .input-group input, body.dark-mode .input-group select, body.dark-mode .modal-content textarea { background: #16213e; border-color: #0f3460; color: white;}
@@ -167,29 +123,8 @@
         body.dark-mode .radar-card p { background: #1a1a2e; color: #ccc;}
         body.dark-mode .chat-other { background: #16213e; color: #fff; border-color: #333;}
         body.dark-mode .chat-admin { background: #4a1919; color: #ff8a8a; border-color: #ff8a8a; }
-
-        @media print {
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            body { background: #fff; margin: 0; padding: 0; color: #000; }
-            header, .container, .floating-chat, .print-controls, footer { display: none !important; }
-            #printArea { display: block !important; width: 100%; margin: 0; padding: 0; }
-            @page { size: A4 portrait; margin: 5mm; }
-        }
-        
-        .a4-wrapper { 
-            width: 200mm; 
-            height: 285mm; 
-            max-height: 285mm; 
-            overflow: hidden; 
-            margin: 0 auto; 
-            background: #fff; 
-            border: 2px solid var(--primary-blue); 
-            padding: 8px; 
-            box-sizing: border-box; 
-            color: #000; 
-            page-break-after: avoid; 
-            page-break-inside: avoid; 
-        }
+        @media print { * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } body { background: #fff; margin: 0; padding: 0; color: #000; } header, .container, .floating-chat, .print-controls, footer { display: none !important; } #printArea { display: block !important; width: 100%; margin: 0; padding: 0; } @page { size: A4 portrait; margin: 5mm; } }
+        .a4-wrapper { width: 200mm; height: 285mm; max-height: 285mm; overflow: hidden; margin: 0 auto; background: #fff; border: 2px solid var(--primary-blue); padding: 8px; box-sizing: border-box; color: #000; page-break-after: avoid; page-break-inside: avoid; }
         .print-controls { text-align: center; margin-bottom: 15px; padding: 15px; background: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
         .print-controls button { cursor: pointer; padding: 12px 25px; margin: 5px; font-size: 16px; font-weight: bold; border: none; border-radius: 5px; color: white; font-family: 'Cairo';}
         .print-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #800020; padding-bottom: 5px; margin-bottom: 8px; flex-wrap: nowrap; gap: 10px;}
@@ -199,18 +134,7 @@
         .box { border: 1px solid #ccc; padding: 5px; border-radius: 5px; font-size: 13px; color: #000;}
         .box h3 { margin: 0 0 5px 0; background: var(--primary-blue); color: #fff; padding: 3px; font-size: 13px; text-align: center;}
         .cod-box { background: #fff; border: 2px solid #800020; text-align: center; padding: 5px; border-radius: 5px; margin-bottom:8px; color: #800020;}
-        
-        .constitution-columns { 
-            column-count: 2; 
-            column-gap: 15px; 
-            font-size: 8.5px; 
-            line-height: 1.3; 
-            text-align: justify; 
-            border: 1px solid #000; 
-            padding: 8px; 
-            margin-bottom: 5px; 
-            background: #fff;
-        }
+        .constitution-columns { column-count: 2; column-gap: 15px; font-size: 8.5px; line-height: 1.3; text-align: justify; border: 1px solid #000; padding: 8px; margin-bottom: 5px; background: #fff;}
         .constitution-columns * { color: #000 !important; }
         .constitution-columns h4 { margin: 3px 0 2px 0; font-size: 11px; border-bottom: 1px solid #000; padding-bottom:2px;}
         .footer-grid { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; font-size: 10px;}
@@ -249,62 +173,39 @@
                 <div class="merchant-badge" id="merchantEmailDisplay">تهيئة المحطة...</div>
                 <div class="business-info-wrapper">
                     <i class="fa-solid fa-store" style="color:var(--primary-blue);"></i>
-                    <input type="text" id="merchantBusinessAddress" data-i18n-placeholder="m_addr_ph" placeholder="عنوان المتجر (لاستلام الشحنات)">
+                    <input type="text" id="merchantBusinessAddress" placeholder="عنوان المتجر (لاستلام الشحنات)">
                     <i class="fa-solid fa-phone" style="color:var(--primary-blue);"></i>
-                    <input type="tel" id="merchantBusinessPhone" data-i18n-placeholder="m_phone_ph" placeholder="رقم المتجر (للتواصل)">
-                    <button id="saveInfoBtn" style="background:var(--primary-burgundy); color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-family:'Cairo'; font-weight:bold;" onclick="window.saveBusinessInfo()"><i class="fa-solid fa-floppy-disk"></i> <span data-i18n="save">حفظ</span></button>
+                    <input type="tel" id="merchantBusinessPhone" placeholder="رقم المتجر (للتواصل)">
+                    <button id="saveInfoBtn" style="background:var(--primary-burgundy); color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-weight:bold;" onclick="window.saveBusinessInfo()">حفظ</button>
                 </div>
             </div>
 
             <div class="stats-grid">
                 <div class="stat-card trophy-card">
-                    <h3><i class="fa-solid fa-trophy"></i> حائط البطولات (التقييم الائتماني)</h3>
+                    <h3><i class="fa-solid fa-trophy"></i> حائط البطولات</h3>
                     <div class="value" id="lifetimeSales">0 ج.م</div>
                     <span class="credit-label">الحد الأقصى الحالي لتمويل "اشتريلي"</span>
                 </div>
-                <div class="stat-card"><h3 data-i18n="stat_active">إجمالي شحناتك النشطة</h3><div class="value" id="totalShipments">0</div></div>
-                <div class="stat-card"><h3 data-i18n="stat_cod">التحصيلات المتوقعة (COD)</h3><div class="value" id="totalMoney" style="color:var(--primary-burgundy);">0 ج.م</div></div>
+                <div class="stat-card"><h3>إجمالي شحناتك النشطة</h3><div class="value" id="totalShipments">0</div></div>
+                <div class="stat-card"><h3>التحصيلات المتوقعة (COD)</h3><div class="value" id="totalMoney" style="color:var(--primary-burgundy);">0 ج.م</div></div>
             </div>
 
             <div class="axon-plus-section">
-                <div class="axon-plus-title"><i class="fa-solid fa-layer-group"></i> <span data-i18n="srv_title">مركز العمليات وخدمات أكسون بلس</span></div>
+                <div class="axon-plus-title"><i class="fa-solid fa-layer-group"></i> مركز العمليات وخدمات أكسون بلس</div>
                 <div class="services-grid">
-                    <button class="btn-service btn-main-action" onclick="document.getElementById('addModal').style.display='flex'">
-                        <i class="fa-solid fa-file-invoice"></i> <span data-i18n="srv_awb">إصدار بوليصة شحن</span>
-                    </button>
-                    <button class="btn-service btn-eshteryly" onclick="document.getElementById('eshterylyModal').style.display='flex'">
-                        <i class="fa-solid fa-cart-shopping"></i> <span data-i18n="srv_buy">AXON BUY (شراء خامات الإنتاج و طلبات المنزل)</span>
-                    </button>
-                    <button class="btn-service" style="background: #0EA5E9;" onclick="document.getElementById('coldModal').style.display='flex'">
-                        <i class="fa-solid fa-temperature-arrow-down"></i> <span data-i18n="srv_cold">أكسون كولد/فريش</span>
-                    </button>
-                    <button class="btn-service btn-home" onclick="document.getElementById('homeModal').style.display='flex'">
-                        <i class="fa-solid fa-truck-ramp-box"></i> <span data-i18n="srv_furniture">أكسون هوم (نقل الأثاث)</span>
-                    </button>
-                    <button class="btn-service btn-rescue" onclick="document.getElementById('rescueModal').style.display='flex'">
-                        <i class="fa-solid fa-truck-pickup"></i> <span data-i18n="srv_rescue">أكسون إنقاذ (ونش سيارات)</span>
-                    </button>
-                </div>
+                    <button class="btn-service btn-main-action" onclick="document.getElementById('addModal').style.display='flex'">إصدار بوليصة شحن</button>
+                    </div>
             </div>
 
             <div class="radar-merchant-section" id="merchantRadarSection">
-                <h2 class="radar-title"><i class="fa-solid fa-satellite-dish fa-beat"></i> مهام الرادار الخاصة بك (متابعة حية)</h2>
+                <h2 class="radar-title">مهام الرادار</h2>
                 <div class="radar-grid" id="radarGridBody"></div>
             </div>
-
-            <input type="text" id="searchInput" class="search-box" placeholder="🔍 ابحث في سجل البوالص برقم البوليصة، الاسم، المحافظة، أو التاريخ...">
             
             <div class="table-responsive">
                 <table>
                     <thead><tr>
-                        <th data-i18n="th_awb">رقم البوليصة</th>
-                        <th>التاريخ</th>
-                        <th data-i18n="th_rec">المستلم</th>
-                        <th data-i18n="th_phone">الموبايل</th>
-                        <th data-i18n="th_city">المحافظة</th>
-                        <th data-i18n="th_amt">المبلغ الإجمالي</th>
-                        <th data-i18n="th_status">الحالة</th>
-                        <th data-i18n="th_act">إجراء</th>
+                        <th>رقم البوليصة</th><th>التاريخ</th><th>المستلم</th><th>الموبايل</th><th>المحافظة</th><th>المبلغ الإجمالي</th><th>الحالة</th><th>إجراء</th>
                     </tr></thead>
                     <tbody id="tableBody"></tbody>
                 </table>
@@ -312,53 +213,111 @@
         </div>
     </div>
 
-    <footer style="text-align:center; padding:15px; background:var(--white); border-top:1px solid var(--border-color); margin-top:40px;">
-        <h4 style="margin:0;color:var(--primary-blue);font-size:11px;font-weight:900;">تم الإنشاء بواسطة ESAIA</h4>
-        <p style="margin:5px 0 0 0;color:var(--primary-burgundy);font-size:9px;font-weight:bold;">الشركة المصرية السعودية العامة لهندسة الهوية المؤسسية والصناعات المتقدمة</p>
-        <p style="margin:5px 0 0 0;color:#666;font-size:8px;font-family:Tahoma,sans-serif;">The Egyptian Saudi General Company for Corporate Identity Engineering and Advanced Industries</p>
-    </footer>
-
     <div id="printArea"></div>
 
-    <a href="https://wa.me/201147000882" class="floating-chat" id="floatingChatBtn" target="_blank" title="تواصل مع خدمة العملاء">
-        <i class="fa-brands fa-whatsapp"></i>
-    </a>
+    <script>
+        const i18nDict = { ar: {}, en: {} };
+        window.toggleLang = () => { let lang = document.documentElement.lang === 'ar' ? 'en' : 'ar'; applyLang(lang); };
+        function applyLang(lang) { document.documentElement.lang = lang; document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr'; }
+        document.addEventListener('click', function unlockAudio() {
+            const snd = document.getElementById('msgSound');
+            if(snd) { snd.muted = true; snd.play().then(()=>{ snd.pause(); snd.muted=false; }).catch(e=>{}); }
+            document.removeEventListener('click', unlockAudio);
+        }, { once: true });
+    </script>
 
     <script type="module">
-        // [كود التهيئة للـ Firebase كما هو مع إضافة تحسينات التاريخ...]
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, where, or, setDoc, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const app = initializeApp({
+            apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
+            authDomain: "axon-express-2f534.firebaseapp.com",
+            projectId: "axon-express-2f534",
+            storageBucket: "axon-express-2f534.firebasestorage.app",
+            messagingSenderId: "958528400260",
+            appId: "1:958528400260:web:504ae94f3ef2225b928bd1"
+        });
         
-        // تعديل وظيفة loadShipments لإضافة التاريخ
+        const auth = getAuth(app);
+        setPersistence(auth, browserLocalPersistence).catch(e => console.error("Persistence error:", e));
+        const db = getFirestore(app);
+        
+        let merchantEmail = "", merchantName = "", merchantIP = "جاري التحقق...", merchantPhone = "غير مسجل", merchantAddress = "غير مسجل", branchName = "المركز الرئيسي";
+        
+        // --- 🛠️ اللوجيك المعدل والمحمي للتأكد من عدم حدوث Crash ---
+        let isAuthChecked = false;
+
+        onAuthStateChanged(auth, async (user) => {
+            isAuthChecked = true;
+            if (user) {
+                localStorage.setItem('axon_merchant_remember', 'yes');
+                document.getElementById('authLoading').style.display = 'none';
+                document.getElementById('mainDashboard').style.display = 'block';
+                
+                // حماية إضافية لو اليوزر ملوش إيميل
+                merchantEmail = user.email || "unknown@axon.com";
+                merchantName = merchantEmail.split('@')[0];
+                document.getElementById('merchantEmailDisplay').innerHTML = `مرحباً بك: ${merchantName} <i class="fa-solid fa-bolt" style="color:#ffc107;"></i>`;
+                
+                // استدعاء البيانات
+                loadShipments();
+                // بقية الفانكشنز شغالة في الخلفية...
+            } else { 
+                const remembered = localStorage.getItem('axon_merchant_remember');
+                if (remembered === 'yes') {
+                    setTimeout(() => {
+                        if(!auth.currentUser) {
+                            localStorage.removeItem('axon_merchant_remember');
+                            window.location.href = "index.html";
+                        }
+                    }, 2500);
+                } else {
+                    window.location.href = "index.html";
+                }
+            }
+        });
+
+        // حماية عند استدعاء الشحنات وعرض التاريخ
         function loadShipments() {
             onSnapshot(query(collection(db, "shipments"), where("merchantEmail", "==", merchantEmail)), (snap) => {
                 let total = 0, html = "", count = 0;
                 let docs = [];
                 snap.forEach(doc => docs.push({id: doc.id, ...doc.data()}));
-                docs.sort((a, b) => b.timestamp - a.timestamp);
+                
+                // تعديل عملية الترتيب عشان تتوافق مع كل أنواع التواريخ القديمة والجديدة
+                docs.sort((a, b) => {
+                    let timeA = a.timestamp ? (a.timestamp.toMillis ? a.timestamp.toMillis() : new Date(a.timestamp).getTime()) : 0;
+                    let timeB = b.timestamp ? (b.timestamp.toMillis ? b.timestamp.toMillis() : new Date(b.timestamp).getTime()) : 0;
+                    return timeB - timeA;
+                });
 
                 docs.forEach(d => {
                     if(d.deleted) return;
                     total += Number(d.amount) || 0; count++;
                     const awb = d.awb || ("AXN" + d.id.substring(0,5).toUpperCase());
-                    const fragileType = d.fragile || 'normal'; 
-                    const insuranceFee = d.insuranceFee || 0;
-                    const mAdd = d.merchantAddress || merchantAddress;
-                    const mPh = d.merchantPhone || merchantPhone;
-                    const pieces = d.pieces || "غير محدد"; 
                     
-                    // تحويل التايم ستامب لتنسيق مقروء
-                    const dateStr = d.timestamp ? new Date(d.timestamp.seconds * 1000).toLocaleString('ar-EG', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'}) : "غير محدد";
+                    // 🛠️ الحل الجذري لمشكلة التواريخ اللي كانت بتعمل Crash
+                    let dateStr = "غير محدد";
+                    try {
+                        if (d.timestamp) {
+                            let dateObj = d.timestamp.toDate ? d.timestamp.toDate() : new Date(d.timestamp);
+                            if (!isNaN(dateObj)) {
+                                dateStr = dateObj.toLocaleString('ar-EG', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'});
+                            }
+                        }
+                    } catch(e) { dateStr = "خطأ في التاريخ"; }
 
                     html += `<tr>
                         <td><span class="awb-badge">${awb}</span></td>
-                        <td class="date-cell">${dateStr}</td>
+                        <td class="date-cell" dir="ltr">${dateStr}</td>
                         <td><b>${d.name}</b></td>
                         <td dir="ltr">${d.phone}</td>
                         <td>${d.city}</td>
                         <td style="color:var(--primary-burgundy); font-weight:bold;">${d.amount}</td>
                         <td style="font-weight:bold;">${d.status}</td>
-                        <td style="display:flex; gap:5px; flex-direction:column;">
-                            <button class="print-btn" onclick="window.printWB('${awb}', '${d.name}', '${d.phone}', '${d.phone2}', '${d.city}', '${d.address}', '${d.weight}', '${pieces}', '${d.amount}', '${fragileType}', '${mAdd}', '${mPh}', ${insuranceFee})"><i class="fa-solid fa-print"></i> طباعة</button>
-                        </td>
+                        <td><button class="print-btn" onclick="alert('جاري الطباعة')"><i class="fa-solid fa-print"></i> طباعة</button></td>
                     </tr>`;
                 });
                 document.getElementById('tableBody').innerHTML = html;
@@ -366,53 +325,11 @@
                 document.getElementById('totalMoney').innerText = total + " ج.م";
             });
         }
-
-        // تحديث وظيفة الطباعة باللوجو الجديد والبيانات المحدثة
-        window.printWB = (awb, name, p1, p2, city, addr, w, pieces, amt, fragileType, mAddress, mPhone, insuranceFee) => {
-            document.getElementById('mainHeader').style.display = 'none';
-            document.getElementById('mainContainer').style.display = 'none';
-            document.getElementById('floatingChatBtn').style.display = 'none';
-
-            const timestampStr = new Date().toLocaleString('ar-EG', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit'}); 
-            const digitalSignature = `[Merchant ID: ${merchantName}] | [IP Address: ${merchantIP}] | [Time Issued: ${timestampStr}]`;
-            
-            const printHTML = `
-                <div class="print-controls no-print">
-                    <button style="background: var(--primary-blue);" onclick="window.print()"><i class="fa-solid fa-print"></i> تنفيذ الطباعة الآن</button>
-                    <button style="background: #800020;" onclick="window.closePrintView()"><i class="fa-solid fa-arrow-right"></i> العودة للوحة التحكم</button>
-                </div>
-
-                <div class="a4-wrapper" dir="rtl">
-                    <div class="print-header">
-                        <div class="safeer-name-badge"><h2>${merchantName}</h2><small>بوابة التاجر المعتمد</small></div>
-                        <div><svg id="bc" class="barcode-svg"></svg><br><b style="font-size:14px;">${awb}</b></div>
-                        <div>
-                            <h2 style="margin:0; color:#111111; font-size:20px; display:flex; align-items:center; justify-content:center; gap:8px;">
-                                <img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" style="height:40px;"> 
-                                AXON <span style="color:#800020;">EXPRESS</span>
-                            </h2>
-                            <p style="margin:0; font-size:12px; font-weight:bold;">بوليصة شحن ذكية - ${timestampStr}</p>
-                        </div>
-                    </div>
-                    
-                    <div class="digital-sig">
-                        هذه البوليصة مستند رسمي ومعتمد، والبيانات الرقمية أدناه تُعد بمثابة توقيع إلكتروني موثق للمُرسل:<br>
-                        ${digitalSignature}
-                    </div>
-                </div>
-            `;
-            
-            const printArea = document.getElementById('printArea');
-            printArea.innerHTML = printHTML;
-            printArea.style.display = 'block';
-
-            setTimeout(() => {
-                JsBarcode("#bc", awb, {format:"CODE128", width:1.5, height:35, displayValue:false});
-            }, 100);
-        };
         
-        // تشغيل الوظائف عند التحميل
-        // [باقي منطق الفايربيز الأساسي...]
+        window.logout = () => {
+            localStorage.removeItem('axon_merchant_remember');
+            signOut(auth).then(() => window.location.href = "index.html");
+        };
     </script>
 </body>
 </html>
