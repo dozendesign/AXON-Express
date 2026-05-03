@@ -47,7 +47,6 @@
             .print-table{font-size:8px;border-collapse:collapse;width:100%;}
             .print-table td,.print-table th{border:1px solid #000;padding:2px;}
         }
-        .error-message{background:#ffebee;color:#c62828;padding:10px;border-radius:8px;margin:15px;text-align:center;}
     </style>
 </head>
 <body>
@@ -60,7 +59,7 @@
 <div class="container">
     <div class="filter-bar">
         <i class="fa-solid fa-city"></i> <span>مراجعة فرع:</span>
-        <select id="branchSelect" onchange="window.refreshData()">
+        <select id="branchSelect" onchange="loadData()">
             <option value="all">الجمهورية (الكل)</option>
             <optgroup label="محافظات الوجه البحري والقاهرة">
                 <option value="القاهرة">القاهرة</option><option value="الجيزة">الجيزة</option><option value="الإسكندرية">الإسكندرية</option>
@@ -79,7 +78,6 @@
         </select>
     </div>
     <div id="loading" style="text-align:center;padding:50px;"><i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل البيانات...</div>
-    <div id="errorContainer" style="display:none;"></div>
     <div id="dashboard" style="display:none;">
         <div class="tabs">
             <button class="tab-btn active" onclick="showTab('overview')">الموقف العام</button>
@@ -95,20 +93,19 @@
             </div>
         </div>
         <div id="couriers" class="tab-content"><div class="table-responsive"><table><thead><tr><th>الكابتن</th><th>المهام</th><th>العهدة المطلوبة</th><th></th></tr></thead><tbody id="couriersBody"></tbody></table></div></div>
-        <div id="merchants" class="tab-content"><div class="table-responsive"><tr><thead><tr><th>التاجر</th><th>بوالص مسلمة</th><th>إجمالي COD</th><th>مخصوم</th><th>صافي المستحق</th><th></th></tr></thead><tbody id="merchantsBody"></tbody></table></div></div>
-        <div id="expenses" class="tab-content"><button class="btn-danger" onclick="addExpense()">+ تسجيل مصروف</button><div class="table-responsive"><td><thead><tr><th>التاريخ</th><th>البيان</th><th>المبلغ</th></tr></thead><tbody id="expensesBody"></tbody></table></div></div>
+        <div id="merchants" class="tab-content"><div class="table-responsive"></td><thead><tr><th>التاجر</th><th>بوالص مسلمة</th><th>إجمالي COD</th><th>مخصوم</th><th>صافي المستحق</th><th></th></tr></thead><tbody id="merchantsBody"></tbody></table></div></div>
+        <div id="expenses" class="tab-content"><button class="btn-danger" onclick="addExpense()">+ تسجيل مصروف</button><div class="table-responsive"></table><thead><tr><th>التاريخ</th><th>البيان</th><th>المبلغ</th></tr></thead><tbody id="expensesBody"></tbody></table></div></div>
     </div>
 </div>
 
-<div id="courierModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="closeModal('courierModal')">✖</button><h2>تفاصيل عهدة: <span id="courierNameModal"></span></h2><div class="summary-box"><div>النقدية المطلوبة: <span id="courierTotal"></span></div><div>عدد المهام: <span id="courierTasks"></span></div></div><div class="table-responsive"></td><thead><tr><th>النوع</th><th>رقم البوليصة/التفاصيل</th><th>التاجر/العنوان</th><th>المبلغ</th><th>الحالة</th></tr></thead><tbody id="courierDetailsBody"></tbody></table></div><button class="btn-print" onclick="printCourierManifest()">طباعة المانيفست</button></div></div>
-<div id="merchantModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="closeModal('merchantModal')">✖</button><h2>كشف حساب: <span id="merchantNameModal"></span></h2><div class="summary-box"><div>إجمالي COD: <span id="merchantTotalCod"></span></div><div>مخصوم شحن: <span id="merchantTotalFees"></span></div><div>الصافي المستحق: <span id="merchantNet"></span></div></div><div class="table-responsive"><tr><thead><tr><th>التاريخ</th><th>البوليصة</th><th>المستلم</th><th>COD</th><th>مخصوم</th><th>الصافي</th></tr></thead><tbody id="merchantItemsBody"></tbody></tr></div><div style="display:flex; gap:8px; justify-content:center;"><button class="btn-settle" onclick="settleMerchant()">اعتماد التسوية</button><button class="btn-print" onclick="printMerchantStatement()">طباعة الكشف</button></div></div></div>
+<div id="courierModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="closeModal('courierModal')">✖</button><h2>تفاصيل عهدة: <span id="courierNameModal"></span></h2><div class="summary-box"><div>النقدية المطلوبة: <span id="courierTotal"></span></div><div>عدد المهام: <span id="courierTasks"></span></div></div><div class="table-responsive"><table><thead><tr><th>النوع</th><th>رقم البوليصة/التفاصيل</th><th>التاجر/العنوان</th><th>المبلغ</th><th>الحالة</th></tr></thead><tbody id="courierDetailsBody"></tbody></table></div><button class="btn-print" onclick="printCourierManifest()">طباعة المانيفست</button></div></div>
+<div id="merchantModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="closeModal('merchantModal')">✖</button><h2>كشف حساب: <span id="merchantNameModal"></span></h2><div class="summary-box"><div>إجمالي COD: <span id="merchantTotalCod"></span></div><div>مخصوم شحن: <span id="merchantTotalFees"></span></div><div>الصافي المستحق: <span id="merchantNet"></span></div></div><div class="table-responsive"></td><thead><td><th>التاريخ</th><th>البوليصة</th><th>المستلم</th><th>COD</th><th>مخصوم</th><th>الصافي</th><tr></thead><tbody id="merchantItemsBody"></tbody></tr></div><div style="display:flex; gap:8px; justify-content:center;"><button class="btn-settle" onclick="settleMerchant()">اعتماد التسوية</button><button class="btn-print" onclick="printMerchantStatement()">طباعة الكشف</button></div></div></div>
 <div id="printArea"></div>
 
 <script>
-    let currentCourierData = null;
-    let currentMerchantEmail = null;
-    let merchantsMap = {}, couriersMap = {};
-    let selectedBranch = "all";
+    let allShipments = [], allRadar = [];
+    let livePrices = {};
+    let currentCourier = null, currentMerchantEmail = null;
 
     function showTab(id){
         document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
@@ -117,7 +114,6 @@
         if(event && event.currentTarget) event.currentTarget.classList.add('active');
     }
     function closeModal(id){ document.getElementById(id).style.display='none'; }
-    function refreshData(){ if(window.loadFinancialData) window.loadFinancialData(); }
 
     async function addExpense(){
         const {value:vals} = await Swal.fire({
@@ -131,65 +127,9 @@
                 return {desc, amt};
             },
             confirmButtonText:'إضافة',
-            showCancelButton:true,
-            cancelButtonText:'إلغاء'
+            showCancelButton:true
         });
-        if(vals && vals.desc && vals.amt){
-            if(window.addExpenseFirestore) await window.addExpenseFirestore(vals.desc, vals.amt);
-            else Swal.fire('خطأ','الوظيفة غير متوفرة','error');
-        }
-    }
-</script>
-
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-    import { getFirestore, collection, onSnapshot, doc, query, where, addDoc, updateDoc, writeBatch, increment, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
-        authDomain: "axon-express-2f534.firebaseapp.com",
-        projectId: "axon-express-2f534",
-        storageBucket: "axon-express-2f534.firebasestorage.app",
-        messagingSenderId: "958528400260",
-        appId: "1:958528400260:web:504ae94f3ef2225b928bd1"
-    };
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    let shipments = [], radarTasks = [];
-    let livePrices = {};
-    let unsubShipments, unsubRadar, unsubPrices, unsubExpenses;
-    let isLoading = true;
-
-    window.addExpenseFirestore = async (desc, amt) => {
-        try {
-            await addDoc(collection(db, "expenses"), { 
-                description: desc, 
-                amount: amt, 
-                timestamp: new Date(), 
-                branchName: selectedBranch === 'all' ? 'all' : selectedBranch, 
-                addedBy: auth.currentUser?.email 
-            });
-            Swal.fire('تم','تم إضافة المصروف بنجاح','success');
-            loadExpenses();
-        } catch(e){ 
-            Swal.fire('خطأ', e.message, 'error'); 
-        }
-    };
-
-    function loadExpenses(){
-        let q = collection(db, "expenses");
-        if(selectedBranch !== 'all') q = query(q, where("branchName", "==", selectedBranch));
-        onSnapshot(query(q, orderBy("timestamp","desc")), snap => {
-            let html = "";
-            snap.forEach(d => { 
-                let data = d.data(); 
-                html += `<tr><td style="font-size:13px;">${data.timestamp?.toDate().toLocaleDateString()||'-'}</td><td style="font-size:13px;">${data.description}</td><td style="font-size:13px; font-weight:bold;">${data.amount} ج.م</noscript></tr>`;
-            });
-            document.getElementById('expensesBody').innerHTML = html || "<tr><td colspan='3'>لا توجد مصروفات</tr>";
-        });
+        if(vals && window.addExpenseFirestore) await window.addExpenseFirestore(vals.desc, vals.amt);
     }
 
     function getShippingCost(city){
@@ -218,189 +158,251 @@
 
     function processData(){
         let branch = document.getElementById('branchSelect').value;
-        selectedBranch = branch;
         let merchants = {}, couriers = {};
-        let totalCollected = 0, totalCompanyProfit = 0;
-
-        let allItems = [...shipments.map(s=>({...s, type:'shipment'})), ...radarTasks.map(r=>({...r, type:'radar'}))];
-        allItems.forEach(v => {
+        let totalCollected = 0, totalProfit = 0;
+        
+        let all = [...allShipments.map(s=>({...s, type:'shipment'})), ...allRadar.map(r=>({...r, type:'radar'}))];
+        all.forEach(v => {
             if(v.deleted) return;
             let itemBranch = v.branchName || v.city || "غير محدد";
             if(branch !== 'all' && !itemBranch.includes(branch)) return;
-
+            
             let amt = Number(v.amount||0), insurance = Number(v.insuranceFee||0), weight = Number(v.weight||1);
             let status = v.status || "جديد";
-            let merchantEmail = v.merchantEmail || "إدارة";
-            let courierName = v.courierName || (v.type==='radar' && v.courierName ? v.courierName : "غير محدد");
-
+            let merchant = v.merchantEmail || "إدارة";
+            let courier = v.courierName || (v.type==='radar' && v.courierName ? v.courierName : "غير محدد");
+            
             let baseCost = getShippingCost(itemBranch);
             let overWeight = (weight>2) ? Math.ceil(weight-2)*8 : 0;
             let shipCost = baseCost + overWeight;
             let collected = amt + insurance;
             let companyProfit = shipCost + insurance;
-
-            if(courierName && courierName !== "غير محدد"){
-                if(!couriers[courierName]) couriers[courierName] = { count:0, totalCollected:0, shipments:[], radar:[] };
-                couriers[courierName].count++;
-                if(v.type === 'shipment') couriers[courierName].shipments.push({...v, awb:v.awb||("AXN"+v.id?.substring(0,5)), totalCollected:collected});
-                else couriers[courierName].radar.push({...v, totalCollected:collected});
-                if(status === "تم التسليم" || status === "تم التسليم بنجاح") couriers[courierName].totalCollected += collected;
+            
+            if(courier && courier !== "غير محدد"){
+                if(!couriers[courier]) couriers[courier] = { count:0, total:0, items:[] };
+                couriers[courier].count++;
+                couriers[courier].items.push({...v, awb:v.awb||("AXN"+v.id?.substring(0,5)), collected});
+                if(status === "تم التسليم" || status === "تم التسليم بنجاح") couriers[courier].total += collected;
             }
-
-            if((status === "تم التسليم" || status === "تم التسليم بنجاح") && v.type === 'shipment' && status !== "تمت التسوية" && merchantEmail !== "إدارة"){
-                if(!merchants[merchantEmail]) merchants[merchantEmail] = { count:0, totalCod:0, totalFees:0, items:[] };
+            
+            if((status === "تم التسليم" || status === "تم التسليم بنجاح") && v.type === 'shipment' && status !== "تمت التسوية" && merchant !== "إدارة"){
+                if(!merchants[merchant]) merchants[merchant] = { count:0, totalCod:0, totalFees:0, items:[] };
                 let net = amt - shipCost;
-                merchants[merchantEmail].items.push({...v, awb:v.awb||("AXN"+v.id?.substring(0,5)), shipCost, net});
-                merchants[merchantEmail].totalCod += amt;
-                merchants[merchantEmail].totalFees += shipCost;
-                merchants[merchantEmail].count++;
+                merchants[merchant].items.push({...v, awb:v.awb||("AXN"+v.id?.substring(0,5)), shipCost, net});
+                merchants[merchant].totalCod += amt;
+                merchants[merchant].totalFees += shipCost;
+                merchants[merchant].count++;
                 totalCollected += collected;
-                totalCompanyProfit += companyProfit;
+                totalProfit += companyProfit;
             }
         });
-
-        merchantsMap = merchants;
-        couriersMap = couriers;
-
+        
         document.getElementById('statTotalCash').innerText = totalCollected + " ج.م";
-        document.getElementById('statProfit').innerText = totalCompanyProfit + " ج.م";
-        let netDues = totalCollected - totalCompanyProfit;
-        document.getElementById('statNetDues').innerText = netDues + " ج.م";
-
+        document.getElementById('statProfit').innerText = totalProfit + " ج.م";
+        document.getElementById('statNetDues').innerText = (totalCollected - totalProfit) + " ج.م";
+        
         let courierHtml = "";
         for(let c in couriers){
-            courierHtml += `<tr><td><b>${c}</b></td><td>${couriers[c].count}</td><td style="color:#800020;">${couriers[c].totalCollected} ج.م</td><td><button class="btn-view" onclick="showCourierDetails('${c}')">فتح العهدة</button></td></tr>`;
+            courierHtml += `<tr>}<td><b>${c}</b></td><td>${couriers[c].count}</td><td style="color:#800020;">${couriers[c].total} ج.م</td><td><button class="btn-view" onclick="showCourier('${c}', ${JSON.stringify(couriers[c].items).replace(/"/g, '&quot;')})">فتح العهدة</button></td></tr>`;
         }
-        document.getElementById('couriersBody').innerHTML = courierHtml || "<tr><td colspan='4'>لا توجد عهدة حالية</tr>";
-
+        document.getElementById('couriersBody').innerHTML = courierHtml || "<tr><td colspan='4'>لا توجد عهدة</tr>";
+        
         let merchantHtml = "";
         for(let m in merchants){
             let data = merchants[m];
             let net = data.totalCod - data.totalFees;
-            merchantHtml += `<tr><td><b>${m.split('@')[0]}</b></td><td>${data.count}</td><td>${data.totalCod} ج.م</td><td style="color:#800020;">${data.totalFees} ج.م</td><td style="color:#10B981;">${net} ج.م</td><td><button class="btn-view" onclick="showMerchantDetails('${m}')">تسوية</button></td></tr>`;
+            merchantHtml += `<tr>}<td><b>${m.split('@')[0]}</b></td><td>${data.count}</td><td>${data.totalCod} ج.م</td><td style="color:#800020;">${data.totalFees} ج.م</td><td style="color:#10B981;">${net} ج.م</td><td><button class="btn-view" onclick="showMerchant('${m}', ${JSON.stringify(data.items).replace(/"/g, '&quot;')}, ${data.totalCod}, ${data.totalFees})">تسوية</button></td></tr>`;
         }
         document.getElementById('merchantsBody').innerHTML = merchantHtml || "<tr><td colspan='6'>لا توجد مستحقات</tr>";
-
+        
         document.getElementById('loading').style.display = 'none';
         document.getElementById('dashboard').style.display = 'block';
     }
-
-    window.showCourierDetails = (name) => {
-        let data = couriersMap[name];
-        if(!data) return;
-        currentCourierData = { name, data };
+    
+    window.showCourier = (name, items) => {
+        currentCourier = {name, items};
         document.getElementById('courierNameModal').innerText = name;
-        document.getElementById('courierTotal').innerText = data.totalCollected + " ج.م";
-        document.getElementById('courierTasks').innerText = data.count;
+        let total = items.reduce((s,i)=>s+(i.collected||0),0);
+        document.getElementById('courierTotal').innerText = total + " ج.م";
+        document.getElementById('courierTasks').innerText = items.length;
         let rows = "";
-        data.shipments.forEach(s => { rows += `<tr><td>بوليصة</td><td>${s.awb}</td><td>${(s.merchantEmail||'').split('@')[0]}</td><td>${s.totalCollected} ج.م</td><td>${s.status}</td></tr>`; });
-        data.radar.forEach(r => { rows += `<tr><td>رادار</td><td>${r.details?.substring(0,50)}</td><td>${r.address?.substring(0,50)}</td><td>${r.paymentMethod==='pickup'?'بيكب':r.totalCollected+' ج.م'}</td><td>${r.status}</td></tr>`; });
-        document.getElementById('courierDetailsBody').innerHTML = rows || "<tr><td colspan='5'>لا توجد بيانات</tr>";
+        items.forEach(i => {
+            rows += `<tr>}<td>${i.type==='shipment'?'بوليصة':'رادار'}</td><td>${i.awb||i.details?.substring(0,50)}</td><td>${i.merchantEmail?.split('@')[0]||i.address?.substring(0,50)}</td><td>${i.collected||0} ج.م</td><td>${i.status}</td></tr>`;
+        });
+        document.getElementById('courierDetailsBody').innerHTML = rows;
         document.getElementById('courierModal').style.display = 'flex';
     };
-
+    
     window.printCourierManifest = () => {
-        let data = currentCourierData?.data;
-        if(!data) return;
+        if(!currentCourier) return;
         let rows = "", total=0, idx=1;
-        data.shipments.forEach(s => { let c=Number(s.totalCollected)||0; total+=c; rows+=`<tr><td>${idx++}</td><td>${s.awb}</td><td>${(s.merchantEmail||'').split('@')[0]}</td><td>${s.name} (${s.phone})<br>${s.city}</td><td>${c} ج.م</td></tr>`; });
-        data.radar.forEach(r => { let c=r.paymentMethod==='pickup'?0:(Number(r.totalCollected)||0); total+=c; rows+=`<tr><td>${idx++}</td><td>رادار</td><td>-</td><td>${r.details?.substring(0,40)}<br>${r.address?.substring(0,40)}</td><td>${c} ج.م</td></tr>`; });
-        let html = `<div style="direction:rtl;padding:2mm;"><div style="display:flex;justify-content:space-between;"><div><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" style="height:25px;"> <b>AXON EXPRESS</b><br>فرع ${selectedBranch}</div><div><h3>تصفية عهدة كابتن</h3><p>${new Date().toLocaleString()}</p></div><div><h3>${currentCourierData.name}</h3></div></div>
-        <table class="print-table" style="width:100%;border-collapse:collapse;font-size:8px;"><thead><tr><th>م</th><th>رقم البوليصة</th><th>التاجر</th><th>بيانات المستلم</th><th>المبلغ</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="5"><div style="border:2px solid #800020;background:#fff3cd;padding:2px;"><b>إجمالي العهدة: ${total} ج.م</b></div></td></tr></tfoot></table>
-        <div style="display:flex;justify-content:space-between;border-top:1px solid #000;margin-top:5px;padding-top:3px;"><div>توقيع المندوب: ${currentCourierData.name}</div><div>توقيع الخزينة: ........</div><div>التاريخ: ${new Date().toLocaleDateString()}</div></div></div>`;
+        currentCourier.items.forEach(i => {
+            let c = i.collected||0;
+            total += c;
+            rows += `<tr><td>${idx++}</td><td>${i.awb||'رادار'}</td><td>${i.merchantEmail?.split('@')[0]||'-'}</td><td>${i.name||i.details?.substring(0,30)}<br>${i.city||i.address?.substring(0,30)}</td><td>${c} ج.م</td></tr>`;
+        });
+        let html = `<div style="direction:rtl;padding:2mm;"><div><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" style="height:25px;"> <b>AXON EXPRESS</b><br>فرع ${document.getElementById('branchSelect').value}</div><h3>تصفية عهدة كابتن: ${currentCourier.name}</h3><p>${new Date().toLocaleString()}</p>
+        <table class="print-table" style="width:100%;border-collapse:collapse;font-size:8px;"><thead><tr><th>م</th><th>رقم البوليصة</th><th>التاجر</th><th>بيانات المستلم</th><th>المبلغ</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="5"><div style="border:2px solid #800020;background:#fff3cd;"><b>إجمالي العهدة: ${total} ج.م</b></div></td></tr></tfoot></table>
+        <div style="display:flex;justify-content:space-between;margin-top:5px;"><div>توقيع المندوب: ${currentCourier.name}</div><div>توقيع الخزينة: ........</div><div>التاريخ: ${new Date().toLocaleDateString()}</div></div></div>`;
         document.getElementById('printArea').innerHTML = html;
         window.print();
     };
-
-    window.showMerchantDetails = (email) => {
-        let data = merchantsMap[email];
-        if(!data) return;
+    
+    window.showMerchant = (email, items, totalCod, totalFees) => {
         currentMerchantEmail = email;
         document.getElementById('merchantNameModal').innerText = email.split('@')[0];
-        document.getElementById('merchantTotalCod').innerText = data.totalCod + " ج.م";
-        document.getElementById('merchantTotalFees').innerText = data.totalFees + " ج.م";
-        let net = data.totalCod - data.totalFees;
-        document.getElementById('merchantNet').innerText = net + " ج.م";
+        document.getElementById('merchantTotalCod').innerText = totalCod + " ج.م";
+        document.getElementById('merchantTotalFees').innerText = totalFees + " ج.م";
+        document.getElementById('merchantNet').innerText = (totalCod - totalFees) + " ج.م";
         let rows = "";
-        data.items.forEach(i => { rows += `<tr><td>${i.timestamp?.toDate().toLocaleDateString()||'-'}</td><td>${i.awb}</td><td>${i.name} (${i.city})</td><td>${i.amount}</td><td>${i.shipCost}</td><td style="color:#10B981;">${i.net} ج.م</td></tr>`; });
+        items.forEach(i => {
+            rows += `<tr><td>${i.timestamp?.toDate().toLocaleDateString()||'-'}</td><td>${i.awb}</td><td>${i.name} (${i.city})</td><td>${i.amount}</td><td>${i.shipCost}</td><td style="color:#10B981;">${i.net} ج.م</td></tr>`;
+        });
         document.getElementById('merchantItemsBody').innerHTML = rows;
         document.getElementById('merchantModal').style.display = 'flex';
     };
-
+    
     window.settleMerchant = async () => {
+        if(!currentMerchantEmail) return;
         let email = currentMerchantEmail;
-        let data = merchantsMap[email];
-        if(!data || !data.items.length) return Swal.fire('تنبيه','لا توجد بوالص لتسويتها','warning');
-        
+        let items = merchantsMapForSettle?.[email]?.items || []; // need to store globally
+        // We'll get data from the global variable set in processData
+        if(typeof window.merchantsData === 'undefined') window.merchantsData = {};
+        let data = window.merchantsData[email];
+        if(!data || !data.items.length) return Swal.fire('تنبيه','لا توجد بوالص','warning');
         closeModal('merchantModal');
-        
         Swal.fire({
-            title: 'تأكيد التسوية المالية',
-            html: `<strong style="color:#10B981;">سيتم إضافة ${data.totalCod} ج.م إلى حائط بطولات التاجر (lifetime_sales).</strong><br>بعد التسوية، لن تظهر هذه البوالص في قائمة المستحقات.`,
+            title: 'تأكيد التسوية',
+            html: `سيتم إضافة ${data.totalCod} ج.م إلى حائط بطولات التاجر.`,
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'نعم، قم بالتسوية',
-            cancelButtonText: 'إلغاء',
-            confirmButtonColor: '#10B981'
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                Swal.fire({ title: 'جاري التسوية...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            confirmButtonText: 'تسوية',
+            cancelButtonText: 'إلغاء'
+        }).then(async res => {
+            if(res.isConfirmed){
+                Swal.fire({title:'جاري التسوية...', allowOutsideClick:false, didOpen:()=>Swal.showLoading()});
                 try {
                     const batch = writeBatch(db);
-                    data.items.forEach(item => { batch.update(doc(db, "shipments", item.id), { status: "تمت التسوية" }); });
+                    data.items.forEach(item => batch.update(doc(db, "shipments", item.id), { status: "تمت التسوية" }));
                     const userQuery = query(collection(db, "users"), where("email", "==", email));
                     const snap = await getDocs(userQuery);
                     if(!snap.empty) batch.update(snap.docs[0].ref, { lifetime_sales: increment(data.totalCod) });
-                    else batch.set(doc(db, "users", email), { email: email, lifetime_sales: data.totalCod });
+                    else batch.set(doc(db, "users", email), { email, lifetime_sales: data.totalCod });
                     await batch.commit();
-                    Swal.fire('تم بنجاح!', `تمت التسوية وإضافة ${data.totalCod} ج.م إلى حائط البطولات.`, 'success');
-                    refreshData();
-                } catch(e){ Swal.fire('خطأ', e.message, 'error'); }
+                    Swal.fire('تم','تمت التسوية','success');
+                    loadData();
+                } catch(e){ Swal.fire('خطأ',e.message,'error'); }
             }
         });
     };
-
+    
     window.printMerchantStatement = () => {
-        let data = merchantsMap[currentMerchantEmail];
+        if(!currentMerchantEmail) return;
+        let data = window.merchantsData[currentMerchantEmail];
         if(!data) return;
         let rows = "", totalNet = 0;
-        data.items.forEach(i => { totalNet += Number(i.net); rows += `<tr><td>${i.timestamp?.toDate().toLocaleDateString()||'-'}</td><td>${i.awb}</td><td>${i.name} (${i.city})</td><td>${i.amount}</td><td>${i.shipCost}</td><td style="color:#10B981;">${i.net} ج.م</td></tr>`; });
-        let html = `<div style="direction:rtl;padding:2mm;"><div style="display:flex;justify-content:space-between;"><div><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" style="height:25px;"> <b>AXON EXPRESS</b><br>فرع ${selectedBranch}</div><div><h3>كشف حساب تاجر</h3><p>${new Date().toLocaleString()}</p></div><div><h3>${currentMerchantEmail.split('@')[0]}</h3></div></div>
-        <div style="background:#f0f0f0;padding:2px;">عدد البوالص: ${data.count}</div>
-        <table class="print-table" style="width:100%;border-collapse:collapse;font-size:8px;"><thead><tr><th>التاريخ</th><th>البوليصة</th><th>المستلم</th><th>COD</th><th>مخصوم</th><th>الصافي</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="6"><div style="border:2px solid #10B981;background:#d1fae5;padding:2px;"><b>صافي المستحق: ${totalNet} ج.م</b></div></td></tr></tfoot></table>
-        <div style="display:flex;justify-content:space-between;border-top:1px solid #000;margin-top:5px;padding-top:3px;"><div>توقيع التاجر: ${currentMerchantEmail.split('@')[0]}</div><div>توقيع الخزينة: ........</div><div>التاريخ: ${new Date().toLocaleDateString()}</div></div></div>`;
+        data.items.forEach(i => { totalNet += i.net; rows += `<tr><td>${i.timestamp?.toDate().toLocaleDateString()||'-'}</td><td>${i.awb}</td><td>${i.name} (${i.city})</td><td>${i.amount}</td><td>${i.shipCost}</td><td>${i.net} ج.م</td></tr>`; });
+        let html = `<div style="direction:rtl;padding:2mm;"><div><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" style="height:25px;"> <b>AXON EXPRESS</b><br>فرع ${document.getElementById('branchSelect').value}</div><h3>كشف حساب تاجر: ${currentMerchantEmail.split('@')[0]}</h3><p>${new Date().toLocaleString()}</p>
+        <div>عدد البوالص: ${data.count}</div>
+        <table class="print-table" style="width:100%;border-collapse:collapse;font-size:8px;"><thead><tr><th>التاريخ</th><th>البوليصة</th><th>المستلم</th><th>COD</th><th>مخصوم</th><th>الصافي</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="6"><div style="border:2px solid #10B981;background:#d1fae5;"><b>صافي المستحق: ${totalNet} ج.م</b></div></td></tr></tfoot></table>
+        <div style="display:flex;justify-content:space-between;margin-top:5px;"><div>توقيع التاجر: ${currentMerchantEmail.split('@')[0]}</div><div>توقيع الخزينة: ........</div><div>التاريخ: ${new Date().toLocaleDateString()}</div></div></div>`;
         document.getElementById('printArea').innerHTML = html;
         window.print();
     };
-
-    window.loadFinancialData = () => {
-        if(unsubShipments) unsubShipments();
-        if(unsubRadar) unsubRadar();
-        if(unsubPrices) unsubPrices();
-        unsubPrices = onSnapshot(doc(db, "settings", "shipping_prices"), snap => { if(snap.exists()) livePrices = snap.data(); processData(); }, err => { console.error(err); showError("فشل تحميل الأسعار: "+err.message); });
-        unsubShipments = onSnapshot(collection(db, "shipments"), snap => { shipments = []; snap.forEach(d => shipments.push({ id:d.id, ...d.data() })); processData(); }, err => { console.error(err); showError("فشل تحميل الشحنات: "+err.message); });
-        unsubRadar = onSnapshot(collection(db, "eshteryly_orders"), snap => { radarTasks = []; snap.forEach(d => radarTasks.push({ id:d.id, ...d.data() })); processData(); }, err => { console.error(err); showError("فشل تحميل الرادار: "+err.message); });
-        loadExpenses();
+    
+    window.addExpenseFirestore = async (desc, amt) => {
+        try {
+            await addDoc(collection(db, "expenses"), { description: desc, amount: amt, timestamp: new Date(), branchName: document.getElementById('branchSelect').value, addedBy: auth.currentUser?.email });
+            Swal.fire('تم','تم إضافة المصروف','success');
+            loadExpenses();
+        } catch(e){ Swal.fire('خطأ',e.message,'error'); }
     };
-
-    function showError(msg){
-        const errDiv = document.getElementById('errorContainer');
-        errDiv.innerHTML = `<div class="error-message"><i class="fa-solid fa-circle-exclamation"></i> ${msg}<br>تأكد من صلاحيات المستخدم وقواعد Firebase.</div>`;
-        errDiv.style.display = 'block';
-        document.getElementById('loading').style.display = 'none';
+    
+    async function loadExpenses(){
+        let q = collection(db, "expenses");
+        let branch = document.getElementById('branchSelect').value;
+        if(branch !== 'all') q = query(q, where("branchName", "==", branch));
+        onSnapshot(query(q, orderBy("timestamp","desc")), snap => {
+            let html = "";
+            snap.forEach(d => { let data = d.data(); html += `<tr><td>${data.timestamp?.toDate().toLocaleDateString()||'-'}</td><td>${data.description}</td><td>${data.amount} ج.م</td></tr>`; });
+            document.getElementById('expensesBody').innerHTML = html || "<td><td colspan='3'>لا توجد مصروفات</tr>";
+        });
     }
-
+    
+    async function loadData(){
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('dashboard').style.display = 'none';
+        const branch = document.getElementById('branchSelect').value;
+        // get shipments
+        let shipSnap = await getDocs(collection(db, "shipments"));
+        allShipments = shipSnap.docs.map(d => ({ id:d.id, ...d.data() }));
+        let radarSnap = await getDocs(collection(db, "eshteryly_orders"));
+        allRadar = radarSnap.docs.map(d => ({ id:d.id, ...d.data() }));
+        let priceSnap = await getDoc(doc(db, "settings", "shipping_prices"));
+        if(priceSnap.exists()) livePrices = priceSnap.data();
+        
+        // rebuild merchants data for settlement
+        let merchants = {};
+        allShipments.forEach(s => {
+            if(s.status === "تم التسليم" && s.status !== "تمت التسوية" && s.merchantEmail && s.merchantEmail !== "إدارة"){
+                let amt = Number(s.amount||0), insurance = Number(s.insuranceFee||0), weight = Number(s.weight||1);
+                let itemBranch = s.branchName || s.city || "غير محدد";
+                let baseCost = getShippingCost(itemBranch);
+                let shipCost = baseCost + ((weight>2)?Math.ceil(weight-2)*8:0);
+                let net = amt - shipCost;
+                if(!merchants[s.merchantEmail]) merchants[s.merchantEmail] = { items:[], totalCod:0, totalFees:0, count:0 };
+                merchants[s.merchantEmail].items.push({ id:s.id, awb:s.awb||("AXN"+s.id.substring(0,5)), name:s.name, city:s.city, amount:amt, shipCost, net, timestamp:s.timestamp });
+                merchants[s.merchantEmail].totalCod += amt;
+                merchants[s.merchantEmail].totalFees += shipCost;
+                merchants[s.merchantEmail].count++;
+            }
+        });
+        window.merchantsData = merchants;
+        
+        processData(); // this will use allShipments, allRadar, livePrices
+        loadExpenses();
+    }
+    
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getFirestore, collection, getDocs, getDoc, doc, addDoc, updateDoc, writeBatch, increment, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    
+    const firebaseConfig = {
+        apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
+        authDomain: "axon-express-2f534.firebaseapp.com",
+        projectId: "axon-express-2f534",
+        storageBucket: "axon-express-2f534.firebasestorage.app",
+        messagingSenderId: "958528400260",
+        appId: "1:958528400260:web:504ae94f3ef2225b928bd1"
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    
+    window.db = db;
+    window.getDocs = getDocs;
+    window.addDoc = addDoc;
+    window.updateDoc = updateDoc;
+    window.writeBatch = writeBatch;
+    window.increment = increment;
+    window.doc = doc;
+    window.collection = collection;
+    window.query = query;
+    window.where = where;
+    window.orderBy = orderBy;
+    window.onSnapshot = onSnapshot;
+    
     onAuthStateChanged(auth, (user) => {
         if(!user){ window.location.href = "index.html"; return; }
         if(user.email !== 'admin@axon.com'){
             Swal.fire('غير مصرح','أنت لا تمتلك صلاحية الخزينة','error').then(()=> signOut(auth));
             return;
         }
-        window.loadFinancialData();
+        loadData();
     });
-
-    window.refreshData = () => { processData(); loadExpenses(); };
+    
     window.logout = () => { localStorage.clear(); signOut(auth); };
+    window.loadData = loadData;
 </script>
 </body>
 </html>
