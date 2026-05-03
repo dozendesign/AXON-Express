@@ -50,7 +50,6 @@
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
     
     <style>
-        /* جميع الأنماط كما هي دون تغيير (اختصاراً للطول) */
         * { box-sizing: border-box; }
         :root { 
             --primary-blue: #0A3D62; 
@@ -62,32 +61,43 @@
             --dark-text: #111111; 
             --border-color: #eee; 
         }
+        
         html, body { font-family: 'Cairo', sans-serif; margin: 0; background: var(--light-bg); color: var(--dark-text); overflow-x: hidden; scroll-behavior: smooth; transition: background 0.3s, color 0.3s;}
+        
         #printArea { display: none; }
         .swal2-container { font-family: 'Cairo', sans-serif !important; z-index: 99999 !important; }
+
         header { background: var(--primary-blue); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--primary-yellow); position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s;}
         .logo { font-size: 22px; font-weight: 900; color: var(--white); display: flex; align-items: center;}
         .logo img { height: 40px; margin-left: 10px; object-fit: contain; }
         .logo span { color: var(--primary-yellow); }
+        .logo i { color: var(--primary-yellow); }
+        
         .container { padding: 20px; max-width: 1400px; margin: 0 auto;}
+        
         .header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap;}
         .branch-badge { background: var(--primary-black); color: var(--primary-yellow); padding: 5px 15px; border-radius: 8px; font-size: 14px; font-weight: bold; display: none; border: 1px solid var(--primary-yellow);}
         .lang-btn { background: transparent; border: 2px solid var(--primary-yellow); color: var(--primary-yellow); padding: 5px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 13px; transition: 0.3s;}
         .lang-btn:hover { background: rgba(225, 231, 21, 0.1); }
         .logout-btn { background: var(--primary-burgundy); border: 2px solid var(--primary-burgundy); color: var(--white); padding: 6px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; transition: 0.3s;}
         .logout-btn:hover { background: #5a0016; border-color: #5a0016; }
+
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .stat-card { background: var(--white); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-blue); transition: 0.3s;}
         .stat-card h3 { font-size: 15px; margin: 0 0 10px 0; color: #666; transition: 0.3s; font-weight: 900;}
         .stat-card .value { font-size: 24px; font-weight: 900; color: var(--primary-blue);}
+        
         .admin-section { background: var(--white); padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--border-color); transition: 0.3s;}
         .admin-section h2 { color: var(--primary-blue); border-bottom: 2px solid var(--primary-yellow); padding-bottom: 10px; margin-top: 0; font-size: 18px; font-weight: 900;}
+        
         #adminMap { height: 450px; width: 100%; border-radius: 12px; border: 3px solid var(--primary-yellow); z-index: 1;}
+        
         .table-wrapper { width: 100%; overflow-x: auto; border-radius: 8px; border: 1px solid var(--border-color);}
         table { width: 100%; min-width: 800px; border-collapse: collapse; text-align: right; }
         th, td { padding: 12px; border-bottom: 1px solid var(--border-color); font-size: 13px; transition: 0.3s;}
         th { background: var(--primary-blue); color: var(--white); font-weight: 900; }
         tr:hover { background-color: rgba(0,0,0,0.02); }
+        
         .btn-action { border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; color: white; margin-left: 3px; margin-bottom: 3px; font-family: 'Cairo'; font-weight: bold; font-size: 12px; transition: 0.3s;}
         .btn-action:hover { opacity: 0.8; }
         .btn-save { background: #28a745; } .btn-edit { background: var(--primary-blue); } .btn-delete { background: var(--primary-burgundy); } .btn-print { background: #333; } .btn-track { background: #17a2b8; margin-top: 5px; width: 100%; }
@@ -96,15 +106,19 @@
         .btn-receive { background: #20c997; box-shadow: 0 2px 5px rgba(0,0,0,0.2); animation: pulse 2s infinite; }
         .btn-clear-courier { background: #666; width: 100%; padding: 4px; font-size: 10px; margin-top: 4px; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        
         .search-box { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd; font-family: 'Cairo'; font-size: 14px; transition: 0.3s; background: var(--white); color: var(--dark-text); outline: none;}
         .search-box:focus { border-color: var(--primary-blue); }
+
         .status-dropdown, .courier-dropdown { padding: 6px; border-radius: 5px; border: 1px solid #ddd; font-family: 'Cairo'; font-weight: bold; outline: none; transition: 0.3s; background: var(--white); color: var(--dark-text);}
         .courier-dropdown { border-color: var(--primary-blue); color: var(--primary-black); background: #e0eaf5; }
+        
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(17, 17, 17, 0.8); align-items: center; justify-content: center; z-index: 2000; padding: 15px; backdrop-filter: blur(5px);}
         .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 500px; position: relative; transition: 0.3s; max-height: 90vh; overflow-y: auto; border: 2px solid var(--primary-yellow);}
         .modal-content input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo'; background: var(--white); color: var(--dark-text); transition: 0.3s; outline: none;}
         .modal-content input:focus { border-color: var(--primary-blue); }
         .close-btn { position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--primary-burgundy);}
+        
         html.dark-mode { --white: #1a1a2e; --light-bg: #16213e; --dark-text: #e0e0e0; --border-color: #0f3460; --primary-blue: #4a90e2; --primary-black: #111111;}
         html.dark-mode header { border-bottom: 4px solid var(--primary-burgundy); background: #1a1a2e;}
         html.dark-mode .lang-btn { border-color: var(--primary-yellow); color: var(--primary-yellow); }
@@ -119,23 +133,44 @@
         html.dark-mode .stat-card { background: #1a1a2e; border-bottom: 4px solid var(--primary-burgundy); border-color: #0f3460;}
         html.dark-mode .stat-card h3 { color: #ccc; }
         html.dark-mode .stat-card .value { color: var(--primary-yellow); }
+        
         .new-acc-section { background: #fff9e6; border: 2px solid var(--primary-yellow); }
         html.dark-mode .new-acc-section { background: #1a1600 !important; border-color: var(--primary-yellow) !important; }
-        .admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 10px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+
+        .admin-tabs { 
+            display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; 
+            padding-bottom: 10px; -webkit-overflow-scrolling: touch; scrollbar-width: none; 
+        }
         .admin-tabs::-webkit-scrollbar { display: none; }
-        .admin-tab-btn { background: var(--white); color: var(--primary-blue); border: 1px solid var(--primary-blue); padding: 12px 20px; border-radius: 8px; font-family: 'Cairo'; font-weight: bold; cursor: pointer; transition: 0.3s; white-space: nowrap; flex-shrink: 0; font-size: 15px;}
+        .admin-tab-btn { 
+            background: var(--white); color: var(--primary-blue); border: 1px solid var(--primary-blue); padding: 12px 20px; 
+            border-radius: 8px; font-family: 'Cairo'; font-weight: bold; cursor: pointer; 
+            transition: 0.3s; white-space: nowrap; flex-shrink: 0; font-size: 15px;
+        }
         .admin-tab-btn.active { background: var(--primary-blue); color: var(--white); border-color: var(--primary-blue); }
         .admin-tab-content { display: none; }
         .admin-tab-content.active { display: block; }
         html.dark-mode .admin-tab-btn { background: #222; color: #aaa; border-color:#444;}
         html.dark-mode .admin-tab-btn.active { background: #0f3460; color: var(--white); border-color: var(--primary-yellow); }
+
         .status-danger { background-color: #ffeaea !important; } 
         .status-warning { background-color: #fffde7 !important; } 
         .status-success { background-color: #e8f5e9 !important; } 
         .status-archived { background-color: #e2e3e5 !important; color: #6c757d; } 
         .status-transit { background-color: #fff3cd !important; border-right: 4px solid #fd7e14; }
-        .status-new-shipment { background-color: rgba(255, 195, 0, 0.15) !important; border-right: 5px solid var(--primary-yellow); animation: newShipmentPulse 2s infinite; }
-        @keyframes newShipmentPulse { 0% { box-shadow: inset 0 0 0 rgba(255, 195, 0, 0); } 50% { box-shadow: inset 35px 0 20px -20px rgba(255, 195, 0, 0.4); } 100% { box-shadow: inset 0 0 0 rgba(255, 195, 0, 0); } }
+        
+        .status-new-shipment {
+            background-color: rgba(255, 195, 0, 0.15) !important;
+            border-right: 5px solid var(--primary-yellow);
+            animation: newShipmentPulse 2s infinite;
+        }
+
+        @keyframes newShipmentPulse {
+            0% { box-shadow: inset 0 0 0 rgba(255, 195, 0, 0); }
+            50% { box-shadow: inset 35px 0 20px -20px rgba(255, 195, 0, 0.4); }
+            100% { box-shadow: inset 0 0 0 rgba(255, 195, 0, 0); }
+        }
+
         .filter-group { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; align-items: center;}
         .filter-btn { background: #fff; border: 1px solid #ccc; padding: 6px 15px; border-radius: 20px; cursor: pointer; font-family: 'Cairo'; font-size: 13px; font-weight: bold; transition: 0.3s;}
         .filter-btn.active { background: var(--primary-blue); color: var(--white); border-color: var(--primary-blue); }
@@ -143,15 +178,29 @@
         html.dark-mode .filter-btn.active { background: var(--primary-yellow); color: var(--primary-black); border-color: var(--primary-yellow); }
         .adv-filter-select { padding: 6px 15px; border-radius: 20px; border: 1px solid var(--primary-blue); background: #e0eaf5; color: var(--primary-blue); font-weight: bold; font-family: 'Cairo'; font-size: 13px; outline: none;}
         html.dark-mode .adv-filter-select { background: #000; color: var(--primary-yellow); border-color: var(--primary-yellow); }
+
         @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             body { background: #fff; margin: 0; padding: 0; color:#000; width: 100%; }
             header, .container, .print-controls-ui, .swal2-container, footer { display: none !important; }
             #printArea { display: block !important; width: 100%; margin: 0; padding: 0; }
             @page { margin: 5mm; } 
-            .a4-wrapper { width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 5mm !important; border: 2px solid var(--primary-black) !important; box-sizing: border-box !important; }
-            .logo-print { width: 3cm !important; height: 2cm !important; object-fit: contain !important; }
+            
+            .a4-wrapper { 
+                width: 100% !important; 
+                max-width: 100% !important; 
+                margin: 0 !important; 
+                padding: 5mm !important;
+                border: 2px solid var(--primary-black) !important;
+                box-sizing: border-box !important;
+            }
+            .logo-print {
+                width: 3cm !important;
+                height: 2cm !important;
+                object-fit: contain !important;
+            }
         }
+        
         .a4-wrapper { width: 100%; max-width: 800px; margin: 0 auto; background: #fff; border: 2px solid var(--primary-blue); padding: 10px; box-sizing: border-box; color: #000; }
         .print-controls-ui { text-align: center; margin-bottom: 20px; padding: 15px; background: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
         .print-controls-ui button { cursor: pointer; padding: 12px 25px; margin: 5px; font-size: 16px; font-weight: bold; border: none; border-radius: 5px; color: white; font-family: 'Cairo';}
@@ -192,10 +241,17 @@
     </header>
 
     <div class="container" id="mainContainer">
+        
         <div class="admin-tabs">
             <button class="admin-tab-btn active" onclick="switchAdminTab('mainOps')"><i class="fa-solid fa-truck-fast"></i> <span data-i18n="tab_main">العمليات الرئيسية</span></button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('emergencyOps')" style="color:var(--primary-burgundy);"><i class="fa-solid fa-truck-medical"></i> <span data-i18n="tab_emergency">طوارئ ونقل</span> 🚨<span id="emergencyBadge" style="background:red; color:white; border-radius:50%; padding:2px 6px; font-size:10px; margin-right:5px; display:none;">0</span></button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('supportOps')" style="position: relative;"><i class="fa-solid fa-headset"></i> <span data-i18n="tab_support">الدعم والموارد البشرية</span> 🎧 <span id="ticketBadge" style="background:red; color:white; border-radius:50%; padding:2px 6px; font-size:10px; position:absolute; top:-5px; right:-5px; display:none;">0</span></button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('emergencyOps')" style="color:var(--primary-burgundy);">
+                <i class="fa-solid fa-truck-medical"></i> <span data-i18n="tab_emergency">طوارئ ونقل</span> 🚨
+                <span id="emergencyBadge" style="background:red; color:white; border-radius:50%; padding:2px 6px; font-size:10px; margin-right:5px; display:none;">0</span>
+            </button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('supportOps')" style="position: relative;">
+                <i class="fa-solid fa-headset"></i> <span data-i18n="tab_support">الدعم والموارد البشرية</span> 🎧 
+                <span id="ticketBadge" style="background:red; color:white; border-radius:50%; padding:2px 6px; font-size:10px; position:absolute; top:-5px; right:-5px; display:none;">0</span>
+            </button>
         </div>
 
         <div id="mainOps" class="admin-tab-content active">
@@ -211,8 +267,19 @@
                     <div><label style="font-size:13px; font-weight:bold;">الاسم / اسم المحل:</label><input type="text" id="newAccName" class="search-box" style="margin-bottom:0; padding:8px;"></div>
                     <div><label style="font-size:13px; font-weight:bold;">الإيميل:</label><input type="email" id="newAccEmail" class="search-box" style="margin-bottom:0; padding:8px;"></div>
                     <div><label style="font-size:13px; font-weight:bold;">الباسورد (6 أحرف/أرقام للأقل):</label><input type="text" id="newAccPass" class="search-box" style="margin-bottom:0; padding:8px;"></div>
-                    <div><label style="font-size:13px; font-weight:bold;">نوع الحساب:</label><select id="newAccRole" class="status-dropdown" style="width: 100%; padding: 8px;"><option value="merchant">تاجر</option><option value="delivery">مندوب</option><option value="operator">أوبريتور إدارة</option><option value="admin">إدارة (وكيل محافظة)</option></select></div>
-                    <div id="branchSelectContainer"><label style="font-size:13px; font-weight:bold;">تعيين على محافظة:</label><select id="newAccBranch" class="status-dropdown" style="width: 100%; padding: 8px;"></select></div>
+                    <div>
+                        <label style="font-size:13px; font-weight:bold;">نوع الحساب:</label>
+                        <select id="newAccRole" class="status-dropdown" style="width: 100%; padding: 8px;">
+                            <option value="merchant">تاجر</option>
+                            <option value="delivery">مندوب</option>
+                            <option value="operator">أوبريتور إدارة</option>
+                            <option value="admin">إدارة (وكيل محافظة)</option>
+                        </select>
+                    </div>
+                    <div id="branchSelectContainer">
+                        <label style="font-size:13px; font-weight:bold;">تعيين على محافظة:</label>
+                        <select id="newAccBranch" class="status-dropdown" style="width: 100%; padding: 8px;"></select>
+                    </div>
                 </div>
                 <button id="btnCreateAcc" onclick="window.createNewAccount()" style="background: var(--primary-blue); color: var(--white); border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; font-family: 'Cairo';"><span data-i18n="btn_create">إنشاء الحساب فوراً</span> 🚀</button>
             </div>
@@ -231,7 +298,10 @@
                     <button onclick="window.issuePickupOrder()" style="background: var(--primary-burgundy); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-family: 'Cairo'; font-weight: bold;"><i class="fa-solid fa-truck-pickup"></i> إصدار أمر بيكب جديد</button>
                 </div>
                 <div class="table-wrapper">
-                    <table><thead><tr><th>النوع والتفاصيل</th><th>العنوان والمبلغ</th><th>الحالة والمتابعة</th></tr></thead><tbody id="radarTasksBody"></tbody></table>
+                    <table>
+                        <thead><tr><th>النوع والتفاصيل</th><th>العنوان والمبلغ</th><th>الحالة والمتابعة</th></tr></thead>
+                        <tbody id="radarTasksBody"></tbody>
+                    </table>
                 </div>
             </div>
 
@@ -274,11 +344,11 @@
         <div id="emergencyOps" class="admin-tab-content">
             <div class="admin-section" style="border: 2px solid var(--primary-burgundy);">
                 <h2 style="color:var(--primary-burgundy);"><i class="fa-solid fa-truck-pickup"></i> أكسون إنقاذ (استغاثات)</h2>
-                <div class="table-wrapper"><table><thead><tr><th>التاريخ</th><th>العميل</th><th>الموقع</th><th>إجراء</th></tr></thead><tbody id="rescueBody"></tbody></table></div>
+                <div class="table-wrapper"><tr><thead><tr><th>التاريخ</th><th>العميل</th><th>الموقع</th><th>إجراء</th></tr></thead><tbody id="rescueBody"></tbody></table></div>
             </div>
             <div class="admin-section" style="border: 2px solid #d39e00;">
                 <h2 style="color:#d39e00; border-bottom-color:#d39e00;"><i class="fa-solid fa-truck-ramp-box"></i> أكسون هوم (نقل الأثاث)</h2>
-                <div class="table-wrapper"><table><thead><tr><th>التاريخ</th><th>التواصل</th><th>المسار</th><th>الخدمة</th><th>إجراء</th></tr></thead><tbody id="homeBody"></tbody></table></div>
+                <div class="table-wrapper"></table><thead><tr><th>التاريخ</th><th>التواصل</th><th>المسار</th><th>الخدمة</th><th>إجراء</th></tr></thead><tbody id="homeBody"></tbody></table></div>
             </div>
         </div>
 
@@ -287,6 +357,7 @@
             <div class="admin-section"><h2><i class="fa-solid fa-user-plus"></i> طلبات الانضمام للأسطول (توظيف)</h2><div class="table-wrapper"><table><thead><tr><th>التاريخ</th><th>الاسم والوظيفة</th><th>المحافظة والموبايل</th><th>ملاحظات وخبرات</th></tr></thead><tbody id="careersBody"></tbody></table></div></div>
             <div class="admin-section"><h2><i class="fa-solid fa-code-branch"></i> طلبات وكالة (فرنشايز)</h2><div class="table-wrapper"><table><thead><tr><th>التاريخ</th><th>الاسم/الشركة</th><th>المنطقة المستهدفة</th><th>رقم التواصل</th><th>ملاحظات وتفاصيل</th></tr></thead><tbody id="franchiseBody"></tbody></table></div></div>
         </div>
+
     </div>
 
     <footer style="text-align:center; padding:15px; background:var(--white); border-top:1px solid var(--border-color); margin-top:40px;">
@@ -453,7 +524,7 @@
         function loadLivePrices() { onSnapshot(doc(db, "settings", "shipping_prices"), (snap) => { if(snap.exists()) { livePricesCache = snap.data(); governorates.forEach(gov => { let inputElement = document.getElementById(`price_${gov}`); if(inputElement) inputElement.value = livePricesCache[gov] || ''; }); extraZonesAdminList.forEach(zone => { let inputElement = document.getElementById(`price_${zone}`); if(inputElement) inputElement.value = livePricesCache[zone] || ''; }); if(document.getElementById('pricePenalty')) document.getElementById('pricePenalty').value = livePricesCache.penalty || ''; } else { livePricesCache = {}; } }); }
         window.updateLivePrices = async () => { const pricesToSave = { penalty: Number(document.getElementById("pricePenalty").value) || 0, lastUpdate: new Date().toLocaleTimeString("ar-EG") }; governorates.forEach(gov => { let inputElement = document.getElementById(`price_${gov}`); if(inputElement && inputElement.value) pricesToSave[gov] = Number(inputElement.value); }); extraZonesAdminList.forEach(zone => { let inputElement = document.getElementById(`price_${zone}`); if(inputElement && inputElement.value) pricesToSave[zone] = Number(inputElement.value); }); await setDoc(doc(db, "settings", "shipping_prices"), pricesToSave, { merge: true }); Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم تحديث البورصة بالكامل', showConfirmButton:false, timer:2000}); };
         window.issuePickupOrder = async () => { const { value: vals } = await Swal.fire({ title: 'إصدار أمر بيكب جديد', html: '<input id="swal-merchant" class="swal2-input" placeholder="اسم التاجر أو الشركة"><input id="swal-address" class="swal2-input" placeholder="العنوان بالتفصيل"><input id="swal-notes" class="swal2-input" placeholder="ملاحظات">', preConfirm: () => [document.getElementById('swal-merchant').value, document.getElementById('swal-address').value, document.getElementById('swal-notes').value] }); if (vals && vals[0] && vals[1]) { await addDoc(collection(db, "eshteryly_orders"), { merchantEmail: vals[0], details: vals[2] || "طلب استلام طرود من التاجر", address: vals[1], paymentMethod: "pickup", status: "جاري البحث عن مندوب", timestamp: new Date(), branchName: adminBranch === 'all' ? "المركز الرئيسي" : adminBranch, type: 'radar' }); Swal.fire('تم', 'تم البث للرادار', 'success'); } };
-        function loadRadarTasks(branchFilter = null) { let q = query(collection(db, "eshteryly_orders"), orderBy("timestamp", "desc")); onSnapshot(q, (snap) => { let html = "", count = 0; snap.forEach(docSnap => { const d = docSnap.data(), id = docSnap.id; if(branchFilter && branchFilter !== 'all' && d.branchName !== branchFilter) return; if(d.status === "تم التسليم بنجاح" || d.status === "مرفوض" || d.status === "تمت التسوية") return; count++; let typeIcon = "🛒 اشتريلي"; let typeColor = "#000"; if(d.paymentMethod === 'pickup') { typeIcon = "📦 أمر بيكب"; typeColor = "#8e44ad"; } else if(d.details && d.details.includes('كولد')) { typeIcon = "🥶 كولد / فريش"; typeColor = "#0EA5E9"; } let btns = ""; if(d.status === "جاري البحث عن مندوب") { btns = `<span style="color:#856404; background:#fff3cd; padding:5px; border-radius:5px; font-size:12px; display:inline-block; font-weight:bold;">مذاع على الرادار 📡</span> <button class="btn-action btn-delete" onclick="window.deleteEsh('${id}')" style="margin-top:5px;">حذف ✖</button>`; } else { btns = `<div style="text-align:center;"><span style="color:#155724; background:#d4edda; padding:5px; border-radius:5px; display:block; margin-bottom:5px; font-size:12px;">في عهدة: ${d.courierName || 'المندوب'}</span><button class="btn-action btn-delete" onclick="window.deleteEsh('${id}')" style="margin-top:5px;">حذف ✖</button></div>`; } html += `<tr><td><b>${(d.merchantEmail||'مجهول').split('@')[0]}</b><br><span style="font-size:11px; color:${typeColor}; font-weight:bold;">${typeIcon}</span><br><span style="font-size:11px;">${d.details}</span><\/td><td><span style="font-size:11px;">📍 ${d.address}</span><br><b style="color:var(--primary-burgundy); font-size:11px;">💳 ${d.paymentMethod === 'pickup' ? '-' : d.paymentMethod}</b><\/td><td>${btns}<\/td><\/tr>`; }); document.getElementById('radarTasksBody').innerHTML = html || "<tr><td colspan='3' style='text-align:center;'>الرادار خالي حالياً<\/td><\/tr>"; document.getElementById('activeRadarTasks').innerText = count; }); }
+        function loadRadarTasks(branchFilter = null) { let q = query(collection(db, "eshteryly_orders"), orderBy("timestamp", "desc")); onSnapshot(q, (snap) => { let html = "", count = 0; snap.forEach(docSnap => { const d = docSnap.data(), id = docSnap.id; if(branchFilter && branchFilter !== 'all' && d.branchName !== branchFilter) return; if(d.status === "تم التسليم بنجاح" || d.status === "مرفوض" || d.status === "تمت التسوية") return; count++; let typeIcon = "🛒 اشتريلي"; let typeColor = "#000"; if(d.paymentMethod === 'pickup') { typeIcon = "📦 أمر بيكب"; typeColor = "#8e44ad"; } else if(d.details && d.details.includes('كولد')) { typeIcon = "🥶 كولد / فريش"; typeColor = "#0EA5E9"; } let btns = ""; if(d.status === "جاري البحث عن مندوب") { btns = `<span style="color:#856404; background:#fff3cd; padding:5px; border-radius:5px; font-size:12px; display:inline-block; font-weight:bold;">مذاع على الرادار 📡</span> <button class="btn-action btn-delete" onclick="window.deleteEsh('${id}')" style="margin-top:5px;">حذف ✖</button>`; } else { btns = `<div style="text-align:center;"><span style="color:#155724; background:#d4edda; padding:5px; border-radius:5px; display:block; margin-bottom:5px; font-size:12px;">في عهدة: ${d.courierName || 'المندوب'}</span><button class="btn-action btn-delete" onclick="window.deleteEsh('${id}')" style="margin-top:5px;">حذف ✖</button></div>`; } html += `</td><td><b>${(d.merchantEmail||'مجهول').split('@')[0]}</b><br><span style="font-size:11px; color:${typeColor}; font-weight:bold;">${typeIcon}</span><br><span style="font-size:11px;">${d.details}</span><br><b style="color:var(--primary-burgundy); font-size:11px;">💳 ${d.paymentMethod === 'pickup' ? '-' : d.paymentMethod}</b><\/td><td>📍 ${d.address}<\/td><td>${btns}<\/td><\/tr>`; }); document.getElementById('radarTasksBody').innerHTML = html || "<tr><td colspan='3' style='text-align:center;'>الرادار خالي حالياً<\/td><\/tr>"; document.getElementById('activeRadarTasks').innerText = count; }); }
         window.deleteEsh = async (id) => { if(confirm("تأكيد حذف الهدف من الرادار؟")) { await deleteDoc(doc(db, "eshteryly_orders", id)); } };
         function loadCouriersList(branchFilter) { onSnapshot(collection(db, "couriers"), (snap) => { window.branchCouriersList = []; snap.forEach(doc => { const d = doc.data(); if(branchFilter === 'all' || d.branchName === branchFilter || !d.branchName) { window.branchCouriersList.push({ id: doc.id, name: d.name, successfulDeliveries: d.successfulDeliveries || 0 }); } }); populateManifestDropdown(); loadShipments(branchFilter); }); }
         function populateManifestDropdown() { let html = '<option value="">-- اختر مندوب --</option>'; window.branchCouriersList.forEach(c => { html += `<option value="${c.name}">${c.name}</option>`; }); document.getElementById('manifestCourierSelect').innerHTML = html; }
@@ -487,7 +558,7 @@
         
         window.assignCourier = async (shipmentId, courierName) => { if(!courierName) return; try { await updateDoc(doc(db, "shipments", shipmentId), { courierName: courierName, status: "في عهدة: " + courierName }); Swal.fire({toast:true, position:'top-end', icon:'success', title:`تم تحويل العهدة للكابتن ${courierName}`, showConfirmButton:false, timer:2000}); } catch(e) { Swal.fire('خطأ', e.message, 'error'); } };
         window.clearCourier = async (shipmentId) => { try { await updateDoc(doc(db, "shipments", shipmentId), { courierName: null, status: "قيد التوصيل" }); Swal.fire({toast:true, position:'top-end', icon:'warning', title:'تم سحب العهدة من المندوب بنجاح', showConfirmButton:false, timer:2000}); } catch(e) { Swal.fire('خطأ', e.message, 'error'); } };
-        window.deleteShipment = async (id) => { if (adminRole !== 'super_admin') return Swal.fire('مرفوض', 'القيادة العليا فقط تملك صلاحية حذف بوليصة.', 'error'); const shipData = window.loadedShipmentsData[id]; if(shipData && shipData.isAccounted && shipData.merchantEmail) { let shippingCost = shipData.realShippingCost || getRealShippingCost(shipData); const profit = Number(shipData.amount) - shippingCost; if(profit > 0) await revertLifetimeSales(shipData.merchantEmail, Number(shipData.amount), shippingCost); } const res = await Swal.fire({ title: 'تأكيد الحذف الدائم؟', icon: 'warning', showCancelButton: true, confirmButtonText: 'نعم، احذفها', cancelButtonText: 'إلغاء' }); if(res.isConfirmed) { await updateDoc(doc(db, "shipments", id), { deleted: true }); } };
+        window.deleteShipment = async (id) => { if (adminRole !== 'super_admin') return Swal.fire('مرفوض', 'القيادة العليا فقط تملك صلاحية حذف بوليصة.', 'error'); const shipData = window.loadedShipmentsData[id]; if(shipData && shipData.isAccounted && shipData.merchantEmail && shipData.status !== "تمت التسوية") { let shippingCost = shipData.realShippingCost || getRealShippingCost(shipData); const profit = Number(shipData.amount) - shippingCost; if(profit > 0) await revertLifetimeSales(shipData.merchantEmail, Number(shipData.amount), shippingCost); } const res = await Swal.fire({ title: 'تأكيد الحذف الدائم؟', icon: 'warning', showCancelButton: true, confirmButtonText: 'نعم، احذفها', cancelButtonText: 'إلغاء' }); if(res.isConfirmed) { await updateDoc(doc(db, "shipments", id), { deleted: true }); } };
         window.openEditModalById = (id) => { const data = window.loadedShipmentsData[id]; if(!data) return; document.getElementById('editShipId').value = id; document.getElementById('editShipName').value = data.name; document.getElementById('editShipAddress').value = data.address; document.getElementById('editShipAmount').value = data.amount; document.getElementById('editShipPhone').value = data.phone; document.getElementById('editShipmentModal').style.display = 'flex'; };
         window.saveShipmentEdits = async () => { const id = document.getElementById('editShipId').value; const oldData = window.loadedShipmentsData[id]; const newAmount = Number(document.getElementById('editShipAmount').value); try { if(oldData.isAccounted && oldData.merchantEmail && newAmount !== oldData.amount) { let oldShippingCost = oldData.realShippingCost || getRealShippingCost(oldData); let newShippingCost = oldData.realShippingCost || getRealShippingCost({...oldData, amount: newAmount}); const oldProfit = oldData.amount - oldShippingCost; const newProfit = newAmount - newShippingCost; const diff = newProfit - oldProfit; if(diff !== 0) { const userQ = query(collection(db, "users"), where("email", "==", oldData.merchantEmail)); const uSnap = await getDocs(userQ); uSnap.forEach(async (uDoc) => { await updateDoc(uDoc.ref, { lifetime_sales: increment(diff) }); }); } } await updateDoc(doc(db, "shipments", id), { name: document.getElementById('editShipName').value, address: document.getElementById('editShipAddress').value, amount: newAmount, phone: document.getElementById('editShipPhone').value }); document.getElementById('editShipmentModal').style.display = 'none'; Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم حفظ التعديلات', showConfirmButton:false, timer:1500}); } catch(e) { Swal.fire('خطأ', e.message, 'error'); } };
         window.broadcastShipmentToRadarById = async (id) => { const data = window.loadedShipmentsData[id]; if(!data) return; if(data.status === "تمت التسوية") return Swal.fire('غير مسموح', 'لا يمكن إعادة بث شحنة تمت تسويتها.', 'warning'); if(!confirm("هل تريد بث هذه الشحنة للرادار ليقوم مندوب بتوصيلها الآن؟")) return; try { await addDoc(collection(db, "eshteryly_orders"), { merchantEmail: data.merchantEmail, details: `توصيل مباشر (بوليصة: ${data.awb}) - تحصيل: ${data.amount} ج.م`, address: `${data.city} - ${data.address}`, paymentMethod: data.paymentType || 'normal', status: "جاري البحث عن مندوب", timestamp: new Date(), branchName: adminBranch === 'all' ? "المركز الرئيسي" : adminBranch, type: 'radar', linkedShipmentId: id }); await updateDoc(doc(db, "shipments", id), { status: "مذاع للرادار" }); Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم البث للرادار', showConfirmButton:false, timer:2000}); } catch(e) { Swal.fire('خطأ', e.message, 'error'); } };
@@ -552,20 +623,20 @@
 
         function loadEmergencyOps(branchFilter = null) {
             onSnapshot(query(collection(db, "axon_rescue_orders"), orderBy("timestamp", "desc")), (snap) => { let html = "", count = 0; snap.forEach(doc => { const d = doc.data(); if(branchFilter && branchFilter !== 'all' && d.branchName !== branchFilter) return; if(d.status !== "تم الإنقاذ") count++; const dateStr = d.timestamp ? (d.timestamp.toDate ? d.timestamp.toDate().toLocaleString('ar-EG') : new Date(d.timestamp).toLocaleString('ar-EG')) : '-'; const gpsLink = d.gps.includes('http') ? `<a href="${d.gps}" target="_blank" style="color:var(--primary-blue); font-weight:bold;">📍 فتح الموقع على الخريطة</a>` : d.gps; html += `<tr style="${d.status === 'نداء استغاثة' ? 'background:#ffeaea;' : ''}"><td><span style="font-size:11px;">${dateStr}</span><\/td><td><b>${(d.merchantEmail||'').split('@')[0]}</b><br><span dir="ltr" style="font-size:11px; font-weight:bold; color:var(--primary-burgundy);">${d.phone}</span><br><span style="font-size:11px; color:gray;">${d.car}</span><\/td><td>${gpsLink}<\/td><td><select onchange="window.updateEmergencyStatus('axon_rescue_orders', '${doc.id}', this.value)" class="status-dropdown" style="margin-bottom:5px;"><option value="نداء استغاثة" ${d.status==='نداء استغاثة'?'selected':''}>🚨 نداء استغاثة</option><option value="ونش في الطريق" ${d.status==='ونش في الطريق'?'selected':''}>🚚 ونش في الطريق</option><option value="تم الإنقاذ" ${d.status==='تم الإنقاذ'?'selected':''}>✅ تم الإنقاذ</option></select><button class="btn-action btn-delete" onclick="window.deleteTicket('axon_rescue_orders', '${doc.id}')">مسح</button><\/td><\/tr>`; }); document.getElementById('rescueBody').innerHTML = html || "<tr><td colspan='4'>لا توجد نداءات استغاثة حالياً.<\/tr>"; updateEmergencyBadge(count); });
-            onSnapshot(query(collection(db, "axon_home_orders"), orderBy("timestamp", "desc")), (snap) => { let html = "", count = 0; snap.forEach(doc => { const d = doc.data(); if(branchFilter && branchFilter !== 'all' && d.branchName !== branchFilter) return; if(d.status === "قيد التسعير") count++; const dateStr = d.timestamp ? (d.timestamp.toDate ? d.timestamp.toDate().toLocaleDateString('ar-EG') : new Date(d.timestamp).toLocaleDateString('ar-EG')) : '-'; html += `<tr><td><span style="font-size:11px;">${dateStr}</span><\/td><td><b>${(d.merchantEmail||'').split('@')[0]}</b><br><b dir="ltr" style="color:#d39e00;">${d.phone}</b><\/td><td><span style="font-size:11px;"><b>من:</b> ${d.from}</span><br><span style="font-size:11px;"><b>إلى:</b> ${d.to}</span><\/td><td><span style="background:#fff3cd; color:#856404; padding:3px 8px; border-radius:10px; font-size:11px; font-weight:bold;">${d.service}</span><\/td><td><select onchange="window.updateEmergencyStatus('axon_home_orders', '${doc.id}', this.value)" class="status-dropdown" style="margin-bottom:5px;"><option value="قيد التسعير" ${d.status==='قيد التسعير'?'selected':''}>قيد التسعير (مطلوب رد)</option><option value="تم التسعير والاتفاق" ${d.status==='تم التسعير والاتفاق'?'selected':''}>تم الاتفاق</option><option value="مرفوض" ${d.status==='مرفوض'?'selected':''}>مرفوض/ملغي</option></select><button class="btn-action btn-delete" onclick="window.deleteTicket('axon_home_orders', '${doc.id}')">مسح</button><\/td><\/tr>`; }); document.getElementById('homeBody').innerHTML = html || "<tr><td colspan='5'>لا توجد طلبات نقل عفش حالياً.<\/tr>"; updateEmergencyBadge(count); });
+            onSnapshot(query(collection(db, "axon_home_orders"), orderBy("timestamp", "desc")), (snap) => { let html = "", count = 0; snap.forEach(doc => { const d = doc.data(); if(branchFilter && branchFilter !== 'all' && d.branchName !== branchFilter) return; if(d.status === "قيد التسعير") count++; const dateStr = d.timestamp ? (d.timestamp.toDate ? d.timestamp.toDate().toLocaleDateString('ar-EG') : new Date(d.timestamp).toLocaleDateString('ar-EG')) : '-'; html += `<tr><td style="font-size:11px;">${dateStr}<\/td><td><b>${(d.merchantEmail||'').split('@')[0]}</b><br><b dir="ltr" style="color:#d39e00;">${d.phone}</b><\/td><td><span style="font-size:11px;"><b>من:</b> ${d.from}</span><br><span style="font-size:11px;"><b>إلى:</b> ${d.to}</span><\/td><td><span style="background:#fff3cd; color:#856404; padding:3px 8px; border-radius:10px; font-size:11px; font-weight:bold;">${d.service}</span><\/td><td><select onchange="window.updateEmergencyStatus('axon_home_orders', '${doc.id}', this.value)" class="status-dropdown" style="margin-bottom:5px;"><option value="قيد التسعير" ${d.status==='قيد التسعير'?'selected':''}>قيد التسعير (مطلوب رد)</option><option value="تم التسعير والاتفاق" ${d.status==='تم التسعير والاتفاق'?'selected':''}>تم الاتفاق</option><option value="مرفوض" ${d.status==='مرفوض'?'selected':''}>مرفوض/ملغي</option></select><button class="btn-action btn-delete" onclick="window.deleteTicket('axon_home_orders', '${doc.id}')">مسح</button><\/td><\/tr>`; }); document.getElementById('homeBody').innerHTML = html || "<td><td colspan='5'>لا توجد طلبات نقل عفش حالياً.<\/tr>"; updateEmergencyBadge(count); });
         }
         window.updateEmergencyStatus = async (collectionName, id, newStatus) => { await updateDoc(doc(db, collectionName, id), { status: newStatus }); Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم التحديث', showConfirmButton:false, timer:1500}); };
         function updateEmergencyBadge(count) { const badge = document.getElementById('emergencyBadge'); if(count > 0) { badge.style.display = 'inline-block'; badge.innerText = count; } else { badge.style.display = 'none'; badge.innerText = 0; } }
 
         function loadSupportTickets(branchFilter = null) {
-            onSnapshot(query(collection(db, "web_inquiries"), orderBy("timestamp", "desc")), (snap) => { let html = "", count = 0; snap.forEach(doc => { const d = doc.data(); if(branchFilter && branchFilter !== 'all') return; count++; const dateStr = d.timestamp ? (d.timestamp.toDate ? d.timestamp.toDate().toLocaleString('ar-EG') : new Date(d.timestamp).toLocaleString('ar-EG')) : '-'; let contactInfo = `<b>${d.phone || 'لا يوجد'}</b>`; if(d.phone && d.phone.length >= 10) { let waPhone = d.phone.startsWith('0') ? '2' + d.phone : d.phone; contactInfo += `<br><a href="https://wa.me/${waPhone}" target="_blank" style="background:#25D366; color:white; padding:4px 8px; border-radius:5px; text-decoration:none; font-size:11px; margin-top:5px; display:inline-block;"><i class="fa-brands fa-whatsapp"></i> رد واتساب</a>`; } html += `<tr><td><span style="font-size:11px;">${dateStr}</span><\/td><td><div style="max-width:250px; white-space:normal;">${d.message}</div><\/td><td dir="ltr">${contactInfo}<\/td><td><button class="btn-action btn-delete" onclick="window.deleteTicket('web_inquiries', '${doc.id}')">إغلاق التذكرة ✖</button><\/td><\/tr>`; }); document.getElementById('ticketsBody').innerHTML = html || "<tr><td colspan='4'>لا توجد رسائل حالياً.<\/tr>"; updateBadge(count); });
-            onSnapshot(query(collection(db, "careers"), orderBy("timestamp", "desc")), (snap) => { let html = ""; snap.forEach(doc => { const d = doc.data(); const dateStr = d.timestamp ? (d.timestamp.toDate ? d.timestamp.toDate().toLocaleDateString('ar-EG') : new Date(d.timestamp).toLocaleDateString('ar-EG')) : '-'; html += `<tr><td><span style="font-size:11px;">${dateStr}</span><\/td><td><b>${d.name}</b><br><span style="color:var(--primary-blue); font-size:11px;">${d.position}</span><\/td><td>${d.city}<br><b dir="ltr">${d.phone}</b><\/td><td><div style="max-width:200px; white-space:normal; font-size:11px;">${d.notes || 'لا يوجد'}</div><button class="btn-action btn-delete" style="margin-top:5px;" onclick="window.deleteTicket('careers', '${doc.id}')">أرشفة</button><\/td><\/tr>`; }); document.getElementById('careersBody').innerHTML = html || "<tr><td colspan='4'>لا توجد طلبات انضمام.<\/tr>"; });
-            onSnapshot(query(collection(db, "franchises"), orderBy("timestamp", "desc")), (snap) => { let html = ""; snap.forEach(doc => { const d = doc.data(); const dateStr = d.timestamp ? (d.timestamp.toDate ? d.timestamp.toDate().toLocaleDateString('ar-EG') : new Date(d.timestamp).toLocaleDateString('ar-EG')) : '-'; html += `<tr><td><span style="font-size:11px;">${dateStr}</span><\/td><td><b>${d.name}</b><\/td><td>${d.city}<br><span style="color:${d.office==='نعم'?'green':'red'}; font-size:11px;">مقر: ${d.office}</span><\/td><td dir="ltr"><b>${d.phone}</b><\/td><td><div style="max-width:200px; white-space:normal; font-size:11px;">${d.notes || 'لا يوجد'}</div><button class="btn-action btn-delete" style="margin-top:5px;" onclick="window.deleteTicket('franchises', '${doc.id}')">أرشفة</button><\/td><\/tr>`; }); document.getElementById('franchiseBody').innerHTML = html || "<tr><td colspan='5'>لا توجد طلبات وكالة.<\/tr>"; });
+            onSnapshot(query(collection(db, "web_inquiries"), orderBy("timestamp", "desc")), (snap) => { let html = "", count = 0; snap.forEach(doc => { const d = doc.data(); if(branchFilter && branchFilter !== 'all') return; count++; const dateStr = d.timestamp ? (d.timestamp.toDate ? d.timestamp.toDate().toLocaleString('ar-EG') : new Date(d.timestamp).toLocaleString('ar-EG')) : '-'; let contactInfo = `<b>${d.phone || 'لا يوجد'}</b>`; if(d.phone && d.phone.length >= 10) { let waPhone = d.phone.startsWith('0') ? '2' + d.phone : d.phone; contactInfo += `<br><a href="https://wa.me/${waPhone}" target="_blank" style="background:#25D366; color:white; padding:4px 8px; border-radius:5px; text-decoration:none; font-size:11px; margin-top:5px; display:inline-block;"><i class="fa-brands fa-whatsapp"></i> رد واتساب</a>`; } html += `<tr><td style="font-size:11px;">${dateStr}<\/td><td><div style="max-width:250px; white-space:normal;">${d.message}</div><\/td><td dir="ltr">${contactInfo}<\/td><td><button class="btn-action btn-delete" onclick="window.deleteTicket('web_inquiries', '${doc.id}')">إغلاق التذكرة ✖</button><\/td><\/tr>`; }); document.getElementById('ticketsBody').innerHTML = html || "<tr><td colspan='4'>لا توجد رسائل حالياً.<\/tr>"; updateBadge(count); });
+            onSnapshot(query(collection(db, "careers"), orderBy("timestamp", "desc")), (snap) => { let html = ""; snap.forEach(doc => { const d = doc.data(); const dateStr = d.timestamp ? (d.timestamp.toDate ? d.timestamp.toDate().toLocaleDateString('ar-EG') : new Date(d.timestamp).toLocaleDateString('ar-EG')) : '-'; html += `<tr><td style="font-size:11px;">${dateStr}<\/td><td><b>${d.name}</b><br><span style="color:var(--primary-blue); font-size:11px;">${d.position}</span><\/td><td>${d.city}<br><b dir="ltr">${d.phone}</b><\/td><td><div style="max-width:200px; white-space:normal; font-size:11px;">${d.notes || 'لا يوجد'}</div><button class="btn-action btn-delete" style="margin-top:5px;" onclick="window.deleteTicket('careers', '${doc.id}')">أرشفة</button><\/td><\/tr>`; }); document.getElementById('careersBody').innerHTML = html || "<table><td colspan='4'>لا توجد طلبات انضمام.<\/tr>"; });
+            onSnapshot(query(collection(db, "franchises"), orderBy("timestamp", "desc")), (snap) => { let html = ""; snap.forEach(doc => { const d = doc.data(); const dateStr = d.timestamp ? (d.timestamp.toDate ? d.timestamp.toDate().toLocaleDateString('ar-EG') : new Date(d.timestamp).toLocaleDateString('ar-EG')) : '-'; html += `<tr><td style="font-size:11px;">${dateStr}<\/td><td><b>${d.name}</b><\/td><td>${d.city}<br><span style="color:${d.office==='نعم'?'green':'red'}; font-size:11px;">مقر: ${d.office}</span><\/td><td dir="ltr"><b>${d.phone}</b><\/td><td><div style="max-width:200px; white-space:normal; font-size:11px;">${d.notes || 'لا يوجد'}</div><button class="btn-action btn-delete" style="margin-top:5px;" onclick="window.deleteTicket('franchises', '${doc.id}')">أرشفة</button><\/td><\/tr>`; }); document.getElementById('franchiseBody').innerHTML = html || "<tr><td colspan='5'>لا توجد طلبات وكالة.<\/tr>"; });
         }
         function updateBadge(count) { const badge = document.getElementById('ticketBadge'); if(count > 0) { badge.style.display = 'inline-block'; badge.innerText = count; } else { badge.style.display = 'none'; } }
         window.deleteTicket = async (collectionName, id) => { if(confirm("هل متأكد من الإعدام الرقمي لهذا السجل من قاعدة البيانات؟")) { await deleteDoc(doc(db, collectionName, id)); } };
 
-        // --- دالة تحميل الشحنات الأساسية (مع استبعاد "تمت التسوية") ---
+        // دالة تحميل الشحنات (معدلة لاستبعاد "تمت التسوية")
         function loadShipments(branchFilter = null) {
             let q = query(collection(db, "shipments"), orderBy("timestamp", "desc"));
             onSnapshot(q, (snap) => {
@@ -581,8 +652,9 @@
                 snap.forEach(docSnap => {
                     const d = docSnap.data(), id = docSnap.id;
                     if(d.deleted) return;
-                    if(d.status === "تمت التسوية") return; // استبعاد الشحنات المسوّاة
-
+                    // استبعاد الشحنات التي تمت تسويتها
+                    if(d.status === "تمت التسوية") return;
+                    
                     const merchant = d.merchantEmail ? d.merchantEmail.split('@')[0] : "إدارة";
                     citiesSet.add(d.city); merchantsSet.add(merchant);
                     if(branchFilter && branchFilter !== 'all') { if(d.branchName !== branchFilter && d.targetBranch !== branchFilter) return; }
