@@ -139,7 +139,7 @@
 
     <header>
         <h1>
-            <img src="axon-logo.png" alt="Axon Logo">
+            <img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" alt="Axon Logo">
             <span data-i18n="fin_title">FINANCE</span>
         </h1>
         <div class="header-actions">
@@ -215,7 +215,7 @@
 
             <div id="couriers" class="tab-content">
                 <div class="table-responsive">
-                    <table>
+                    </table>
                         <thead><tr><th data-i18n="th_courier">الكابتن</th><th data-i18n="th_tasks">إجمالي المهام</th><th data-i18n="th_custody">العهدة النقدية المطلوبة (كاش)</th><th data-i18n="th_act">إجراءات التصفية</th></tr></thead>
                         <tbody id="tblCouriers"></tbody>
                     </table>
@@ -233,12 +233,12 @@
 
             <div id="expenses" class="tab-content">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
-                    <button class="btn-action" style="background:var(--primary-burgundy);" onclick="alert('مودال المصروفات')">+ <span data-i18n="add_exp">تسجيل مصروف</span></button>
+                    <button class="btn-action" style="background:var(--primary-burgundy);" onclick="alert('يمكنك إضافة المصروفات لاحقاً عبر واجهة منفصلة')">+ <span data-i18n="add_exp">تسجيل مصروف</span></button>
                 </div>
                 <div class="table-responsive">
                     <table>
                         <thead><tr><th data-i18n="th_date">التاريخ</th><th data-i18n="th_desc">البند</th><th data-i18n="th_amt">المبلغ</th></tr></thead>
-                        <tbody id="tblExpenses"><tr><td colspan='3' style='text-align:center;'>لا توجد مصروفات مسجلة</td></tr></tbody>
+                        <tbody id="tblExpenses"><tr><td colspan='3' style='text-align:center;'>لا توجد مصروفات مسجلة حتى الآن</td></tr></tbody>
                     </table>
                 </div>
             </div>
@@ -320,7 +320,6 @@
     </script>
 
     <script type="module">
-        // تم إضافة getDocs, writeBatch, increment لمكتبة الفايرستور هنا
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, doc, query, where, updateDoc, writeBatch, increment, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
@@ -399,15 +398,15 @@
                 let merchant = v.merchantEmail || "إدارة";
                 let courier = v.courierName || "غير محدد";
                 let type = v.type === 'shipment' ? '📦 بوليصة' : '📡 رادار';
-                let awb = v.awb || ("AXN" + v.id.substring(0,5).toUpperCase());
+                let awb = v.awb || ("AXN" + (v.id ? v.id.substring(0,5) : "00000")).toUpperCase();
 
-                let baseFee = lP[itemBranch] ? Number(lP[itemBranch]) : 100;
+                let baseFee = lP[itemBranch] ? Number(lP[itemBranch]) : 85;
                 if(itemBranch.includes("قاهرة") || itemBranch.includes("جيزة")) baseFee = lP.cairo || baseFee;
                 if(itemBranch.includes("إسكندرية")) baseFee = lP.alex || baseFee;
                 if(itemBranch.includes("بحيرة")) baseFee = lP.beheira || baseFee;
 
                 let overWeightFee = 0;
-                if (weight > 2) { overWeightFee = Math.ceil(weight - 2) * 10; }
+                if (weight > 2) { overWeightFee = Math.ceil(weight - 2) * 8; }
                 
                 let totalShippingDeduction = baseFee + overWeightFee; 
                 let totalCompanyProfit = totalShippingDeduction + insuranceFee; 
@@ -460,7 +459,7 @@
             document.getElementById('statCustody').innerText = totalCash + " ج.م";
             document.getElementById('statProfit').innerText = totalProfit + " ج.م";
             document.getElementById('statDues').innerText = (totalCash - totalProfit) + " ج.م";
-            document.getElementById('tblJournal').innerHTML = htmlJournal;
+            document.getElementById('tblJournal').innerHTML = htmlJournal || "<tr><td colspan='7' style='text-align:center;'>لا توجد معاملات مسجلة</td></tr>";
             
             document.getElementById('loading').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
@@ -472,7 +471,7 @@
             let courierHtml = "";
             for(let c in sD.couriers) {
                 courierHtml += `<tr>
-                    <td><b>${c}</b></td>
+                    <td><b>${c}</b></table>
                     <td>${sD.couriers[c].count} مهمة مسندة</td>
                     <td style="color:var(--primary-burgundy);font-weight:bold; font-size:16px;">${sD.couriers[c].totalCollected} ج.م (مُحصل)</td>
                     <td><button class="btn-action btn-view" onclick="window.openCourierModal('${c}')"><i class="fa-solid fa-list-check"></i> فتح المانيفست والتصفية</button></td>
@@ -509,7 +508,7 @@
                 let statusColor = s.status.includes('تم التسليم') ? '#10B981' : (s.status.includes('مرتجع') ? '#6c757d' : '#f59e0b');
                 sHtml += `<tr>
                     <td><b>${s.awb}</b></td>
-                    <td>${s.merchantEmail.split('@')[0]}</td>
+                    <td>${(s.merchantEmail || "إدارة").split('@')[0]}</td>
                     <td>${s.name}</td>
                     <td style="font-weight:bold;">${s.totalCollected} ج.م</td>
                     <td style="color:${statusColor}; font-weight:bold;">${s.status}</td>
@@ -520,10 +519,11 @@
             let rHtml = "";
             data.radar.forEach(r => {
                 let statusColor = r.status.includes('تم التسليم') ? '#10B981' : '#f59e0b';
+                let collected = (r.paymentMethod === 'pickup' ? 'أمر بيكب مجاني' : (r.totalCollected ? r.totalCollected + ' ج.م' : 'غير محدد'));
                 rHtml += `<tr>
                     <td>${r.details}</td>
                     <td>${r.address}</td>
-                    <td style="font-weight:bold;">${r.paymentMethod === 'pickup' ? 'أمر بيكب مجاني' : r.totalCollected + ' ج.م'}</td>
+                    <td style="font-weight:bold;">${collected}</td>
                     <td style="color:${statusColor}; font-weight:bold;">${r.status}</td>
                 </tr>`;
             });
@@ -558,8 +558,7 @@
             document.getElementById('merchantModal').style.display = 'flex';
         };
 
-        // ---------------- دوال الطباعة للمودالات ----------------
-        
+        // ========== وظائف الطباعة (بدون تغيير) ==========
         window.printCourierSheet = () => {
             const data = sD.couriers[currentViewedCourier];
             const timestamp = new Date().toLocaleString('ar-EG');
@@ -574,7 +573,7 @@
                 tableRows += `<tr>
                     <td>${index++}</td>
                     <td><b>${s.awb}</b></td>
-                    <td>${s.merchantEmail.split('@')[0]}</td>
+                    <td>${(s.merchantEmail || "إدارة").split('@')[0]}</td>
                     <td>${s.name} (${s.phone})<br>${s.city} - ${s.address}</td>
                     <td style="color:#800020; font-weight:bold; font-size:14px; white-space:nowrap !important;">${sCash} ج.م</td>
                 </tr>`;
@@ -598,7 +597,7 @@
                 <div class="print-wrapper" dir="rtl">
                     <div class="print-header">
                         <div>
-                            <h1 style="color:#111111; margin:0;"><img src="axon-logo.png" alt="Axon Logo" style="height:30px; object-fit:contain; margin-left:8px;"> AXON EXPRESS</h1>
+                            <h1 style="color:#111111; margin:0;"><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" alt="Axon Logo" style="height:30px; object-fit:contain; margin-left:8px;"> AXON EXPRESS</h1>
                             <p style="margin:0;">الخزينة المركزية - فرع ${adminBranch}</p>
                         </div>
                         <div style="text-align:center;"><h2 style="margin:0;">تصفية عهدة كابتن (يومية)</h2><p style="margin:0;">تاريخ الجرد: ${timestamp}</p></div>
@@ -666,7 +665,7 @@
                 <div class="print-wrapper" dir="rtl">
                     <div class="print-header">
                         <div>
-                            <h1 style="color:#111111; margin:0;"><img src="axon-logo.png" alt="Axon Logo" style="height:30px; object-fit:contain; margin-left:8px;"> AXON EXPRESS</h1>
+                            <h1 style="color:#111111; margin:0;"><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" alt="Axon Logo" style="height:30px; object-fit:contain; margin-left:8px;"> AXON EXPRESS</h1>
                             <p style="margin:0;">إدارة الحسابات - فرع ${adminBranch}</p>
                         </div>
                         <div style="text-align:center;"><h2 style="margin:0;">كشف حساب وتسوية تاجر</h2><p style="margin:0;">تاريخ الإصدار: ${timestamp}</p></div>
@@ -716,102 +715,18 @@
             window.print();
         };
 
-        window.generateManifest = () => {
-            const courierName = document.getElementById('manifestCourierSelect').value;
-            if(!courierName) return Swal.fire('خطأ', 'الرجاء اختيار المندوب أولاً', 'error');
-            
-            let targetShipments = [];
-            let courierData = window.branchCouriersList.find(c => c.name === courierName);
-
-            for(let key in window.loadedShipmentsData) {
-                let s = window.loadedShipmentsData[key];
-                if(s.courierName === courierName && s.status !== 'تم التسليم' && s.status !== 'تمت التسوية' && s.status !== 'مرتجع') {
-                    targetShipments.push(s); 
-                }
-            }
-
-            if(targetShipments.length === 0) return Swal.fire('لا يوجد عهدة', 'هذا المندوب ليس لديه طرود مفتوحة في عهدته حالياً لطباعتها.', 'warning');
-
-            document.getElementById('manifestModal').style.display = 'none';
-            document.getElementById('mainHeader').style.display = 'none';
-            document.getElementById('mainContainer').style.display = 'none';
-
-            const timestamp = new Date().toLocaleString('ar-EG');
-            
-            let tableRows = '';
-            let calcCod = 0;
-            targetShipments.forEach((s, index) => {
-                calcCod += Number(s.amount) || 0;
-                tableRows += `<tr>
-                    <td>${index + 1}</td>
-                    <td><b>${s.awb}</b></td>
-                    <td>${s.merchant}</td>
-                    <td>${s.name} (${s.phone})<br>${s.city} - ${s.address}</td>
-                    <td style="color:#800020; font-weight:bold; font-size:14px; white-space:nowrap !important;">${s.amount} ج.م</td>
-                </tr>`;
-            });
-
-            let printHtml = `
-                <div class="print-wrapper" dir="rtl">
-                    <div class="print-header">
-                        <div>
-                            <h1 style="color:#111111; margin:0;"><img src="axon-logo.png" alt="Axon Logo" style="height:30px; object-fit:contain; margin-left:8px;"> AXON EXPRESS</h1>
-                            <p style="margin:0;">إدارة العمليات - فرع ${adminBranch}</p>
-                        </div>
-                        <div style="text-align:center;"><h2 style="margin:0;">كشف عهدة تسليم (Manifest)</h2><p style="margin:0;">تاريخ الطباعة: ${timestamp}</p></div>
-                        <div><h2 style="color:#800020; margin:0;">${courierName}</h2></div>
-                    </div>
-
-                    <table class="print-table">
-                        <thead>
-                            <tr>
-                                <th style="width:5%;">م</th>
-                                <th style="width:15%;">رقم البوليصة</th>
-                                <th style="width:15%;">الراسل (التاجر)</th>
-                                <th style="width:50%;">بيانات المستلم (المرسل إليه)</th>
-                                <th style="width:15%;">المبلغ المطلوب</th>
-                            </tr>
-                        </thead>
-                        <tbody>${tableRows}</tbody>
-                        <tfoot class="print-footer">
-                            <tr>
-                                <td colspan="5" style="border:none; padding-top: 15px !important;">
-                                    <div style="border:2px solid #800020; padding:5px; text-align:center; background:#fff3cd; margin-bottom:5px;">
-                                        <h2 style="margin:0; color:#800020; font-size:18px;">إجمالي العهدة المطبوعة (متوقع تحصيلها): ${calcCod} ج.م</h2>
-                                    </div>
-                                    <div style="display:flex; justify-content:space-between; border: 2px solid #000; padding: 12px; background: #fafafa; font-size: 13px; font-weight: bold; align-items: center; page-break-inside: avoid;">
-                                        <div style="width: 30%;">
-                                            <span style="color:#800020;">تحذير:</span> الإخطار الكاذب يعرضك لخصم.
-                                        </div>
-                                        <div style="width: 70%; display: flex; justify-content: space-between;">
-                                            <div>توقيع المندوب: <span style="color:#800020;">${courierName}</span> (........)</div>
-                                            <div>توقيع الإدارة: ..........................</div>
-                                            <div>التاريخ: ${timestamp.split(',')[0]}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-            `;
-            document.getElementById('printArea').style.display = 'block';
-            document.getElementById('printArea').innerHTML = printHtml;
-        };
-
-        // دالة التسوية الشاملة اللي بتغذي حائط بطولات التاجر
+        // ==================== التعديل الجوهري: دالة تسوية حسابات التاجر ====================
+        // تم تعديلها بحيث لا تؤثر على lifetime_sales (لأن الأرباح تضاف بالفعل عند التسليم)
+        // وتقوم فقط بتحديث حالة البوالص إلى "تمت التسوية" وإغلاق الدورة المالية.
         window.settleAccount = async (merchantEmail) => {
             const data = sD.merchants[merchantEmail];
             if(!data || data.items.length === 0) {
                 return Swal.fire('تنبيه', 'لا يوجد بوالص لتسويتها', 'warning');
             }
 
-            // الرقم اللي هيتضاف لدولاب بطولات التاجر (إجمالي مبيعاته)
-            let totalSalesToAddToWall = data.totalCod; 
-
             Swal.fire({
                 title: 'تأكيد التسوية المالية',
-                text: `هل أنت متأكد من تسوية مستحقات التاجر؟ سيتم تحديث حالة البوالص وإضافة ${totalSalesToAddToWall} ج.م إلى حائط بطولاته!`,
+                html: `هل أنت متأكد من تسوية مستحقات التاجر؟<br><strong style="color:#10B981;">ملاحظة هامة:</strong> أرباح حائط البطولات (lifetime_sales) تم إضافتها مسبقاً عند تسليم الطرود، وهذه الخطوة تغلق الدورة المالية فقط.`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'نعم، قم بالتسوية',
@@ -824,38 +739,23 @@
                     try {
                         const batch = writeBatch(db);
 
-                        // 1. تحديث حالة كل البوالص اللي في الكشف إلى "تمت التسوية"
+                        // تحديث حالة كل البوالص التي ظهرت في الكشف إلى "تمت التسوية"
                         data.items.forEach(item => {
                             const shipRef = doc(db, "shipments", item.id);
                             batch.update(shipRef, { status: "تمت التسوية" });
                         });
 
-                        // 2. البحث عن التاجر وتزويد حائط البطولات (lifetime_sales)
-                        const q = query(collection(db, "users"), where("email", "==", merchantEmail));
-                        const querySnapshot = await getDocs(q);
-                        
-                        if (!querySnapshot.empty) {
-                            const merchantDoc = querySnapshot.docs[0];
-                            batch.update(merchantDoc.ref, {
-                                lifetime_sales: increment(totalSalesToAddToWall)
-                            });
-                        } else {
-                            console.warn("لم يتم العثور على التاجر في كوليكشن users لتحديث رصيد النجاح.");
-                        }
-
-                        // تنفيذ العمليات كلها في نفس اللحظة
                         await batch.commit();
 
-                        Swal.fire('تم بنجاح!', 'تمت التسوية بنجاح، وتمت إضافة المبيعات لدولاب بطولات التاجر.', 'success');
+                        Swal.fire('تم بنجاح!', 'تمت التسوية المالية بنجاح، وتم إغلاق كشف الحساب.', 'success');
                         document.getElementById('merchantModal').style.display = 'none';
                         
-                        // الفايربيز snapshot هيحدث الواجهة لوحده لأن الداتا اتغيرت، 
-                        // بس عشان نضمن إن الداتا اتمسحت من الكشف الحالي:
+                        // تحديث الواجهة لعرض البيانات الجديدة (ستختفي البوالص من قائمة المستحقات)
                         window.rAS(); 
 
                     } catch (error) {
                         console.error("Error settling account: ", error);
-                        Swal.fire('خطأ', 'حدث خطأ أثناء التسوية، يرجى مراجعة الصلاحيات (Rules).', 'error');
+                        Swal.fire('خطأ', 'حدث خطأ أثناء التسوية، يرجى مراجعة الصلاحيات (Rules).\n' + error.message, 'error');
                     }
                 }
             });
