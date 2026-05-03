@@ -24,6 +24,22 @@
                 }
             });
         })();
+
+        // تعريف الدوال المستقلة لضمان عملها بدون التدخل مع Firebase
+        window.toggleTheme = () => { 
+            document.documentElement.classList.toggle('dark-mode'); 
+            const isDark = document.documentElement.classList.contains('dark-mode'); 
+            localStorage.setItem('axon_admin_theme', isDark ? 'dark' : 'light'); 
+            const icon = document.getElementById('themeIcon');
+            if(icon) icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon'; 
+        };
+        
+        window.closePrintView = () => { 
+            document.getElementById('printArea').style.display = 'none'; 
+            document.getElementById('printArea').innerHTML = ''; 
+            document.getElementById('mainHeader').style.display = 'flex'; 
+            document.getElementById('mainContainer').style.display = 'block'; 
+        };
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
@@ -104,23 +120,23 @@
         .modal-content input:focus { border-color: var(--primary-blue); }
         .close-btn { position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--primary-burgundy);}
         
-        body.dark-mode { --white: #1a1a2e; --light-bg: #16213e; --dark-text: #e0e0e0; --border-color: #0f3460; --primary-blue: #4a90e2; --primary-black: #111111;}
-        body.dark-mode header { border-bottom: 4px solid var(--primary-burgundy); background: #1a1a2e;}
-        body.dark-mode .lang-btn { border-color: var(--primary-yellow); color: var(--primary-yellow); }
-        body.dark-mode .lang-btn:hover { background: var(--primary-yellow); color: var(--primary-black); }
-        body.dark-mode th { background: #0f3460; color: var(--white); border-color: #333; }
-        body.dark-mode tr:hover { background-color: rgba(255,195,0,0.05); }
-        body.dark-mode .search-box, body.dark-mode .status-dropdown, body.dark-mode .courier-dropdown { background: #16213e; border: 1px solid #0f3460; color: #fff; }
-        body.dark-mode .logout-btn { background: transparent; border-color: var(--primary-burgundy); color: var(--primary-burgundy); }
-        body.dark-mode .logout-btn:hover { background: var(--primary-burgundy); color: white; }
-        body.dark-mode .admin-section { background: #1a1a2e; border-color: #0f3460; }
-        body.dark-mode .bourse-section { background: #16213e !important; border-color: var(--primary-yellow) !important; }
-        body.dark-mode .stat-card { background: #1a1a2e; border-bottom: 4px solid var(--primary-burgundy); border-color: #0f3460;}
-        body.dark-mode .stat-card h3 { color: #ccc; }
-        body.dark-mode .stat-card .value { color: var(--primary-yellow); }
+        html.dark-mode { --white: #1a1a2e; --light-bg: #16213e; --dark-text: #e0e0e0; --border-color: #0f3460; --primary-blue: #4a90e2; --primary-black: #111111;}
+        html.dark-mode header { border-bottom: 4px solid var(--primary-burgundy); background: #1a1a2e;}
+        html.dark-mode .lang-btn { border-color: var(--primary-yellow); color: var(--primary-yellow); }
+        html.dark-mode .lang-btn:hover { background: var(--primary-yellow); color: var(--primary-black); }
+        html.dark-mode th { background: #0f3460; color: var(--white); border-color: #333; }
+        html.dark-mode tr:hover { background-color: rgba(255,195,0,0.05); }
+        html.dark-mode .search-box, html.dark-mode .status-dropdown, html.dark-mode .courier-dropdown { background: #16213e; border: 1px solid #0f3460; color: #fff; }
+        html.dark-mode .logout-btn { background: transparent; border-color: var(--primary-burgundy); color: var(--primary-burgundy); }
+        html.dark-mode .logout-btn:hover { background: var(--primary-burgundy); color: white; }
+        html.dark-mode .admin-section { background: #1a1a2e; border-color: #0f3460; }
+        html.dark-mode .bourse-section { background: #16213e !important; border-color: var(--primary-yellow) !important; }
+        html.dark-mode .stat-card { background: #1a1a2e; border-bottom: 4px solid var(--primary-burgundy); border-color: #0f3460;}
+        html.dark-mode .stat-card h3 { color: #ccc; }
+        html.dark-mode .stat-card .value { color: var(--primary-yellow); }
         
         .new-acc-section { background: #fff9e6; border: 2px solid var(--primary-yellow); }
-        body.dark-mode .new-acc-section { background: #1a1600 !important; border-color: var(--primary-yellow) !important; }
+        html.dark-mode .new-acc-section { background: #1a1600 !important; border-color: var(--primary-yellow) !important; }
 
         .admin-tabs { 
             display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; 
@@ -135,8 +151,8 @@
         .admin-tab-btn.active { background: var(--primary-blue); color: var(--white); border-color: var(--primary-blue); }
         .admin-tab-content { display: none; }
         .admin-tab-content.active { display: block; }
-        body.dark-mode .admin-tab-btn { background: #222; color: #aaa; border-color:#444;}
-        body.dark-mode .admin-tab-btn.active { background: #0f3460; color: var(--white); border-color: var(--primary-yellow); }
+        html.dark-mode .admin-tab-btn { background: #222; color: #aaa; border-color:#444;}
+        html.dark-mode .admin-tab-btn.active { background: #0f3460; color: var(--white); border-color: var(--primary-yellow); }
 
         .status-danger { background-color: #ffeaea !important; } 
         .status-warning { background-color: #fffde7 !important; } 
@@ -145,7 +161,7 @@
         .status-transit { background-color: #fff3cd !important; border-right: 4px solid #fd7e14; }
         
         .status-new-shipment {
-            background-color: rgba(225, 231, 21, 0.15) !important;
+            background-color: rgba(255, 195, 0, 0.15) !important;
             border-right: 5px solid var(--primary-yellow);
             animation: newShipmentPulse 2s infinite;
         }
@@ -159,10 +175,10 @@
         .filter-group { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; align-items: center;}
         .filter-btn { background: #fff; border: 1px solid #ccc; padding: 6px 15px; border-radius: 20px; cursor: pointer; font-family: 'Cairo'; font-size: 13px; font-weight: bold; transition: 0.3s;}
         .filter-btn.active { background: var(--primary-blue); color: var(--white); border-color: var(--primary-blue); }
-        body.dark-mode .filter-btn { background: #222; border-color: #444; color: #fff;}
-        body.dark-mode .filter-btn.active { background: var(--primary-yellow); color: var(--primary-black); border-color: var(--primary-yellow); }
+        html.dark-mode .filter-btn { background: #222; border-color: #444; color: #fff;}
+        html.dark-mode .filter-btn.active { background: var(--primary-yellow); color: var(--primary-black); border-color: var(--primary-yellow); }
         .adv-filter-select { padding: 6px 15px; border-radius: 20px; border: 1px solid var(--primary-blue); background: #e0eaf5; color: var(--primary-blue); font-weight: bold; font-family: 'Cairo'; font-size: 13px; outline: none;}
-        body.dark-mode .adv-filter-select { background: #000; color: var(--primary-yellow); border-color: var(--primary-yellow); }
+        html.dark-mode .adv-filter-select { background: #000; color: var(--primary-yellow); border-color: var(--primary-yellow); }
 
         @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -178,6 +194,11 @@
                 padding: 5mm !important;
                 border: 2px solid var(--primary-black) !important;
                 box-sizing: border-box !important;
+            }
+            .logo-print {
+                width: 3cm !important;
+                height: 2cm !important;
+                object-fit: contain !important;
             }
         }
         
@@ -200,6 +221,7 @@
         .safeer-name-badge h2 { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 1px;}
         .branch-badge-print { font-weight: bold; font-size: 14px; color: #000; text-transform: uppercase; background: #f0f0f0; border: 2px solid #000; padding: 3px 10px; display: inline-block; margin-bottom: 5px;}
         .fragile-banner { color: white; text-align: center; font-size: 14px; font-weight: bold; padding: 8px; border-radius: 5px; margin-bottom: 10px; border: 2px dashed #000;}
+        .logo-print { width: 3cm; height: 2cm; object-fit: contain; }
     </style>
 </head>
 <body>
@@ -426,6 +448,14 @@
     </div>
 
     <script>
+        if(localStorage.getItem('axon_admin_theme') === 'dark') { 
+            document.documentElement.classList.add('dark-mode'); 
+            window.addEventListener('DOMContentLoaded', () => {
+                const icon = document.getElementById('themeIcon');
+                if(icon) icon.className = 'fa-solid fa-sun';
+            });
+        }
+        
         const i18nDict = {
             ar: { admin_title: "إدارة", logout: "خروج", tab_main: "العمليات الرئيسية", tab_emergency: "طوارئ ونقل", tab_support: "الدعم والطلبات", stat_active: "إجمالي الشحنات المتاحة", stat_cod: "إجمالي التحصيلات (COD)", stat_radar: "مهام الرادار النشطة", create_acc: "إنشاء حسابات جديدة", btn_create: "إنشاء الحساب فوراً", radar_map: "الرادار التكتيكي (تتبع حي)", bourse_title: "بورصة الشحن الحية (تحديث مركزي)", bank_title: "الرادار اللوجستي (بنك الشحنات)" },
             en: { admin_title: "Admin", logout: "Logout", tab_main: "Main Ops", tab_emergency: "Emergency", tab_support: "Support", stat_active: "Available Shipments", stat_cod: "Total COD", stat_radar: "Active Radar Tasks", create_acc: "Create New Accounts", btn_create: "Create Account Now", radar_map: "Tactical Live Radar", bourse_title: "Live Shipping Exchange", bank_title: "Logistics Radar (Shipments Bank)" }
@@ -443,7 +473,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, setDoc, getDoc, addDoc, deleteDoc, where, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, setDoc, getDoc, addDoc, deleteDoc, where, increment, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw", authDomain: "axon-express-2f534.firebaseapp.com", projectId: "axon-express-2f534", storageBucket: "axon-express-2f534.firebasestorage.app", messagingSenderId: "958528400260", appId: "1:958528400260:web:504ae94f3ef2225b928bd1" };
         const app = initializeApp(firebaseConfig); 
@@ -530,35 +560,32 @@
             if(tabId === 'mainOps' && adminMap) { setTimeout(() => adminMap.invalidateSize(), 200); }
         };
 
-        // --- 🛠️ اللوجيك المحدث لتجنب تعليق الشاشة (Fallback System) ---
+        // --- 🛠️ اللوجيك المحدث لتجنب تعليق الشاشة ---
         onAuthStateChanged(auth, async (user) => {
             if (!user) { window.location.href = "index.html"; return; }
             
-            // 1. افتراضي لو هو الإدمن الرئيسي عشان ميعلقش على "تحميل..."
             if (user.email === 'admin@axon.com') {
                 adminRole = 'super_admin';
                 adminBranch = 'all';
                 document.getElementById('adminBranchDisplay').innerText = 'القيادة العليا';
                 document.getElementById('adminBranchDisplay').style.display = 'inline-block';
+            } else {
+                try {
+                    const adminDoc = await getDoc(doc(db, "admins", user.uid));
+                    if(adminDoc.exists()) {
+                        adminRole = adminDoc.data().role;
+                        adminBranch = adminDoc.data().branchName;
+                        let roleDisplay = adminRole === 'operator' ? "أوبريتور إدارة: " : (adminRole === 'super_admin' ? 'القيادة العليا' : "فرع: ");
+                        document.getElementById('adminBranchDisplay').innerText = roleDisplay + (adminRole === 'super_admin' ? '' : adminBranch);
+                        document.getElementById('adminBranchDisplay').style.display = 'inline-block';
+                    }
+                } catch(e) { console.log("Admin doc fetch bypassed"); }
             }
 
-            try {
-                // 2. محاولة سحب صلاحيات لو اليوزر ده أدمن فرع
-                const adminDoc = await getDoc(doc(db, "admins", user.uid));
-                if(adminDoc.exists()) {
-                    adminRole = adminDoc.data().role;
-                    adminBranch = adminDoc.data().branchName;
-                    let roleDisplay = adminRole === 'operator' ? "أوبريتور إدارة: " : (adminRole === 'super_admin' ? 'القيادة العليا' : "فرع: ");
-                    document.getElementById('adminBranchDisplay').innerText = roleDisplay + (adminRole === 'super_admin' ? '' : adminBranch);
-                    document.getElementById('adminBranchDisplay').style.display = 'inline-block';
-                }
-            } catch(e) { console.log("Admin doc bypass"); }
-
-            // تأمين لو مفيش صلاحية نزلت
             if(!adminRole) {
                 adminRole = 'super_admin'; 
                 adminBranch = 'all';
-                document.getElementById('adminBranchDisplay').innerText = 'القيادة العليا';
+                document.getElementById('adminBranchDisplay').innerText = 'القيادة العليا (Fallback)';
                 document.getElementById('adminBranchDisplay').style.display = 'inline-block';
             }
 
@@ -625,7 +652,6 @@
 
                 await setDoc(doc(db, collectionName, role === "merchant" ? email : uid), userData);
                 
-                // إضافة حساب مالي للتاجر عشان حائط البطولات يشتغل صح
                 if(role === "merchant") {
                     await setDoc(doc(db, "users", email), { email: email, lifetime_sales: 0 });
                 }
@@ -795,7 +821,7 @@
                     try {
                         if(d.timestamp) {
                             let dateObj = d.timestamp.toDate ? d.timestamp.toDate() : new Date(d.timestamp.seconds ? d.timestamp.seconds * 1000 : d.timestamp);
-                            if(!isNaN(dateObj)) dateStr = dateObj.toLocaleString('ar-EG', {hour:'2-digit', minute:'2-digit', day:'2-digit', month:'2-digit'});
+                            if(!isNaN(dateObj)) dateStr = dateObj.toLocaleString('ar-EG', {hour:'2-digit', minute:'2-digit', second:'2-digit', day:'2-digit', month:'2-digit', year:'numeric'});
                         }
                     } catch(e) {}
 
@@ -844,7 +870,7 @@
                             </select>
                             ${courierAction}
                         </td>
-                        <td style="color:var(--primary-burgundy); font-weight:bold; font-size:16px;">${d.amount}</td>
+                        <td style="color:var(--primary-burgundy); font-weight:900; font-size:15px;">${d.amount}</td>
                         <td><span style="background:#fff; padding:3px 8px; border-radius:10px; border:1px solid #ccc; font-weight:bold; color:#000;">${d.city}</span><br><small style="font-size:11px;">${d.address}</small></td>
                         <td>${d.name}<br><small dir="ltr">${d.phone}</small></td>
                         <td><b>${merchant}</b></td>
@@ -882,20 +908,23 @@
             const val = document.getElementById(`st-${id}`).value; 
             const shipData = window.loadedShipmentsData[id];
             try {
-                // دمج حائط البطولات للتاجر
+                // دمج حائط البطولات للتاجر (محمية لتنفذ مرة واحدة فقط وبأمر getDocs لتجنب الانهيار)
                 if(val === "تم التسليم" && shipData.status !== "تم التسليم" && !shipData.isAccounted && shipData.merchantEmail) {
                     const profit = Number(shipData.amount) - 85; 
                     const userQ = query(collection(db, "users"), where("email", "==", shipData.merchantEmail));
-                    onSnapshot(userQ, (uSnap) => {
-                        uSnap.forEach(async (uDoc) => {
-                            await updateDoc(uDoc.ref, { lifetime_sales: increment(profit > 0 ? profit : 0) });
-                        });
-                    }, {once: true});
+                    
+                    const uSnap = await getDocs(userQ);
+                    let updates = [];
+                    uSnap.forEach((uDoc) => {
+                        updates.push(updateDoc(uDoc.ref, { lifetime_sales: increment(profit > 0 ? profit : 0) }));
+                    });
+                    await Promise.all(updates);
+
                     await updateDoc(doc(db, "shipments", id), { status: val, isAccounted: true });
                 } else {
                     await updateDoc(doc(db, "shipments", id), { status: val }); 
                 }
-                Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم الحفظ', showConfirmButton:false, timer:1500}); 
+                Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم الحفظ بنجاح', showConfirmButton:false, timer:1500}); 
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
         };
         
@@ -973,17 +1002,9 @@
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
         };
 
-        async function triggerAutomatedWhatsAppAPI(phone, message) {
-            let waPhone = phone.startsWith('0') ? '+2' + phone : phone;
-            console.log(`[Axon Automation System] Background WA initiated to: ${waPhone}`);
-            return true;
-        }
-
         window.receiveTransit = async (id, phone, merchant) => {
             try {
                 await updateDoc(doc(db, "shipments", id), { status: 'قيد التوصيل', branchName: adminBranch, targetBranch: null });
-                let msg = `مرحباً بك من أكسون إكسبريس 📦\nشحنتك من (${merchant}) وصلت فرع (${adminBranch}) بأمان، وجاري تجهيزها لتسليمها لك اليوم إن شاء الله.\nتقدر تتابعها من موقعنا برقم البوليصة.`;
-                triggerAutomatedWhatsAppAPI(phone, msg);
                 Swal.fire('تم استلام الفرع', 'تم استلام الشحنة وتوجيه رسالة واتساب للعميل أوتوماتيكياً في الخلفية.', 'success');
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
         };
@@ -1044,7 +1065,7 @@
                     <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #111; padding-bottom:3px; margin-bottom:5px;">
                         <div>
                             <div style="display:flex; align-items:center; gap:10px;">
-                                <img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" style="height:40px;">
+                                <img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" class="logo-print">
                                 <h1 style="margin:0; color:#111; font-size:18px;">AXON <span style="color:#800020;">EXPRESS</span></h1>
                             </div>
                             <p style="margin:0; font-weight:bold; font-size:10px;">الفرع: ${adminBranch === 'all' ? 'إدارة عامة' : adminBranch}</p>
@@ -1139,7 +1160,7 @@
                         <div><svg id="barcodePrint" class="barcode-svg"></svg><br><b style="font-size:16px;">${data.awb}</b></div>
                         <div>
                             <div style="display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:5px;">
-                                <img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" style="height:40px; object-fit:contain;">
+                                <img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" class="logo-print">
                                 <h2 style="margin:0; color:#111; font-size:22px;">AXON <span style="color:#800020;">EXPRESS</span></h2>
                             </div>
                             <p style="margin:0; font-size:13px; font-weight:bold;">بوليصة شحن إلكترونية</p>
