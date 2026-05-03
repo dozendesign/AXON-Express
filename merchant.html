@@ -29,7 +29,7 @@
             });
         })();
 
-        // دالة الدارك مود الموحدة
+        // دوال التحكم في الواجهة (نعومة كاملة)
         window.toggleTheme = () => {
             document.documentElement.classList.toggle('dark-mode');
             const isDark = document.documentElement.classList.contains('dark-mode');
@@ -38,14 +38,12 @@
             if(themeIcon) themeIcon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
         };
 
-        // دالة الرجوع من الطباعة الموحدة
         window.closePrintView = () => {
             document.getElementById('printArea').style.display = 'none';
             document.getElementById('printArea').innerHTML = ''; 
             document.getElementById('mainHeader').style.display = 'flex';
             document.getElementById('mainContainer').style.display = 'block';
-            const chatBtn = document.getElementById('floatingChatBtn');
-            if(chatBtn) chatBtn.style.display = 'flex';
+            if(document.getElementById('floatingChatBtn')) document.getElementById('floatingChatBtn').style.display = 'flex';
         };
     </script>
 
@@ -69,6 +67,7 @@
             --dark-text: #111111; 
             --border-color: #eee; 
         }
+        
         html, body { font-family: 'Cairo', sans-serif; margin: 0; background: var(--light-bg); color: var(--dark-text); overflow-x: hidden; scroll-behavior: smooth; transition: 0.3s;}
         
         #printArea { display: none; }
@@ -124,18 +123,19 @@
         .radar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 15px; }
         .radar-card { background: #fdfdfd; border: 1px solid #e0e0e0; border-radius: 10px; padding: 15px; display: flex; flex-direction: column; gap: 10px; transition: 0.3s; position: relative;}
         
-        .search-box { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Cairo'; outline: none; margin-bottom: 15px; color: var(--dark-text);}
+        .search-box { width: 100%; padding: 12px 15px; border: 2px solid #ddd; border-radius: 8px; font-family: 'Cairo'; outline: none; margin-bottom: 15px; color: var(--dark-text); transition: 0.3s;}
+        .search-box:focus { border-color: var(--primary-blue); }
         .table-responsive { width: 100%; overflow-x: auto; background: var(--white); border-radius: 12px; border: 1px solid var(--border-color); animation: fadeIn 0.8s ease;}
         table { width: 100%; min-width: 1000px; border-collapse: collapse; }
         th, td { padding: 15px 12px; text-align: right; border-bottom: 1px solid var(--border-color); font-size: 14px;}
         th { background: var(--primary-blue); color: var(--white); font-weight: bold;}
-        .print-btn { background: var(--primary-blue); color: var(--white); border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; width: 100%; transition: 0.3s;}
-        .track-btn { background: #17a2b8; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; width: 100%; transition: 0.3s;}
+        .print-btn { background: var(--primary-blue); color: var(--white); border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; width: 100%;}
+        .track-btn { background: #17a2b8; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; width: 100%;}
         
         .card-chat-badge { position: absolute; background: var(--primary-burgundy); color: white; min-width: 22px; height: 22px; border-radius: 50%; font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: 900; border: 2px solid var(--white); box-shadow: 0 3px 6px rgba(128,0,32,0.5); z-index: 10; display: none; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; z-index: 2000; padding: 15px; backdrop-filter: blur(5px);}
-        .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; position: relative; animation: fadeIn 0.4s ease;}
+        .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; position: relative; animation: fadeIn 0.4s ease; border: 3px solid var(--primary-yellow);}
         .input-group label { font-size: 14px; font-weight: bold; color: var(--primary-blue); margin-top: 12px; display: block; }
         .input-group input, .input-group select, .modal-content textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo'; background: var(--white); color: var(--dark-text); transition: 0.3s;}
         .close-btn { position: absolute; top: 15px; left: 15px; border: none; background: none; font-size: 24px; cursor: pointer; color: var(--primary-burgundy); transition: 0.3s; z-index: 10;}
@@ -146,12 +146,11 @@
         .calc-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; font-weight: bold; }
         .calc-total { font-size: 18px; color: var(--primary-burgundy); border-top: 1px solid #ddd; padding-top: 8px; margin-top: 8px; }
 
-        /* Dark Mode CSS */
-        .dark-mode { --white: #1a1a2e; --light-bg: #16213e; --dark-text: #e0e0e0; --border-color: #0f3460; --primary-blue: #4a90e2; }
-        .dark-mode header { background: #1a1a2e; border-bottom: 4px solid var(--primary-burgundy); }
-        .dark-mode .stat-card, .dark-mode .business-info-wrapper, .dark-mode .axon-plus-section, .dark-mode .radar-card { background: #1a1a2e; border-color: #0f3460; }
-        .dark-mode input, .dark-mode select, .dark-mode textarea { background: #16213e; color: white; border-color: #0f3460; }
-        .dark-mode .table-responsive { background: #1a1a2e; border-color: #0f3460; }
+        /* Dark Mode */
+        html.dark-mode { --white: #1a1a2e; --light-bg: #16213e; --dark-text: #e0e0e0; --border-color: #0f3460; --primary-blue: #4a90e2; }
+        html.dark-mode header { background: #1a1a2e; border-bottom: 4px solid var(--primary-burgundy); }
+        html.dark-mode .stat-card, html.dark-mode .business-info-wrapper, html.dark-mode .axon-plus-section, html.dark-mode .radar-card { background: #1a1a2e; border-color: #0f3460; }
+        html.dark-mode input, html.dark-mode select, html.dark-mode textarea { background: #16213e; color: white; border-color: #0f3460; }
 
         @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -167,6 +166,9 @@
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px; }
         .box { border: 1px solid #ccc; padding: 5px; border-radius: 5px; font-size: 13px; color: #000;}
         .box h3 { margin: 0 0 5px 0; background: var(--primary-blue); color: #fff; padding: 3px; font-size: 13px; text-align: center;}
+        .cod-box { background: #fff; border: 2px solid #800020; text-align: center; padding: 5px; border-radius: 5px; margin-bottom:8px; color: #800020;}
+        .constitution-columns { column-count: 2; column-gap: 15px; font-size: 8.5px; line-height: 1.3; text-align: justify; border: 1px solid #000; padding: 8px; margin-bottom: 5px; background: #fff;}
+        .digital-sig { text-align: center; font-size: 8.5px; font-family: monospace; color: #000; border-top: 1px dashed #000; padding-top: 5px; font-weight: bold;}
     </style>
 </head>
 <body>
@@ -339,30 +341,33 @@
                 <input type="number" id="itemRealValue" placeholder="أدخل السعر الحقيقي" oninput="window.updateShippingCalc()">
             </div>
             <div id="uninsuredDiv" style="display:none; background:#fff3cd; padding:10px; border-radius:8px; border:1px solid #ffeeba; margin-top:10px;">
-                <p style="font-size:12px; color:#856404; margin:0; line-height:1.5;">⚠️ إقرار إخلاء مسؤولية عن تغليف الطرد.</p>
+                <p style="font-size:12px; color:#856404; margin:0; line-height:1.5;">⚠️ <b>إقرار إخلاء مسؤولية:</b> أقر أنا الراسل بأنني قمت بتغليف الطرد داخلياً ليتحمل صدمات النقل البري، وأتحمل المسؤولية الكاملة عن أي تلف للقطعة.</p>
             </div>
             <div class="calc-summary">
                 <div class="calc-row"><span>قيمة البضاعة:</span> <span id="lblCodAmount">0 ج.م</span></div>
                 <div class="calc-row"><span>رسوم الشحن:</span> <span id="lblShippingFee" style="color:var(--primary-blue);">0 ج.م</span></div>
                 <div class="calc-row calc-total"><span>الإجمالي للتحصيل:</span> <span id="lblTotalAmount">0 ج.م</span></div>
             </div>
-            <button class="btn-service btn-main-action" id="btnSave" style="width:100%; margin-top:15px;" onclick="window.saveShipment()">إرسال الشحنة وتوليد البوليصة</button>
+            <button class="btn-service btn-main-action" id="btnSave" style="width:100%; margin-top:15px; justify-content:center;" onclick="window.saveShipment()">
+                <i class="fa-solid fa-paper-plane"></i> <span data-i18n="btn_submit_awb">إرسال الشحنة وتوليد البوليصة بالإجمالي</span>
+            </button>
         </div>
     </div>
 
-    <div id="coldModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('coldModal').style.display='none'">✖</button><h3>🥶 طلب شحن فريش/مبرد</h3><div class="input-group"><label>وقت جاهزية الأوردر</label><input type="time" id="coldTime"></div><div class="input-group"><label>عنوان المستلم</label><input type="text" id="coldAddress"></div><div class="input-group"><label>قيمة التحصيل</label><input type="number" id="coldAmount"></div><button onclick="window.submitColdOrder()" class="btn-service" style="background:#0EA5E9; width:100%;">تأكيد الطلب</button></div></div>
-    
+    <div id="coldModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('coldModal').style.display='none'">✖</button><h3 style="color:#0EA5E9;">🥶 طلب شحن فريش/مبرد</h3><div class="input-group"><label>وقت جاهزية الأوردر</label><input type="time" id="coldTime"></div><div class="input-group"><label>عنوان المستلم</label><input type="text" id="coldAddress"></div><div class="input-group"><label>قيمة التحصيل</label><input type="number" id="coldAmount"></div><button onclick="window.submitColdOrder()" class="btn-service" style="background:#0EA5E9; width:100%;">تأكيد الطلب</button></div></div>
     <div id="homeModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('homeModal').style.display='none'">✖</button><h3>🚚 أكسون هوم</h3><input type="text" id="homeFrom" placeholder="من"><input type="text" id="homeTo" placeholder="إلى"><input type="tel" id="homePhone" placeholder="رقم التواصل"><button onclick="window.submitHomeOrder()" class="btn-service btn-home" style="width:100%;">طلب معاينة</button></div></div>
-    
     <div id="rescueModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('rescueModal').style.display='none'">✖</button><h3>🚨 أكسون إنقاذ</h3><input type="tel" id="rescuePhone" placeholder="رقم الموبايل"><input type="text" id="rescueGPS" placeholder="الموقع"><button onclick="window.submitRescueOrder()" class="btn-service btn-rescue" style="width:100%;">إرسال استغاثة</button></div></div>
-
+    
     <div id="trackChatModal" class="modal">
-        <div class="modal-content" style="height: 80vh; display: flex; flex-direction: column;">
+        <div class="modal-content" style="padding: 15px; max-width: 600px; height: 90vh; display: flex; flex-direction: column;">
             <button class="close-btn" onclick="window.closeTrackChat()">✖</button>
-            <h3 id="chatCourierName">تتبع المندوب</h3>
-            <div id="merchantMap" style="height: 200px; width: 100%; margin-bottom: 10px;"></div>
-            <div id="chatBox" style="flex: 1; overflow-y: auto; background: #f9f9f9; padding: 10px; border-radius: 8px;"></div>
-            <div style="display:flex; margin-top:10px;"><input type="text" id="chatInput" style="flex:1;"><button onclick="window.sendChatMessage()" style="background:#25D366; color:white; border:none; padding:10px;">إرسال</button></div>
+            <h3 id="chatCourierName" style="color:var(--primary-blue); margin:0;">تتبع المندوب</h3>
+            <div id="merchantMap" style="height: 200px; width: 100%; border-radius: 12px; margin: 10px 0;"></div>
+            <div id="chatBox" style="flex: 1; overflow-y: auto; background: #f4f7f6; padding: 15px; border-radius: 12px;"></div>
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <input type="text" id="chatInput" placeholder="رسالتك للكابتن..." style="flex: 1;">
+                <button onclick="window.sendChatMessage()" style="background: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 8px;">إرسال</button>
+            </div>
         </div>
     </div>
 
@@ -372,6 +377,10 @@
     </footer>
 
     <div id="printArea"></div>
+
+    <a href="https://wa.me/201147000882" class="floating-chat" id="floatingChatBtn" target="_blank">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
@@ -404,7 +413,7 @@
                 merchantName = merchantEmail.split('@')[0];
                 document.getElementById('merchantEmailDisplay').innerHTML = `مرحباً بك: ${merchantName} <i class="fa-solid fa-bolt" style="color:#ffc107;"></i>`;
                 
-                // --- 🏆 حائط البطولات والحد الائتماني الصارم ---
+                // --- 🏆 حائط البطولات والائتمان الموحد ---
                 const userQ = query(collection(db, "users"), where("email", "==", merchantEmail));
                 onSnapshot(userQ, (userSnap) => {
                     if(!userSnap.empty) {
@@ -412,7 +421,6 @@
                         const lifetimeValue = userData.lifetime_sales || 0;
                         document.getElementById('lifetimeSales').innerText = lifetimeValue.toLocaleString('en-US') + " ج.م";
                         
-                        // الحد الائتماني 1%
                         const limit = lifetimeValue * 0.01;
                         window.currentCreditLimit = limit;
                         document.getElementById('creditLimit').innerText = limit.toLocaleString('en-US') + " ج.م";
@@ -447,12 +455,17 @@
             } else { window.location.href = "index.html"; }
         });
 
-        // 🖨️ الطباعة وإصلاح اللوجو
+        // 🖨️ الطباعة وإصلاح اللوجو الإلزامي (3*2 سم) مع كل الشروط
         window.printWB = (awb, name, p1, p2, city, addr, w, pieces, amt, fragileType, mAddress, mPhone, insuranceFee) => {
             document.getElementById('mainHeader').style.display = 'none';
             document.getElementById('mainContainer').style.display = 'none';
+            document.getElementById('floatingChatBtn').style.display = 'none';
 
             const ts = new Date().toLocaleString('ar-EG');
+            let fragileBannerHTML = '';
+            if (fragileType === 'insured') fragileBannerHTML = `<div class="fragile-banner" style="background:#800020; color:#fff;">شحنة مؤمن عليها VIP 🛡️</div>`;
+            else if (fragileType === 'uninsured') fragileBannerHTML = `<div class="fragile-banner" style="background:#111; color:#E1E715;">شحنة قابلة للكسر (بدون تأمين) ⚠️</div>`;
+
             document.getElementById('printArea').innerHTML = `
                 <div class="print-controls no-print">
                     <button style="background:var(--primary-blue);" onclick="window.print()">طباعة</button>
@@ -468,15 +481,18 @@
                         </div>
                     </div>
                     <div class="info-grid">
-                        <div class="box"><h3>المرسل</h3><p>الاسم: ${merchantName}</p><p>العنوان: ${mAddress}</p></div>
-                        <div class="box"><h3>المستلم</h3><p>الاسم: ${name}</p><p>المدينة: ${city}</p></div>
+                        <div class="box"><h3>بيانات المرسل</h3><p>الاسم: ${merchantName}</p><p>الموبايل: ${mPhone}</p><p>العنوان: ${mAddress}</p><p>التاريخ: ${ts}</p></div>
+                        <div class="box"><h3>بيانات المستلم</h3><p>الاسم: ${name}</p><p>الموبايل: ${p1}</p><p>المحافظة: ${city}</p><p>العنوان: ${addr}</p></div>
                     </div>
-                    <div class="cod-box"><h2>المبلغ للتحصيل: ${amt} ج.م</h2></div>
+                    <div class="cod-box"><h2>المبلغ المطلوب تحصيله (COD): ${amt} ج.م</h2></div>
+                    ${fragileBannerHTML}
                     <div class="constitution-columns">
-                        <h4>شروط وأحكام</h4>
-                        <p>1. الشحن الائتماني يضيف 58 ج.م رسوم خدمة. 2. تأكد من أن طلباتك لا تتجاوز حدك الائتماني الموضح في لوحة التحكم.</p>
+                        <h4 style="text-align:center; column-span:all;">شروط وأحكام الناقل (Axon Express)</h4>
+                        <p>1. يستلم الناقل البضاعة بناءً على إقرار المرسل بسلامة التعبئة. 2. لا تتحمل الشركة مسئولية سوء التغليف الداخلي. 3. يتم فتح الطرد فقط بعد سداد القيمة الكاملة. 4. الشراء الائتماني يضيف 58 ج.م رسوم خدمة.</p>
+                        <h4 style="text-align:center; column-span:all;">📝 إقرارات المرسل</h4>
+                        <p>أتعهد بصحة البيانات المذكورة وبأن البضاعة لا تحتوي على مواد محظورة أو خطرة.</p>
                     </div>
-                    <div class="digital-sig">تم الإصدار في: ${ts}</div>
+                    <div class="digital-sig">توقيع رقمي موثق للتاجر: [Merchant:${merchantName}] | [TS:${ts}]</div>
                 </div>`;
             document.getElementById('printArea').style.display = 'block';
             setTimeout(() => JsBarcode("#bc", awb, {format:"CODE128", width:1.5, height:35, displayValue:false}), 100);
@@ -484,33 +500,40 @@
 
         const governorates = ["القاهرة", "الجيزة", "الإسكندرية", "الدقهلية", "الغربية", "المنوفية", "الشرقية", "القليوبية", "البحيرة", "كفر الشيخ", "دمياط", "الإسماعيلية", "بورسعيد", "السويس", "مرسى مطروح", "شمال سيناء", "جنوب سيناء", "البحر الأحمر", "الفيوم", "بني سويف", "المنيا", "أسيوط", "سوهاج", "قنا", "الأقصر", "أسوان", "الوادي الجديد"];
 
-        // Functions Logic
         window.getCityPrice = (city) => livePrices[city] || 85;
+        
         window.saveBusinessInfo = async () => {
             const p = document.getElementById('merchantBusinessPhone').value.trim();
             const a = document.getElementById('merchantBusinessAddress').value.trim();
+            if(!p || !a) return Swal.fire('نقص بيانات','','warning');
             await setDoc(doc(db, "merchant_profiles", merchantEmail), { businessPhone: p, businessAddress: a }, { merge: true });
-            Swal.fire('تم الحفظ','','success');
+            Swal.fire('تم الحفظ بنجاح','','success');
         };
+
         window.updateShippingCalc = () => {
             const cod = Number(document.getElementById('codAmount').value) || 0;
             const city = document.getElementById('recCity').value.trim();
+            const weight = Number(document.getElementById('recWeight').value) || 1;
             const base = window.getCityPrice(city);
+            let extra = weight > 2 ? Math.ceil(weight - 2) * 8 : 0;
             document.getElementById('lblCodAmount').innerText = cod + " ج.م";
-            document.getElementById('lblShippingFee').innerText = base + " ج.م";
-            document.getElementById('lblTotalAmount').innerText = (cod + base) + " ج.م";
+            document.getElementById('lblShippingFee').innerText = (base + extra) + " ج.م";
+            document.getElementById('lblTotalAmount').innerText = (cod + base + extra) + " ج.م";
         };
+
         window.submitEshteryly = async () => {
             const pay = document.getElementById('eshPayment').value;
             const details = document.getElementById('eshDetails').value.trim();
-            // هنا بيتم فحص الحد الائتماني لو اختار خصم من المستحقات
+            const addr = document.getElementById('eshAddress').value.trim();
+            if(!details || !addr || !pay) return Swal.fire('بيانات ناقصة','','warning');
+            
             if(pay === 'balance' && window.currentCreditLimit <= 0) {
-                return Swal.fire('الائتمان غير كافي', 'عذراً، حدك الائتماني 0 حالياً. لا يمكنك استخدام الشراء الائتماني حتى تزيد مبيعاتك في حائط البطولات.', 'error');
+                return Swal.fire('ائتمان غير كافٍ', 'حدك الائتماني حالياً 0. برجاء زيادة مبيعاتك لاستخدام هذه الخدمة.', 'error');
             }
+            
             await addDoc(collection(db, "eshteryly_orders"), {
                 merchantEmail, details: details + (pay === 'balance' ? ' | (شراء ائتماني + 58ج)' : ''),
-                address: document.getElementById('eshAddress').value, paymentMethod: pay,
-                status: "جاري البحث عن مندوب", timestamp: new Date(), branchName
+                address: addr, paymentMethod: pay, status: "جاري البحث عن مندوب", timestamp: new Date(), branchName
             });
             document.getElementById('eshterylyModal').style.display='none';
             Swal.fire('تم البث للرادار','','success');
@@ -523,32 +546,57 @@
             document.getElementById('vfcashDetails').style.display = val === 'vfcash' ? 'block' : 'none';
         };
 
-        // Remaining logic (Shipments, Radar, etc.) as requested
         function loadShipments() {
             onSnapshot(query(collection(db, "shipments"), where("merchantEmail", "==", merchantEmail)), (snap) => {
                 let html = "", count = 0, total = 0;
-                snap.forEach(d => {
-                    const data = d.data(); if(data.deleted) return;
+                let docs = [];
+                snap.forEach(d => { if(!d.data().deleted) docs.push({id: d.id, ...d.data()}); });
+                docs.sort((a,b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+
+                docs.forEach(data => {
                     count++; total += (data.amount || 0);
                     const ts = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleDateString('ar-EG') : '-';
-                    html += `<tr><td>${data.awb || d.id.substring(0,5)}</td><td>${ts}</td><td>${data.name}</td><td>${data.phone}</td><td>${data.city}</td><td>${data.amount}</td><td>${data.status}</td><td><button onclick="window.printWB('${data.awb}','${data.name}','${data.phone}','','${data.city}','${data.address}','1','1','${data.amount}','${data.fragile}','${merchantAddress}','${merchantPhone}',0)" class="print-btn">طباعة</button></td></tr>`;
+                    html += `<tr><td>${data.awb || data.id.substring(0,6)}</td><td>${ts}</td><td><b>${data.name}</b></td><td>${data.phone}</td><td>${data.city}</td><td style="color:var(--primary-burgundy); font-weight:bold;">${data.amount}</td><td>${data.status}</td><td><button onclick="window.printWB('${data.awb}','${data.name}','${data.phone}','','${data.city}','${data.address}','1','1','${data.amount}','${data.fragile}','${merchantAddress}','${merchantPhone}',0)" class="print-btn">طباعة</button></td></tr>`;
                 });
                 document.getElementById('tableBody').innerHTML = html;
                 document.getElementById('totalShipments').innerText = count;
-                document.getElementById('totalMoney').innerText = total + " ج.م";
+                document.getElementById('totalMoney').innerText = total.toLocaleString() + " ج.م";
             });
         }
+
         function loadMerchantRadar() {
             onSnapshot(query(collection(db, "eshteryly_orders"), where("merchantEmail", "==", merchantEmail)), (snap) => {
                 let html = "";
                 snap.forEach(d => {
                     const data = d.data();
-                    html += `<div class="radar-card"><h4>${data.status}</h4><p>${data.details}</p></div>`;
+                    let cardClass = data.details.includes('كولد') ? 'type-cold' : (data.paymentMethod === 'pickup' ? '' : 'type-buy');
+                    html += `<div class="radar-card ${cardClass}"><h4>${data.status}</h4><p>${data.details}<br><b>العنوان:</b> ${data.address}</p></div>`;
                 });
                 document.getElementById('radarGridBody').innerHTML = html;
                 document.getElementById('merchantRadarSection').style.display = snap.empty ? 'none' : 'block';
             });
         }
+
+        window.saveShipment = async () => {
+            const name = document.getElementById('recName').value.trim();
+            const phone = document.getElementById('recPhone').value.trim();
+            const city = document.getElementById('recCity').value.trim();
+            const addr = document.getElementById('recAddress').value.trim();
+            const cod = Number(document.getElementById('codAmount').value) || 0;
+            if(!name || !phone || !city || !cod) return Swal.fire('نقص بيانات','','warning');
+            
+            const base = window.getCityPrice(city);
+            const total = cod + base;
+            const awb = "AXN" + Math.random().toString(36).substr(2, 6).toUpperCase();
+            
+            await setDoc(doc(collection(db, "shipments")), {
+                merchantEmail, name, phone, city, address: addr, amount: total, awb, 
+                status: "بوليصة جديدة", timestamp: new Date(), branchName, deleted: false
+            });
+            document.getElementById('addModal').style.display = 'none';
+            Swal.fire('تم الإصدار بنجاح','','success');
+        };
+
         window.logout = () => signOut(auth).then(() => window.location.href="index.html");
     </script>
 </body>
