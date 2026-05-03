@@ -205,7 +205,7 @@
 
             <div id="journal" class="tab-content">
                 <div class="table-responsive">
-                    <table>
+                    <tr>
                         <thead><tr><th data-i18n="th_date">التاريخ</th><th data-i18n="th_type">النوع</th><th data-i18n="th_merchant">التاجر</th><th data-i18n="th_courier">المندوب</th><th data-i18n="th_amt">الإجمالي المُحصل</th><th data-i18n="th_fees">تأمين/شحن إضافي</th><th data-i18n="th_status">الحالة</th></tr></thead>
                         <tbody id="tblJournal"></tbody>
                     </table>
@@ -235,9 +235,9 @@
                     <button class="btn-action" style="background:var(--primary-burgundy);" onclick="alert('يمكنك إضافة المصروفات لاحقاً عبر واجهة منفصلة')">+ <span data-i18n="add_exp">تسجيل مصروف</span></button>
                 </div>
                 <div class="table-responsive">
-                    <tr>
+                    <table>
                         <thead><tr><th data-i18n="th_date">التاريخ</th><th data-i18n="th_desc">البند</th><th data-i18n="th_amt">المبلغ</th></tr></thead>
-                        <tbody id="tblExpenses"><tr><td colspan='3' style='text-align:center;'>لا توجد مصروفات مسجلة حتى الآن</td></tr>
+                        <tbody id="tblExpenses"><tr><td colspan='3' style='text-align:center;'>لا توجد مصروفات مسجلة حتى الآن</td></tr></tbody>
                     </table>
                 </div>
             </div>
@@ -321,8 +321,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, doc, query, where, updateDoc, writeBatch, getDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-        
+        import { getFirestore, collection, onSnapshot, doc, query, where, updateDoc, writeBatch, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
         const firebaseConfig = {
             apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
             authDomain: "axon-express-2f534.firebaseapp.com",
@@ -334,100 +334,113 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        
-        // متغيرات عامة
+
         let gD = { shipments: [], radar: [] };
-        let lP = {};               // أسعار الشحن
-        let sD = { merchants: {}, couriers: {} }; // بيانات ملخصة
+        let lP = {};
+        let sD = { merchants: {}, couriers: {} };
+
+        let adminRole = "super_admin", adminBranch = "all";
+        let currentViewedCourier = "", currentViewedMerchant = "";
         
-        let adminRole = "super_admin";
-        let adminBranch = "all";
-        let currentViewedCourier = "";
-        let currentViewedMerchant = "";
-        
-        // مستمعات الـ onSnapshot (سنقوم بتجديدها عند تغيير الفرع)
-        let unsubShipments = null;
-        let unsubRadar = null;
-        let unsubPrices = null;
-        
-        // ================= 1. جلب بيانات المستخدم من Firestore =================
+        let unsubShipments = null, unsubRadar = null, unsubPrices = null;
+
         async function fetchUserRoleAndBranch(user) {
             try {
-                // أولاً: التحقق من جدول "admins" (للمستخدمين الإداريين)
                 const adminDoc = await getDoc(doc(db, "admins", user.uid));
-                if (adminDoc.exists()) {
+                if(adminDoc.exists()) {
                     adminRole = adminDoc.data().role || "branch_admin";
                     adminBranch = adminDoc.data().branchName || "all";
                     localStorage.setItem('axon_user_role', adminRole);
                     localStorage.setItem('axon_branch', adminBranch);
-                    return;
+                } else {
+                    adminRole = "none";
+                    Swal.fire('غير مسموح', 'ليس لديك صلاحية الوصول إلى الخزينة.', 'error').then(() => signOut(auth));
                 }
-                
-                // غير مسموح - ليس أدمن
-                adminRole = "none";
-                adminBranch = "all";
-                Swal.fire('غير مسموح', 'ليس لديك صلاحية الوصول إلى الخزينة.', 'error').then(() => { signOut(auth); });
-            } catch (err) {
-                console.error("Error fetching user role:", err);
-                Swal.fire('خطأ', 'حدث خطأ في جلب صلاحيات المستخدم', 'error');
-            }
+            } catch(err) { console.error(err); }
         }
-        
-        // ================= 2. إعداد الاستماع للبيانات بناءً على الفرع =================
+
         function setupListeners() {
-            if (unsubShipments) unsubShipments();
-            if (unsubRadar) unsubRadar();
-            if (unsubPrices) unsubPrices();
-            
-            unsubPrices = onSnapshot(doc(db, "settings", "shipping_prices"), (snap) => {
-                if (snap.exists()) lP = { ...lP, ...snap.data() };
-                processData();
-            });
+            if(unsubShipments) unsubShipments();
+            if(unsubRadar) unsubRadar();
+            if(unsubPrices) unsubPrices();
+
+            unsubPrices = onSnapshot(doc(db, "settings", "shipping_prices"), snap => { if(snap.exists()) lP = { ...lP, ...snap.data() }; processData(); });
             
             let shipmentsQuery = collection(db, "shipments");
             let radarQuery = collection(db, "eshteryly_orders");
             
-            if (adminRole === 'branch_admin' && adminBranch !== 'all') {
+            if(adminRole === 'branch_admin' && adminBranch !== 'all') {
                 shipmentsQuery = query(collection(db, "shipments"), where("branchName", "==", adminBranch));
                 radarQuery = query(collection(db, "eshteryly_orders"), where("branchName", "==", adminBranch));
-            } else if (adminRole === 'super_admin' && document.getElementById('branchFilter').value !== 'all') {
+            } else if(adminRole === 'super_admin' && document.getElementById('branchFilter').value !== 'all') {
                 const selected = document.getElementById('branchFilter').value;
-                if (selected !== 'all') {
+                if(selected !== 'all') {
                     shipmentsQuery = query(collection(db, "shipments"), where("branchName", "==", selected));
                     radarQuery = query(collection(db, "eshteryly_orders"), where("branchName", "==", selected));
                 }
             }
             
-            unsubShipments = onSnapshot(shipmentsQuery, (snap) => {
-                gD.shipments = [];
-                snap.forEach(docSnap => gD.shipments.push({ id: docSnap.id, type: 'shipment', ...docSnap.data() }));
-                processData();
-            });
-            
-            unsubRadar = onSnapshot(radarQuery, (snap) => {
-                gD.radar = [];
-                snap.forEach(docSnap => gD.radar.push({ id: docSnap.id, type: 'radar', ...docSnap.data() }));
-                processData();
-            });
+            unsubShipments = onSnapshot(shipmentsQuery, snap => { gD.shipments = []; snap.forEach(d => gD.shipments.push({ id: d.id, type: 'shipment', ...d.data() })); processData(); });
+            unsubRadar = onSnapshot(radarQuery, snap => { gD.radar = []; snap.forEach(d => gD.radar.push({ id: d.id, type: 'radar', ...d.data() })); processData(); });
         }
-        
-        // ================= 3. معالجة البيانات وعرض الإحصائيات =================
+
+        onAuthStateChanged(auth, async (user) => {
+            if(user) {
+                await fetchUserRoleAndBranch(user);
+                if(adminRole === "none") return;
+                if(adminRole === 'branch_admin') {
+                    const filterSelect = document.getElementById('branchFilter');
+                    filterSelect.innerHTML = `<option value="${adminBranch}">${adminBranch}</option>`;
+                    filterSelect.value = adminBranch;
+                    filterSelect.disabled = true;
+                }
+                setupListeners();
+            } else { window.location.href = "index.html"; }
+        });
+
+        window.logout = () => { localStorage.clear(); signOut(auth).then(() => window.location.href = "index.html"); };
+        window.onBranchChange = () => { if(adminRole === 'super_admin') setupListeners(); };
+        window.showTab = window.showTab; // already defined in inline script
+
+        function getRealShippingCost(city) {
+            if(!city) return 85;
+            let normalized = city.trim().replace(/\s+/g, ' ').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/[ىي]/g, 'ي');
+            // search extra zones
+            for(let zone in lP) {
+                if(zone.includes('-')) {
+                    let parts = zone.split('-');
+                    let normZone = zone.replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/[ىي]/g, 'ي');
+                    let sub = parts[1] ? parts[1].trim().replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/[ىي]/g, 'ي') : "";
+                    if(normZone === normalized || (sub && normalized.includes(sub))) {
+                        let parent = parts[0].trim();
+                        let base = Number(lP[parent]) || 85;
+                        let extra = Number(lP[zone]) || 0;
+                        return base + extra;
+                    }
+                }
+            }
+            // search governorates
+            for(let gov in lP) {
+                if(!gov.includes('-')) {
+                    let normGov = gov.replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/[ىي]/g, 'ي');
+                    if(normalized.includes(normGov) || normGov.includes(normalized)) return Number(lP[gov]) || 85;
+                }
+            }
+            return 85;
+        }
+
         function processData() {
+            const branchFilter = document.getElementById('branchFilter').value;
             sD = { merchants: {}, couriers: {} };
-            let totalCash = 0;
-            let totalProfit = 0;
-            let htmlJournal = "";
-            
-            const combined = [...gD.shipments, ...gD.radar];
+            let totalCash = 0, totalProfit = 0, htmlJournal = "";
+            let combined = [...gD.shipments, ...gD.radar];
             combined.sort((a,b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
-            
+
             combined.forEach(v => {
-                if (v.deleted) return;
-                
+                if(v.deleted) return;
                 const itemBranch = v.branchName || v.city || "غير محدد";
-                const selectedBranch = document.getElementById('branchFilter').value;
-                if (adminRole !== 'super_admin' && selectedBranch !== 'all' && !itemBranch.includes(selectedBranch)) return;
-                
+                if(branchFilter !== 'all' && !itemBranch.includes(branchFilter)) return;
+
                 let amt = Number(v.amount || 0);
                 let insuranceFee = Number(v.insuranceFee || 0);
                 let weight = Number(v.weight || 1);
@@ -436,193 +449,128 @@
                 let courier = v.courierName || "غير محدد";
                 let type = v.type === 'shipment' ? '📦 بوليصة' : '📡 رادار';
                 let awb = v.awb || ("AXN" + (v.id ? v.id.substring(0,5) : "00000")).toUpperCase();
-                
-                let baseFee = lP[itemBranch] ? Number(lP[itemBranch]) : 85;
-                if (itemBranch.includes("قاهرة") || itemBranch.includes("جيزة")) baseFee = lP.cairo || baseFee;
-                if (itemBranch.includes("إسكندرية")) baseFee = lP.alex || baseFee;
-                if (itemBranch.includes("بحيرة")) baseFee = lP.beheira || baseFee;
-                
-                let overWeightFee = 0;
-                if (weight > 2) overWeightFee = Math.ceil(weight - 2) * 8;
+
+                let baseFee = getRealShippingCost(itemBranch);
+                let overWeightFee = (weight > 2) ? Math.ceil(weight - 2) * 8 : 0;
                 let totalShippingDeduction = baseFee + overWeightFee;
                 let totalCompanyProfit = totalShippingDeduction + insuranceFee;
                 let totalCollectedFromClient = amt + insuranceFee;
-                
-                let feeDetailsHTML = `${baseFee} (شحن)`;
-                if (overWeightFee > 0) feeDetailsHTML += `<br><span style="color:#fd7e14;">+${overWeightFee} (وزن)</span>`;
-                if (insuranceFee > 0) feeDetailsHTML += `<br><span style="color:var(--primary-black);">+${insuranceFee} (تأمين VIP)</span>`;
-                
-                htmlJournal += `<tr>
-                    <td>${v.timestamp?.toDate().toLocaleDateString('ar-EG') || '-'}</td>
-                    <td>${type}</td>
-                    <td>${merchant.split('@')[0]}</td>
-                    <td>${courier}</td>
-                    <td style="color:var(--primary-burgundy);font-weight:bold; font-size:16px;">${totalCollectedFromClient}</td>
-                    <td>${feeDetailsHTML}</td>
-                    <td>${status}</td>
-                </tr>`;
-                
-                // تجميع بيانات المناديب
-                if (v.courierName && v.courierName !== "غير محدد") {
-                    if (!sD.couriers[courier]) sD.couriers[courier] = { shipments: [], radar: [], totalCollected: 0, count: 0 };
+
+                htmlJournal += `<tr><td>${v.timestamp?.toDate().toLocaleDateString('ar-EG') || '-'}<td>${type}<td>${merchant.split('@')[0]}<td>${courier}<td style="color:var(--primary-burgundy);font-weight:bold;">${totalCollectedFromClient}<td>${baseFee} (شحن)${overWeightFee ? ` + ${overWeightFee} (وزن)` : ''}${insuranceFee ? ` + ${insuranceFee} (تأمين)` : ''}<td>${status}<\/tr>`;
+
+                // Couriers data
+                if(v.courierName && v.courierName !== "غير محدد") {
+                    if(!sD.couriers[courier]) sD.couriers[courier] = { shipments: [], radar: [], totalCollected: 0, count: 0 };
                     sD.couriers[courier].count += 1;
-                    
-                    if (v.type === 'shipment') {
-                        sD.couriers[courier].shipments.push({ ...v, totalCollected: totalCollectedFromClient, awb });
-                    } else {
-                        sD.couriers[courier].radar.push({ ...v, totalCollected: totalCollectedFromClient });
-                    }
-                    
-                    if (status === "تم التسليم" || status === "تم التسليم بنجاح") {
-                        sD.couriers[courier].totalCollected += totalCollectedFromClient;
-                    }
+                    if(v.type === 'shipment') sD.couriers[courier].shipments.push({ ...v, totalCollected: totalCollectedFromClient, awb });
+                    else sD.couriers[courier].radar.push({ ...v, totalCollected: totalCollectedFromClient });
+                    if(status === "تم التسليم" || status === "تم التسليم بنجاح") sD.couriers[courier].totalCollected += totalCollectedFromClient;
                 }
-                
-                // تجميع بيانات التجار (للبوالص المسلمة فقط - واستبعاد "تمت التسوية" من قائمة المستحقات)
-                if ((status === "تم التسليم" || status === "تم التسليم بنجاح") && v.type === 'shipment' && status !== "تمت التسوية") {
-                    if (!sD.merchants[merchant]) sD.merchants[merchant] = { items: [], totalCod: 0, totalFees: 0, count: 0 };
-                    
+
+                // Merchants data (only completed shipments, excluding settled)
+                if((status === "تم التسليم" || status === "تم التسليم بنجاح") && v.type === 'shipment' && status !== "تمت التسوية") {
+                    if(!sD.merchants[merchant]) sD.merchants[merchant] = { items: [], totalCod: 0, totalFees: 0, count: 0 };
                     let netForThisItem = amt - totalShippingDeduction;
                     sD.merchants[merchant].items.push({ ...v, awb, totalShippingDeduction, netForThisItem });
                     sD.merchants[merchant].totalCod += amt;
                     sD.merchants[merchant].totalFees += totalShippingDeduction;
                     sD.merchants[merchant].count += 1;
-                    
                     totalCash += totalCollectedFromClient;
                     totalProfit += totalCompanyProfit;
                 }
             });
-            
             document.getElementById('statCustody').innerText = totalCash + " ج.م";
             document.getElementById('statProfit').innerText = totalProfit + " ج.م";
             document.getElementById('statDues').innerText = (totalCash - totalProfit) + " ج.م";
-            document.getElementById('tblJournal').innerHTML = htmlJournal || "<tr><td colspan='7' style='text-align:center;'>لا توجد معاملات مسجلة</td></tr>";
-            
+            document.getElementById('tblJournal').innerHTML = htmlJournal || "<tr><td colspan='7'>لا توجد معاملات مسجلة<\/tr>";
             document.getElementById('loading').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
-            
             renderSubTables();
         }
-        
+
         function renderSubTables() {
-            // جدول المناديب
             let courierHtml = "";
-            for (let c in sD.couriers) {
-                courierHtml += `<tr>
-                    <td><b>${c}</b></td>
-                    <td>${sD.couriers[c].count} مهمة مسندة</td>
-                    <td style="color:var(--primary-burgundy);font-weight:bold; font-size:16px;">${sD.couriers[c].totalCollected} ج.م (مُحصل)</td>
-                    <td><button class="btn-action btn-view" onclick="window.openCourierModal('${c}')"><i class="fa-solid fa-list-check"></i> فتح المانيفست والتصفية</button></td>
-                </tr>`;
+            for(let c in sD.couriers) {
+                courierHtml += `<tr><td><b>${c}</b><td>${sD.couriers[c].count} مهمة مسندة<td style="color:var(--primary-burgundy);font-weight:bold;">${sD.couriers[c].totalCollected} ج.م<td><button class="btn-action btn-view" onclick="window.openCourierModal('${c}')">فتح المانيفست والتصفية<\/button><\/tr>`;
             }
-            document.getElementById('tblCouriers').innerHTML = courierHtml || "<tr><td colspan='4' style='text-align:center;'>لا يوجد عهد مسندة حالية</td></tr>";
+            document.getElementById('tblCouriers').innerHTML = courierHtml || "<tr><td colspan='4'>لا يوجد عهد مسندة حالية<\/tr>";
             
-            // جدول التجار
             let merchantHtml = "";
-            for (let m in sD.merchants) {
-                let mData = sD.merchants[m];
-                let net = mData.totalCod - mData.totalFees;
-                merchantHtml += `<tr>
-                    <td><b>${m.split('@')[0]}</b></td>
-                    <td>${mData.count} بوليصة</td>
-                    <td style="font-weight:bold;">${mData.totalCod} ج.م</td>
-                    <td style="color:var(--primary-burgundy);">${mData.totalFees} ج.م</td>
-                    <td style="color:#10B981;font-weight:bold; font-size:16px;">${net} ج.م</td>
-                    <td><button class="btn-action btn-view" onclick="window.openMerchantModal('${m}')"><i class="fa-solid fa-file-invoice-dollar"></i> كشف الحساب والتسوية</button></td>
-                </tr>`;
+            for(let m in sD.merchants) {
+                let data = sD.merchants[m];
+                let net = data.totalCod - data.totalFees;
+                merchantHtml += `<tr><td><b>${m.split('@')[0]}</b><td>${data.count} بوليصة<td>${data.totalCod} ج.م<td style="color:var(--primary-burgundy);">${data.totalFees} ج.م<td style="color:#10B981;font-weight:bold;">${net} ج.م<td><button class="btn-action btn-view" onclick="window.openMerchantModal('${m}')">كشف الحساب والتسوية<\/button><\/tr>`;
             }
-            document.getElementById('tblMerchants').innerHTML = merchantHtml || "<tr><td colspan='6' style='text-align:center;'>لا يوجد مستحقات حالية (البوالص إما قيد التوصيل أو تمت تسويتها)</td></tr>";
+            document.getElementById('tblMerchants').innerHTML = merchantHtml || "<tr><td colspan='6'>لا يوجد مستحقات حالية<\/tr>";
         }
-        
+
         window.openCourierModal = (courierName) => {
-            const data = sD.couriers[courierName];
-            if (!data) return;
             currentViewedCourier = courierName;
+            const data = sD.couriers[courierName];
+            if(!data) return;
             document.getElementById('cmName').innerText = courierName;
             document.getElementById('cmTotalCash').innerText = data.totalCollected + " ج.م";
             document.getElementById('cmTotalTasks').innerText = data.count;
-            
             let sHtml = "";
-            data.shipments.forEach(s => {
-                let statusColor = s.status.includes('تم التسليم') ? '#10B981' : (s.status.includes('مرتجع') ? '#6c757d' : '#f59e0b');
-                sHtml += `<tr>
-                    <td><b>${s.awb}</b></td>
-                    <td>${(s.merchantEmail || "إدارة").split('@')[0]}</td>
-                    <td>${s.name}</td>
-                    <td style="font-weight:bold;">${s.totalCollected} ج.م</td>
-                    <td style="color:${statusColor}; font-weight:bold;">${s.status}</td>
-                </tr>`;
-            });
-            document.getElementById('cmShipmentsBody').innerHTML = sHtml || "<tr><td colspan='5' style='text-align:center;'>لا يوجد بوالص</td></tr>";
-            
+            data.shipments.forEach(s => { sHtml += `<tr><td><b>${s.awb}<\/td><td>${(s.merchantEmail||"").split('@')[0]}<\/td><td>${s.name}<\/td><td>${s.totalCollected} ج.م<\/td><td>${s.status}<\/tr>`; });
+            document.getElementById('cmShipmentsBody').innerHTML = sHtml || "<tr><td colspan='5'>لا يوجد بوالص<\/tr>";
             let rHtml = "";
-            data.radar.forEach(r => {
-                let statusColor = r.status.includes('تم التسليم') ? '#10B981' : '#f59e0b';
-                let collected = (r.paymentMethod === 'pickup' ? 'أمر بيكب مجاني' : (r.totalCollected ? r.totalCollected + ' ج.م' : 'غير محدد'));
-                rHtml += `<tr>
-                    <td>${r.details}</td>
-                    <td>${r.address}</td>
-                    <td style="font-weight:bold;">${collected}</td>
-                    <td style="color:${statusColor}; font-weight:bold;">${r.status}</td>
-                </tr>`;
-            });
-            document.getElementById('cmRadarBody').innerHTML = rHtml || "<tr><td colspan='4' style='text-align:center;'>لا يوجد مهام رادار</td></tr>";
+            data.radar.forEach(r => { rHtml += `<tr><td>${r.details}<\/td><td>${r.address}<\/td><td>${r.paymentMethod === 'pickup' ? 'بيكب' : r.totalCollected + ' ج.م'}<\/td><td>${r.status}<\/tr>`; });
+            document.getElementById('cmRadarBody').innerHTML = rHtml || "<tr><td colspan='4'>لا يوجد مهام رادار<\/tr>";
             document.getElementById('courierModal').style.display = 'flex';
         };
-        
+
         window.openMerchantModal = (merchantEmail) => {
-            const data = sD.merchants[merchantEmail];
-            if (!data) return;
             currentViewedMerchant = merchantEmail;
+            const data = sD.merchants[merchantEmail];
+            if(!data) return;
             let net = data.totalCod - data.totalFees;
             document.getElementById('mmName').innerText = merchantEmail.split('@')[0];
             document.getElementById('mmTotalCod').innerText = data.totalCod + " ج.م";
             document.getElementById('mmTotalFees').innerText = data.totalFees + " ج.م";
             document.getElementById('mmNet').innerText = net + " ج.م";
-            
             let mHtml = "";
-            data.items.forEach(i => {
-                mHtml += `<tr>
-                    <td>${i.timestamp?.toDate().toLocaleDateString('ar-EG') || '-'}</td>
-                    <td><b>${i.awb}</b></td>
-                    <td>${i.name} (${i.city})</td>
-                    <td style="font-weight:bold;">${i.amount}</td>
-                    <td style="color:var(--primary-burgundy);">${i.totalShippingDeduction}</td>
-                    <td style="color:#10B981; font-weight:bold;">${i.netForThisItem} ج.م</td>
-                </tr>`;
-            });
+            data.items.forEach(i => { mHtml += `<tr><td>${i.timestamp?.toDate().toLocaleDateString('ar-EG') || '-'}<td><b>${i.awb}<\/b><td>${i.name} (${i.city})<td>${i.amount}<td style="color:var(--primary-burgundy);">${i.totalShippingDeduction}<td style="color:#10B981;">${i.netForThisItem} ج.م<\/tr>`; });
             document.getElementById('mmShipmentsBody').innerHTML = mHtml;
             document.getElementById('merchantModal').style.display = 'flex';
         };
-        
-        // ================= دوال الطباعة (مختصرة للاختصار ولكنها تعمل) =================
+
+        // ========== طباعة كشوف التصفية ==========
         window.printCourierSheet = () => {
             const data = sD.couriers[currentViewedCourier];
-            if (!data) return;
-            const timestamp = new Date().toLocaleString('ar-EG');
-            let tableRows = '', totalManifestCash = 0;
-            data.shipments.forEach(s => { let sc = Number(s.totalCollected)||0; totalManifestCash += sc; tableRows += `<tr><td>${s.awb}</td><td>${(s.merchantEmail||"").split('@')[0]}</td><td>${s.name} ${s.phone}<br>${s.city}</td><td>${sc} ج.م</td></tr>`; });
-            data.radar.forEach(r => { let rc = r.paymentMethod==='pickup'?0:(Number(r.totalCollected)||0); totalManifestCash += rc; tableRows += `<tr><td>رادار</td><td>-</td><td>${r.details}<br>${r.address}</td><td>${rc} ج.م</td></tr>`; });
-            let printHtml = `<div class="print-wrapper"><div class="print-header"><div><h1><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" style="height:30px;"> AXON EXPRESS</h1></div><div><h2>تصفية عهدة كابتن: ${currentViewedCourier}</h2><p>${timestamp}</p></div></div><table class="print-table"><thead><tr><th>البوليصة</th><th>التاجر</th><th>المستلم / التفاصيل</th><th>المبلغ</th></tr></thead><tbody>${tableRows}</tbody><tfoot><tr><td colspan="4"><div>إجمالي العهدة: ${totalManifestCash} ج.م</div></td></tr></tfoot></table><div>التوقيعات: ...................</div></div>`;
+            if(!data) return;
+            const ts = new Date().toLocaleString('ar-EG');
+            let rows = "", totalManifest = 0, i=1;
+            data.shipments.forEach(s => { let c = Number(s.totalCollected)||0; totalManifest+=c; rows+=`<tr><td>${i++}<td>${s.awb}<td>${(s.merchantEmail||"").split('@')[0]}<td>${s.name} (${s.phone})<br>${s.city}<td>${c} ج.م<\/tr>`; });
+            data.radar.forEach(r => { let c = r.paymentMethod==='pickup'?0:(Number(r.totalCollected)||0); totalManifest+=c; rows+=`<tr style="background:#f8f9fa;"><td>${i++}<td>رادار<td>-<td>${r.details}<br>${r.address}<td>${c} ج.م<\/tr>`; });
+            if(!rows) rows="<tr><td colspan='5'>لا توجد عهدة<\/tr>";
+            const printHtml = `<div class="print-wrapper"><div class="print-header"><div><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" style="height:30px;"><h1>AXON EXPRESS</h1><p>الخزينة المركزية - فرع ${adminBranch}</p></div><div><h2>تصفية عهدة كابتن</h2><p>${ts}</p></div><div><h2>${currentViewedCourier}</h2></div></div>
+            <table class="print-table"><thead><tr><th>م</th><th>رقم البوليصة</th><th>التاجر</th><th>بيانات المستلم</th><th>المبلغ المطلوب توريده</th></tr></thead><tbody>${rows}</tbody>
+            <tfoot><tr><td colspan="5"><div style="border:2px solid #800020; background:#fff3cd;"><h2>إجمالي العهدة: ${totalManifest} ج.م</h2></div></td></tr></tfoot></table>
+            <div style="display:flex; justify-content:space-between; border:1px solid #000; padding:10px;"><div>توقيع المندوب: ${currentViewedCourier}</div><div>توقيع الخزينة: ........</div><div>التاريخ: ${ts.split(',')[0]}</div></div></div>`;
             document.getElementById('printArea').innerHTML = printHtml;
             window.print();
         };
-        
+
         window.printMerchantSheet = () => {
             const data = sD.merchants[currentViewedMerchant];
-            if (!data) return;
-            const timestamp = new Date().toLocaleString('ar-EG');
-            let tableRows = '', calcNet = 0;
-            data.items.forEach(i => { calcNet += i.netForThisItem; tableRows += `<tr><td>${i.timestamp?.toDate().toLocaleDateString()||'-'}</td><td><b>${i.awb}</b></td><td>${i.name}</td><td>${i.amount}</td><td>${i.totalShippingDeduction}</td><td>${i.netForThisItem}</td></tr>`; });
-            let printHtml = `<div class="print-wrapper"><div class="print-header"><div><h1><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" style="height:30px;"> AXON EXPRESS</h1></div><div><h2>كشف حساب تاجر: ${currentViewedMerchant.split('@')[0]}</h2><p>${timestamp}</p></div></div><div>عدد البوالص: ${data.count}</div><table class="print-table"><thead><tr><th>التاريخ</th><th>البوليصة</th><th>المستلم</th><th>COD</th><th>مخصوم</th><th>الصافي</th></tr></thead><tbody>${tableRows}</tbody><tfoot><tr><td colspan="6"><div>الصافي المستحق: ${calcNet} ج.م</div></td></tr></tfoot></table><div>التوقيعات: ...................</div></div>`;
+            if(!data) return;
+            const ts = new Date().toLocaleString('ar-EG');
+            let rows = "", totalNet = 0;
+            data.items.forEach(i => { totalNet += Number(i.netForThisItem)||0; rows+=`<tr><td>${i.timestamp?.toDate().toLocaleDateString('ar-EG')||'-'}<td>${i.awb}<td>${i.name} (${i.city})<td>${i.amount}<td>${i.totalShippingDeduction}<td style="color:#10B981;">${i.netForThisItem} ج.م<\/tr>`; });
+            const printHtml = `<div class="print-wrapper"><div class="print-header"><div><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" style="height:30px;"><h1>AXON EXPRESS</h1><p>إدارة الحسابات - فرع ${adminBranch}</p></div><div><h2>كشف حساب تاجر</h2><p>${ts}</p></div><div><h2>${currentViewedMerchant.split('@')[0]}</h2></div></div>
+            <div style="background:#f0f0f0; padding:5px;">عدد البوالص المسلمة: ${data.count}</div>
+            <table class="print-table"><thead><tr><th>التاريخ</th><th>البوليصة</th><th>المستلم (المدينة)</th><th>COD</th><th>مخصوم</th><th>الصافي</th></tr></thead><tbody>${rows}</tbody>
+            <tfoot><tr><td colspan="6"><div style="border:2px solid #10B981; background:#d1fae5;"><h2>صافي المستحق: ${totalNet} ج.م</h2></div></td></tr></tfoot></table>
+            <div style="display:flex; justify-content:space-between; border:1px solid #000; padding:10px;"><div>توقيع التاجر: ${currentViewedMerchant.split('@')[0]}</div><div>توقيع الخزينة: ........</div><div>التاريخ: ${ts.split(',')[0]}</div></div></div>`;
             document.getElementById('printArea').innerHTML = printHtml;
             window.print();
         };
-        
-        // ================= 7. دالة تسوية حسابات التاجر - **التعديل الجوهري** =================
+
+        // ========== التسوية المالية وتحديث حائط البطولات ==========
         window.settleAccount = async (merchantEmail) => {
             const data = sD.merchants[merchantEmail];
-            if (!data || data.items.length === 0) return Swal.fire('تنبيه', 'لا يوجد بوالص لتسويتها', 'warning');
+            if(!data || data.items.length === 0) return Swal.fire('تنبيه', 'لا يوجد بوالص لتسويتها', 'warning');
             
             Swal.fire({
                 title: 'تأكيد التسوية المالية',
@@ -637,73 +585,31 @@
                     try {
                         const batch = writeBatch(db);
                         
-                        // 1. تحديث حالة كل البوالص إلى "تمت التسوية"
+                        // تحديث حالة كل البوالص المسلمة إلى "تمت التسوية"
                         data.items.forEach(item => {
                             const shipRef = doc(db, "shipments", item.id);
                             batch.update(shipRef, { status: "تمت التسوية" });
                         });
                         
-                        // 2. تحديث حقل lifetime_sales في وثيقة المستخدم (users) الخاص بالتاجر
-                        //    بإضافة إجمالي مبلغ البوالص (ليس صافي الأرباح، بل إجمالي المبيعات)
+                        // تحديث حقل lifetime_sales في جدول users الخاص بالتاجر بإضافة إجمالي البوالص
                         const merchantUserRef = doc(db, "users", merchantEmail);
                         const merchantUserSnap = await getDoc(merchantUserRef);
                         if (merchantUserSnap.exists()) {
-                            batch.update(merchantUserRef, {
-                                lifetime_sales: increment(data.totalCod)
-                            });
+                            batch.update(merchantUserRef, { lifetime_sales: increment(data.totalCod) });
                         } else {
-                            // لو وثيقة المستخدم مش موجودة، ننشئها
-                            batch.set(merchantUserRef, {
-                                email: merchantEmail,
-                                lifetime_sales: data.totalCod
-                            });
+                            batch.set(merchantUserRef, { email: merchantEmail, lifetime_sales: data.totalCod });
                         }
                         
                         await batch.commit();
-                        
                         Swal.fire('تم بنجاح!', `تمت التسوية بنجاح. تمت إضافة ${data.totalCod} ج.م إلى حائط بطولات التاجر.`, 'success');
                         document.getElementById('merchantModal').style.display = 'none';
-                        
-                        // إعادة تحميل البيانات لتحديث الواجهة مباشرة
-                        processData();
-                        
+                        processData(); // تحديث الواجهة مباشرة
                     } catch (error) {
-                        console.error("خطأ في التسوية:", error);
+                        console.error(error);
                         Swal.fire('خطأ', 'حدث خطأ أثناء التسوية: ' + error.message, 'error');
                     }
                 }
             });
-        };
-        
-        // ================= 8. دالة تغيير الفرع =================
-        window.onBranchChange = () => {
-            if (adminRole === 'super_admin') {
-                setupListeners();
-            }
-        };
-        
-        // ================= 9. مصادقة المستخدم =================
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                await fetchUserRoleAndBranch(user);
-                if (adminRole === "none") return;
-                if (adminRole === 'branch_admin') {
-                    const filterSelect = document.getElementById('branchFilter');
-                    filterSelect.innerHTML = `<option value="${adminBranch}">${adminBranch}</option>`;
-                    filterSelect.value = adminBranch;
-                    filterSelect.disabled = true;
-                    filterSelect.style.background = "#eee";
-                }
-                setupListeners();
-            } else {
-                window.location.href = "index.html";
-            }
-        });
-        
-        window.logout = () => {
-            localStorage.removeItem('axon_user_role');
-            localStorage.removeItem('axon_branch');
-            signOut(auth).then(() => window.location.href = "index.html");
         };
     </script>
 </body>
