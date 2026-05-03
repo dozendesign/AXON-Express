@@ -25,7 +25,6 @@
             });
         })();
 
-        // تعريف الدوال المستقلة لضمان عملها بدون التدخل مع Firebase
         window.toggleTheme = () => { 
             document.documentElement.classList.toggle('dark-mode'); 
             const isDark = document.documentElement.classList.contains('dark-mode'); 
@@ -473,7 +472,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, setDoc, getDoc, addDoc, deleteDoc, where, increment, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, setDoc, getDoc, addDoc, deleteDoc, where, increment, getDocs, Timestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw", authDomain: "axon-express-2f534.firebaseapp.com", projectId: "axon-express-2f534", storageBucket: "axon-express-2f534.firebasestorage.app", messagingSenderId: "958528400260", appId: "1:958528400260:web:504ae94f3ef2225b928bd1" };
         const app = initializeApp(firebaseConfig); 
@@ -527,6 +526,8 @@
             "الوادي الجديد - الخارجة", "الوادي الجديد - الداخلة", "الوادي الجديد - الفرافرة", "الوادي الجديد - باريس"
         ];
 
+        let livePricesCache = {};
+
         function renderPricesGrid() {
             const grid = document.getElementById('pricesGrid');
             if(!grid) return; 
@@ -560,7 +561,6 @@
             if(tabId === 'mainOps' && adminMap) { setTimeout(() => adminMap.invalidateSize(), 200); }
         };
 
-        // --- 🛠️ اللوجيك المحدث لتجنب تعليق الشاشة ---
         onAuthStateChanged(auth, async (user) => {
             if (!user) { window.location.href = "index.html"; return; }
             
@@ -693,10 +693,12 @@
         function loadLivePrices() {
             onSnapshot(doc(db, "settings", "shipping_prices"), (snap) => {
                 if(snap.exists()) {
-                    const d = snap.data();
-                    governorates.forEach(gov => { let inputElement = document.getElementById(`price_${gov}`); if(inputElement) inputElement.value = d[gov] || ''; });
-                    extraZonesAdminList.forEach(zone => { let inputElement = document.getElementById(`price_${zone}`); if(inputElement) inputElement.value = d[zone] || ''; });
-                    if(document.getElementById('pricePenalty')) document.getElementById('pricePenalty').value = d.penalty || '';
+                    livePricesCache = snap.data();
+                    governorates.forEach(gov => { let inputElement = document.getElementById(`price_${gov}`); if(inputElement) inputElement.value = livePricesCache[gov] || ''; });
+                    extraZonesAdminList.forEach(zone => { let inputElement = document.getElementById(`price_${zone}`); if(inputElement) inputElement.value = livePricesCache[zone] || ''; });
+                    if(document.getElementById('pricePenalty')) document.getElementById('pricePenalty').value = livePricesCache.penalty || '';
+                } else {
+                    livePricesCache = {};
                 }
             });
         }
@@ -775,154 +777,102 @@
 
         window.triggerLoadShipments = () => { loadShipments(adminRole === 'super_admin' ? 'all' : adminBranch); }
 
-        function loadShipments(branchFilter = null) {
-            let q = query(collection(db, "shipments"), orderBy("timestamp", "desc"));
-            onSnapshot(q, (snap) => {
-                let html = "", totalM = 0, count = 0;
-                window.loadedShipmentsData = {}; 
-                
-                let couriersOptions = '<option value="">-- تسليم لمندوب --</option>';
-                window.branchCouriersList.forEach(c => { couriersOptions += `<option value="${c.name}">${c.name}</option>`; });
-
-                let citiesSet = new Set();
-                let merchantsSet = new Set();
-
-                const advCity = document.getElementById('advFilterBranch').value;
-                const advMerchant = document.getElementById('advFilterMerchant').value;
-
-                snap.forEach(docSnap => {
-                    const d = docSnap.data(), id = docSnap.id;
-                    if(d.deleted) return;
-                    
-                    const merchant = d.merchantEmail ? d.merchantEmail.split('@')[0] : "إدارة";
-                    citiesSet.add(d.city); merchantsSet.add(merchant);
-
-                    if(branchFilter && branchFilter !== 'all') {
-                        if(d.branchName !== branchFilter && d.targetBranch !== branchFilter) return;
+        // دالة لحساب سعر الشحن الحقيقي بناءً على بيانات الشحنة والأسعار الحية
+        function getRealShippingCost(shipmentData) {
+            if(shipmentData.realShippingCost) return shipmentData.realShippingCost;
+            const city = shipmentData.city;
+            if(!city || !livePricesCache) return 85; // fallback
+            
+            // حساب مشابه لكود التاجر
+            let normalizedInput = city.replace(/\s+/g, ' ').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/[ىي]/g, 'ي');
+            let basePrice = 85;
+            
+            // البحث في الأطراف أولاً
+            for(let zone in livePricesCache) {
+                if(extraZonesAdminList.includes(zone)) {
+                    let parts = zone.split('-');
+                    let normalizedZone = zone.replace(/\s+/g, ' ').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/[ىي]/g, 'ي');
+                    let subCityName = parts[1] ? parts[1].trim().replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/[ىي]/g, 'ي') : "";
+                    if (normalizedZone === normalizedInput || (subCityName && normalizedInput.includes(subCityName))) {
+                        let parentGov = parts[0].trim();
+                        basePrice = Number(livePricesCache[parentGov]) || 85;
+                        let extraFee = Number(livePricesCache[zone]) || 0;
+                        return basePrice + extraFee;
                     }
-
-                    let isNewShipment = (d.status === 'Pending' || d.status === 'بوليصة جديدة');
-                    
-                    if(currentFilter === 'جديد' && !isNewShipment) return;
-                    if(currentFilter === 'مطلوب تعيين' && d.status !== 'قيد التوصيل' && d.status !== 'Pending' && d.status !== 'بوليصة جديدة') return;
-                    if(currentFilter === 'مكتملة' && d.status !== 'تم التسليم' && d.status !== 'تمت التسوية') return;
-                    if(currentFilter === 'مع المناديب' && !d.status.includes('مندوب') && d.status !== 'مذاع للرادار') return;
-                    if(currentFilter === 'مرتجع' && d.status !== 'مرتجع' && d.status !== 'مؤجل') return;
-                    if(currentFilter === 'واردات' && d.targetBranch !== adminBranch) return;
-
-                    if(advCity && d.city !== advCity) return;
-                    if(advMerchant && merchant !== advMerchant) return;
-
-                    totalM += Number(d.amount) || 0; count++;
-                    const awb = d.awb || ("AXN" + id.substring(0,5).toUpperCase());
-                    const branch = d.branchName || "المركز الرئيسي";
-                    
-                    let dateStr = "-";
-                    try {
-                        if(d.timestamp) {
-                            let dateObj = d.timestamp.toDate ? d.timestamp.toDate() : new Date(d.timestamp.seconds ? d.timestamp.seconds * 1000 : d.timestamp);
-                            if(!isNaN(dateObj)) dateStr = dateObj.toLocaleString('ar-EG', {hour:'2-digit', minute:'2-digit', second:'2-digit', day:'2-digit', month:'2-digit', year:'numeric'});
-                        }
-                    } catch(e) {}
-
-                    window.loadedShipmentsData[id] = { ...d, awb, merchant, branch, id, dateStr };
-
-                    let rowClass = "";
-                    if(isNewShipment) rowClass = "status-new-shipment"; 
-                    else if(d.status === 'قيد التوصيل') rowClass = "status-danger";
-                    else if(d.status === 'مذاع للرادار' || d.status.includes('مندوب')) rowClass = "status-warning";
-                    else if(d.status === 'تم التسليم' || d.status === 'تمت التسوية') rowClass = "status-success";
-                    else if(d.status === 'مرتجع' || d.status === 'مؤجل') rowClass = "status-archived";
-                    else if(d.status.includes('ترانزيت')) rowClass = "status-transit";
-
-                    let actionBtns = '';
-                    let courierAction = '';
-
-                    if(d.targetBranch === adminBranch && d.status.includes('ترانزيت')) {
-                        actionBtns = `<button class="btn-action btn-receive" style="width:100%; padding:10px; font-size:12px;" onclick="window.receiveTransit('${id}', '${d.phone}', '${merchant}')"><i class="fa-solid fa-download"></i> استلام وتنبيه العميل</button>`;
-                        courierAction = `<div style="margin-top:5px; background:#fd7e14; color:white; padding:3px; border-radius:5px; font-size:11px; text-align:center;">شحنة واردة من ${d.branchName}</div>`;
-                    } else {
-                        actionBtns = `
-                            <button class="btn-action btn-save" onclick="window.updateStatus('${id}')">حفظ</button>
-                            <button class="btn-action btn-print" onclick="window.printWaybillById('${id}')"><i class="fa-solid fa-print"></i></button>
-                            <button class="btn-action btn-broadcast" onclick="window.broadcastShipmentToRadarById('${id}')" title="إسناد للرادار"><i class="fa-solid fa-satellite-dish"></i></button>
-                            <button class="btn-action btn-edit" onclick="window.openEditModalById('${id}')"><i class="fa-solid fa-pen"></i></button>
-                            <button class="btn-action btn-transit" onclick="window.openTransitModal('${id}')" title="ترحيل لمحافظة أخرى"><i class="fa-solid fa-truck-fast"></i></button>
-                            <button class="btn-action btn-delete" onclick="window.deleteShipment('${id}')"><i class="fa-solid fa-trash"></i></button>
-                        `;
-                        courierAction = d.courierName ? 
-                            `<div style="margin-top:5px; background:var(--primary-black); color:var(--primary-yellow); padding:3px; border-radius:5px; font-size:11px; text-align:center;">عهدة: ${d.courierName}</div>
-                             <button class="btn-action btn-clear-courier" onclick="window.clearCourier('${id}')">إلغاء التعيين ✖</button>` : 
-                            `<select class="courier-dropdown" style="margin-top:5px; width:100%; font-size:11px;" onchange="window.assignCourier('${id}', this.value)">${couriersOptions}</select>`;
-                    }
-
-                    html += `<tr class="${rowClass}">
-                        <td style="white-space:nowrap; min-width:150px;">${actionBtns}</td>
-                        <td>
-                            <select id="st-${id}" class="status-dropdown" style="width:100%;">
-                                <option value="${d.status}" selected style="display:none;">${d.status}</option>
-                                <option value="بوليصة جديدة">بوليصة جديدة</option>
-                                <option value="قيد التوصيل">قيد التوصيل</option>
-                                <option value="مذاع للرادار">مذاع للرادار</option>
-                                <option value="تم التسليم">تم التسليم</option>
-                                <option value="مؤجل">مؤجل</option>
-                                <option value="مرتجع">مرتجع</option>
-                            </select>
-                            ${courierAction}
-                        </td>
-                        <td style="color:var(--primary-burgundy); font-weight:900; font-size:15px;">${d.amount}</td>
-                        <td><span style="background:#fff; padding:3px 8px; border-radius:10px; border:1px solid #ccc; font-weight:bold; color:#000;">${d.city}</span><br><small style="font-size:11px;">${d.address}</small></td>
-                        <td>${d.name}<br><small dir="ltr">${d.phone}</small></td>
-                        <td><b>${merchant}</b></td>
-                        <td><span style="background:#e0eaf5; padding:5px; border-radius:5px; color:var(--primary-black); font-weight:bold; font-size:12px;">${awb}</span><br><small style="font-size:10px;" dir="ltr">${dateStr}</small></td>
-                        <td><span style="background:#f4f7f6; padding:3px; border-radius:3px; font-size:11px; font-weight:bold;">${branch}</span></td>
-                    </tr>`;
-                });
-                
-                document.getElementById('shipmentsBody').innerHTML = html;
-                document.getElementById('totalShipments').innerText = count;
-                document.getElementById('totalMoney').innerText = totalM + " ج.م";
-
-                if(document.getElementById('advFilterBranch').options.length <= 1) {
-                    let cHtml = '<option value="">-- فلتر المحافظة (المدينة) --</option>';
-                    citiesSet.forEach(c => cHtml += `<option value="${c}">${c}</option>`);
-                    document.getElementById('advFilterBranch').innerHTML = cHtml;
-
-                    let mHtml = '<option value="">-- فلتر التاجر (الراسل) --</option>';
-                    merchantsSet.forEach(m => mHtml += `<option value="${m}">${m}</option>`);
-                    document.getElementById('advFilterMerchant').innerHTML = mHtml;
                 }
-            });
+            }
+            
+            // البحث في المحافظات الأساسية
+            for(let gov in livePricesCache) {
+                if(governorates.includes(gov)) {
+                    let normalizedGov = gov.replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/[ىي]/g, 'ي');
+                    if (normalizedInput.includes(normalizedGov) || normalizedGov.includes(normalizedInput)) {
+                        return Number(livePricesCache[gov]) || 85;
+                    }
+                }
+            }
+            return 85;
         }
 
-        window.filterTable = () => {
-            const input = document.getElementById("searchInput").value.toUpperCase();
-            const tr = document.getElementById("shipmentsTable").getElementsByTagName("tr");
-            for (let i = 1; i < tr.length; i++) {
-                const tdText = tr[i].textContent || tr[i].innerText;
-                tr[i].style.display = tdText.toUpperCase().indexOf(input) > -1 ? "" : "none";
-            }
-        };
+        // دالة لحذف المبلغ من lifetime_sales عند الإرجاع
+        async function revertLifetimeSales(merchantEmail, amount, shippingCost) {
+            if(!merchantEmail) return;
+            const profit = amount - shippingCost;
+            if(profit <= 0) return;
+            const userQ = query(collection(db, "users"), where("email", "==", merchantEmail));
+            const uSnap = await getDocs(userQ);
+            uSnap.forEach(async (uDoc) => {
+                await updateDoc(uDoc.ref, { lifetime_sales: increment(-profit) });
+            });
+        }
 
         window.updateStatus = async (id) => { 
             const val = document.getElementById(`st-${id}`).value; 
             const shipData = window.loadedShipmentsData[id];
+            if(!shipData) return;
+            
+            const oldStatus = shipData.status;
             try {
-                // دمج حائط البطولات للتاجر (محمية لتنفذ مرة واحدة فقط وبأمر getDocs لتجنب الانهيار)
-                if(val === "تم التسليم" && shipData.status !== "تم التسليم" && !shipData.isAccounted && shipData.merchantEmail) {
-                    const profit = Number(shipData.amount) - 85; 
-                    const userQ = query(collection(db, "users"), where("email", "==", shipData.merchantEmail));
-                    
-                    const uSnap = await getDocs(userQ);
-                    let updates = [];
-                    uSnap.forEach((uDoc) => {
-                        updates.push(updateDoc(uDoc.ref, { lifetime_sales: increment(profit > 0 ? profit : 0) }));
+                // حالة إتمام التسليم (إضافة المبلغ)
+                if(val === "تم التسليم" && oldStatus !== "تم التسليم" && !shipData.isAccounted && shipData.merchantEmail) {
+                    // حساب سعر الشحن الحقيقي
+                    let shippingCost = shipData.realShippingCost;
+                    if(!shippingCost) {
+                        shippingCost = getRealShippingCost(shipData);
+                    }
+                    const profit = Number(shipData.amount) - shippingCost;
+                    if(profit > 0) {
+                        const userQ = query(collection(db, "users"), where("email", "==", shipData.merchantEmail));
+                        const uSnap = await getDocs(userQ);
+                        let updates = [];
+                        uSnap.forEach((uDoc) => {
+                            updates.push(updateDoc(uDoc.ref, { lifetime_sales: increment(profit) }));
+                        });
+                        await Promise.all(updates);
+                    }
+                    await updateDoc(doc(db, "shipments", id), { 
+                        status: val, 
+                        isAccounted: true, 
+                        accountedAt: Timestamp.now(),
+                        realShippingCost: shippingCost
                     });
-                    await Promise.all(updates);
-
-                    await updateDoc(doc(db, "shipments", id), { status: val, isAccounted: true });
-                } else {
-                    await updateDoc(doc(db, "shipments", id), { status: val }); 
+                }
+                // حالة الإرجاع (خصم المبلغ)
+                else if((val === "مرتجع" || val === "مؤجل") && oldStatus === "تم التسليم" && shipData.isAccounted && shipData.merchantEmail) {
+                    let shippingCost = shipData.realShippingCost || getRealShippingCost(shipData);
+                    const profit = Number(shipData.amount) - shippingCost;
+                    if(profit > 0) {
+                        await revertLifetimeSales(shipData.merchantEmail, Number(shipData.amount), shippingCost);
+                    }
+                    await updateDoc(doc(db, "shipments", id), { 
+                        status: val, 
+                        isAccounted: false,
+                        accountedAt: null
+                    });
+                }
+                // أي حالة أخرى
+                else {
+                    await updateDoc(doc(db, "shipments", id), { status: val });
                 }
                 Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم الحفظ بنجاح', showConfirmButton:false, timer:1500}); 
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
@@ -945,6 +895,15 @@
 
         window.deleteShipment = async (id) => {
             if (adminRole !== 'super_admin') return Swal.fire('مرفوض', 'القيادة العليا فقط تملك صلاحية حذف بوليصة.', 'error');
+            // التحقق إذا كانت الشحنة قد أضيفت إلى lifetime_sales، نحتاج لاسترجاعها
+            const shipData = window.loadedShipmentsData[id];
+            if(shipData && shipData.isAccounted && shipData.merchantEmail) {
+                let shippingCost = shipData.realShippingCost || getRealShippingCost(shipData);
+                const profit = Number(shipData.amount) - shippingCost;
+                if(profit > 0) {
+                    await revertLifetimeSales(shipData.merchantEmail, Number(shipData.amount), shippingCost);
+                }
+            }
             const res = await Swal.fire({ title: 'تأكيد الحذف الدائم؟', icon: 'warning', showCancelButton: true, confirmButtonText: 'نعم، احذفها', cancelButtonText: 'إلغاء' });
             if(res.isConfirmed) { await updateDoc(doc(db, "shipments", id), { deleted: true }); }
         };
@@ -962,11 +921,28 @@
 
         window.saveShipmentEdits = async () => {
             const id = document.getElementById('editShipId').value;
+            const oldData = window.loadedShipmentsData[id];
+            const newAmount = Number(document.getElementById('editShipAmount').value);
             try {
+                // إذا كان قد تم احتساب الشحنة بالفعل وتغير المبلغ، نحتاج لضبط lifetime_sales
+                if(oldData.isAccounted && oldData.merchantEmail && newAmount !== oldData.amount) {
+                    let oldShippingCost = oldData.realShippingCost || getRealShippingCost(oldData);
+                    let newShippingCost = oldData.realShippingCost || getRealShippingCost({...oldData, amount: newAmount});
+                    const oldProfit = oldData.amount - oldShippingCost;
+                    const newProfit = newAmount - newShippingCost;
+                    const diff = newProfit - oldProfit;
+                    if(diff !== 0) {
+                        const userQ = query(collection(db, "users"), where("email", "==", oldData.merchantEmail));
+                        const uSnap = await getDocs(userQ);
+                        uSnap.forEach(async (uDoc) => {
+                            await updateDoc(uDoc.ref, { lifetime_sales: increment(diff) });
+                        });
+                    }
+                }
                 await updateDoc(doc(db, "shipments", id), { 
                     name: document.getElementById('editShipName').value, 
                     address: document.getElementById('editShipAddress').value, 
-                    amount: Number(document.getElementById('editShipAmount').value), 
+                    amount: newAmount, 
                     phone: document.getElementById('editShipPhone').value 
                 });
                 document.getElementById('editShipmentModal').style.display = 'none';
@@ -1197,7 +1173,7 @@
                         <p><b>ثالثاً: حدود التعويض واشتراط الإعلان بالقيمة:</b> يكون الناقل ملتزماً بالتعويض في حالة ثبوت خطئه بما لا يتجاوز قيمة أجرة النقل × 3، أو بحد أقصى مبلغ (500 جنيه)، أيهما أقل، وذلك ما لم يقم المرسل بالإعلان عن القيمة الحقيقية للبضاعة كتابةً على البوليصة وسداد نسبة إضافية مقابل ذلك كتأمين غير مسترد. في حال الشحنات القابلة للكسر فهي إما أن تنقل على مسؤولية الراسل ولا تلتزم الشركة بأي تعويض في حال التلف، أو أن يقوم بدفع قيمة تأمين مبلغ 10% من قيمة الطرد الفعلية وبذلك تتعهد الشركة بتعويض الراسل بكامل قيمة الطرد حيث أن الشركة تعيد تغليف الطرد.</p>
                         <p><b>رابعاً: مهلة الإخطار بالشكاوى:</b> يُعتبر التسليم نافياً للمسؤولية ما لم يقم المرسل إليه بإخطار الناقل كتابةً بأي تحفظ أو اعتراض على البضاعة فور استلامها، أو خلال <b>48 ساعة كحد أقصى</b> من تاريخ التسليم للشكاوى الخفية، وإلا سقط حقه في أي مطالبة.</p>
                         <h4>📝 إقرارات وتعهدات المرسل</h4>
-                        <p><b>1. صحة البيانات:</b> أتعهد بموجب هذا بأن جميع البيانات المذكورة في هذه البوليصة صحيحة وكاملة، وأتحمل وحدي المسؤولية عن عدم دقتها.<br><b>2. سلامة التغليف:</b> أقر بأن البضاعة معبأة بشكل مناسب يضمن سلامتها.<br><b>3. التراخيص:</b> أتعهد بتوفير جميع التراخيص والموافقات المطلوبة قانوناً لنقل هذه البضاعة.</p>
+                        <p><b>1. صحة البيانات:</b> أتعهد بموجب هذا بأن جميع البيانات المذكورة في هذه البوليصة صحيحة وكاملة، وأتحمل وحدي المسؤولية عن عدم دقتها.<br><b>2. سلامة التغليف:</b> أقر بأن البضاعة معبأة بشكل مناسب يضمن سلامتها.<br><b>3. التراخيص:</b> أتعهد بتوفير جميع التراخيص والموافقات المطلوبة قانونياً لنقل هذه البضاعة.</p>
                         <h4>🚫 المحظورات المطلقة</h4>
                         <p>يحظر بشكل قاطع شحن أو قبول أي من البضائع التالية: المواد شديدة الخطورة والاشتعال، الأسلحة والذخائر، المواد المخدرة، البضائع المهربة والمزورة، المواد سريعة التلف، الحيوانات، النقود والأحجار الكريمة.<br><b>. قد يخضع الطرد للتفتيش داخلياً بمعرفة الشركة وإذا تم العثور بداخل الطرد على أي مواد مخالفة للقانون سيتم على الفور إبلاغ السلطات المعنية لاتخاذ اللازم تجاه الراسل والمستلم.<br>. جميع ما سبق هو بمثابة إخلاء مسؤولية كاملة عن محتوى الطرود التي لم يتم الكشف عليها من طرف الشركة وأن المسؤولية الجنائية تقع كاملة على عاتق الراسل.</b></p>
                         <h4>📋 تعليمات إلزامية للعملاء</h4>
@@ -1275,6 +1251,147 @@
         }
         function updateBadge(count) { const badge = document.getElementById('ticketBadge'); if(count > 0) { badge.style.display = 'inline-block'; badge.innerText = count; } else { badge.style.display = 'none'; } }
         window.deleteTicket = async (collectionName, id) => { if(confirm("هل متأكد من الإعدام الرقمي لهذا السجل من قاعدة البيانات؟")) { await deleteDoc(doc(db, collectionName, id)); } };
+
+        // دالة تحميل الشحنات (مطورة لتحتوي على realShippingCost عند عدم وجوده)
+        function loadShipments(branchFilter = null) {
+            let q = query(collection(db, "shipments"), orderBy("timestamp", "desc"));
+            onSnapshot(q, (snap) => {
+                let html = "", totalM = 0, count = 0;
+                window.loadedShipmentsData = {}; 
+                
+                let couriersOptions = '<option value="">-- تسليم لمندوب --</option>';
+                window.branchCouriersList.forEach(c => { couriersOptions += `<option value="${c.name}">${c.name}</option>`; });
+
+                let citiesSet = new Set();
+                let merchantsSet = new Set();
+
+                const advCity = document.getElementById('advFilterBranch').value;
+                const advMerchant = document.getElementById('advFilterMerchant').value;
+
+                snap.forEach(docSnap => {
+                    const d = docSnap.data(), id = docSnap.id;
+                    if(d.deleted) return;
+                    
+                    const merchant = d.merchantEmail ? d.merchantEmail.split('@')[0] : "إدارة";
+                    citiesSet.add(d.city); merchantsSet.add(merchant);
+
+                    if(branchFilter && branchFilter !== 'all') {
+                        if(d.branchName !== branchFilter && d.targetBranch !== branchFilter) return;
+                    }
+                    if(advCity && d.city !== advCity) return;
+                    if(advMerchant && merchant !== advMerchant) return;
+
+                    // تخزين realShippingCost لو مش موجود
+                    if(!d.realShippingCost && d.city) {
+                        const calculatedCost = getRealShippingCost(d);
+                        if(calculatedCost !== 85 || d.city) {
+                            // تحديث غير متزامن ولكن ليس ضرورياً الآن، سنقوم به في الخلفية
+                            updateDoc(doc(db, "shipments", id), { realShippingCost: calculatedCost }).catch(e=>{});
+                            d.realShippingCost = calculatedCost;
+                        } else {
+                            d.realShippingCost = 85;
+                        }
+                    }
+
+                    let isNewShipment = (d.status === 'Pending' || d.status === 'بوليصة جديدة');
+                    
+                    if(currentFilter === 'جديد' && !isNewShipment) return;
+                    if(currentFilter === 'مطلوب تعيين' && d.status !== 'قيد التوصيل' && d.status !== 'Pending' && d.status !== 'بوليصة جديدة') return;
+                    if(currentFilter === 'مكتملة' && d.status !== 'تم التسليم' && d.status !== 'تمت التسوية') return;
+                    if(currentFilter === 'مع المناديب' && !d.status.includes('مندوب') && d.status !== 'مذاع للرادار') return;
+                    if(currentFilter === 'مرتجع' && d.status !== 'مرتجع' && d.status !== 'مؤجل') return;
+                    if(currentFilter === 'واردات' && d.targetBranch !== adminBranch) return;
+
+                    totalM += Number(d.amount) || 0; count++;
+                    const awb = d.awb || ("AXN" + id.substring(0,5).toUpperCase());
+                    const branch = d.branchName || "المركز الرئيسي";
+                    
+                    let dateStr = "-";
+                    try {
+                        if(d.timestamp) {
+                            let dateObj = d.timestamp.toDate ? d.timestamp.toDate() : new Date(d.timestamp.seconds ? d.timestamp.seconds * 1000 : d.timestamp);
+                            if(!isNaN(dateObj)) dateStr = dateObj.toLocaleString('ar-EG', {hour:'2-digit', minute:'2-digit', second:'2-digit', day:'2-digit', month:'2-digit', year:'numeric'});
+                        }
+                    } catch(e) {}
+
+                    window.loadedShipmentsData[id] = { ...d, awb, merchant, branch, id, dateStr };
+
+                    let rowClass = "";
+                    if(isNewShipment) rowClass = "status-new-shipment"; 
+                    else if(d.status === 'قيد التوصيل') rowClass = "status-danger";
+                    else if(d.status === 'مذاع للرادار' || d.status.includes('مندوب')) rowClass = "status-warning";
+                    else if(d.status === 'تم التسليم' || d.status === 'تمت التسوية') rowClass = "status-success";
+                    else if(d.status === 'مرتجع' || d.status === 'مؤجل') rowClass = "status-archived";
+                    else if(d.status.includes('ترانزيت')) rowClass = "status-transit";
+
+                    let actionBtns = '';
+                    let courierAction = '';
+
+                    if(d.targetBranch === adminBranch && d.status.includes('ترانزيت')) {
+                        actionBtns = `<button class="btn-action btn-receive" style="width:100%; padding:10px; font-size:12px;" onclick="window.receiveTransit('${id}', '${d.phone}', '${merchant}')"><i class="fa-solid fa-download"></i> استلام وتنبيه العميل</button>`;
+                        courierAction = `<div style="margin-top:5px; background:#fd7e14; color:white; padding:3px; border-radius:5px; font-size:11px; text-align:center;">شحنة واردة من ${d.branchName}</div>`;
+                    } else {
+                        actionBtns = `
+                            <button class="btn-action btn-save" onclick="window.updateStatus('${id}')">حفظ</button>
+                            <button class="btn-action btn-print" onclick="window.printWaybillById('${id}')"><i class="fa-solid fa-print"></i></button>
+                            <button class="btn-action btn-broadcast" onclick="window.broadcastShipmentToRadarById('${id}')" title="إسناد للرادار"><i class="fa-solid fa-satellite-dish"></i></button>
+                            <button class="btn-action btn-edit" onclick="window.openEditModalById('${id}')"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn-action btn-transit" onclick="window.openTransitModal('${id}')" title="ترحيل لمحافظة أخرى"><i class="fa-solid fa-truck-fast"></i></button>
+                            <button class="btn-action btn-delete" onclick="window.deleteShipment('${id}')"><i class="fa-solid fa-trash"></i></button>
+                        `;
+                        courierAction = d.courierName ? 
+                            `<div style="margin-top:5px; background:var(--primary-black); color:var(--primary-yellow); padding:3px; border-radius:5px; font-size:11px; text-align:center;">عهدة: ${d.courierName}</div>
+                             <button class="btn-action btn-clear-courier" onclick="window.clearCourier('${id}')">إلغاء التعيين ✖</button>` : 
+                            `<select class="courier-dropdown" style="margin-top:5px; width:100%; font-size:11px;" onchange="window.assignCourier('${id}', this.value)">${couriersOptions}</select>`;
+                    }
+
+                    html += `<tr class="${rowClass}">
+                        <td style="white-space:nowrap; min-width:150px;">${actionBtns}</td>
+                        <td>
+                            <select id="st-${id}" class="status-dropdown" style="width:100%;">
+                                <option value="${d.status}" selected style="display:none;">${d.status}</option>
+                                <option value="بوليصة جديدة">بوليصة جديدة</option>
+                                <option value="قيد التوصيل">قيد التوصيل</option>
+                                <option value="مذاع للرادار">مذاع للرادار</option>
+                                <option value="تم التسليم">تم التسليم</option>
+                                <option value="مؤجل">مؤجل</option>
+                                <option value="مرتجع">مرتجع</option>
+                            </select>
+                            ${courierAction}
+                        </td>
+                        <td style="color:var(--primary-burgundy); font-weight:900; font-size:15px;">${d.amount}</td>
+                        <td><span style="background:#fff; padding:3px 8px; border-radius:10px; border:1px solid #ccc; font-weight:bold; color:#000;">${d.city}</span><br><small style="font-size:11px;">${d.address}</small></td>
+                        <td>${d.name}<br><small dir="ltr">${d.phone}</small></td>
+                        <td><b>${merchant}</b></td>
+                        <td><span style="background:#e0eaf5; padding:5px; border-radius:5px; color:var(--primary-black); font-weight:bold; font-size:12px;">${awb}</span><br><small style="font-size:10px;" dir="ltr">${dateStr}</small></td>
+                        <td><span style="background:#f4f7f6; padding:3px; border-radius:3px; font-size:11px; font-weight:bold;">${branch}</span></td>
+                    </tr>`;
+                });
+                
+                document.getElementById('shipmentsBody').innerHTML = html;
+                document.getElementById('totalShipments').innerText = count;
+                document.getElementById('totalMoney').innerText = totalM + " ج.م";
+
+                if(document.getElementById('advFilterBranch').options.length <= 1) {
+                    let cHtml = '<option value="">-- فلتر المحافظة (المدينة) --</option>';
+                    citiesSet.forEach(c => cHtml += `<option value="${c}">${c}</option>`);
+                    document.getElementById('advFilterBranch').innerHTML = cHtml;
+
+                    let mHtml = '<option value="">-- فلتر التاجر (الراسل) --</option>';
+                    merchantsSet.forEach(m => mHtml += `<option value="${m}">${m}</option>`);
+                    document.getElementById('advFilterMerchant').innerHTML = mHtml;
+                }
+            });
+        }
+
+        window.filterTable = () => {
+            const input = document.getElementById("searchInput").value.toUpperCase();
+            const tr = document.getElementById("shipmentsTable").getElementsByTagName("tr");
+            for (let i = 1; i < tr.length; i++) {
+                const tdText = tr[i].textContent || tr[i].innerText;
+                tr[i].style.display = tdText.toUpperCase().indexOf(input) > -1 ? "" : "none";
+            }
+        };
 
     </script>
 </body>
