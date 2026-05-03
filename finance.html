@@ -61,9 +61,15 @@
         <i class="fa-solid fa-city"></i> <span>مراجعة فرع:</span>
         <select id="branchSelect" onchange="window.refreshData()">
             <option value="all">الجمهورية (الكل)</option>
-            <option value="القاهرة">القاهرة</option>
-            <option value="الجيزة">الجيزة</option>
-            <option value="الإسكندرية">الإسكندرية</option>
+            <option value="القاهرة">القاهرة</option><option value="الجيزة">الجيزة</option><option value="الإسكندرية">الإسكندرية</option>
+            <option value="الدقهلية">الدقهلية</option><option value="الغربية">الغربية</option><option value="المنوفية">المنوفية</option>
+            <option value="الشرقية">الشرقية</option><option value="القليوبية">القليوبية</option><option value="البحيرة">البحيرة</option>
+            <option value="كفر الشيخ">كفر الشيخ</option><option value="دمياط">دمياط</option><option value="الإسماعيلية">الإسماعيلية</option>
+            <option value="بورسعيد">بورسعيد</option><option value="السويس">السويس</option><option value="مرسى مطروح">مرسى مطروح</option>
+            <option value="شمال سيناء">شمال سيناء</option><option value="جنوب سيناء">جنوب سيناء</option><option value="البحر الأحمر">البحر الأحمر</option>
+            <option value="الفيوم">الفيوم</option><option value="بني سويف">بني سويف</option><option value="المنيا">المنيا</option>
+            <option value="أسيوط">أسيوط</option><option value="سوهاج">سوهاج</option><option value="قنا">قنا</option>
+            <option value="الأقصر">الأقصر</option><option value="أسوان">أسوان</option><option value="الوادي الجديد">الوادي الجديد</option>
         </select>
     </div>
     <div id="loading" style="text-align:center;padding:50px;"><i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل البيانات...</div>
@@ -81,13 +87,13 @@
                 <div class="stat-card green"><h3>أرباح الشركة (شحن+وزن+تأمين)</h3><div class="value" id="statProfit">0</div></div>
             </div>
         </div>
-        <div id="couriers" class="tab-content"><div class="table-responsive"><table><thead><tr><th>الكابتن</th><th>المهام</th><th>العهدة المطلوبة</th><th></th></tr></thead><tbody id="couriersBody"></tbody></table></div></div>
-        <div id="merchants" class="tab-content"><div class="table-responsive"><table><thead><tr><th>التاجر</th><th>بوالص مسلمة</th><th>إجمالي COD</th><th>مخصوم</th><th>صافي المستحق</th><th></th></tr></thead><tbody id="merchantsBody"></tbody></table></div></div>
-        <div id="expenses" class="tab-content"><button class="btn-danger" onclick="addExpense()">+ تسجيل مصروف</button><div class="table-responsive"><table><thead><tr><th>التاريخ</th><th>البيان</th><th>المبلغ</th></tr></thead><tbody id="expensesBody"></tbody></table></div></div>
+        <div id="couriers" class="tab-content"><div class="table-responsive"></td><thead><tr><th>الكابتن</th><th>المهام</th><th>العهدة المطلوبة</th><th></th></tr></thead><tbody id="couriersBody"></tbody></table></div></div>
+        <div id="merchants" class="tab-content"><div class="table-responsive"><tr><thead><tr><th>التاجر</th><th>بوالص مسلمة</th><th>إجمالي COD</th><th>مخصوم</th><th>صافي المستحق</th><th></th></tr></thead><tbody id="merchantsBody"></tbody></table></div></div>
+        <div id="expenses" class="tab-content"><button class="btn-danger" onclick="addExpense()">+ تسجيل مصروف</button><div class="table-responsive"></td><thead><tr><th>التاريخ</th><th>البيان</th><th>المبلغ</th></tr></thead><tbody id="expensesBody"></tbody></table></div></div>
     </div>
 </div>
 
-<div id="courierModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="closeModal('courierModal')">✖</button><h2>تفاصيل عهدة: <span id="courierNameModal"></span></h2><div class="summary-box"><div>النقدية المطلوبة: <span id="courierTotal"></span></div><div>عدد المهام: <span id="courierTasks"></span></div></div><div class="table-responsive"><table><thead><tr><th>النوع</th><th>رقم البوليصة/التفاصيل</th><th>التاجر/العنوان</th><th>المبلغ</th><th>الحالة</th></tr></thead><tbody id="courierDetailsBody"></tbody></table></div><button class="btn-print" onclick="printCourierManifest()">طباعة المانيفست</button></div></div>
+<div id="courierModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="closeModal('courierModal')">✖</button><h2>تفاصيل عهدة: <span id="courierNameModal"></span></h2><div class="summary-box"><div>النقدية المطلوبة: <span id="courierTotal"></span></div><div>عدد المهام: <span id="courierTasks"></span></div></div><div class="table-responsive"><table><thead><tr><th>النوع</th><th>رقم البوليصة/التفاصيل</th><th>التاجر/العنوان</th><th>المبلغ</th><th>الحالة</th></tr></thead><tbody id="courierDetailsBody"></tbody></td></div><button class="btn-print" onclick="printCourierManifest()">طباعة المانيفست</button></div></div>
 <div id="merchantModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="closeModal('merchantModal')">✖</button><h2>كشف حساب: <span id="merchantNameModal"></span></h2><div class="summary-box"><div>إجمالي COD: <span id="merchantTotalCod"></span></div><div>مخصوم شحن: <span id="merchantTotalFees"></span></div><div>الصافي المستحق: <span id="merchantNet"></span></div></div><div class="table-responsive"><table><thead><tr><th>التاريخ</th><th>البوليصة</th><th>المستلم</th><th>COD</th><th>مخصوم</th><th>الصافي</th></tr></thead><tbody id="merchantItemsBody"></tbody></table></div><button class="btn-settle" onclick="settleMerchant()">اعتماد التسوية</button><button class="btn-print" onclick="printMerchantStatement()">طباعة الكشف</button></div></div>
 <div id="printArea"></div>
 
@@ -96,7 +102,6 @@
     let currentMerchantEmail = null;
     let merchantsMap = {}, couriersMap = {};
     let selectedBranch = "all";
-    let authToken = null;
 
     function showTab(id){
         document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
@@ -108,7 +113,20 @@
     function refreshData(){ if(window.loadFinancialData) window.loadFinancialData(); }
 
     async function addExpense(){
-        const {value:vals} = await Swal.fire({title:'تسجيل مصروف', html:'<input id="expDesc" class="swal2-input" placeholder="الوصف"><input id="expAmt" class="swal2-input" type="number" placeholder="المبلغ">', preConfirm:()=>({desc:document.getElementById('expDesc').value,amt:parseFloat(document.getElementById('expAmt').value)}), confirmButtonText:'إضافة'});
+        const {value:vals} = await Swal.fire({
+            title:'تسجيل مصروف جديد',
+            html:'<input id="expDesc" class="swal2-input" placeholder="وصف المصروف"><input id="expAmt" class="swal2-input" type="number" placeholder="المبلغ">',
+            preConfirm:()=>{
+                let desc = document.getElementById('expDesc').value;
+                let amt = parseFloat(document.getElementById('expAmt').value);
+                if(!desc) Swal.showValidationMessage('الوصف مطلوب');
+                else if(!amt || amt<=0) Swal.showValidationMessage('المبلغ غير صحيح');
+                return {desc, amt};
+            },
+            confirmButtonText:'إضافة',
+            showCancelButton:true,
+            cancelButtonText:'إلغاء'
+        });
         if(vals && vals.desc && vals.amt){
             if(window.addExpenseFirestore) await window.addExpenseFirestore(vals.desc, vals.amt);
             else Swal.fire('خطأ','الوظيفة غير متوفرة','error');
@@ -139,10 +157,16 @@
 
     window.addExpenseFirestore = async (desc, amt) => {
         try {
-            await addDoc(collection(db, "expenses"), { description: desc, amount: amt, timestamp: new Date(), branchName: selectedBranch === 'all' ? 'all' : selectedBranch, addedBy: auth.currentUser?.email });
-            Swal.fire('تم','تم إضافة المصروف','success');
-            loadExpenses();
-        } catch(e){ Swal.fire('خطأ',e.message,'error'); }
+            await addDoc(collection(db, "expenses"), { 
+                description: desc, 
+                amount: amt, 
+                timestamp: new Date(), 
+                branchName: selectedBranch === 'all' ? 'all' : selectedBranch, 
+                addedBy: auth.currentUser?.email 
+            });
+            Swal.fire('تم','تم إضافة المصروف بنجاح','success');
+            loadExpenses(); 
+        } catch(e){ Swal.fire('خطأ', e.message, 'error'); }
     };
 
     function loadExpenses(){
@@ -150,7 +174,10 @@
         if(selectedBranch !== 'all') q = query(q, where("branchName", "==", selectedBranch));
         onSnapshot(query(q, orderBy("timestamp","desc")), snap => {
             let html = "";
-            snap.forEach(d => { let data = d.data(); html += `<tr><td>${data.timestamp?.toDate().toLocaleDateString()||'-'}</td><td>${data.description}</td><td>${data.amount} ج.م</td></tr>`; });
+            snap.forEach(d => { 
+                let data = d.data(); 
+                html += `<tr><td style="font-size:13px;">${data.timestamp?.toDate().toLocaleDateString()||'-'}</td><td style="font-size:13px;">${data.description}</td><td style="font-size:13px; font-weight:bold;">${data.amount} ج.م</td></tr>`;
+            });
             document.getElementById('expensesBody').innerHTML = html || "<tr><td colspan='3'>لا توجد مصروفات</td></tr>";
         });
     }
@@ -202,7 +229,6 @@
             let collected = amt + insurance;
             let companyProfit = shipCost + insurance;
 
-            // تجميع بيانات المناديب (للعهدة)
             if(courierName && courierName !== "غير محدد"){
                 if(!couriers[courierName]) couriers[courierName] = { count:0, totalCollected:0, shipments:[], radar:[] };
                 couriers[courierName].count++;
@@ -211,7 +237,6 @@
                 if(status === "تم التسليم" || status === "تم التسليم بنجاح") couriers[courierName].totalCollected += collected;
             }
 
-            // تجميع بيانات التجار (للبوالص المكتملة غير المسوّاة)
             if((status === "تم التسليم" || status === "تم التسليم بنجاح") && v.type === 'shipment' && status !== "تمت التسوية" && merchantEmail !== "إدارة"){
                 if(!merchants[merchantEmail]) merchants[merchantEmail] = { count:0, totalCod:0, totalFees:0, items:[] };
                 let net = amt - shipCost;
@@ -227,20 +252,17 @@
         merchantsMap = merchants;
         couriersMap = couriers;
 
-        // عرض الإحصائيات
         document.getElementById('statTotalCash').innerText = totalCollected + " ج.م";
         document.getElementById('statProfit').innerText = totalCompanyProfit + " ج.م";
         let netDues = totalCollected - totalCompanyProfit;
         document.getElementById('statNetDues').innerText = netDues + " ج.م";
 
-        // جدول المناديب
         let courierHtml = "";
         for(let c in couriers){
             courierHtml += `<tr><td><b>${c}</b></td><td>${couriers[c].count}</td><td style="color:#800020;">${couriers[c].totalCollected} ج.م</td><td><button class="btn-view" onclick="showCourierDetails('${c}')">فتح العهدة</button></td></tr>`;
         }
         document.getElementById('couriersBody').innerHTML = courierHtml || "<tr><td colspan='4'>لا توجد عهدة حالية</td></tr>";
 
-        // جدول التجار
         let merchantHtml = "";
         for(let m in merchants){
             let data = merchants[m];
@@ -299,9 +321,21 @@
         let email = currentMerchantEmail;
         let data = merchantsMap[email];
         if(!data || !data.items.length) return Swal.fire('تنبيه','لا توجد بوالص لتسويتها','warning');
-        Swal.fire({ title:'تأكيد التسوية', html:`سيتم إضافة ${data.totalCod} ج.م إلى حائط بطولات التاجر.`, icon:'warning', showCancelButton:true, confirmButtonText:'تسوية', cancelButtonText:'إلغاء' }).then(async res=>{
-            if(res.isConfirmed){
-                Swal.fire({ title:'جاري التسوية...', allowOutsideClick:false, didOpen:()=>Swal.showLoading() });
+        
+        // إغلاق مودال الكشف أولاً
+        closeModal('merchantModal');
+        
+        Swal.fire({
+            title: 'تأكيد التسوية المالية',
+            html: `<strong style="color:#10B981;">سيتم إضافة ${data.totalCod} ج.م إلى حائط بطولات التاجر (lifetime_sales).</strong><br>بعد التسوية، لن تظهر هذه البوالص في قائمة المستحقات.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'نعم، قم بالتسوية',
+            cancelButtonText: 'إلغاء',
+            confirmButtonColor: '#10B981'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                Swal.fire({ title: 'جاري التسوية وتحديث حائط البطولات...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
                 try {
                     const batch = writeBatch(db);
                     data.items.forEach(item => { batch.update(doc(db, "shipments", item.id), { status: "تمت التسوية" }); });
@@ -310,10 +344,9 @@
                     if(!snap.empty) batch.update(snap.docs[0].ref, { lifetime_sales: increment(data.totalCod) });
                     else batch.set(doc(db, "users", email), { email: email, lifetime_sales: data.totalCod });
                     await batch.commit();
-                    Swal.fire('تم','تمت التسوية وإضافة الرصيد','success');
-                    document.getElementById('merchantModal').style.display = 'none';
-                    window.loadFinancialData();
-                } catch(e){ Swal.fire('خطأ',e.message,'error'); }
+                    Swal.fire('تم بنجاح!', `تمت التسوية وإضافة ${data.totalCod} ج.م إلى حائط البطولات.`, 'success');
+                    window.refreshData();
+                } catch(e){ Swal.fire('خطأ', e.message, 'error'); }
             }
         });
     };
@@ -322,7 +355,7 @@
         let data = merchantsMap[currentMerchantEmail];
         if(!data) return;
         let rows = "", totalNet = 0;
-        data.items.forEach(i => { totalNet += Number(i.net); rows += `<tr><td>${i.timestamp?.toDate().toLocaleDateString()||'-'}</td><td>${i.awb}</td><td>${i.name} (${i.city})</td><td>${i.amount}</td><td>${i.shipCost}</td><td>${i.net} ج.م</td></tr>`; });
+        data.items.forEach(i => { totalNet += Number(i.net); rows += `<tr><td>${i.timestamp?.toDate().toLocaleDateString()||'-'}</td><td>${i.awb}</td><td>${i.name} (${i.city})</td><td>${i.amount}</td><td>${i.shipCost}</td><td style="color:#10B981;">${i.net} ج.م</td></tr>`; });
         let html = `<div style="direction:rtl;padding:2mm;"><div style="display:flex;justify-content:space-between;"><div><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" style="height:25px;"> <b>AXON EXPRESS</b><br>فرع ${selectedBranch}</div><div><h3>كشف حساب تاجر</h3><p>${new Date().toLocaleString()}</p></div><div><h3>${currentMerchantEmail.split('@')[0]}</h3></div></div>
         <div style="background:#f0f0f0;padding:2px;">عدد البوالص: ${data.count}</div>
         <table class="print-table" style="width:100%;border-collapse:collapse;font-size:8px;"><thead><tr><th>التاريخ</th><th>البوليصة</th><th>المستلم</th><th>COD</th><th>مخصوم</th><th>الصافي</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="6"><div style="border:2px solid #10B981;background:#d1fae5;padding:2px;"><b>صافي المستحق: ${totalNet} ج.م</b></div></td></tr></tfoot></table>
