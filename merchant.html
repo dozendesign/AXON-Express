@@ -165,7 +165,6 @@
         body.dark-mode .chat-other { background: #16213e; color: #fff; border-color: #333;}
         body.dark-mode .chat-admin { background: #4a1919; color: #ff8a8a; border-color: #ff8a8a; }
 
-        /* قيود الطباعة الصارمة لورقة A4 واحدة */
         @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             body { background: #fff; margin: 0; padding: 0; color: #000; }
@@ -266,7 +265,6 @@
                     <h3><i class="fa-solid fa-trophy"></i> حائط البطولات (إجمالي مبيعاتك)</h3>
                     <div class="value" id="lifetimeSales">0 ج.م</div>
                 </div>
-                <!-- كارد الحد الائتماني الجديد -->
                 <div class="stat-card">
                     <h3><i class="fa-solid fa-credit-card"></i> الحد الأقصى للتمويل (اشتريلي)</h3>
                     <div class="value" id="creditLimitDisplay">0 ج.م</div>
@@ -313,7 +311,7 @@
                         <th data-i18n="th_amt">المبلغ الإجمالي</th>
                         <th data-i18n="th_status">الحالة</th>
                         <th data-i18n="th_act">إجراء</th>
-                    </tr></thead>
+                    </thead>
                     <tbody id="tableBody"></tbody>
                 </table>
             </div>
@@ -323,7 +321,6 @@
     <footer style="text-align:center; padding:15px; background:var(--white); border-top:1px solid var(--border-color); margin-top:40px;">
         <h4 style="margin:0;color:var(--primary-blue);font-size:11px;font-weight:900;">تم الإنشاء بواسطة ESAIA</h4>
         <p style="margin:5px 0 0 0;color:var(--primary-burgundy);font-size:9px;font-weight:bold;">الشركة المصرية السعودية العامة لهندسة الهوية المؤسسية والصناعات المتقدمة</p>
-        <p style="margin:5px 0 0 0;color:#666;font-size:8px;font-family:Tahoma,sans-serif;">The Egyptian Saudi General Company for Corporate Identity Engineering and Advanced Industries</p>
     </footer>
 
     <div id="printArea"></div>
@@ -574,7 +571,7 @@
             "الغربية", "الغربية - طنطا", "الغربية - المحلة الكبرى", "الغربية - زفتى", "الغربية - كفر الزيات", "الغربية - بسيون", "الغربية - سمنود", "الغربية - قطور",
             "المنوفية", "المنوفية - شبين الكوم", "المنوفية - السادات", "المنوفية - منوف", "المنوفية - قويسنا", "المنوفية - أشمون", "المنوفية - الباجور", "المنوفية - بركة السبع", "المنوفية - تلا",
             "البحيرة", "البحيرة - دمنهور", "البحيرة - كفر الدوار", "البحيرة - رشيد", "البحيرة - إدكو", "البحيرة - أبو حمص", "البحيرة - أبو المطامير", "البحيرة - وادي النطرون", "البحيرة - النوبارية",
-            "كفر الشيخ", "كفر الشيخ - دسوق", "كفر الشيخ - بيلا", "كفر الشيخ - الحامول", "كفر الشيخ - بلطيم", "كفر الشيخ - البرلس", "كفر الشيخ - مطوبس",
+            "كفر الشيخ", "كفر الشيخ - دسوق", "كفر الشيخ - بيلا", "кفر الشيخ - الحامول", "كفر الشيخ - بلطيم", "كفر الشيخ - البرلس", "كفر الشيخ - مطوبس",
             "دمياط", "دمياط - دمياط الجديدة", "دمياط - رأس البر", "دمياط - عزبة البرج", "دمياط - فارسكور", "دمياط - كفر سعد",
             "الإسماعيلية", "الإسماعيلية - فايد", "الإسماعيلية - التل الكبير", "الإسماعيلية - القنطرة غرب", "الإسماعيلية - القنطرة شرق",
             "بورسعيد", "بورسعيد - بورفؤاد", "بورسعيد - جنوب بورسعيد",
@@ -652,21 +649,17 @@
                         const sales = userData.lifetime_sales || 0;
                         currentLifetimeSales = sales;
                         document.getElementById('lifetimeSales').innerText = sales.toLocaleString('en-US') + " ج.م";
-                        // حساب الحد الائتماني (1% من إجمالي المبيعات)
                         currentCreditLimit = sales * 0.01;
                         document.getElementById('creditLimitDisplay').innerText = currentCreditLimit.toFixed(2) + " ج.م";
-                        // تحديث التنبيه داخل المودال إن كان مفتوحاً
                         const creditSpan = document.getElementById('creditLimitAlertSpan');
                         if(creditSpan) creditSpan.innerText = currentCreditLimit.toFixed(2);
                     }
                 });
 
-                // دمج بورصة الأسعار الحية من الإدارة
                 onSnapshot(doc(db, "settings", "shipping_prices"), (snap) => {
                     if(snap.exists()) { 
                         let data = snap.data();
                         livePrices = { ...livePrices, ...data };
-
                         extraZones = {};
                         shippingZonesList.forEach(zone => {
                             if(zone.includes('-') && data[zone]) { extraZones[zone] = data[zone]; }
@@ -718,16 +711,13 @@
 
         function startGlobalChatListener() {
             if(globalChatUnsubscribe) globalChatUnsubscribe();
-            
             const chatQ = query(collection(db, "internal_chats"), where("to", "==", merchantEmail));
             let initialLoad = true;
-            
             globalChatUnsubscribe = onSnapshot(chatQ, (snap) => {
                 snap.docChanges().forEach((change) => {
                     if (change.type === "added") {
                         const msgData = change.doc.data();
                         const targetOrderId = msgData.orderId || 'general';
-                        
                         if(!msgData.isRead && currentChatOrderId !== targetOrderId) {
                             unreadMessagesByOrder[targetOrderId] = (unreadMessagesByOrder[targetOrderId] || 0) + 1;
                             if(!initialLoad) {
@@ -798,10 +788,7 @@
                             msgClass = "chat-admin";
                             senderName = "🚨 الإدارة العليا";
                         }
-                        html += `<div class="chat-bubble ${msgClass}">
-                                    <b style="font-size: 10px; color: #666; display: block; margin-bottom: 2px;">${senderName}</b>
-                                    ${m.message}
-                                 </div>`;
+                        html += `<div class="chat-bubble ${msgClass}"><b style="font-size: 10px; color: #666; display: block; margin-bottom: 2px;">${senderName}</b>${m.message}</div>`;
                     }
                 });
                 const chatBox = document.getElementById('chatBox');
@@ -1141,24 +1128,45 @@
             onSnapshot(query(collection(db, "shipments"), where("merchantEmail", "==", merchantEmail)), (snap) => {
                 let total = 0, html = "", count = 0;
                 let docs = [];
-                snap.forEach(doc => docs.push({id: doc.id, ...doc.data()}));
+                snap.forEach(docSnap => docs.push({id: docSnap.id, ...docSnap.data()}));
                 docs.sort((a, b) => b.timestamp - a.timestamp);
+
                 docs.forEach(d => {
-                    if(d.deleted) return;
-                    total += Number(d.amount) || 0; count++;
+                    // ✅ استبعاد الشحنات التي تمت تسويتها أو المرتجعة أو المؤجلة
+                    if(d.deleted || d.status === "تمت التسوية" || d.status === "مرتجع" || d.status === "مؤجل") return;
+                    
+                    total += Number(d.amount) || 0; 
+                    count++;
                     const awb = d.awb || ("AXN" + d.id.substring(0,5).toUpperCase());
                     const fragileType = d.fragile || 'normal'; 
                     const insuranceFee = d.insuranceFee || 0;
                     const mAdd = d.merchantAddress || merchantAddress;
                     const mPh = d.merchantPhone || merchantPhone;
                     const pieces = d.pieces || "غير محدد"; 
+                    
                     let unread = unreadMessagesByOrder[d.id] || 0;
                     let badgeDisplay = unread > 0 ? 'flex' : 'none';
+
                     let trackButton = "";
                     if(d.status === "مع المندوب" || d.status.includes("مندوب")) {
-                        trackButton = `<button class="track-btn" style="position:relative;" onclick="window.showCourierTrack('${d.courierName || 'الكابتن'}', '${d.id}')"><i class="fa-solid fa-map-location-dot"></i> تتبع الكابتن<span class="card-chat-badge out-badge" data-order="${d.id}" style="display:${badgeDisplay}; right:-5px; top:-8px; left:auto;">${unread}</span></button>`;
+                        trackButton = `<button class="track-btn" style="position:relative;" onclick="window.showCourierTrack('${d.courierName || 'الكابتن'}', '${d.id}')">
+                            <i class="fa-solid fa-map-location-dot"></i> تتبع الكابتن
+                            <span class="card-chat-badge out-badge" data-order="${d.id}" style="display:${badgeDisplay}; right:-5px; top:-8px; left:auto;">${unread}</span>
+                        </button>`;
                     }
-                    html += `<tr><td><span class="awb-badge">${awb}</span></td><td><b>${d.name}</b></td><td dir="ltr">${d.phone}</td><td>${d.city}</td><td style="color:var(--primary-burgundy); font-weight:bold;">${d.amount}</td><td style="font-weight:bold;">${d.status}</td><td style="display:flex; gap:5px; flex-direction:column;"><button class="print-btn" onclick="window.printWB('${awb}', '${d.name}', '${d.phone}', '${d.phone2}', '${d.city}', '${d.address}', '${d.weight}', '${pieces}', '${d.amount}', '${fragileType}', '${mAdd}', '${mPh}', ${insuranceFee})"><i class="fa-solid fa-print"></i> طباعة</button>${trackButton}</noscript></td>`;
+
+                    html += `<tr>
+                        <td><span class="awb-badge">${awb}</span></td>
+                        <td><b>${d.name}</b></noscript>
+                        <td dir="ltr">${d.phone}</td>
+                        <td>${d.city}</td>
+                        <td style="color:var(--primary-burgundy); font-weight:bold;">${d.amount}</noscript>
+                        <td style="font-weight:bold;">${d.status}</noscript>
+                        <td style="display:flex; gap:5px; flex-direction:column;">
+                            <button class="print-btn" onclick="window.printWB('${awb}', '${d.name}', '${d.phone}', '${d.phone2}', '${d.city}', '${d.address}', '${d.weight}', '${pieces}', '${d.amount}', '${fragileType}', '${mAdd}', '${mPh}', ${insuranceFee})"><i class="fa-solid fa-print"></i> طباعة</button>
+                            ${trackButton}
+                        </noscript>
+                    </tr>`;
                 });
                 document.getElementById('tableBody').innerHTML = html;
                 document.getElementById('totalShipments').innerText = count;
@@ -1170,6 +1178,7 @@
             document.getElementById('mainHeader').style.display = 'none';
             document.getElementById('mainContainer').style.display = 'none';
             document.getElementById('floatingChatBtn').style.display = 'none';
+
             const timestampStr = new Date().toLocaleString('en-GB'); 
             const digitalSignature = `[Merchant: ${merchantName}] | [IP: ${merchantIP}] | [Device: ${deviceInfo}] | [Time: ${timestampStr}]`;
             const branchBadgePrint = `<div style="border: 2px solid #000; display: inline-block; padding: 5px 15px; font-weight: 900; font-size: 14px; margin-bottom: 10px; background: #f0f0f0;">الفرع المُصدر: ${branchName}</div>`;
@@ -1201,7 +1210,19 @@
                     </div>
                     <div class="cod-box"><h2 style="margin:0; color:#800020; font-size:20px;">المبلغ المطلوب تحصيله (COD): ${amt} ج.م</h2></div>
                     ${insurancePrintHTML}
-                    <div class="constitution-columns"><h4 style="text-align:center; column-span: all; font-size:12px; color:#000;">شروط وأحكام الناقل (Axon Express)</h4><p style="color:#000;"><b>أولاً: إقرار باستلام البضاعة بحالة ظاهرية سليمة:</b> يستلم الناقل البضاعة بناءً على الإقرار الصادر من المرسل بأنها بحالة ظاهرية سليمة، وخالية من أي عيوب أو تلف، ومعبأة تعبئة مناسبة تتناسب مع طبيعة البضاعة ومتطلبات النقل البري، ويكون الناقل غير مسؤول عن الفحص الفني للبضاعة أو مكوناتها الداخلية.</p><p style="color:#000;"><b>ثانياً: تحديد نطاق مسؤولية الناقل:</b> يلتزم الناقل ببذل العناية المعتادة في نقل البضاعة والحفاظ عليها. ومع ذلك، لا يكون الناقل مسؤولاً عن أي تلف أو ضياع أو تأخير ينشأ نتيجة لأي من الأسباب التالية: 1. قوة قاهرة أو حادث لا يمكن توقعه. 2. طبيعة البضاعة من حيث قابليتها للكسر أو التلف. 3. التغليف غير الملائم من قبل المرسل. 4. خطأ من قبل المرسل أو المرسل إليه. 5. أي نقص في الوزن أو العدد لا تتوافق مع مستندات المرسل. 6. التأخير الناتج عن إجراءات تفتيش الجهات الحكومية أو القيود المرورية. 7. لا تتجاوز قيمة تعويض الناقل عن أي ضرر يثبت خطؤه فيه قيمة أجرة النقل المتفق عليها لهذه الشحنة، ما لم يثبت المرسل قيمة البضاعة الحقيقية ويعلنها كتابةً عند الشحن.</p><p style="color:#000;"><b>ثالثاً: حدود التعويض واشتراط الإعلان بالقيمة:</b> يكون الناقل ملتزماً بالتعويض في حالة ثبوت خطئه بما لا يتجاوز قيمة أجرة النقل × 3، أو بحد أقصى مبلغ (500 جنيه)، أيهما أقل، وذلك ما لم يقم المرسل بالإعلان عن القيمة الحقيقية للبضاعة كتابةً على البوليصة وسداد نسبة إضافية مقابل ذلك كتأمين غير مسترد. في حال الشحنات القابلة للكسر فهي إما أن تنقل على مسؤولية الراسل ولا تلتزم الشركة بأي تعويض في حال التلف، أو أن يقوم بدفع قيمة تأمين مبلغ 10% من قيمة الطرد الفعلية وبذلك تتعهد الشركة بتعويض الراسل بكامل قيمة الطرد حيث أن الشركة تعيد تغليف الطرد.</p><p style="color:#000;"><b>رابعاً: مهلة الإخطار بالشكاوى:</b> يُعتبر التسليم نافياً للمسؤولية ما لم يقم المرسل إليه بإخطار الناقل كتابةً بأي تحفظ أو اعتراض على البضاعة فور استلامها، أو خلال <b>48 ساعة كحد أقصى</b> من تاريخ التسليم للشكاوى الخفية، وإلا سقط حقه في أي مطالبة.</p><h4 style="color:#000;">📝 إقرارات وتعهدات المرسل</h4><p style="color:#000;"><b>1. صحة البيانات:</b> أتعهد بموجب هذا بأن جميع البيانات المذكورة في هذه البوليصة صحيحة وكاملة، وأتحمل وحدي المسؤولية عن عدم دقتها.<br><b>2. سلامة التغليف:</b> أقر بأن البضاعة معبأة بشكل مناسب يضمن سلامتها.<br><b>3. التراخيص:</b> أتعهد بتوفير جميع التراخيص والموافقات المطلوبة قانونياً لنقل هذه البضاعة.</p><h4 style="color:#000;">🚫 المحظورات المطلقة</h4><p style="color:#000;">يحظر بشكل قاطع شحن أو قبول أي من البضائع التالية: المواد شديدة الخطورة والاشتعال، الأسلحة والذخائر، المواد المخدرة، البضائع المهربة والمزورة، المواد سريعة التلف، الحيوانات، النقود والأحجار الكريمة.<br><b>. قد يخضع الطرد للتفتيش داخلياً بمعرفة الشركة وإذا تم العثور بداخل الطرد على أي مواد مخالفة للقانون سيتم على الفور إبلاغ السلطات المعنية لاتخاذ اللازم تجاه الراسل والمستلم.<br>. جميع ما سبق هو بمثابة إخلاء مسؤولية كاملة عن محتوى الطرود التي لم يتم الكشف عليها من طرف الشركة وأن المسؤولية الجنائية تقع كاملة على عاتق الراسل.</b></p><h4 style="color:#000;">📋 تعليمات إلزامية للعملاء</h4><p style="color:#000;">1. يتحمل المرسل مسؤولية التعبئة الآمنة وكتابة عنوان المستلم بوضوح. 2. يلتزم المرسل بتسليم الشحنة والحصول على إيصال. 3. يلتزم المرسل إليه باستلام الشحنة فور وصولها ويتحمل تكاليف التخزين حال التأخير. 4. لا تُقبل مطالبات بعد توقيع المرسل إليه بدون تحفظات.<br><span style="color:#000; font-weight:bold; font-size:10px;">5. يُمنع منعاً باتاً فتح الشحنة أو العبث بتغليفها قبل سداد كامل قيمتها (COD) ومصاريف الشحن لمندوب الشركة. وفي حالة رفض الاستلام بعد الفتح (بإذن التاجر)، يلتزم العميل بدفع مصاريف الشحن كاملة. وفي حالة رفض المستلم استلام الشحنة، يلتزم التاجر بسداد رسوم الشحن (ذهاباً وإياباً).</span></p></div>
+                    <div class="constitution-columns">
+                        <h4 style="text-align:center; column-span: all; font-size:12px; color:#000;">شروط وأحكام الناقل (Axon Express)</h4>
+                        <p style="color:#000;"><b>أولاً: إقرار باستلام البضاعة بحالة ظاهرية سليمة:</b> يستلم الناقل البضاعة بناءً على الإقرار الصادر من المرسل بأنها بحالة ظاهرية سليمة، وخالية من أي عيوب أو تلف، ومعبأة تعبئة مناسبة تتناسب مع طبيعة البضاعة ومتطلبات النقل البري، ويكون الناقل غير مسؤول عن الفحص الفني للبضاعة أو مكوناتها الداخلية.</p>
+                        <p style="color:#000;"><b>ثانياً: تحديد نطاق مسؤولية الناقل:</b> يلتزم الناقل ببذل العناية المعتادة في نقل البضاعة والحفاظ عليها. ومع ذلك، لا يكون الناقل مسؤولاً عن أي تلف أو ضياع أو تأخير ينشأ نتيجة لأي من الأسباب التالية: 1. قوة قاهرة أو حادث لا يمكن توقعه. 2. طبيعة البضاعة من حيث قابليتها للكسر أو التلف. 3. التغليف غير الملائم من قبل المرسل. 4. خطأ من قبل المرسل أو المرسل إليه. 5. أي نقص في الوزن أو العدد لا تتوافق مع مستندات المرسل. 6. التأخير الناتج عن إجراءات تفتيش الجهات الحكومية أو القيود المرورية. 7. لا تتجاوز قيمة تعويض الناقل عن أي ضرر يثبت خطؤه فيه قيمة أجرة النقل المتفق عليها لهذه الشحنة، ما لم يثبت المرسل قيمة البضاعة الحقيقية ويعلنها كتابةً عند الشحن.</p>
+                        <p style="color:#000;"><b>ثالثاً: حدود التعويض واشتراط الإعلان بالقيمة:</b> يكون الناقل ملتزماً بالتعويض في حالة ثبوت خطئه بما لا يتجاوز قيمة أجرة النقل × 3، أو بحد أقصى مبلغ (500 جنيه)، أيهما أقل، وذلك ما لم يقم المرسل بالإعلان عن القيمة الحقيقية للبضاعة كتابةً على البوليصة وسداد نسبة إضافية مقابل ذلك كتأمين غير مسترد. في حال الشحنات القابلة للكسر فهي إما أن تنقل على مسؤولية الراسل ولا تلتزم الشركة بأي تعويض في حال التلف، أو أن يقوم بدفع قيمة تأمين مبلغ 10% من قيمة الطرد الفعلية وبذلك تتعهد الشركة بتعويض الراسل بكامل قيمة الطرد حيث أن الشركة تعيد تغليف الطرد.</p>
+                        <p style="color:#000;"><b>رابعاً: مهلة الإخطار بالشكاوى:</b> يُعتبر التسليم نافياً للمسؤولية ما لم يقم المرسل إليه بإخطار الناقل كتابةً بأي تحفظ أو اعتراض على البضاعة فور استلامها، أو خلال <b>48 ساعة كحد أقصى</b> من تاريخ التسليم للشكاوى الخفية، وإلا سقط حقه في أي مطالبة.</p>
+                        <h4 style="color:#000;">📝 إقرارات وتعهدات المرسل</h4>
+                        <p style="color:#000;"><b>1. صحة البيانات:</b> أتعهد بموجب هذا بأن جميع البيانات المذكورة في هذه البوليصة صحيحة وكاملة، وأتحمل وحدي المسؤولية عن عدم دقتها.<br><b>2. سلامة التغليف:</b> أقر بأن البضاعة معبأة بشكل مناسب يضمن سلامتها.<br><b>3. التراخيص:</b> أتعهد بتوفير جميع التراخيص والموافقات المطلوبة قانونياً لنقل هذه البضاعة.</p>
+                        <h4 style="color:#000;">🚫 المحظورات المطلقة</h4>
+                        <p style="color:#000;">يحظر بشكل قاطع شحن أو قبول أي من البضائع التالية: المواد شديدة الخطورة والاشتعال، الأسلحة والذخائر، المواد المخدرة، البضائع المهربة والمزورة، المواد سريعة التلف، الحيوانات، النقود والأحجار الكريمة.<br><b>. قد يخضع الطرد للتفتيش داخلياً بمعرفة الشركة وإذا تم العثور بداخل الطرد على أي مواد مخالفة للقانون سيتم على الفور إبلاغ السلطات المعنية لاتخاذ اللازم تجاه الراسل والمستلم.<br>. جميع ما سبق هو بمثابة إخلاء مسؤولية كاملة عن محتوى الطرود التي لم يتم الكشف عليها من طرف الشركة وأن المسؤولية الجنائية تقع كاملة على عاتق الراسل.</b></p>
+                        <h4 style="color:#000;">📋 تعليمات إلزامية للعملاء</h4>
+                        <p style="color:#000;">1. يتحمل المرسل مسؤولية التعبئة الآمنة وكتابة عنوان المستلم بوضوح. 2. يلتزم المرسل بتسليم الشحنة والحصول على إيصال. 3. يلتزم المرسل إليه باستلام الشحنة فور وصولها ويتحمل تكاليف التخزين حال التأخير. 4. لا تُقبل مطالبات بعد توقيع المرسل إليه بدون تحفظات.<br><span style="color:#000; font-weight:bold; font-size:10px;">5. يُمنع منعاً باتاً فتح الشحنة أو العبث بتغليفها قبل سداد كامل قيمتها (COD) ومصاريف الشحن لمندوب الشركة. وفي حالة رفض الاستلام بعد الفتح (بإذن التاجر)، يلتزم العميل بدفع مصاريف الشحن كاملة. وفي حالة رفض المستلم استلام الشحنة، يلتزم التاجر بسداد رسوم الشحن (ذهاباً وإياباً).</span></p>
+                    </div>
                     <div class="footer-grid"><div style="line-height:1.4;"><b>تواصل معنا:</b><br>مسح الكود المجاور يوجهك لجميع روابط الشركة وحساباتنا.<br><i style="color:#000; font-weight:bold;">خدمة العملاء (واتساب): 01147000882</i></div><div style="text-align:center;"><img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://axonexpress.taplink.ws" style="width:3cm; height:3cm; object-fit:contain; border: 1px solid #000; padding:2px;"><br></div></div>
                     <div class="digital-sig">هذه البوليصة إلكترونية ومُصدرة مباشرة عبر نظام (أكسون إكسبريس) من حساب التاجر. يُعد إنشاؤها إقراراً نهائياً وملزماً بصحة البيانات وموافقة تامة على الشروط والأحكام والمسؤولية الجنائية.<br><b>البيانات الرقمية أدناه تُعد بمثابة توقيع إلكتروني موثق للمُرسل:</b><br>${digitalSignature}</div>
                 </div>
