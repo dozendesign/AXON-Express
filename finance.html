@@ -3,396 +3,355 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>الخزينة المركزية | Axon Finance Pro</title>
+    <title>الخزينة المركزية | Axon Express</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        * { box-sizing: border-box; }
-        :root { --primary-black: #111; --primary-yellow: #E1E715; --primary-burgundy: #800020; --bg-color: #F8F9FA; --card-bg: #fff; --text-dark: #111; --border-color: #E2E8F0; }
-        body { font-family: 'Cairo', sans-serif; margin: 0; background: var(--bg-color); color: var(--text-dark); }
-        header { background: var(--primary-black); border-bottom: 3px solid var(--primary-yellow); padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; }
-        header h1 { margin: 0; font-size: 20px; display: flex; align-items: center; gap: 10px; }
-        header h1 img { height: 35px; object-fit: contain; }
-        .header-actions { display: flex; gap: 10px; }
-        .container { padding: 20px; max-width: 1300px; margin: 0 auto; }
-        .branch-filter-box { background: var(--card-bg); padding: 15px; border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
-        .branch-select { padding: 10px; border-radius: 8px; border: 2px solid var(--primary-black); flex: 1; }
-        .tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; }
-        .tab-btn { background: #e2e8f0; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .tab-btn.active { background: var(--primary-black); color: var(--primary-yellow); }
-        .tab-content { display: none; animation: fadeIn 0.4s ease; }
-        .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: var(--card-bg); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-black); }
-        .stat-card.red { border-bottom-color: var(--primary-burgundy); }
-        .stat-card.green { border-bottom-color: #10B981; }
-        .stat-card .value { font-size: 26px; font-weight: 900; margin-top: 5px; }
-        .table-responsive { width: 100%; overflow-x: auto; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 25px; }
-        table { width: 100%; min-width: 900px; border-collapse: collapse; }
-        th { background: var(--primary-black); color: var(--primary-yellow); padding: 12px; }
-        td { padding: 10px; border-bottom: 1px solid var(--border-color); font-size: 13px; }
-        .btn-action { border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; color: white; margin: 2px; background: #17a2b8; }
-        .btn-print { background: var(--primary-black); color: var(--primary-yellow); }
-        .btn-settle { background: #10B981; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; z-index: 2000; }
-        .modal-content { background: var(--card-bg); padding: 20px; border-radius: 15px; width: 90%; max-width: 900px; max-height: 90vh; overflow-y: auto; position: relative; }
-        .close-btn { position: absolute; top: 10px; left: 10px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--primary-burgundy); }
-        .summary-box { background: #f4f4f4; padding: 10px; border-radius: 8px; display: flex; justify-content: space-around; margin-bottom: 15px; }
-        .section-title { background: var(--primary-black); color: var(--primary-yellow); padding: 5px 10px; border-radius: 5px; display: inline-block; margin: 10px 0; }
-        @media print {
-            body * { visibility: hidden; }
-            #printArea, #printArea * { visibility: visible; }
-            #printArea { position: absolute; top: 0; left: 0; width: 100%; margin: 0; padding: 0; }
-            .print-table { font-size: 8px; border-collapse: collapse; width: 100%; }
-            .print-table td, .print-table th { border: 1px solid #000; padding: 2px; }
+        *{box-sizing:border-box;}
+        body{font-family:'Cairo',sans-serif;margin:0;background:#f8f9fa;}
+        header{background:#111;border-bottom:3px solid #E1E715;padding:15px 20px;color:white;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;}
+        .logo{display:flex;align-items:center;gap:10px;}
+        .logo img{height:35px;}
+        .container{padding:20px;max-width:1300px;margin:0 auto;}
+        .filter-bar{background:white;padding:15px;border-radius:12px;margin-bottom:20px;display:flex;align-items:center;gap:15px;flex-wrap:wrap;}
+        select{padding:8px 12px;border-radius:8px;border:2px solid #111;font-family:'Cairo';font-weight:bold;}
+        .tabs{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;}
+        .tab-btn{background:#e2e8f0;border:none;padding:8px 20px;border-radius:8px;cursor:pointer;font-weight:bold;}
+        .tab-btn.active{background:#111;color:#E1E715;}
+        .tab-content{display:none;animation:fadeIn 0.3s;}
+        .tab-content.active{display:block;}
+        @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+        .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:25px;}
+        .stat-card{background:white;padding:20px;border-radius:12px;text-align:center;border-bottom:4px solid #111;}
+        .stat-card.red{border-bottom-color:#800020;}
+        .stat-card.green{border-bottom-color:#10B981;}
+        .value{font-size:26px;font-weight:900;margin-top:5px;}
+        .table-responsive{overflow-x:auto;background:white;border-radius:12px;border:1px solid #ddd;margin-bottom:25px;}
+        table{width:100%;min-width:800px;border-collapse:collapse;}
+        th{background:#111;color:#E1E715;padding:12px;}
+        td{padding:10px;border-bottom:1px solid #eee;}
+        button{border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:bold;margin:2px;}
+        .btn-view{background:#17a2b8;color:white;}
+        .btn-settle{background:#10B981;color:white;}
+        .btn-print{background:#111;color:#E1E715;}
+        .btn-danger{background:#800020;color:white;}
+        .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);align-items:center;justify-content:center;z-index:2000;}
+        .modal-content{background:white;padding:20px;border-radius:15px;max-width:900px;width:90%;max-height:90vh;overflow-y:auto;position:relative;}
+        .close-btn{position:absolute;top:10px;left:10px;background:none;border:none;font-size:24px;cursor:pointer;color:#800020;}
+        .summary-box{background:#f4f4f4;padding:10px;border-radius:8px;display:flex;justify-content:space-around;margin:15px 0;}
+        @media print{
+            body *{visibility:hidden;}
+            #printArea,#printArea *{visibility:visible;}
+            #printArea{position:absolute;top:0;left:0;width:100%;}
+            .print-table{font-size:8px;border-collapse:collapse;width:100%;}
+            .print-table td,.print-table th{border:1px solid #000;padding:2px;}
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" alt="Logo"> <span>FINANCE</span></h1>
-        <div class="header-actions">
-            <button onclick="window.location.href='admin.html'" class="lang-btn">رجوع للإدارة</button>
-            <button onclick="window.toggleTheme()" style="background:none; border:none; color:var(--primary-yellow);">🌙</button>
-            <button onclick="window.logout()" style="background:var(--primary-burgundy); color:white; border:none; padding:6px 12px; border-radius:6px;">خروج</button>
-        </div>
-    </header>
-
-    <div class="container">
-        <div class="branch-filter-box">
-            <i class="fa-solid fa-city"></i>
-            <span>مراجعة حسابات فرع:</span>
-            <select id="branchFilter" class="branch-select" onchange="window.onBranchChange()">
-                <option value="all">الجمهورية (الكل)</option>
-                <option value="القاهرة">القاهرة</option>
-                <option value="الجيزة">الجيزة</option>
-                <option value="الإسكندرية">الإسكندرية</option>
-                <!-- باقي المحافظات حسب الحاجة -->
-            </select>
-        </div>
-        <div id="loading" style="text-align:center; padding:50px;"><i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل البيانات...</div>
-        <div id="dashboard" style="display:none;">
-            <div class="tabs">
-                <button class="tab-btn active" onclick="showTab('overview')">الموقف العام</button>
-                <button class="tab-btn" onclick="showTab('couriers')">عهد الكباتن</button>
-                <button class="tab-btn" onclick="showTab('merchants')">تسويات التجار</button>
-                <button class="tab-btn" onclick="showTab('expenses')">المصروفات</button>
-            </div>
-            <div id="overview" class="tab-content active">
-                <div class="stats-grid">
-                    <div class="stat-card"><h3>إجمالي العهد المحصلة</h3><div class="value" id="statCustody">0</div></div>
-                    <div class="stat-card red"><h3>مستحقات التجار (صافية)</h3><div class="value" id="statDues">0</div></div>
-                    <div class="stat-card green"><h3>أرباح الشركة</h3><div class="value" id="statProfit">0</div></div>
-                </div>
-            </div>
-            <div id="couriers" class="tab-content">
-                <div class="table-responsive"><table><thead><tr><th>الكابتن</th><th>المهام</th><th>العهدة المطلوبة</th><th>إجراء</th></tr></thead><tbody id="tblCouriers"></tbody></table></div>
-            </div>
-            <div id="merchants" class="tab-content">
-                <div class="table-responsive"><table><thead><tr><th>التاجر</th><th>بوالص مسلمة</th><th>إجمالي COD</th><th>مخصوم شحن</th><th>صافي المستحق</th><th>إجراء</th></tr></thead><tbody id="tblMerchants"></tbody></table></div>
-            </div>
-            <div id="expenses" class="tab-content">
-                <button class="btn-action" style="background:var(--primary-burgundy);" onclick="addExpense()">+ تسجيل مصروف</button>
-                <div class="table-responsive"><table><thead><tr><th>التاريخ</th><th>البيان</th><th>المبلغ</th></tr></thead><tbody id="tblExpenses"></tbody></table></div>
-            </div>
-        </div>
+<header>
+    <div class="logo"><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" alt="Logo"><span>AXON EXPRESS | FINANCE</span></div>
+    <div><button onclick="location.href='admin.html'" style="background:transparent;border:1px solid #E1E715;color:#E1E715;">رجوع للإدارة</button>
+    <button onclick="document.body.classList.toggle('dark-mode')" style="background:none;border:none;color:#E1E715;">🌙</button>
+    <button onclick="window.logout()" style="background:#800020;color:white;border:none;">خروج</button></div>
+</header>
+<div class="container">
+    <div class="filter-bar">
+        <i class="fa-solid fa-city"></i> <span>مراجعة فرع:</span>
+        <select id="branchSelect" onchange="window.refreshData()">
+            <option value="all">الجمهورية (الكل)</option>
+            <option value="القاهرة">القاهرة</option>
+            <option value="الجيزة">الجيزة</option>
+            <option value="الإسكندرية">الإسكندرية</option>
+        </select>
     </div>
+    <div id="loading" style="text-align:center;padding:50px;"><i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل البيانات...</div>
+    <div id="dashboard" style="display:none;">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('overview')">الموقف العام</button>
+            <button class="tab-btn" onclick="showTab('couriers')">عهد الكباتن</button>
+            <button class="tab-btn" onclick="showTab('merchants')">تسويات التجار</button>
+            <button class="tab-btn" onclick="showTab('expenses')">المصروفات</button>
+        </div>
+        <div id="overview" class="tab-content active">
+            <div class="stats">
+                <div class="stat-card"><h3>إجمالي العهد المحصلة</h3><div class="value" id="statTotalCash">0</div></div>
+                <div class="stat-card red"><h3>مستحقات التجار (صافية)</h3><div class="value" id="statNetDues">0</div></div>
+                <div class="stat-card green"><h3>أرباح الشركة (شحن+وزن+تأمين)</h3><div class="value" id="statProfit">0</div></div>
+            </div>
+        </div>
+        <div id="couriers" class="tab-content"><div class="table-responsive"><table><thead><tr><th>الكابتن</th><th>المهام</th><th>العهدة المطلوبة</th><th></th></tr></thead><tbody id="couriersBody"></tbody></table></div></div>
+        <div id="merchants" class="tab-content"><div class="table-responsive"><table><thead><tr><th>التاجر</th><th>بوالص مسلمة</th><th>إجمالي COD</th><th>مخصوم</th><th>صافي المستحق</th><th></th></tr></thead><tbody id="merchantsBody"></tbody></table></div></div>
+        <div id="expenses" class="tab-content"><button class="btn-danger" onclick="addExpense()">+ تسجيل مصروف</button><div class="table-responsive"><table><thead><tr><th>التاريخ</th><th>البيان</th><th>المبلغ</th></tr></thead><tbody id="expensesBody"></tbody></table></div></div>
+    </div>
+</div>
 
-    <div id="courierModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="closeModal('courierModal')">✖</button><h2>تصفية عهدة: <span id="cmName"></span></h2><div class="summary-box"><div>النقدية المطلوبة: <span id="cmTotalCash"></span></div><div>المهام: <span id="cmTotalTasks"></span></div></div><div class="section-title">بوالص الشحن</div><div class="table-responsive"><table><thead><tr><th>البوليصة</th><th>التاجر</th><th>المستلم</th><th>المبلغ</th><th>الحالة</th></tr></thead><tbody id="cmShipmentsBody"></tbody></table></div><div class="section-title">مهام الرادار</div><div class="table-responsive"><table><thead><tr><th>التفاصيل</th><th>العنوان</th><th>التحصيل</th><th>الحالة</th></tr></thead><tbody id="cmRadarBody"></tbody></table></div><button class="btn-action btn-print" onclick="printCourierSheet()">طباعة المانيفست</button></div></div>
-    <div id="merchantModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="closeModal('merchantModal')">✖</button><h2>كشف حساب: <span id="mmName"></span></h2><div class="summary-box"><div>إجمالي COD: <span id="mmTotalCod"></span></div><div>مخصوم: <span id="mmTotalFees"></span></div><div>الصافي: <span id="mmNet"></span></div></div><div class="table-responsive"><table><thead><tr><th>التاريخ</th><th>البوليصة</th><th>المستلم</th><th>COD</th><th>مخصوم</th><th>الصافي</th></tr></thead><tbody id="mmShipmentsBody"></tbody></table></div><button class="btn-action btn-settle" onclick="window.settleAccount(currentViewedMerchant)">اعتماد التسوية</button><button class="btn-action btn-print" onclick="printMerchantSheet()">طباعة الكشف</button></div></div>
-    <div id="printArea"></div>
+<div id="courierModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="closeModal('courierModal')">✖</button><h2>تفاصيل عهدة: <span id="courierNameModal"></span></h2><div class="summary-box"><div>النقدية المطلوبة: <span id="courierTotal"></span></div><div>عدد المهام: <span id="courierTasks"></span></div></div><div class="table-responsive"><table><thead><tr><th>النوع</th><th>رقم البوليصة/التفاصيل</th><th>التاجر/العنوان</th><th>المبلغ</th><th>الحالة</th></tr></thead><tbody id="courierDetailsBody"></tbody></table></div><button class="btn-print" onclick="printCourierManifest()">طباعة المانيفست</button></div></div>
+<div id="merchantModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="closeModal('merchantModal')">✖</button><h2>كشف حساب: <span id="merchantNameModal"></span></h2><div class="summary-box"><div>إجمالي COD: <span id="merchantTotalCod"></span></div><div>مخصوم شحن: <span id="merchantTotalFees"></span></div><div>الصافي المستحق: <span id="merchantNet"></span></div></div><div class="table-responsive"><table><thead><tr><th>التاريخ</th><th>البوليصة</th><th>المستلم</th><th>COD</th><th>مخصوم</th><th>الصافي</th></tr></thead><tbody id="merchantItemsBody"></tbody></table></div><button class="btn-settle" onclick="settleMerchant()">اعتماد التسوية</button><button class="btn-print" onclick="printMerchantStatement()">طباعة الكشف</button></div></div>
+<div id="printArea"></div>
 
-    <script>
-        window.toggleTheme = () => document.body.classList.toggle('dark-mode');
-        window.showTab = (id) => {
-            document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            event.currentTarget.classList.add('active');
-        };
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-        async function addExpense() {
-            const { value: vals } = await Swal.fire({ title: 'تسجيل مصروف', html: '<input id="desc" class="swal2-input" placeholder="الوصف"><input id="amt" class="swal2-input" type="number" placeholder="المبلغ">', preConfirm: () => ({ desc: document.getElementById('desc').value, amt: parseFloat(document.getElementById('amt').value) }), confirmButtonText: 'إضافة', showCancelButton: true });
-            if(vals && vals.desc && vals.amt) await window.addExpense(vals.desc, vals.amt);
-            else Swal.fire('خطأ', 'الرجاء إدخال الوصف والمبلغ', 'error');
+<script>
+    let currentCourierData = null;
+    let currentMerchantEmail = null;
+    let merchantsMap = {}, couriersMap = {};
+    let selectedBranch = "all";
+    let authToken = null;
+
+    function showTab(id){
+        document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+    function closeModal(id){ document.getElementById(id).style.display='none'; }
+    function refreshData(){ if(window.loadFinancialData) window.loadFinancialData(); }
+
+    async function addExpense(){
+        const {value:vals} = await Swal.fire({title:'تسجيل مصروف', html:'<input id="expDesc" class="swal2-input" placeholder="الوصف"><input id="expAmt" class="swal2-input" type="number" placeholder="المبلغ">', preConfirm:()=>({desc:document.getElementById('expDesc').value,amt:parseFloat(document.getElementById('expAmt').value)}), confirmButtonText:'إضافة'});
+        if(vals && vals.desc && vals.amt){
+            if(window.addExpenseFirestore) await window.addExpenseFirestore(vals.desc, vals.amt);
+            else Swal.fire('خطأ','الوظيفة غير متوفرة','error');
         }
-    </script>
+    }
+</script>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, doc, query, where, updateDoc, writeBatch, addDoc, increment, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getFirestore, collection, onSnapshot, doc, query, where, addDoc, updateDoc, writeBatch, increment, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
-            authDomain: "axon-express-2f534.firebaseapp.com",
-            projectId: "axon-express-2f534",
-            storageBucket: "axon-express-2f534.firebasestorage.app",
-            messagingSenderId: "958528400260",
-            appId: "1:958528400260:web:504ae94f3ef2225b928bd1"
-        };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+    const firebaseConfig = {
+        apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
+        authDomain: "axon-express-2f534.firebaseapp.com",
+        projectId: "axon-express-2f534",
+        storageBucket: "axon-express-2f534.firebasestorage.app",
+        messagingSenderId: "958528400260",
+        appId: "1:958528400260:web:504ae94f3ef2225b928bd1"
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-        let gShipments = [], gRadar = [];
-        let livePrices = {};
-        let merchantMap = {}, courierMap = {};
-        let adminRole = "none", adminBranch = "all";
-        let currentCourier = "", currentMerchant = "";
-        let unsubShip, unsubRadar, unsubPrices, unsubExp;
+    let shipments = [], radarTasks = [];
+    let livePrices = {};
+    let unsubShipments, unsubRadar, unsubPrices, unsubExpenses;
 
-        async function fetchUserRole(user) {
-            if(user.email === 'admin@axon.com') { adminRole = 'super_admin'; adminBranch = 'all'; return true; }
-            const adminDoc = await getDoc(doc(db, "admins", user.uid));
-            if(adminDoc.exists()) {
-                adminRole = adminDoc.data().role;
-                adminBranch = adminDoc.data().branchName || 'all';
-                return true;
-            }
-            return false;
-        }
-
-        function getShippingCost(city) {
-            if(!city) return 85;
-            let norm = city.trim().replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/[ىي]/g,'ي');
-            // extra zones
-            for(let zone in livePrices) {
-                if(zone.includes('-')) {
-                    let parts = zone.split('-');
-                    let normZone = zone.replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/[ىي]/g,'ي');
-                    let sub = parts[1] ? parts[1].trim().replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/[ىي]/g,'ي') : "";
-                    if(normZone === norm || (sub && norm.includes(sub))) {
-                        let base = Number(livePrices[parts[0].trim()]) || 85;
-                        let extra = Number(livePrices[zone]) || 0;
-                        return base + extra;
-                    }
-                }
-            }
-            for(let gov in livePrices) {
-                if(!gov.includes('-')) {
-                    let normGov = gov.replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/[ىي]/g,'ي');
-                    if(norm.includes(normGov) || normGov.includes(norm)) return Number(livePrices[gov]) || 85;
-                }
-            }
-            return 85;
-        }
-
-        function processData() {
-            const selectedBranch = document.getElementById('branchFilter').value;
-            merchantMap = {}; courierMap = {};
-            let totalCash = 0, totalProfit = 0;
-            let combined = [...gShipments, ...gRadar];
-            combined.sort((a,b) => (b.timestamp?.seconds||0) - (a.timestamp?.seconds||0));
-
-            combined.forEach(v => {
-                if(v.deleted) return;
-                const itemBranch = v.branchName || v.city || "غير محدد";
-                if(selectedBranch !== 'all' && !itemBranch.includes(selectedBranch)) return;
-                if(adminRole === 'branch_admin' && adminBranch !== 'all' && itemBranch !== adminBranch && !itemBranch.includes(adminBranch)) return;
-
-                let amt = Number(v.amount||0), insurance = Number(v.insuranceFee||0), weight = Number(v.weight||1);
-                let status = v.status || "جديد";
-                let merchant = v.merchantEmail || "إدارة";
-                let courier = v.courierName || "غير محدد";
-                let isShipment = (v.type === 'shipment');
-                let awb = v.awb || ("AXN" + (v.id ? v.id.substring(0,5) : "00000")).toUpperCase();
-
-                let baseCost = getShippingCost(itemBranch);
-                let overWeight = (weight > 2) ? Math.ceil(weight - 2) * 8 : 0;
-                let shipCost = baseCost + overWeight;
-                let collected = amt + insurance;
-                let companyProfit = shipCost + insurance;
-
-                // تسجيل بيانات المندوب
-                if(v.courierName && v.courierName !== "غير محدد") {
-                    if(!courierMap[courier]) courierMap[courier] = { shipments: [], radar: [], totalCollected: 0, count: 0 };
-                    courierMap[courier].count++;
-                    if(isShipment) courierMap[courier].shipments.push({...v, totalCollected: collected, awb});
-                    else courierMap[courier].radar.push({...v, totalCollected: collected});
-                    if(status === "تم التسليم" || status === "تم التسليم بنجاح") courierMap[courier].totalCollected += collected;
-                }
-
-                // بيانات التاجر (للبوالص المكتملة فقط وغير المسوَّاة)
-                if((status === "تم التسليم" || status === "تم التسليم بنجاح") && isShipment && status !== "تمت التسوية") {
-                    if(!merchantMap[merchant]) merchantMap[merchant] = { items: [], totalCod: 0, totalFees: 0, count: 0 };
-                    let net = amt - shipCost;
-                    merchantMap[merchant].items.push({...v, awb, shipCost, net});
-                    merchantMap[merchant].totalCod += amt;
-                    merchantMap[merchant].totalFees += shipCost;
-                    merchantMap[merchant].count++;
-                    totalCash += collected;
-                    totalProfit += companyProfit;
-                }
-            });
-
-            document.getElementById('statCustody').innerText = totalCash + " ج.م";
-            document.getElementById('statProfit').innerText = totalProfit + " ج.م";
-            document.getElementById('statDues').innerText = (totalCash - totalProfit) + " ج.م";
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
-            renderTables();
-        }
-
-        function renderTables() {
-            let courierHtml = "", merchantHtml = "";
-            for(let c in courierMap) {
-                courierHtml += `<tr><td><b>${c}</b></td><td>${courierMap[c].count}</td><td style="color:var(--primary-burgundy);">${courierMap[c].totalCollected} ج.م</td><td><button class="btn-action" onclick="openCourierModal('${c}')">تصفية</button></td></tr>`;
-            }
-            document.getElementById('tblCouriers').innerHTML = courierHtml || "<tr><td colspan='4'>لا توجد عهدة</td></tr>";
-            for(let m in merchantMap) {
-                let data = merchantMap[m];
-                let net = data.totalCod - data.totalFees;
-                merchantHtml += `<tr><td><b>${m.split('@')[0]}</b></td><td>${data.count}</td><td>${data.totalCod} ج.م</td><td style="color:var(--primary-burgundy);">${data.totalFees} ج.م</td><td style="color:#10B981;">${net} ج.م</td><td><button class="btn-action" onclick="openMerchantModal('${m}')">تسوية</button></td></tr>`;
-            }
-            document.getElementById('tblMerchants').innerHTML = merchantHtml || "<tr><td colspan='6'>لا توجد مستحقات</td></tr>";
-        }
-
-        window.openCourierModal = (name) => {
-            currentCourier = name;
-            let data = courierMap[name];
-            if(!data) return;
-            document.getElementById('cmName').innerText = name;
-            document.getElementById('cmTotalCash').innerText = data.totalCollected + " ج.م";
-            document.getElementById('cmTotalTasks').innerText = data.count;
-            let sHtml = "", rHtml = "";
-            data.shipments.forEach(s => { sHtml += `<tr><td><b>${s.awb}</b></td><td>${(s.merchantEmail||'').split('@')[0]}</td><td>${s.name}</td><td>${s.totalCollected} ج.م</td><td>${s.status}</td></tr>`; });
-            data.radar.forEach(r => { rHtml += `<tr><td>${r.details}</td><td>${r.address}</td><td>${r.paymentMethod === 'pickup' ? 'بيكب' : r.totalCollected+' ج.م'}</td><td>${r.status}</td></tr>`; });
-            document.getElementById('cmShipmentsBody').innerHTML = sHtml || "<tr><td colspan='5'>لا توجد بوالص</td></tr>";
-            document.getElementById('cmRadarBody').innerHTML = rHtml || "<tr><td colspan='4'>لا توجد مهام</td></tr>";
-            document.getElementById('courierModal').style.display = 'flex';
-        };
-
-        window.openMerchantModal = (email) => {
-            currentMerchant = email;
-            let data = merchantMap[email];
-            if(!data) return;
-            let net = data.totalCod - data.totalFees;
-            document.getElementById('mmName').innerText = email.split('@')[0];
-            document.getElementById('mmTotalCod').innerText = data.totalCod + " ج.م";
-            document.getElementById('mmTotalFees').innerText = data.totalFees + " ج.م";
-            document.getElementById('mmNet').innerText = net + " ج.م";
-            let mHtml = "";
-            data.items.forEach(i => { mHtml += `<tr><td>${i.timestamp?.toDate().toLocaleDateString()||'-'}</td><td><b>${i.awb}</b></td><td>${i.name} (${i.city})</td><td>${i.amount}</td><td>${i.shipCost}</td><td style="color:#10B981;">${i.net} ج.م</td></tr>`; });
-            document.getElementById('mmShipmentsBody').innerHTML = mHtml;
-            document.getElementById('merchantModal').style.display = 'flex';
-        };
-
-        window.settleAccount = async (merchantEmail) => {
-            const data = merchantMap[merchantEmail];
-            if(!data || !data.items.length) return Swal.fire('تنبيه', 'لا توجد بوالص لتسويتها', 'warning');
-            Swal.fire({
-                title: 'تأكيد التسوية',
-                html: `سيتم إضافة ${data.totalCod} ج.م إلى حائط بطولات التاجر وتغيير حالة البوالص إلى "تمت التسوية".`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'نعم، تسوية',
-                cancelButtonText: 'إلغاء'
-            }).then(async (res) => {
-                if(res.isConfirmed) {
-                    Swal.fire({ title: 'جاري التسوية...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-                    try {
-                        const batch = writeBatch(db);
-                        data.items.forEach(item => { batch.update(doc(db, "shipments", item.id), { status: "تمت التسوية" }); });
-                        const usersRef = query(collection(db, "users"), where("email", "==", merchantEmail));
-                        const snap = await getDocs(usersRef);
-                        if(!snap.empty) batch.update(snap.docs[0].ref, { lifetime_sales: increment(data.totalCod) });
-                        else batch.set(doc(db, "users", merchantEmail), { email: merchantEmail, lifetime_sales: data.totalCod });
-                        await batch.commit();
-                        Swal.fire('تم', 'تمت التسوية بنجاح', 'success');
-                        document.getElementById('merchantModal').style.display = 'none';
-                        processData(); // تحديث البيانات
-                    } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
-                }
-            });
-        };
-
-        window.addExpense = async (desc, amount) => {
-            try {
-                const branchVal = (adminRole === 'super_admin') ? (document.getElementById('branchFilter').value === 'all' ? 'all' : document.getElementById('branchFilter').value) : adminBranch;
-                await addDoc(collection(db, "expenses"), { description: desc, amount, timestamp: new Date(), branchName: branchVal, addedBy: auth.currentUser?.email });
-                Swal.fire('تم', 'تم إضافة المصروف', 'success');
-                loadExpenses();
-            } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
-        };
-
-        function loadExpenses() {
-            let expQuery = collection(db, "expenses");
-            const selectedBranch = document.getElementById('branchFilter').value;
-            if(adminRole === 'branch_admin' && adminBranch !== 'all') expQuery = query(collection(db, "expenses"), where("branchName", "==", adminBranch));
-            else if(adminRole === 'super_admin' && selectedBranch !== 'all') expQuery = query(collection(db, "expenses"), where("branchName", "==", selectedBranch));
-            onSnapshot(query(expQuery, orderBy("timestamp", "desc")), snap => {
-                let html = "";
-                snap.forEach(d => { let data = d.data(); html += `<tr><td>${data.timestamp?.toDate().toLocaleDateString()||'-'}</td><td>${data.description}</td><td>${data.amount} ج.م</td></tr>`; });
-                document.getElementById('tblExpenses').innerHTML = html || "<tr><td colspan='3'>لا توجد مصروفات</td></tr>";
-            });
-        }
-
-        function setupListeners() {
-            if(unsubShip) unsubShip();
-            if(unsubRadar) unsubRadar();
-            if(unsubPrices) unsubPrices();
-
-            let shipQuery = collection(db, "shipments");
-            let radarQuery = collection(db, "eshteryly_orders");
-            const selectedBranch = document.getElementById('branchFilter').value;
-            if(adminRole === 'branch_admin' && adminBranch !== 'all') {
-                shipQuery = query(collection(db, "shipments"), where("branchName", "==", adminBranch));
-                radarQuery = query(collection(db, "eshteryly_orders"), where("branchName", "==", adminBranch));
-            } else if(adminRole === 'super_admin' && selectedBranch !== 'all') {
-                shipQuery = query(collection(db, "shipments"), where("branchName", "==", selectedBranch));
-                radarQuery = query(collection(db, "eshteryly_orders"), where("branchName", "==", selectedBranch));
-            }
-
-            unsubShip = onSnapshot(shipQuery, snap => { gShipments = []; snap.forEach(d => gShipments.push({ id: d.id, type: 'shipment', ...d.data() })); processData(); });
-            unsubRadar = onSnapshot(radarQuery, snap => { gRadar = []; snap.forEach(d => gRadar.push({ id: d.id, type: 'radar', ...d.data() })); processData(); });
-            unsubPrices = onSnapshot(doc(db, "settings", "shipping_prices"), snap => { if(snap.exists()) livePrices = { ...livePrices, ...snap.data() }; processData(); });
+    window.addExpenseFirestore = async (desc, amt) => {
+        try {
+            await addDoc(collection(db, "expenses"), { description: desc, amount: amt, timestamp: new Date(), branchName: selectedBranch === 'all' ? 'all' : selectedBranch, addedBy: auth.currentUser?.email });
+            Swal.fire('تم','تم إضافة المصروف','success');
             loadExpenses();
-        }
+        } catch(e){ Swal.fire('خطأ',e.message,'error'); }
+    };
 
-        onAuthStateChanged(auth, async (user) => {
-            if(!user) { window.location.href = "index.html"; return; }
-            const ok = await fetchUserRole(user);
-            if(!ok) { Swal.fire('غير مصرح', 'لا تمتلك صلاحية الدخول للخزينة', 'error').then(() => signOut(auth)); return; }
-            if(adminRole === 'branch_admin') {
-                const filter = document.getElementById('branchFilter');
-                filter.innerHTML = `<option value="${adminBranch}">${adminBranch}</option>`;
-                filter.value = adminBranch;
-                filter.disabled = true;
+    function loadExpenses(){
+        let q = collection(db, "expenses");
+        if(selectedBranch !== 'all') q = query(q, where("branchName", "==", selectedBranch));
+        onSnapshot(query(q, orderBy("timestamp","desc")), snap => {
+            let html = "";
+            snap.forEach(d => { let data = d.data(); html += `<tr><td>${data.timestamp?.toDate().toLocaleDateString()||'-'}</td><td>${data.description}</td><td>${data.amount} ج.م</td></tr>`; });
+            document.getElementById('expensesBody').innerHTML = html || "<tr><td colspan='3'>لا توجد مصروفات</td></tr>";
+        });
+    }
+
+    function getShippingCost(city){
+        if(!city) return 85;
+        let norm = city.trim().replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/[ىي]/g,'ي');
+        for(let zone in livePrices){
+            if(zone.includes('-')){
+                let parts = zone.split('-');
+                let normZone = zone.replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/[ىي]/g,'ي');
+                let sub = parts[1] ? parts[1].trim().replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/[ىي]/g,'ي') : "";
+                if(normZone === norm || (sub && norm.includes(sub))){
+                    let base = Number(livePrices[parts[0].trim()]) || 85;
+                    let extra = Number(livePrices[zone]) || 0;
+                    return base + extra;
+                }
             }
-            setupListeners();
+        }
+        for(let gov in livePrices){
+            if(!gov.includes('-')){
+                let normGov = gov.replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/[ىي]/g,'ي');
+                if(norm.includes(normGov) || normGov.includes(norm)) return Number(livePrices[gov]) || 85;
+            }
+        }
+        return 85;
+    }
+
+    function processData(){
+        let branch = document.getElementById('branchSelect').value;
+        selectedBranch = branch;
+        let merchants = {}, couriers = {};
+        let totalCollected = 0, totalCompanyProfit = 0;
+
+        let allItems = [...shipments.map(s=>({...s, type:'shipment'})), ...radarTasks.map(r=>({...r, type:'radar'}))];
+        allItems.forEach(v => {
+            if(v.deleted) return;
+            let itemBranch = v.branchName || v.city || "غير محدد";
+            if(branch !== 'all' && !itemBranch.includes(branch)) return;
+
+            let amt = Number(v.amount||0), insurance = Number(v.insuranceFee||0), weight = Number(v.weight||1);
+            let status = v.status || "جديد";
+            let merchantEmail = v.merchantEmail || "إدارة";
+            let courierName = v.courierName || (v.type==='radar' && v.courierName ? v.courierName : "غير محدد");
+
+            let baseCost = getShippingCost(itemBranch);
+            let overWeight = (weight>2) ? Math.ceil(weight-2)*8 : 0;
+            let shipCost = baseCost + overWeight;
+            let collected = amt + insurance;
+            let companyProfit = shipCost + insurance;
+
+            // تجميع بيانات المناديب (للعهدة)
+            if(courierName && courierName !== "غير محدد"){
+                if(!couriers[courierName]) couriers[courierName] = { count:0, totalCollected:0, shipments:[], radar:[] };
+                couriers[courierName].count++;
+                if(v.type === 'shipment') couriers[courierName].shipments.push({...v, awb:v.awb||("AXN"+v.id?.substring(0,5)), totalCollected:collected});
+                else couriers[courierName].radar.push({...v, totalCollected:collected});
+                if(status === "تم التسليم" || status === "تم التسليم بنجاح") couriers[courierName].totalCollected += collected;
+            }
+
+            // تجميع بيانات التجار (للبوالص المكتملة غير المسوّاة)
+            if((status === "تم التسليم" || status === "تم التسليم بنجاح") && v.type === 'shipment' && status !== "تمت التسوية" && merchantEmail !== "إدارة"){
+                if(!merchants[merchantEmail]) merchants[merchantEmail] = { count:0, totalCod:0, totalFees:0, items:[] };
+                let net = amt - shipCost;
+                merchants[merchantEmail].items.push({...v, awb:v.awb||("AXN"+v.id?.substring(0,5)), shipCost, net});
+                merchants[merchantEmail].totalCod += amt;
+                merchants[merchantEmail].totalFees += shipCost;
+                merchants[merchantEmail].count++;
+                totalCollected += collected;
+                totalCompanyProfit += companyProfit;
+            }
         });
 
-        window.logout = () => { localStorage.clear(); signOut(auth); };
-        window.onBranchChange = () => { if(adminRole === 'super_admin') setupListeners(); };
+        merchantsMap = merchants;
+        couriersMap = couriers;
 
-        // دوال الطباعة (مضغوطة لتوفير الورق)
-        window.printCourierSheet = () => {
-            const data = courierMap[currentCourier];
-            if(!data) return;
-            let rows = "", total = 0, idx=1;
-            data.shipments.forEach(s => { let c=Number(s.totalCollected)||0; total+=c; rows+=`<tr><td>${idx++}</td><td>${s.awb}</td><td>${(s.merchantEmail||'').split('@')[0]}</td><td>${s.name} (${s.phone})<br>${s.city}</td><td>${c} ج.م</td></tr>`; });
-            data.radar.forEach(r => { let c=r.paymentMethod==='pickup'?0:(Number(r.totalCollected)||0); total+=c; rows+=`<tr><td>${idx++}</td><td>رادار</td><td>-</td><td>${r.details}<br>${r.address}</td><td>${c} ج.م</td></tr>`; });
-            let html = `<div style="direction:rtl; padding:2mm;"><div style="display:flex; justify-content:space-between;"><div><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" style="height:25px;"> <b>AXON EXPRESS</b><br>فرع ${adminBranch}</div><div><h3>تصفية عهدة كابتن</h3><p>${new Date().toLocaleString()}</p></div><div><h3>${currentCourier}</h3></div></div>
-            <table class="print-table" style="width:100%; border-collapse:collapse; font-size:8px;"><thead><tr><th>م</th><th>رقم البوليصة</th><th>التاجر</th><th>بيانات المستلم</th><th>المبلغ</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="5"><div style="border:2px solid #800020; background:#fff3cd; padding:2px;"><b>إجمالي العهدة: ${total} ج.م</b></div></td></tr></tfoot></table>
-            <div style="display:flex; justify-content:space-between; border-top:1px dashed #000; margin-top:5px; padding-top:3px;"><div>توقيع المندوب: ${currentCourier}</div><div>توقيع الخزينة: ........</div><div>التاريخ: ${new Date().toLocaleDateString()}</div></div></div>`;
-            document.getElementById('printArea').innerHTML = html;
-            window.print();
-        };
-        window.printMerchantSheet = () => {
-            const data = merchantMap[currentMerchant];
-            if(!data) return;
-            let rows = "", totalNet = 0;
-            data.items.forEach(i => { totalNet += Number(i.net)||0; rows+=`<tr><td>${i.timestamp?.toDate().toLocaleDateString()||'-'}</td><td>${i.awb}</td><td>${i.name} (${i.city})</td><td>${i.amount}</td><td>${i.shipCost}</td><td>${i.net} ج.م</td></tr>`; });
-            let html = `<div style="direction:rtl; padding:2mm;"><div style="display:flex; justify-content:space-between;"><div><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" style="height:25px;"> <b>AXON EXPRESS</b><br>فرع ${adminBranch}</div><div><h3>كشف حساب تاجر</h3><p>${new Date().toLocaleString()}</p></div><div><h3>${currentMerchant.split('@')[0]}</h3></div></div>
-            <div style="background:#f0f0f0; padding:2px;">عدد البوالص: ${data.count}</div>
-            <table class="print-table" style="width:100%; border-collapse:collapse; font-size:8px;"><thead><tr><th>التاريخ</th><th>البوليصة</th><th>المستلم</th><th>COD</th><th>مخصوم</th><th>الصافي</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="6"><div style="border:2px solid #10B981; background:#d1fae5; padding:2px;"><b>صافي المستحق: ${totalNet} ج.م</b></div></td></tr></tfoot></table>
-            <div style="display:flex; justify-content:space-between; border-top:1px dashed #000; margin-top:5px; padding-top:3px;"><div>توقيع التاجر: ${currentMerchant.split('@')[0]}</div><div>توقيع الخزينة: ........</div><div>التاريخ: ${new Date().toLocaleDateString()}</div></div></div>`;
-            document.getElementById('printArea').innerHTML = html;
-            window.print();
-        };
-    </script>
+        // عرض الإحصائيات
+        document.getElementById('statTotalCash').innerText = totalCollected + " ج.م";
+        document.getElementById('statProfit').innerText = totalCompanyProfit + " ج.م";
+        let netDues = totalCollected - totalCompanyProfit;
+        document.getElementById('statNetDues').innerText = netDues + " ج.م";
+
+        // جدول المناديب
+        let courierHtml = "";
+        for(let c in couriers){
+            courierHtml += `<tr><td><b>${c}</b></td><td>${couriers[c].count}</td><td style="color:#800020;">${couriers[c].totalCollected} ج.م</td><td><button class="btn-view" onclick="showCourierDetails('${c}')">فتح العهدة</button></td></tr>`;
+        }
+        document.getElementById('couriersBody').innerHTML = courierHtml || "<tr><td colspan='4'>لا توجد عهدة حالية</td></tr>";
+
+        // جدول التجار
+        let merchantHtml = "";
+        for(let m in merchants){
+            let data = merchants[m];
+            let net = data.totalCod - data.totalFees;
+            merchantHtml += `<tr><td><b>${m.split('@')[0]}</b></td><td>${data.count}</td><td>${data.totalCod} ج.م</td><td style="color:#800020;">${data.totalFees} ج.م</td><td style="color:#10B981;">${net} ج.م</td><td><button class="btn-view" onclick="showMerchantDetails('${m}')">تسوية</button></td></tr>`;
+        }
+        document.getElementById('merchantsBody').innerHTML = merchantHtml || "<tr><td colspan='6'>لا توجد مستحقات</td></tr>";
+
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+    }
+
+    window.showCourierDetails = (name) => {
+        let data = couriersMap[name];
+        if(!data) return;
+        currentCourierData = { name, data };
+        document.getElementById('courierNameModal').innerText = name;
+        document.getElementById('courierTotal').innerText = data.totalCollected + " ج.م";
+        document.getElementById('courierTasks').innerText = data.count;
+        let rows = "";
+        data.shipments.forEach(s => { rows += `<tr><td>بوليصة</td><td>${s.awb}</td><td>${(s.merchantEmail||'').split('@')[0]}</td><td>${s.totalCollected} ج.م</td><td>${s.status}</td></tr>`; });
+        data.radar.forEach(r => { rows += `<tr><td>رادار</td><td>${r.details?.substring(0,50)}</td><td>${r.address?.substring(0,50)}</td><td>${r.paymentMethod==='pickup'?'بيكب':r.totalCollected+' ج.م'}</td><td>${r.status}</td></tr>`; });
+        document.getElementById('courierDetailsBody').innerHTML = rows || "<tr><td colspan='5'>لا توجد بيانات</td></tr>";
+        document.getElementById('courierModal').style.display = 'flex';
+    };
+
+    window.printCourierManifest = () => {
+        let data = currentCourierData?.data;
+        if(!data) return;
+        let rows = "", total=0, idx=1;
+        data.shipments.forEach(s => { let c=Number(s.totalCollected)||0; total+=c; rows+=`<tr><td>${idx++}</td><td>${s.awb}</td><td>${(s.merchantEmail||'').split('@')[0]}</td><td>${s.name} (${s.phone})<br>${s.city}</td><td>${c} ج.م</td></tr>`; });
+        data.radar.forEach(r => { let c=r.paymentMethod==='pickup'?0:(Number(r.totalCollected)||0); total+=c; rows+=`<tr><td>${idx++}</td><td>رادار</td><td>-</td><td>${r.details?.substring(0,40)}<br>${r.address?.substring(0,40)}</td><td>${c} ج.م</td></tr>`; });
+        let html = `<div style="direction:rtl;padding:2mm;"><div style="display:flex;justify-content:space-between;"><div><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" style="height:25px;"> <b>AXON EXPRESS</b><br>فرع ${selectedBranch}</div><div><h3>تصفية عهدة كابتن</h3><p>${new Date().toLocaleString()}</p></div><div><h3>${currentCourierData.name}</h3></div></div>
+        <table class="print-table" style="width:100%;border-collapse:collapse;font-size:8px;"><thead><tr><th>م</th><th>رقم البوليصة</th><th>التاجر</th><th>بيانات المستلم</th><th>المبلغ</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="5"><div style="border:2px solid #800020;background:#fff3cd;padding:2px;"><b>إجمالي العهدة: ${total} ج.م</b></div></td></tr></tfoot></table>
+        <div style="display:flex;justify-content:space-between;border-top:1px solid #000;margin-top:5px;padding-top:3px;"><div>توقيع المندوب: ${currentCourierData.name}</div><div>توقيع الخزينة: ........</div><div>التاريخ: ${new Date().toLocaleDateString()}</div></div></div>`;
+        document.getElementById('printArea').innerHTML = html;
+        window.print();
+    };
+
+    window.showMerchantDetails = (email) => {
+        let data = merchantsMap[email];
+        if(!data) return;
+        currentMerchantEmail = email;
+        document.getElementById('merchantNameModal').innerText = email.split('@')[0];
+        document.getElementById('merchantTotalCod').innerText = data.totalCod + " ج.م";
+        document.getElementById('merchantTotalFees').innerText = data.totalFees + " ج.م";
+        let net = data.totalCod - data.totalFees;
+        document.getElementById('merchantNet').innerText = net + " ج.م";
+        let rows = "";
+        data.items.forEach(i => { rows += `<tr><td>${i.timestamp?.toDate().toLocaleDateString()||'-'}</td><td>${i.awb}</td><td>${i.name} (${i.city})</td><td>${i.amount}</td><td>${i.shipCost}</td><td style="color:#10B981;">${i.net} ج.م</td></tr>`; });
+        document.getElementById('merchantItemsBody').innerHTML = rows;
+        document.getElementById('merchantModal').style.display = 'flex';
+    };
+
+    window.settleMerchant = async () => {
+        let email = currentMerchantEmail;
+        let data = merchantsMap[email];
+        if(!data || !data.items.length) return Swal.fire('تنبيه','لا توجد بوالص لتسويتها','warning');
+        Swal.fire({ title:'تأكيد التسوية', html:`سيتم إضافة ${data.totalCod} ج.م إلى حائط بطولات التاجر.`, icon:'warning', showCancelButton:true, confirmButtonText:'تسوية', cancelButtonText:'إلغاء' }).then(async res=>{
+            if(res.isConfirmed){
+                Swal.fire({ title:'جاري التسوية...', allowOutsideClick:false, didOpen:()=>Swal.showLoading() });
+                try {
+                    const batch = writeBatch(db);
+                    data.items.forEach(item => { batch.update(doc(db, "shipments", item.id), { status: "تمت التسوية" }); });
+                    const userQuery = query(collection(db, "users"), where("email", "==", email));
+                    const snap = await getDocs(userQuery);
+                    if(!snap.empty) batch.update(snap.docs[0].ref, { lifetime_sales: increment(data.totalCod) });
+                    else batch.set(doc(db, "users", email), { email: email, lifetime_sales: data.totalCod });
+                    await batch.commit();
+                    Swal.fire('تم','تمت التسوية وإضافة الرصيد','success');
+                    document.getElementById('merchantModal').style.display = 'none';
+                    window.loadFinancialData();
+                } catch(e){ Swal.fire('خطأ',e.message,'error'); }
+            }
+        });
+    };
+
+    window.printMerchantStatement = () => {
+        let data = merchantsMap[currentMerchantEmail];
+        if(!data) return;
+        let rows = "", totalNet = 0;
+        data.items.forEach(i => { totalNet += Number(i.net); rows += `<tr><td>${i.timestamp?.toDate().toLocaleDateString()||'-'}</td><td>${i.awb}</td><td>${i.name} (${i.city})</td><td>${i.amount}</td><td>${i.shipCost}</td><td>${i.net} ج.م</td></tr>`; });
+        let html = `<div style="direction:rtl;padding:2mm;"><div style="display:flex;justify-content:space-between;"><div><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" style="height:25px;"> <b>AXON EXPRESS</b><br>فرع ${selectedBranch}</div><div><h3>كشف حساب تاجر</h3><p>${new Date().toLocaleString()}</p></div><div><h3>${currentMerchantEmail.split('@')[0]}</h3></div></div>
+        <div style="background:#f0f0f0;padding:2px;">عدد البوالص: ${data.count}</div>
+        <table class="print-table" style="width:100%;border-collapse:collapse;font-size:8px;"><thead><tr><th>التاريخ</th><th>البوليصة</th><th>المستلم</th><th>COD</th><th>مخصوم</th><th>الصافي</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="6"><div style="border:2px solid #10B981;background:#d1fae5;padding:2px;"><b>صافي المستحق: ${totalNet} ج.م</b></div></td></tr></tfoot></table>
+        <div style="display:flex;justify-content:space-between;border-top:1px solid #000;margin-top:5px;padding-top:3px;"><div>توقيع التاجر: ${currentMerchantEmail.split('@')[0]}</div><div>توقيع الخزينة: ........</div><div>التاريخ: ${new Date().toLocaleDateString()}</div></div></div>`;
+        document.getElementById('printArea').innerHTML = html;
+        window.print();
+    };
+
+    window.loadFinancialData = () => {
+        if(unsubShipments) unsubShipments();
+        if(unsubRadar) unsubRadar();
+        if(unsubPrices) unsubPrices();
+        unsubPrices = onSnapshot(doc(db, "settings", "shipping_prices"), snap => { if(snap.exists()) livePrices = snap.data(); processData(); });
+        unsubShipments = onSnapshot(collection(db, "shipments"), snap => { shipments = []; snap.forEach(d => shipments.push({ id:d.id, ...d.data() })); processData(); });
+        unsubRadar = onSnapshot(collection(db, "eshteryly_orders"), snap => { radarTasks = []; snap.forEach(d => radarTasks.push({ id:d.id, ...d.data() })); processData(); });
+        loadExpenses();
+    };
+
+    onAuthStateChanged(auth, (user) => {
+        if(!user){ window.location.href = "index.html"; return; }
+        if(user.email !== 'admin@axon.com'){
+            Swal.fire('غير مصرح','أنت لا تمتلك صلاحية الخزينة','error').then(()=> signOut(auth));
+            return;
+        }
+        window.loadFinancialData();
+    });
+
+    window.refreshData = () => { processData(); loadExpenses(); };
+    window.logout = () => { localStorage.clear(); signOut(auth); };
+</script>
 </body>
 </html>
