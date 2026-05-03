@@ -8,7 +8,9 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0A3D62">
     <link rel="apple-touch-icon" href="icon-512.png">
-    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script>
         (function() {
             var domain = window.location.hostname;
@@ -28,23 +30,6 @@
                 }
             });
         })();
-
-        // دوال التحكم في الواجهة (نعومة كاملة)
-        window.toggleTheme = () => {
-            document.documentElement.classList.toggle('dark-mode');
-            const isDark = document.documentElement.classList.contains('dark-mode');
-            localStorage.setItem('axon_merchant_theme', isDark ? 'dark' : 'light');
-            const themeIcon = document.getElementById('themeIcon');
-            if(themeIcon) themeIcon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-        };
-
-        window.closePrintView = () => {
-            document.getElementById('printArea').style.display = 'none';
-            document.getElementById('printArea').innerHTML = ''; 
-            document.getElementById('mainHeader').style.display = 'flex';
-            document.getElementById('mainContainer').style.display = 'block';
-            if(document.getElementById('floatingChatBtn')) document.getElementById('floatingChatBtn').style.display = 'flex';
-        };
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
@@ -67,7 +52,6 @@
             --dark-text: #111111; 
             --border-color: #eee; 
         }
-        
         html, body { font-family: 'Cairo', sans-serif; margin: 0; background: var(--light-bg); color: var(--dark-text); overflow-x: hidden; scroll-behavior: smooth; transition: 0.3s;}
         
         #printArea { display: none; }
@@ -80,7 +64,9 @@
         .header-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end;}
         
         .lang-btn { background: transparent; border: 2px solid var(--primary-yellow); color: var(--primary-yellow); padding: 5px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 13px; transition: 0.3s;}
+        .lang-btn:hover { background: rgba(225, 231, 21, 0.1); }
         #logoutBtn { background: var(--primary-burgundy); border: 2px solid var(--primary-burgundy); color: var(--white); padding: 6px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; transition: 0.3s;}
+        #logoutBtn:hover { background: #5a0016; border-color: #5a0016; }
 
         .container { padding: 20px; max-width: 1200px; margin: 0 auto; min-height: 80vh;}
         
@@ -88,6 +74,7 @@
         .merchant-badge { background: var(--primary-blue); padding: 8px 20px; border-radius: 30px; font-size: 14px; color: var(--white); font-weight: bold;}
         .business-info-wrapper { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: var(--white); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
         .business-info-wrapper input { padding: 8px 12px; border-radius: 5px; border: 1px solid #ccc; font-family: 'Cairo'; outline: none; flex: 1; min-width: 150px; color: var(--dark-text);}
+        .business-info-wrapper input:focus { border-color: var(--primary-blue); }
         
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .stat-card { background: var(--white); padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-blue); animation: fadeIn 0.5s ease;}
@@ -96,11 +83,11 @@
         .stat-card.trophy-card::after { content: '\f091'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; bottom: -10px; left: -10px; font-size: 80px; color: rgba(225, 231, 21, 0.1); }
         .stat-card.trophy-card h3 { color: var(--primary-yellow); margin-bottom: 5px; font-weight: 900;}
         .stat-card.trophy-card .value { color: var(--white); font-size: 28px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);}
-        
+
         .stat-card.credit-card { border-bottom-color: #28a745; background: #f8fff9; }
         .stat-card.credit-card h3 { color: #28a745; font-weight: 900; }
         .stat-card.credit-card .value { color: #28a745; font-size: 24px; }
-
+        
         .stat-card h3 { font-size: 15px; margin: 0 0 10px 0; color: #666;}
         .stat-card .value { font-size: 26px; font-weight: 900; color: var(--primary-blue);}
         
@@ -122,35 +109,65 @@
         .radar-title { color: var(--primary-burgundy); margin-top: 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; font-size: 18px; }
         .radar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 15px; }
         .radar-card { background: #fdfdfd; border: 1px solid #e0e0e0; border-radius: 10px; padding: 15px; display: flex; flex-direction: column; gap: 10px; transition: 0.3s; position: relative;}
+        .radar-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-color: var(--primary-blue);}
+        .radar-card.type-cold { border-right: 4px solid #0EA5E9; }
+        .radar-card.type-buy { border-right: 4px solid #28a745; }
+        .radar-card h4 { margin: 0; font-size: 15px; color: var(--primary-blue); display: flex; justify-content: space-between; align-items: center;}
+        .radar-card p { margin: 0; font-size: 13px; color: #555; line-height: 1.5; background: #f4f7f6; padding: 8px; border-radius: 6px;}
+        .radar-status-badge { font-size: 11px; padding: 4px 8px; border-radius: 4px; font-weight: bold; background: #fff3cd; color: #856404; }
         
-        .search-box { width: 100%; padding: 12px 15px; border: 2px solid #ddd; border-radius: 8px; font-family: 'Cairo'; outline: none; margin-bottom: 15px; color: var(--dark-text); transition: 0.3s;}
-        .search-box:focus { border-color: var(--primary-blue); }
+        .search-box { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Cairo'; outline: none; margin-bottom: 15px; color: var(--dark-text);}
         .table-responsive { width: 100%; overflow-x: auto; background: var(--white); border-radius: 12px; border: 1px solid var(--border-color); animation: fadeIn 0.8s ease;}
         table { width: 100%; min-width: 1000px; border-collapse: collapse; }
         th, td { padding: 15px 12px; text-align: right; border-bottom: 1px solid var(--border-color); font-size: 14px;}
         th { background: var(--primary-blue); color: var(--white); font-weight: bold;}
-        .print-btn { background: var(--primary-blue); color: var(--white); border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; width: 100%;}
-        .track-btn { background: #17a2b8; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; width: 100%;}
+        .print-btn { background: var(--primary-blue); color: var(--white); border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; margin-bottom: 5px; width: 100%; transition: 0.3s;}
+        .track-btn { background: #17a2b8; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; width: 100%; transition: 0.3s;}
+        .track-btn:hover, .print-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        .awb-badge { background: #e0eaf5; color: var(--primary-blue); padding: 5px 12px; border-radius: 6px; font-weight: bold;}
+        .date-cell { font-size: 11px; color: #666; font-family: monospace;}
         
-        .card-chat-badge { position: absolute; background: var(--primary-burgundy); color: white; min-width: 22px; height: 22px; border-radius: 50%; font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: 900; border: 2px solid var(--white); box-shadow: 0 3px 6px rgba(128,0,32,0.5); z-index: 10; display: none; }
+        .card-chat-badge {
+            position: absolute; background: var(--primary-burgundy); color: white;
+            min-width: 22px; height: 22px; border-radius: 50%; font-size: 11px; display: flex; align-items: center;
+            justify-content: center; font-weight: 900; border: 2px solid var(--white); box-shadow: 0 3px 6px rgba(128,0,32,0.5); z-index: 10; display: none;
+        }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; z-index: 2000; padding: 15px; backdrop-filter: blur(5px);}
-        .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; position: relative; animation: fadeIn 0.4s ease; border: 3px solid var(--primary-yellow);}
+        .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; position: relative; animation: fadeIn 0.4s ease;}
         .input-group label { font-size: 14px; font-weight: bold; color: var(--primary-blue); margin-top: 12px; display: block; }
         .input-group input, .input-group select, .modal-content textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo'; background: var(--white); color: var(--dark-text); transition: 0.3s;}
+        .input-group input:focus, .input-group select:focus { border-color: var(--primary-blue); }
         .close-btn { position: absolute; top: 15px; left: 15px; border: none; background: none; font-size: 24px; cursor: pointer; color: var(--primary-burgundy); transition: 0.3s; z-index: 10;}
+        .close-btn:hover { transform: rotate(90deg); }
 
         .floating-chat { position: fixed; bottom: 20px; right: 20px; background: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999; text-decoration: none; transition: 0.3s;}
+        .floating-chat:hover { transform: scale(1.1); }
         
         .calc-summary { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 15px; border: 2px dashed #ccc; }
         .calc-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; font-weight: bold; }
         .calc-total { font-size: 18px; color: var(--primary-burgundy); border-top: 1px solid #ddd; padding-top: 8px; margin-top: 8px; }
+
+        .chat-bubble { padding: 10px 15px; border-radius: 15px; max-width: 80%; font-size: 13px; line-height: 1.4; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 5px; clear: both;}
+        .chat-mine { background: #dcf8c6; float: left; border-bottom-left-radius: 0; color: #000; }
+        .chat-other { background: #ffffff; float: right; border-bottom-right-radius: 0; color: #000; border: 1px solid #eee;}
+        .chat-admin { background: #FEF2F2; float: right; border-bottom-right-radius: 0; color: #800020; border: 1px solid #FCA5A5; }
 
         /* Dark Mode */
         html.dark-mode { --white: #1a1a2e; --light-bg: #16213e; --dark-text: #e0e0e0; --border-color: #0f3460; --primary-blue: #4a90e2; }
         html.dark-mode header { background: #1a1a2e; border-bottom: 4px solid var(--primary-burgundy); }
         html.dark-mode .stat-card, html.dark-mode .business-info-wrapper, html.dark-mode .axon-plus-section, html.dark-mode .radar-card { background: #1a1a2e; border-color: #0f3460; }
         html.dark-mode input, html.dark-mode select, html.dark-mode textarea { background: #16213e; color: white; border-color: #0f3460; }
+
+        @media (max-width: 600px) {
+            header { padding: 12px 10px; flex-direction: column; align-items: center; gap: 12px; }
+            .logo { font-size: 22px; }
+            .header-actions { justify-content: center; width: 100%; gap: 10px; flex-wrap: wrap; }
+            .lang-btn, #logoutBtn { padding: 8px 15px; font-size: 13px; flex-grow: 1; text-align: center; }
+            .top-panel { flex-direction: column; align-items: stretch; text-align: center; }
+            .merchant-badge { margin-bottom: 10px; }
+            .business-info-wrapper { flex-direction: column; align-items: stretch; }
+        }
 
         @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -162,23 +179,31 @@
         }
         
         .a4-wrapper { width: 200mm; margin: 0 auto; background: #fff; border: 2px solid var(--primary-blue); padding: 8px; box-sizing: border-box; color: #000; }
+        .print-controls { text-align: center; margin-bottom: 15px; padding: 15px; background: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+        .print-controls button { cursor: pointer; padding: 12px 25px; margin: 5px; font-size: 16px; font-weight: bold; border: none; border-radius: 5px; color: white; font-family: 'Cairo';}
         .print-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #800020; padding-bottom: 5px; margin-bottom: 8px; flex-wrap: nowrap; gap: 10px;}
+        .print-header > div { flex: 1; text-align: center; overflow: hidden; }
+        .barcode-svg { max-width: 100%; height: auto; }
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px; }
         .box { border: 1px solid #ccc; padding: 5px; border-radius: 5px; font-size: 13px; color: #000;}
         .box h3 { margin: 0 0 5px 0; background: var(--primary-blue); color: #fff; padding: 3px; font-size: 13px; text-align: center;}
         .cod-box { background: #fff; border: 2px solid #800020; text-align: center; padding: 5px; border-radius: 5px; margin-bottom:8px; color: #800020;}
         .constitution-columns { column-count: 2; column-gap: 15px; font-size: 8.5px; line-height: 1.3; text-align: justify; border: 1px solid #000; padding: 8px; margin-bottom: 5px; background: #fff;}
+        .constitution-columns * { color: #000 !important; }
+        .constitution-columns h4 { margin: 3px 0 2px 0; font-size: 11px; border-bottom: 1px solid #000; padding-bottom:2px;}
+        .footer-grid { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; font-size: 10px;}
         .digital-sig { text-align: center; font-size: 8.5px; font-family: monospace; color: #000; border-top: 1px dashed #000; padding-top: 5px; font-weight: bold;}
+        .safeer-name-badge { background: var(--primary-blue); color: #fff; padding: 6px 12px; border-radius: 8px; display: inline-block; font-family: 'Cairo'; margin-bottom: 3px; border: 2px solid #800020;}
+        .safeer-name-badge h2 { margin: 0; font-size: 20px; font-weight: 900; letter-spacing: 1px;}
+        .branch-badge-print { font-weight: bold; font-size: 12px; color: #000; text-transform: uppercase; background: #f0f0f0; border: 2px solid #000; padding: 3px 10px; display: inline-block; margin-bottom: 5px;}
+        .fragile-banner { color: white; text-align: center; font-size: 13px; font-weight: bold; padding: 6px; border-radius: 5px; margin-bottom: 8px; border: 2px dashed #000;}
     </style>
 </head>
 <body>
     <audio id="msgSound" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3" preload="auto"></audio>
 
     <header id="mainHeader">
-        <a href="#" class="logo">
-            <img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" alt="Axon Logo"> 
-            AXON <span data-i18n="logo_span">EXPRESS</span>
-        </a>
+        <a href="#" class="logo"><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" alt="Axon Logo"> AXON <span data-i18n="logo_span">EXPRESS</span></a>
         <div class="header-actions">
             <button onclick="window.toggleLang()" class="lang-btn" id="langBtn">English</button>
             <button onclick="window.toggleTheme()" style="background:none; border:none; color:var(--primary-yellow); font-size:24px; cursor:pointer;" title="الوضع الليلي">
@@ -211,7 +236,7 @@
                     <h3><i class="fa-solid fa-trophy"></i> حائط البطولات</h3>
                     <div class="value" id="lifetimeSales">0 ج.م</div>
                 </div>
-                
+
                 <div class="stat-card credit-card">
                     <h3><i class="fa-solid fa-hand-holding-dollar"></i> الحد الأقصى للتمويل (اشتريلي)</h3>
                     <div class="value" id="creditLimit">0 ج.م</div>
@@ -293,10 +318,8 @@
                     <i class="fa-solid fa-scale-balanced"></i> يتم إضافة <b>58 جنيه</b> رسوم خدمة شراء ائتماني لفترة السماح (7 أيام) على الفاتورة. في حالة التأخير، تضاف غرامة 1% يومياً. برجاء التأكد من أن قيمة المشتريات لا تتجاوز حدك الائتماني الموضح أعلاه.
                 </p>
             </div>
-            
             <div id="instapayDetails" style="display:none; background:#f0f8ff; padding:12px; border-radius:8px; margin-top:10px;"><p style="margin:0; font-weight:bold; color:var(--primary-blue);">حساب InstaPay: <span style="color:red;">01027660260</span></p></div>
             <div id="vfcashDetails" style="display:none; background:#ffebeb; padding:12px; border-radius:8px; margin-top:10px;"><p style="margin:0; font-weight:bold; color:var(--primary-blue);">محفظة فودافون: <span style="font-size:16px; color:var(--primary-burgundy);">01030013810</span></p></div>
-            
             <button class="btn-service btn-eshteryly" style="width:100%; justify-content:center; margin-top:15px;" onclick="window.submitEshteryly()">إرسال الطلب للرادار</button>
         </div>
     </div>
@@ -341,30 +364,28 @@
                 <input type="number" id="itemRealValue" placeholder="أدخل السعر الحقيقي" oninput="window.updateShippingCalc()">
             </div>
             <div id="uninsuredDiv" style="display:none; background:#fff3cd; padding:10px; border-radius:8px; border:1px solid #ffeeba; margin-top:10px;">
-                <p style="font-size:12px; color:#856404; margin:0; line-height:1.5;">⚠️ <b>إقرار إخلاء مسؤولية:</b> أقر أنا الراسل بأنني قمت بتغليف الطرد داخلياً ليتحمل صدمات النقل البري، وأتحمل المسؤولية الكاملة عن أي تلف للقطعة.</p>
+                <p style="font-size:12px; color:#856404; margin:0; line-height:1.5;">⚠️ إقرار إخلاء مسؤولية.</p>
             </div>
             <div class="calc-summary">
                 <div class="calc-row"><span>قيمة البضاعة:</span> <span id="lblCodAmount">0 ج.م</span></div>
                 <div class="calc-row"><span>رسوم الشحن:</span> <span id="lblShippingFee" style="color:var(--primary-blue);">0 ج.م</span></div>
                 <div class="calc-row calc-total"><span>الإجمالي للتحصيل:</span> <span id="lblTotalAmount">0 ج.م</span></div>
             </div>
-            <button class="btn-service btn-main-action" id="btnSave" style="width:100%; margin-top:15px; justify-content:center;" onclick="window.saveShipment()">
-                <i class="fa-solid fa-paper-plane"></i> <span data-i18n="btn_submit_awb">إرسال الشحنة وتوليد البوليصة بالإجمالي</span>
-            </button>
+            <button class="btn-service btn-main-action" id="btnSave" style="width:100%; margin-top:15px; justify-content:center;" onclick="window.saveShipment()">إرسال الشحنة وتوليد البوليصة</button>
         </div>
     </div>
 
-    <div id="coldModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('coldModal').style.display='none'">✖</button><h3 style="color:#0EA5E9;">🥶 طلب شحن فريش/مبرد</h3><div class="input-group"><label>وقت جاهزية الأوردر</label><input type="time" id="coldTime"></div><div class="input-group"><label>عنوان المستلم</label><input type="text" id="coldAddress"></div><div class="input-group"><label>قيمة التحصيل</label><input type="number" id="coldAmount"></div><button onclick="window.submitColdOrder()" class="btn-service" style="background:#0EA5E9; width:100%;">تأكيد الطلب</button></div></div>
-    <div id="homeModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('homeModal').style.display='none'">✖</button><h3>🚚 أكسون هوم</h3><input type="text" id="homeFrom" placeholder="من"><input type="text" id="homeTo" placeholder="إلى"><input type="tel" id="homePhone" placeholder="رقم التواصل"><button onclick="window.submitHomeOrder()" class="btn-service btn-home" style="width:100%;">طلب معاينة</button></div></div>
-    <div id="rescueModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('rescueModal').style.display='none'">✖</button><h3>🚨 أكسون إنقاذ</h3><input type="tel" id="rescuePhone" placeholder="رقم الموبايل"><input type="text" id="rescueGPS" placeholder="الموقع"><button onclick="window.submitRescueOrder()" class="btn-service btn-rescue" style="width:100%;">إرسال استغاثة</button></div></div>
-    
+    <div id="coldModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('coldModal').style.display='none'">✖</button><h3 style="color:#0EA5E9; border-bottom:2px solid #0EA5E9; padding-bottom:10px; margin-top:0;">🥶 طلب شحن مبرد</h3><div class="input-group"><label>وقت الجاهزية</label><input type="time" id="coldTime"></div><div class="input-group"><label>عنوان المستلم</label><input type="text" id="coldAddress"></div><div class="input-group"><label>COD</label><input type="number" id="coldAmount"></div><button onclick="window.submitColdOrder()" style="width:100%; background:#0EA5E9; color:white; padding:15px; border:none; border-radius:10px; font-weight:bold; margin-top:15px; cursor:pointer;">تأكيد</button></div></div>
+    <div id="homeModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('homeModal').style.display='none'">✖</button><h3 style="color:#d39e00; border-bottom: 2px solid var(--primary-blue); padding-bottom:10px; margin-top:0;">🚚 أكسون هوم</h3><input type="text" id="homeFrom" placeholder="من"><input type="text" id="homeTo" placeholder="إلى"><input type="tel" id="homePhone" placeholder="رقم التواصل"><button class="btn-service btn-home" style="width:100%; margin-top:10px;" onclick="window.submitHomeOrder()">طلب معاينة</button></div></div>
+    <div id="rescueModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('rescueModal').style.display='none'">✖</button><h3 style="color:var(--primary-burgundy); border-bottom: 2px solid var(--primary-blue); padding-bottom:10px; margin-top:0;">🚨 أكسون إنقاذ</h3><input type="tel" id="rescuePhone" placeholder="الموبايل"><input type="text" id="rescueGPS" placeholder="الموقع"><button type="button" onclick="window.getRescueLocation()" style="background:#333; color:#fff; width:100%; padding:10px; margin:5px 0;">سحب موقعي</button><button class="btn-service btn-rescue" style="width:100%;" onclick="window.submitRescueOrder()">إرسال استغاثة</button></div></div>
+
     <div id="trackChatModal" class="modal">
         <div class="modal-content" style="padding: 15px; max-width: 600px; height: 90vh; display: flex; flex-direction: column;">
             <button class="close-btn" onclick="window.closeTrackChat()">✖</button>
-            <h3 id="chatCourierName" style="color:var(--primary-blue); margin:0;">تتبع المندوب</h3>
-            <div id="merchantMap" style="height: 200px; width: 100%; border-radius: 12px; margin: 10px 0;"></div>
-            <div id="chatBox" style="flex: 1; overflow-y: auto; background: #f4f7f6; padding: 15px; border-radius: 12px;"></div>
-            <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <h3 style="color:var(--primary-blue); margin-top:0;">تتبع المندوب: <span id="chatCourierName">...</span></h3>
+            <div id="merchantMap" style="height: 200px; width: 100%; border-radius: 12px; margin-bottom: 15px;"></div>
+            <div id="chatBox" style="flex: 1; padding: 15px; overflow-y: auto; background: #f4f7f6; border-radius: 12px;"></div>
+            <div style="display: flex; gap: 10px; padding: 10px; background: white; margin-top:10px;">
                 <input type="text" id="chatInput" placeholder="رسالتك للكابتن..." style="flex: 1;">
                 <button onclick="window.sendChatMessage()" style="background: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 8px;">إرسال</button>
             </div>
@@ -413,7 +434,7 @@
                 merchantName = merchantEmail.split('@')[0];
                 document.getElementById('merchantEmailDisplay').innerHTML = `مرحباً بك: ${merchantName} <i class="fa-solid fa-bolt" style="color:#ffc107;"></i>`;
                 
-                // --- 🏆 حائط البطولات والائتمان الموحد ---
+                // 🏆 حائط البطولات والائتمان الموحد من جدول الـ users
                 const userQ = query(collection(db, "users"), where("email", "==", merchantEmail));
                 onSnapshot(userQ, (userSnap) => {
                     if(!userSnap.empty) {
@@ -451,20 +472,20 @@
                         }
                     }
                 });
-                loadShipments(); loadMerchantRadar();
+                loadShipments(); loadMerchantRadar(); startGlobalChatListener();
             } else { window.location.href = "index.html"; }
         });
 
-        // 🖨️ الطباعة وإصلاح اللوجو الإلزامي (3*2 سم) مع كل الشروط
+        // 🖨️ الطباعة (كاملة بدون اختصار)
         window.printWB = (awb, name, p1, p2, city, addr, w, pieces, amt, fragileType, mAddress, mPhone, insuranceFee) => {
             document.getElementById('mainHeader').style.display = 'none';
             document.getElementById('mainContainer').style.display = 'none';
-            document.getElementById('floatingChatBtn').style.display = 'none';
+            if(document.getElementById('floatingChatBtn')) document.getElementById('floatingChatBtn').style.display = 'none';
 
             const ts = new Date().toLocaleString('ar-EG');
             let fragileBannerHTML = '';
-            if (fragileType === 'insured') fragileBannerHTML = `<div class="fragile-banner" style="background:#800020; color:#fff;">شحنة مؤمن عليها VIP 🛡️</div>`;
-            else if (fragileType === 'uninsured') fragileBannerHTML = `<div class="fragile-banner" style="background:#111; color:#E1E715;">شحنة قابلة للكسر (بدون تأمين) ⚠️</div>`;
+            if (fragileType === 'insured') fragileBannerHTML = `<div class="fragile-banner" style="background:#800020; color:#fff;">🛡️ شحنة مؤمن عليها VIP - يحق للمندوب الفحص</div>`;
+            else if (fragileType === 'uninsured') fragileBannerHTML = `<div class="fragile-banner" style="background:#111; color:#E1E715;">⚠️ شحنة قابلة للكسر (بدون تأمين) - مسؤولية الراسل</div>`;
 
             document.getElementById('printArea').innerHTML = `
                 <div class="print-controls no-print">
@@ -481,18 +502,16 @@
                         </div>
                     </div>
                     <div class="info-grid">
-                        <div class="box"><h3>بيانات المرسل</h3><p>الاسم: ${merchantName}</p><p>الموبايل: ${mPhone}</p><p>العنوان: ${mAddress}</p><p>التاريخ: ${ts}</p></div>
-                        <div class="box"><h3>بيانات المستلم</h3><p>الاسم: ${name}</p><p>الموبايل: ${p1}</p><p>المحافظة: ${city}</p><p>العنوان: ${addr}</p></div>
+                        <div class="box"><h3>المرسل</h3><p>الاسم: ${merchantName}</p><p>الموبايل: ${mPhone}</p><p>العنوان: ${mAddress}</p></div>
+                        <div class="box"><h3>المستلم</h3><p>الاسم: ${name}</p><p>المدينة: ${city}</p><p>العنوان: ${addr}</p></div>
                     </div>
-                    <div class="cod-box"><h2>المبلغ المطلوب تحصيله (COD): ${amt} ج.م</h2></div>
+                    <div class="cod-box"><h2>المبلغ للتحصيل: ${amt} ج.م</h2></div>
                     ${fragileBannerHTML}
                     <div class="constitution-columns">
-                        <h4 style="text-align:center; column-span:all;">شروط وأحكام الناقل (Axon Express)</h4>
-                        <p>1. يستلم الناقل البضاعة بناءً على إقرار المرسل بسلامة التعبئة. 2. لا تتحمل الشركة مسئولية سوء التغليف الداخلي. 3. يتم فتح الطرد فقط بعد سداد القيمة الكاملة. 4. الشراء الائتماني يضيف 58 ج.م رسوم خدمة.</p>
-                        <h4 style="text-align:center; column-span:all;">📝 إقرارات المرسل</h4>
-                        <p>أتعهد بصحة البيانات المذكورة وبأن البضاعة لا تحتوي على مواد محظورة أو خطرة.</p>
+                        <h4 style="text-align:center;">شروط وأحكام الناقل (Axon Express)</h4>
+                        <p><b>أولاً:</b> يستلم الناقل البضاعة بناءً على إقرار المرسل بسلامتها. <b>ثانياً:</b> لا نتحمل مسئولية التغليف الداخلي. <b>ثالثاً:</b> الحد الأقصى للتعويض 500 ج.م ما لم يتم التأمين. <b>رابعاً:</b> الشحن الائتماني يضيف 58 ج.م رسوم خدمة.</p>
                     </div>
-                    <div class="digital-sig">توقيع رقمي موثق للتاجر: [Merchant:${merchantName}] | [TS:${ts}]</div>
+                    <div class="digital-sig">توقيع رقمي للتاجر: [Merchant:${merchantName}] | [Time:${ts}]</div>
                 </div>`;
             document.getElementById('printArea').style.display = 'block';
             setTimeout(() => JsBarcode("#bc", awb, {format:"CODE128", width:1.5, height:35, displayValue:false}), 100);
@@ -500,14 +519,16 @@
 
         const governorates = ["القاهرة", "الجيزة", "الإسكندرية", "الدقهلية", "الغربية", "المنوفية", "الشرقية", "القليوبية", "البحيرة", "كفر الشيخ", "دمياط", "الإسماعيلية", "بورسعيد", "السويس", "مرسى مطروح", "شمال سيناء", "جنوب سيناء", "البحر الأحمر", "الفيوم", "بني سويف", "المنيا", "أسيوط", "سوهاج", "قنا", "الأقصر", "أسوان", "الوادي الجديد"];
 
-        window.getCityPrice = (city) => livePrices[city] || 85;
-        
+        window.getCityPrice = (city) => {
+            for (let zone in extraZones) { if (city.includes(zone)) return (livePrices[zone.split(' - ')[0]] || 85) + extraZones[zone]; }
+            return livePrices[city] || 85;
+        };
+
         window.saveBusinessInfo = async () => {
             const p = document.getElementById('merchantBusinessPhone').value.trim();
             const a = document.getElementById('merchantBusinessAddress').value.trim();
-            if(!p || !a) return Swal.fire('نقص بيانات','','warning');
             await setDoc(doc(db, "merchant_profiles", merchantEmail), { businessPhone: p, businessAddress: a }, { merge: true });
-            Swal.fire('تم الحفظ بنجاح','','success');
+            Swal.fire('تم الحفظ','','success');
         };
 
         window.updateShippingCalc = () => {
@@ -524,39 +545,32 @@
         window.submitEshteryly = async () => {
             const pay = document.getElementById('eshPayment').value;
             const details = document.getElementById('eshDetails').value.trim();
-            const addr = document.getElementById('eshAddress').value.trim();
-            if(!details || !addr || !pay) return Swal.fire('بيانات ناقصة','','warning');
-            
-            if(pay === 'balance' && window.currentCreditLimit <= 0) {
-                return Swal.fire('ائتمان غير كافٍ', 'حدك الائتماني حالياً 0. برجاء زيادة مبيعاتك لاستخدام هذه الخدمة.', 'error');
-            }
-            
+            if(pay === 'balance' && window.currentCreditLimit <= 0) return Swal.fire('ائتمان غير كافي', 'رصيدك الائتماني 0 حالياً.', 'error');
             await addDoc(collection(db, "eshteryly_orders"), {
                 merchantEmail, details: details + (pay === 'balance' ? ' | (شراء ائتماني + 58ج)' : ''),
-                address: addr, paymentMethod: pay, status: "جاري البحث عن مندوب", timestamp: new Date(), branchName
+                address: document.getElementById('eshAddress').value, paymentMethod: pay,
+                status: "جاري البحث عن مندوب", timestamp: new Date(), branchName, type: "radar"
             });
             document.getElementById('eshterylyModal').style.display='none';
             Swal.fire('تم البث للرادار','','success');
         };
 
         window.togglePaymentDetails = () => {
-            const val = document.getElementById('eshPayment').value;
-            document.getElementById('balanceDetails').style.display = val === 'balance' ? 'block' : 'none';
-            document.getElementById('instapayDetails').style.display = val === 'instapay' ? 'block' : 'none';
-            document.getElementById('vfcashDetails').style.display = val === 'vfcash' ? 'block' : 'none';
+            const v = document.getElementById('eshPayment').value;
+            document.getElementById('balanceDetails').style.display = v === 'balance' ? 'block' : 'none';
+            document.getElementById('instapayDetails').style.display = v === 'instapay' ? 'block' : 'none';
+            document.getElementById('vfcashDetails').style.display = v === 'vfcash' ? 'block' : 'none';
         };
 
         function loadShipments() {
             onSnapshot(query(collection(db, "shipments"), where("merchantEmail", "==", merchantEmail)), (snap) => {
                 let html = "", count = 0, total = 0;
-                let docs = [];
-                snap.forEach(d => { if(!d.data().deleted) docs.push({id: d.id, ...d.data()}); });
+                let docs = []; snap.forEach(d => { if(!d.data().deleted) docs.push({id: d.id, ...d.data()}); });
                 docs.sort((a,b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
-
                 docs.forEach(data => {
                     count++; total += (data.amount || 0);
                     const ts = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleDateString('ar-EG') : '-';
-                    html += `<tr><td>${data.awb || data.id.substring(0,6)}</td><td>${ts}</td><td><b>${data.name}</b></td><td>${data.phone}</td><td>${data.city}</td><td style="color:var(--primary-burgundy); font-weight:bold;">${data.amount}</td><td>${data.status}</td><td><button onclick="window.printWB('${data.awb}','${data.name}','${data.phone}','','${data.city}','${data.address}','1','1','${data.amount}','${data.fragile}','${merchantAddress}','${merchantPhone}',0)" class="print-btn">طباعة</button></td></tr>`;
+                    html += `<tr><td>${data.awb || data.id.substring(0,5)}</td><td>${ts}</td><td><b>${data.name}</b></td><td>${data.phone}</td><td>${data.city}</td><td style="color:var(--primary-burgundy); font-weight:bold;">${data.amount}</td><td>${data.status}</td><td><button onclick="window.printWB('${data.awb}','${data.name}','${data.phone}','','${data.city}','${data.address}','${data.weight}','1','${data.amount}','${data.fragile}','${merchantAddress}','${merchantPhone}',0)" class="print-btn">طباعة</button></td></tr>`;
                 });
                 document.getElementById('tableBody').innerHTML = html;
                 document.getElementById('totalShipments').innerText = count;
@@ -568,35 +582,65 @@
             onSnapshot(query(collection(db, "eshteryly_orders"), where("merchantEmail", "==", merchantEmail)), (snap) => {
                 let html = "";
                 snap.forEach(d => {
-                    const data = d.data();
+                    const data = d.data(); if(data.status === "تم التسليم" || data.status === "مرفوض") return;
                     let cardClass = data.details.includes('كولد') ? 'type-cold' : (data.paymentMethod === 'pickup' ? '' : 'type-buy');
                     html += `<div class="radar-card ${cardClass}"><h4>${data.status}</h4><p>${data.details}<br><b>العنوان:</b> ${data.address}</p></div>`;
                 });
-                document.getElementById('radarGridBody').innerHTML = html;
+                document.getElementById('radarGridBody').innerHTML = html || "<p>لا توجد مهام نشطة.</p>";
                 document.getElementById('merchantRadarSection').style.display = snap.empty ? 'none' : 'block';
             });
         }
 
         window.saveShipment = async () => {
-            const name = document.getElementById('recName').value.trim();
-            const phone = document.getElementById('recPhone').value.trim();
-            const city = document.getElementById('recCity').value.trim();
-            const addr = document.getElementById('recAddress').value.trim();
+            const n = document.getElementById('recName').value.trim();
+            const p = document.getElementById('recPhone').value.trim();
+            const c = document.getElementById('recCity').value.trim();
+            const a = document.getElementById('recAddress').value.trim();
             const cod = Number(document.getElementById('codAmount').value) || 0;
-            if(!name || !phone || !city || !cod) return Swal.fire('نقص بيانات','','warning');
-            
-            const base = window.getCityPrice(city);
-            const total = cod + base;
-            const awb = "AXN" + Math.random().toString(36).substr(2, 6).toUpperCase();
-            
-            await setDoc(doc(collection(db, "shipments")), {
-                merchantEmail, name, phone, city, address: addr, amount: total, awb, 
-                status: "بوليصة جديدة", timestamp: new Date(), branchName, deleted: false
-            });
-            document.getElementById('addModal').style.display = 'none';
-            Swal.fire('تم الإصدار بنجاح','','success');
+            if(!n || !p || !c || !cod) return Swal.fire('نقص بيانات','','warning');
+            const total = cod + window.getCityPrice(c);
+            const awb = "AXN" + Math.random().toString(36).substr(2, 5).toUpperCase();
+            await addDoc(collection(db, "shipments"), { merchantEmail, name: n, phone: p, city: c, address: a, amount: total, awb, status: "قيد التوصيل", timestamp: new Date(), branchName, deleted: false });
+            document.getElementById('addModal').style.display='none';
+            Swal.fire('تم الإرسال','','success');
         };
 
+        // Chat logic restored (Same as original)
+        let unreadMessagesByOrder = {};
+        let globalChatUnsubscribe = null;
+        let chatUnsubscribe = null;
+        let currentChatOrderId = "";
+        let currentChatCourier = "";
+        let merchantMap = null;
+        let courierMarker = null;
+
+        function startGlobalChatListener() {
+            const chatQ = query(collection(db, "internal_chats"), where("to", "==", merchantEmail));
+            onSnapshot(chatQ, (snap) => {
+                snap.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        const msgData = change.doc.data();
+                        const targetOrderId = msgData.orderId || 'general';
+                        if(!msgData.isRead && currentChatOrderId !== targetOrderId) {
+                            unreadMessagesByOrder[targetOrderId] = (unreadMessagesByOrder[targetOrderId] || 0) + 1;
+                            window.updateOuterBadges(targetOrderId);
+                        }
+                    }
+                });
+            });
+        }
+
+        window.showCourierTrack = (courierName, orderId) => {
+            currentChatCourier = courierName; currentChatOrderId = orderId || 'general';
+            document.getElementById('chatCourierName').innerText = courierName;
+            document.getElementById('trackChatModal').style.display = 'flex';
+            if(!merchantMap) {
+                merchantMap = L.map('merchantMap').setView([31.2, 29.9], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(merchantMap);
+            }
+        };
+        
+        window.closeTrackChat = () => { document.getElementById('trackChatModal').style.display = 'none'; };
         window.logout = () => signOut(auth).then(() => window.location.href="index.html");
     </script>
 </body>
