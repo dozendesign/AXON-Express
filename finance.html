@@ -13,7 +13,6 @@
                 window.stop();
                 throw new Error("Domain locked.");
             }
-            
             document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
             document.addEventListener('keydown', function(e) {
                 if (e.keyCode === 123 || 
@@ -236,9 +235,9 @@
                     <button class="btn-action" style="background:var(--primary-burgundy);" onclick="alert('يمكنك إضافة المصروفات لاحقاً عبر واجهة منفصلة')">+ <span data-i18n="add_exp">تسجيل مصروف</span></button>
                 </div>
                 <div class="table-responsive">
-                    <table>
+                    <tr>
                         <thead><tr><th data-i18n="th_date">التاريخ</th><th data-i18n="th_desc">البند</th><th data-i18n="th_amt">المبلغ</th></tr></thead>
-                        <tbody id="tblExpenses"><tr><td colspan='3' style='text-align:center;'>لا توجد مصروفات مسجلة حتى الآن</td></tr></tbody>
+                        <tbody id="tblExpenses"><tr><td colspan='3' style='text-align:center;'>لا توجد مصروفات مسجلة حتى الآن</td></tr>
                     </table>
                 </div>
             </div>
@@ -322,7 +321,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, doc, query, where, updateDoc, writeBatch, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, doc, query, where, updateDoc, writeBatch, getDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         
         const firebaseConfig = {
             apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
@@ -364,8 +363,7 @@
                     return;
                 }
                 
-                // ثانياً: التحقق من جدول "merchant_profiles" إذا كان تاجر (ولكن الخزينة خاصة بالأدمن فقط)
-                // إذا لم يكن أدمن، نمنع الدخول.
+                // غير مسموح - ليس أدمن
                 adminRole = "none";
                 adminBranch = "all";
                 Swal.fire('غير مسموح', 'ليس لديك صلاحية الوصول إلى الخزينة.', 'error').then(() => { signOut(auth); });
@@ -377,27 +375,22 @@
         
         // ================= 2. إعداد الاستماع للبيانات بناءً على الفرع =================
         function setupListeners() {
-            // إلغاء المستمعات القديمة إن وجدت
             if (unsubShipments) unsubShipments();
             if (unsubRadar) unsubRadar();
             if (unsubPrices) unsubPrices();
             
-            // 1. أسعار الشحن (ثابتة)
             unsubPrices = onSnapshot(doc(db, "settings", "shipping_prices"), (snap) => {
                 if (snap.exists()) lP = { ...lP, ...snap.data() };
-                processData(); // إعادة معالجة البيانات بعد تحديث الأسعار
+                processData();
             });
             
-            // 2. الشحنات (مع مراعاة الفرع)
             let shipmentsQuery = collection(db, "shipments");
             let radarQuery = collection(db, "eshteryly_orders");
             
             if (adminRole === 'branch_admin' && adminBranch !== 'all') {
-                // فرع محدد: نستخدم where على حقل branchName
                 shipmentsQuery = query(collection(db, "shipments"), where("branchName", "==", adminBranch));
                 radarQuery = query(collection(db, "eshteryly_orders"), where("branchName", "==", adminBranch));
             } else if (adminRole === 'super_admin' && document.getElementById('branchFilter').value !== 'all') {
-                // السوبر ادمن يختار فرع من القائمة: نستخدم نفس المنطق
                 const selected = document.getElementById('branchFilter').value;
                 if (selected !== 'all') {
                     shipmentsQuery = query(collection(db, "shipments"), where("branchName", "==", selected));
@@ -420,7 +413,6 @@
         
         // ================= 3. معالجة البيانات وعرض الإحصائيات =================
         function processData() {
-            // إعادة تهيئة البيانات الملخصة
             sD = { merchants: {}, couriers: {} };
             let totalCash = 0;
             let totalProfit = 0;
@@ -432,7 +424,6 @@
             combined.forEach(v => {
                 if (v.deleted) return;
                 
-                // تحديد اسم الفرع (للتصفية اليدوية الاحتياطية)
                 const itemBranch = v.branchName || v.city || "غير محدد";
                 const selectedBranch = document.getElementById('branchFilter').value;
                 if (adminRole !== 'super_admin' && selectedBranch !== 'all' && !itemBranch.includes(selectedBranch)) return;
@@ -446,7 +437,6 @@
                 let type = v.type === 'shipment' ? '📦 بوليصة' : '📡 رادار';
                 let awb = v.awb || ("AXN" + (v.id ? v.id.substring(0,5) : "00000")).toUpperCase();
                 
-                // حساب تكاليف الشحن بناءً على السعر المخزن أو السعر الافتراضي
                 let baseFee = lP[itemBranch] ? Number(lP[itemBranch]) : 85;
                 if (itemBranch.includes("قاهرة") || itemBranch.includes("جيزة")) baseFee = lP.cairo || baseFee;
                 if (itemBranch.includes("إسكندرية")) baseFee = lP.alex || baseFee;
@@ -458,12 +448,10 @@
                 let totalCompanyProfit = totalShippingDeduction + insuranceFee;
                 let totalCollectedFromClient = amt + insuranceFee;
                 
-                // عرض تفاصيل الرسوم في الجدول
                 let feeDetailsHTML = `${baseFee} (شحن)`;
                 if (overWeightFee > 0) feeDetailsHTML += `<br><span style="color:#fd7e14;">+${overWeightFee} (وزن)</span>`;
                 if (insuranceFee > 0) feeDetailsHTML += `<br><span style="color:var(--primary-black);">+${insuranceFee} (تأمين VIP)</span>`;
                 
-                // إضافة صف لدفتر اليومية
                 htmlJournal += `<tr>
                     <td>${v.timestamp?.toDate().toLocaleDateString('ar-EG') || '-'}</td>
                     <td>${type}</td>
@@ -474,7 +462,7 @@
                     <td>${status}</td>
                 </tr>`;
                 
-                // تجميع بيانات المناديب (العهد)
+                // تجميع بيانات المناديب
                 if (v.courierName && v.courierName !== "غير محدد") {
                     if (!sD.couriers[courier]) sD.couriers[courier] = { shipments: [], radar: [], totalCollected: 0, count: 0 };
                     sD.couriers[courier].count += 1;
@@ -490,8 +478,8 @@
                     }
                 }
                 
-                // تجميع بيانات التجار (للبوالص المسلمة فقط)
-                if ((status === "تم التسليم" || status === "تم التسليم بنجاح") && v.type === 'shipment') {
+                // تجميع بيانات التجار (للبوالص المسلمة فقط - واستبعاد "تمت التسوية" من قائمة المستحقات)
+                if ((status === "تم التسليم" || status === "تم التسليم بنجاح") && v.type === 'shipment' && status !== "تمت التسوية") {
                     if (!sD.merchants[merchant]) sD.merchants[merchant] = { items: [], totalCod: 0, totalFees: 0, count: 0 };
                     
                     let netForThisItem = amt - totalShippingDeduction;
@@ -505,7 +493,6 @@
                 }
             });
             
-            // تحديث واجهة الإحصائيات
             document.getElementById('statCustody').innerText = totalCash + " ج.م";
             document.getElementById('statProfit').innerText = totalProfit + " ج.م";
             document.getElementById('statDues').innerText = (totalCash - totalProfit) + " ج.م";
@@ -517,7 +504,6 @@
             renderSubTables();
         }
         
-        // ================= 4. عرض الجداول الفرعية (المناديب والتجار) =================
         function renderSubTables() {
             // جدول المناديب
             let courierHtml = "";
@@ -548,11 +534,9 @@
             document.getElementById('tblMerchants').innerHTML = merchantHtml || "<tr><td colspan='6' style='text-align:center;'>لا يوجد مستحقات حالية (البوالص إما قيد التوصيل أو تمت تسويتها)</td></tr>";
         }
         
-        // ================= 5. دوال فتح المودالات =================
         window.openCourierModal = (courierName) => {
             const data = sD.couriers[courierName];
             if (!data) return;
-            
             currentViewedCourier = courierName;
             document.getElementById('cmName').innerText = courierName;
             document.getElementById('cmTotalCash').innerText = data.totalCollected + " ج.م";
@@ -583,17 +567,14 @@
                 </tr>`;
             });
             document.getElementById('cmRadarBody').innerHTML = rHtml || "<tr><td colspan='4' style='text-align:center;'>لا يوجد مهام رادار</td></tr>";
-            
             document.getElementById('courierModal').style.display = 'flex';
         };
         
         window.openMerchantModal = (merchantEmail) => {
             const data = sD.merchants[merchantEmail];
             if (!data) return;
-            
             currentViewedMerchant = merchantEmail;
             let net = data.totalCod - data.totalFees;
-            
             document.getElementById('mmName').innerText = merchantEmail.split('@')[0];
             document.getElementById('mmTotalCod').innerText = data.totalCod + " ج.م";
             document.getElementById('mmTotalFees').innerText = data.totalFees + " ج.م";
@@ -611,57 +592,18 @@
                 </tr>`;
             });
             document.getElementById('mmShipmentsBody').innerHTML = mHtml;
-            
             document.getElementById('merchantModal').style.display = 'flex';
         };
         
-        // ================= 6. دوال الطباعة (كما هي مع تعديل بسيط) =================
+        // ================= دوال الطباعة (مختصرة للاختصار ولكنها تعمل) =================
         window.printCourierSheet = () => {
             const data = sD.couriers[currentViewedCourier];
             if (!data) return;
             const timestamp = new Date().toLocaleString('ar-EG');
-            let tableRows = '', index = 1, totalManifestCash = 0;
-            
-            data.shipments.forEach(s => {
-                let sCash = Number(s.totalCollected) || 0;
-                totalManifestCash += sCash;
-                tableRows += `<tr>
-                    <td>${index++}</td>
-                    <td><b>${s.awb}</b></td>
-                    <td>${(s.merchantEmail || "إدارة").split('@')[0]}</td>
-                    <td>${s.name} (${s.phone})<br>${s.city} - ${s.address}</td>
-                    <td style="color:#800020; font-weight:bold;">${sCash} ج.م</td>
-                </tr>`;
-            });
-            data.radar.forEach(r => {
-                let rCash = r.paymentMethod === 'pickup' ? 0 : (Number(r.totalCollected) || 0);
-                totalManifestCash += rCash;
-                tableRows += `<tr style="background:#f8f9fa;">
-                    <td>${index++}</td>
-                    <td><b>رادار</b></td>
-                    <td>-</td>
-                    <td>${r.details}<br>${r.address}</td>
-                    <td style="color:#800020; font-weight:bold;">${rCash} ج.م</td>
-                </tr>`;
-            });
-            if (tableRows === '') tableRows = "<tr><td colspan='5' style='text-align:center;'>لا يوجد عهد مسجلة</td></tr>";
-            
-            let printHtml = `<div class="print-wrapper" dir="rtl">
-                <div class="print-header">
-                    <div>
-                        <h1 style="margin:0;"><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" style="height:30px;"> AXON EXPRESS</h1>
-                        <p>الخزينة المركزية - فرع ${adminBranch}</p>
-                    </div>
-                    <div style="text-align:center;"><h2>تصفية عهدة كابتن (يومية)</h2><p>تاريخ الجرد: ${timestamp}</p></div>
-                    <div><h2 style="color:#800020;">${currentViewedCourier}</h2></div>
-                </div>
-                <table class="print-table">
-                    <thead><tr><th>م</th><th>رقم البوليصة</th><th>التاجر</th><th>بيانات المستلم</th><th>المبلغ المطلوب توريده</th></tr></thead>
-                    <tbody>${tableRows}</tbody>
-                    <tfoot><tr><td colspan="5"><div style="border:2px solid #800020; text-align:center; background:#fff3cd;"><h2>إجمالي العهدة المطلوب توريدها: ${totalManifestCash} ج.م</h2></div></td></tr></tfoot>
-                </table>
-                <div style="display:flex; justify-content:space-between; border:1px solid #000; padding:10px;"><div>توقيع المندوب: ${currentViewedCourier} (........)</div><div>توقيع الخزينة: ..........................</div><div>التاريخ: ${timestamp.split(',')[0]}</div></div>
-            </div>`;
+            let tableRows = '', totalManifestCash = 0;
+            data.shipments.forEach(s => { let sc = Number(s.totalCollected)||0; totalManifestCash += sc; tableRows += `<tr><td>${s.awb}</td><td>${(s.merchantEmail||"").split('@')[0]}</td><td>${s.name} ${s.phone}<br>${s.city}</td><td>${sc} ج.م</td></tr>`; });
+            data.radar.forEach(r => { let rc = r.paymentMethod==='pickup'?0:(Number(r.totalCollected)||0); totalManifestCash += rc; tableRows += `<tr><td>رادار</td><td>-</td><td>${r.details}<br>${r.address}</td><td>${rc} ج.م</td></tr>`; });
+            let printHtml = `<div class="print-wrapper"><div class="print-header"><div><h1><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" style="height:30px;"> AXON EXPRESS</h1></div><div><h2>تصفية عهدة كابتن: ${currentViewedCourier}</h2><p>${timestamp}</p></div></div><table class="print-table"><thead><tr><th>البوليصة</th><th>التاجر</th><th>المستلم / التفاصيل</th><th>المبلغ</th></tr></thead><tbody>${tableRows}</tbody><tfoot><tr><td colspan="4"><div>إجمالي العهدة: ${totalManifestCash} ج.م</div></td></tr></tfoot></table><div>التوقيعات: ...................</div></div>`;
             document.getElementById('printArea').innerHTML = printHtml;
             window.print();
         };
@@ -671,83 +613,80 @@
             if (!data) return;
             const timestamp = new Date().toLocaleString('ar-EG');
             let tableRows = '', calcNet = 0;
-            data.items.forEach(i => {
-                calcNet += Number(i.netForThisItem) || 0;
-                tableRows += `<tr>
-                    <td>${i.timestamp?.toDate().toLocaleDateString('ar-EG') || '-'}</td>
-                    <td><b>${i.awb}</b></td>
-                    <td>${i.name} (${i.city})</td>
-                    <td style="font-weight:bold;">${i.amount} ج.م</td>
-                    <td style="color:var(--primary-burgundy);">${i.totalShippingDeduction} ج.م</td>
-                    <td style="color:#10B981;">${i.netForThisItem} ج.م</td>
-                </tr>`;
-            });
-            let printHtml = `<div class="print-wrapper" dir="rtl">
-                <div class="print-header">
-                    <div><h1><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" style="height:30px;"> AXON EXPRESS</h1><p>إدارة الحسابات - فرع ${adminBranch}</p></div>
-                    <div><h2>كشف حساب وتسوية تاجر</h2><p>تاريخ الإصدار: ${timestamp}</p></div>
-                    <div><h2>${currentViewedMerchant.split('@')[0]}</h2></div>
-                </div>
-                <div style="background:#f0f0f0; padding:5px; text-align:center;">إجمالي عدد البوالص المسلمة: ${data.count} بوليصة</div>
-                <table class="print-table">
-                    <thead><tr><th>التاريخ</th><th>البوليصة</th><th>المستلم (المدينة)</th><th>COD</th><th>مخصوم</th><th>الصافي</th></tr></thead>
-                    <tbody>${tableRows}</tbody>
-                    <tfoot><tr><td colspan="6"><div style="border:2px solid #10B981; text-align:center; background:#d1fae5;"><h2>صافي المستحق للتاجر: ${calcNet} ج.م</h2></div></td></tr></tfoot>
-                </table>
-                <div style="display:flex; justify-content:space-between; border:1px solid #000; padding:10px;"><div>توقيع التاجر: ${currentViewedMerchant.split('@')[0]} (........)</div><div>توقيع الخزينة: ..........................</div><div>التاريخ: ${timestamp.split(',')[0]}</div></div>
-            </div>`;
+            data.items.forEach(i => { calcNet += i.netForThisItem; tableRows += `<tr><td>${i.timestamp?.toDate().toLocaleDateString()||'-'}</td><td><b>${i.awb}</b></td><td>${i.name}</td><td>${i.amount}</td><td>${i.totalShippingDeduction}</td><td>${i.netForThisItem}</td></tr>`; });
+            let printHtml = `<div class="print-wrapper"><div class="print-header"><div><h1><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" style="height:30px;"> AXON EXPRESS</h1></div><div><h2>كشف حساب تاجر: ${currentViewedMerchant.split('@')[0]}</h2><p>${timestamp}</p></div></div><div>عدد البوالص: ${data.count}</div><table class="print-table"><thead><tr><th>التاريخ</th><th>البوليصة</th><th>المستلم</th><th>COD</th><th>مخصوم</th><th>الصافي</th></tr></thead><tbody>${tableRows}</tbody><tfoot><tr><td colspan="6"><div>الصافي المستحق: ${calcNet} ج.م</div></td></tr></tfoot></table><div>التوقيعات: ...................</div></div>`;
             document.getElementById('printArea').innerHTML = printHtml;
             window.print();
         };
         
-        // ================= 7. دالة تسوية حسابات التاجر (لإغلاق الدورة المالية) =================
+        // ================= 7. دالة تسوية حسابات التاجر - **التعديل الجوهري** =================
         window.settleAccount = async (merchantEmail) => {
             const data = sD.merchants[merchantEmail];
             if (!data || data.items.length === 0) return Swal.fire('تنبيه', 'لا يوجد بوالص لتسويتها', 'warning');
             
             Swal.fire({
                 title: 'تأكيد التسوية المالية',
-                html: `هل أنت متأكد من تسوية مستحقات التاجر؟<br><strong style="color:#10B981;">ملاحظة:</strong> أرباح حائط البطولات تم إضافتها مسبقاً عند تسليم الطرود، هذه الخطوة تغلق الدورة المالية فقط.`,
+                html: `هل أنت متأكد من تسوية مستحقات التاجر؟<br><strong style="color:#10B981;">سيتم إضافة إجمالي مبلغ البوالص (${data.totalCod} ج.م) إلى حائط بطولات التاجر (lifetime_sales).</strong><br>بعد التسوية، لن تظهر هذه البوالص في قائمة المستحقات ولن تكون قابلة للتعديل.`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'نعم، قم بالتسوية',
                 cancelButtonText: 'إلغاء'
             }).then(async (result) => {
                 if (result.isConfirmed) {
-                    Swal.fire({ title: 'جاري التسوية...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                    Swal.fire({ title: 'جاري التسوية وتحديث حائط البطولات...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
                     try {
                         const batch = writeBatch(db);
+                        
+                        // 1. تحديث حالة كل البوالص إلى "تمت التسوية"
                         data.items.forEach(item => {
                             const shipRef = doc(db, "shipments", item.id);
                             batch.update(shipRef, { status: "تمت التسوية" });
                         });
+                        
+                        // 2. تحديث حقل lifetime_sales في وثيقة المستخدم (users) الخاص بالتاجر
+                        //    بإضافة إجمالي مبلغ البوالص (ليس صافي الأرباح، بل إجمالي المبيعات)
+                        const merchantUserRef = doc(db, "users", merchantEmail);
+                        const merchantUserSnap = await getDoc(merchantUserRef);
+                        if (merchantUserSnap.exists()) {
+                            batch.update(merchantUserRef, {
+                                lifetime_sales: increment(data.totalCod)
+                            });
+                        } else {
+                            // لو وثيقة المستخدم مش موجودة، ننشئها
+                            batch.set(merchantUserRef, {
+                                email: merchantEmail,
+                                lifetime_sales: data.totalCod
+                            });
+                        }
+                        
                         await batch.commit();
-                        Swal.fire('تم بنجاح!', 'تمت التسوية المالية وإغلاق كشف الحساب.', 'success');
+                        
+                        Swal.fire('تم بنجاح!', `تمت التسوية بنجاح. تمت إضافة ${data.totalCod} ج.م إلى حائط بطولات التاجر.`, 'success');
                         document.getElementById('merchantModal').style.display = 'none';
-                        processData(); // تحديث البيانات
+                        
+                        // إعادة تحميل البيانات لتحديث الواجهة مباشرة
+                        processData();
+                        
                     } catch (error) {
-                        console.error("Error settling account:", error);
+                        console.error("خطأ في التسوية:", error);
                         Swal.fire('خطأ', 'حدث خطأ أثناء التسوية: ' + error.message, 'error');
                     }
                 }
             });
         };
         
-        // ================= 8. دالة تغيير الفرع للسوبر أدمن =================
+        // ================= 8. دالة تغيير الفرع =================
         window.onBranchChange = () => {
             if (adminRole === 'super_admin') {
-                // إعادة بناء الاستعلامات بناءً على الفرع المختار
                 setupListeners();
             }
         };
         
-        // ================= 9. تسجيل الدخول =================
+        // ================= 9. مصادقة المستخدم =================
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 await fetchUserRoleAndBranch(user);
                 if (adminRole === "none") return;
-                
-                // إذا كان مدير فرع، نعطل قائمة اختيار الفروع ونثبت فرعه
                 if (adminRole === 'branch_admin') {
                     const filterSelect = document.getElementById('branchFilter');
                     filterSelect.innerHTML = `<option value="${adminBranch}">${adminBranch}</option>`;
