@@ -59,7 +59,7 @@
 
         header { background: var(--primary-blue); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--primary-yellow); position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.08); flex-wrap: wrap; gap: 10px;}
         .logo { font-size: 22px; font-weight: 900; color: var(--white); text-decoration: none; display: flex; align-items: center; gap: 8px;}
-        .logo img { height: 35px; object-fit: contain; }
+        .logo img { height: 45px; object-fit: contain; border-radius: 5px; }
         .logo span { color: var(--primary-yellow); }
         .header-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end;}
         
@@ -172,12 +172,9 @@
             header, .container, .floating-chat, .print-controls, footer { display: none !important; }
             #printArea { display: block !important; width: 100%; margin: 0; padding: 0; }
             @page { size: A4 portrait; margin: 5mm; }
-            /* enforce logo dimensions in print */
-            .print-header img, .a4-wrapper .print-header img {
-                min-width: 3cm !important;
-                min-height: 2cm !important;
-                width: auto !important;
-                height: auto !important;
+            .print-header img {
+                width: 3cm !important;
+                height: 2cm !important;
                 object-fit: contain !important;
             }
         }
@@ -201,8 +198,8 @@
         .print-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #800020; padding-bottom: 5px; margin-bottom: 8px; flex-wrap: nowrap; gap: 10px;}
         .print-header > div { flex: 1; text-align: center; overflow: hidden; }
         .print-header img {
-            min-width: 3cm;
-            min-height: 2cm;
+            width: 3cm;
+            height: 2cm;
             object-fit: contain;
         }
         .barcode-svg { max-width: 100%; height: auto; }
@@ -236,7 +233,7 @@
     <audio id="msgSound" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3" preload="auto"></audio>
 
     <header id="mainHeader">
-        <a href="#" class="logo"><img src="axon-logo.png" alt="Axon Logo"> AXON <span data-i18n="logo_span">EXPRESS</span></a>
+        <a href="#" class="logo"><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" alt="Axon Logo"> AXON <span data-i18n="logo_span">EXPRESS</span></a>
         <div class="header-actions">
             <button onclick="window.toggleLang()" class="lang-btn" id="langBtn">English</button>
             <button onclick="window.toggleTheme()" style="background:none; border:none; color:var(--primary-yellow); font-size:24px; cursor:pointer;" title="الوضع الليلي">
@@ -1161,7 +1158,7 @@
                     if(d.status === "مع المندوب" || d.status.includes("مندوب")) {
                         trackButton = `<button class="track-btn" style="position:relative;" onclick="window.showCourierTrack('${d.courierName || 'الكابتن'}', '${d.id}')"><i class="fa-solid fa-map-location-dot"></i> تتبع الكابتن<span class="card-chat-badge out-badge" data-order="${d.id}" style="display:${badgeDisplay}; right:-5px; top:-8px; left:auto;">${unread}</span></button>`;
                     }
-                    html += `<tr><td><span class="awb-badge">${awb}</span></td><td><b>${d.name}</b></td><td dir="ltr">${d.phone}</td><td>${d.city}</td><td style="color:var(--primary-burgundy); font-weight:bold;">${d.amount}</td><td style="font-weight:bold;">${d.status}</td><td style="display:flex; gap:5px; flex-direction:column;"><button class="print-btn" onclick="window.printWB('${awb}', '${d.name}', '${d.phone}', '${d.phone2}', '${d.city}', '${d.address}', '${d.weight}', '${pieces}', '${d.amount}', '${fragileType}', '${mAdd}', '${mPh}', ${insuranceFee})"><i class="fa-solid fa-print"></i> طباعة</button>${trackButton}</td></tr>`;
+                    html += `<tr><td><span class="awb-badge">${awb}</span></td><td><b>${d.name}</b></td><td dir="ltr">${d.phone}</td><td>${d.city}</td><td style="color:var(--primary-burgundy); font-weight:bold;">${d.amount}</td><td style="font-weight:bold;">${d.status}</td><td style="display:flex; gap:5px; flex-direction:column;"><button class="print-btn" onclick="window.printWB('${awb}', '${d.name}', '${d.phone}', '${d.phone2}', '${d.city}', '${d.address}', '${d.weight}', '${pieces}', '${d.amount}', '${fragileType}', '${mAdd}', '${mPh}', ${insuranceFee})"><i class="fa-solid fa-print"></i> طباعة</button>${trackButton}</noscript></td>`;
                 });
                 document.getElementById('tableBody').innerHTML = html;
                 document.getElementById('totalShipments').innerText = count;
@@ -1193,7 +1190,7 @@
                         <div>${safeerLogoHTML}<br><small style="font-size:10px;">متجر التاجر</small></div>
                         <div><svg id="bc" class="barcode-svg"></svg><br><b style="font-size:14px;">${awb}</b></div>
                         <div>
-                            <h2 style="margin:0; color:#111111; font-size:20px; display:flex; align-items:center; justify-content:center; gap:5px;"><img src="axon-logo.png" style="min-width:3cm; min-height:2cm; width:auto; height:auto; object-fit:contain;"> AXON <span style="color:#800020;">EXPRESS</span></h2>
+                            <h2 style="margin:0; color:#111111; font-size:20px; display:flex; align-items:center; justify-content:center; gap:5px;"><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" style="width:3cm; height:2cm; object-fit:contain;"> AXON <span style="color:#800020;">EXPRESS</span></h2>
                             <p style="margin:0; font-size:12px;">بوليصة شحن</p>
                         </div>
                     </div>
