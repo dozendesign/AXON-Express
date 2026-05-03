@@ -361,7 +361,7 @@
             <div class="admin-section" style="border: 2px solid #d39e00;">
                 <h2 style="color:#d39e00; border-bottom-color:#d39e00;"><i class="fa-solid fa-truck-ramp-box"></i> أكسون هوم (نقل الأثاث)</h2>
                 <div class="table-wrapper">
-                    <table>
+                    <tr>
                         <thead><tr><th>التاريخ</th><th>التواصل</th><th>المسار</th><th>الخدمة</th><th>إجراء</th></tr></thead>
                         <tbody id="homeBody"></tbody>
                     </table>
@@ -391,7 +391,7 @@
             <div class="admin-section">
                 <h2><i class="fa-solid fa-code-branch"></i> طلبات وكالة (فرنشايز)</h2>
                 <div class="table-wrapper">
-                    <table>
+                    <tr>
                         <thead><tr><th>التاريخ</th><th>الاسم/الشركة</th><th>المنطقة المستهدفة</th><th>رقم التواصل</th><th>ملاحظات وتفاصيل</th></tr></thead>
                         <tbody id="franchiseBody"></tbody>
                     </table>
@@ -741,7 +741,7 @@
                     }
                     html += `<tr><td><b>${(d.merchantEmail||'مجهول').split('@')[0]}</b><br><span style="font-size:11px; color:${typeColor}; font-weight:bold;">${typeIcon}</span><br><span style="font-size:11px;">${d.details}</span></td><td><span style="font-size:11px;">📍 ${d.address}</span><br><b style="color:var(--primary-burgundy); font-size:11px;">💳 ${d.paymentMethod === 'pickup' ? '-' : d.paymentMethod}</b></td><td>${btns}</td></tr>`;
                 });
-                document.getElementById('radarTasksBody').innerHTML = html || "<tr><td colspan='3' style='text-align:center;'>الرادار خالي حالياً</td></tr>";
+                document.getElementById('radarTasksBody').innerHTML = html || "<td><td colspan='3' style='text-align:center;'>الرادار خالي حالياً<\/td></td>";
                 document.getElementById('activeRadarTasks').innerText = count;
             });
         }
@@ -777,17 +777,12 @@
 
         window.triggerLoadShipments = () => { loadShipments(adminRole === 'super_admin' ? 'all' : adminBranch); }
 
-        // دالة لحساب سعر الشحن الحقيقي بناءً على بيانات الشحنة والأسعار الحية
         function getRealShippingCost(shipmentData) {
             if(shipmentData.realShippingCost) return shipmentData.realShippingCost;
             const city = shipmentData.city;
-            if(!city || !livePricesCache) return 85; // fallback
-            
-            // حساب مشابه لكود التاجر
+            if(!city || !livePricesCache) return 85;
             let normalizedInput = city.replace(/\s+/g, ' ').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/[ىي]/g, 'ي');
             let basePrice = 85;
-            
-            // البحث في الأطراف أولاً
             for(let zone in livePricesCache) {
                 if(extraZonesAdminList.includes(zone)) {
                     let parts = zone.split('-');
@@ -801,8 +796,6 @@
                     }
                 }
             }
-            
-            // البحث في المحافظات الأساسية
             for(let gov in livePricesCache) {
                 if(governorates.includes(gov)) {
                     let normalizedGov = gov.replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/[ىي]/g, 'ي');
@@ -814,7 +807,6 @@
             return 85;
         }
 
-        // دالة لحذف المبلغ من lifetime_sales عند الإرجاع
         async function revertLifetimeSales(merchantEmail, amount, shippingCost) {
             if(!merchantEmail) return;
             const profit = amount - shippingCost;
@@ -831,15 +823,19 @@
             const shipData = window.loadedShipmentsData[id];
             if(!shipData) return;
             
+            // منع تعديل الشحنة إذا كانت الحالة "تمت التسوية"
+            if(shipData.status === "تمت التسوية") {
+                Swal.fire('غير مسموح', 'لا يمكن تعديل شحنة تمت تسويتها مالياً.', 'warning');
+                // إعادة ضبط القائمة المنسدلة إلى حالتها الأصلية
+                document.getElementById(`st-${id}`).value = shipData.status;
+                return;
+            }
+            
             const oldStatus = shipData.status;
             try {
-                // حالة إتمام التسليم (إضافة المبلغ)
                 if(val === "تم التسليم" && oldStatus !== "تم التسليم" && !shipData.isAccounted && shipData.merchantEmail) {
-                    // حساب سعر الشحن الحقيقي
                     let shippingCost = shipData.realShippingCost;
-                    if(!shippingCost) {
-                        shippingCost = getRealShippingCost(shipData);
-                    }
+                    if(!shippingCost) shippingCost = getRealShippingCost(shipData);
                     const profit = Number(shipData.amount) - shippingCost;
                     if(profit > 0) {
                         const userQ = query(collection(db, "users"), where("email", "==", shipData.merchantEmail));
@@ -857,7 +853,6 @@
                         realShippingCost: shippingCost
                     });
                 }
-                // حالة الإرجاع (خصم المبلغ)
                 else if((val === "مرتجع" || val === "مؤجل") && oldStatus === "تم التسليم" && shipData.isAccounted && shipData.merchantEmail) {
                     let shippingCost = shipData.realShippingCost || getRealShippingCost(shipData);
                     const profit = Number(shipData.amount) - shippingCost;
@@ -870,7 +865,6 @@
                         accountedAt: null
                     });
                 }
-                // أي حالة أخرى
                 else {
                     await updateDoc(doc(db, "shipments", id), { status: val });
                 }
@@ -895,9 +889,8 @@
 
         window.deleteShipment = async (id) => {
             if (adminRole !== 'super_admin') return Swal.fire('مرفوض', 'القيادة العليا فقط تملك صلاحية حذف بوليصة.', 'error');
-            // التحقق إذا كانت الشحنة قد أضيفت إلى lifetime_sales، نحتاج لاسترجاعها
             const shipData = window.loadedShipmentsData[id];
-            if(shipData && shipData.isAccounted && shipData.merchantEmail) {
+            if(shipData && shipData.isAccounted && shipData.merchantEmail && shipData.status !== "تمت التسوية") {
                 let shippingCost = shipData.realShippingCost || getRealShippingCost(shipData);
                 const profit = Number(shipData.amount) - shippingCost;
                 if(profit > 0) {
@@ -922,9 +915,14 @@
         window.saveShipmentEdits = async () => {
             const id = document.getElementById('editShipId').value;
             const oldData = window.loadedShipmentsData[id];
+            if(!oldData) return;
+            if(oldData.status === "تمت التسوية") {
+                Swal.fire('غير مسموح', 'لا يمكن تعديل شحنة تمت تسويتها مالياً.', 'warning');
+                document.getElementById('editShipmentModal').style.display = 'none';
+                return;
+            }
             const newAmount = Number(document.getElementById('editShipAmount').value);
             try {
-                // إذا كان قد تم احتساب الشحنة بالفعل وتغير المبلغ، نحتاج لضبط lifetime_sales
                 if(oldData.isAccounted && oldData.merchantEmail && newAmount !== oldData.amount) {
                     let oldShippingCost = oldData.realShippingCost || getRealShippingCost(oldData);
                     let newShippingCost = oldData.realShippingCost || getRealShippingCost({...oldData, amount: newAmount});
@@ -953,6 +951,9 @@
         window.broadcastShipmentToRadarById = async (id) => {
             const data = window.loadedShipmentsData[id];
             if(!data) return;
+            if(data.status === "تمت التسوية") {
+                return Swal.fire('غير مسموح', 'لا يمكن إعادة بث شحنة تمت تسويتها.', 'warning');
+            }
             if(!confirm("هل تريد بث هذه الشحنة للرادار ليقوم مندوب بتوصيلها الآن؟")) return;
             try { 
                 await addDoc(collection(db, "eshteryly_orders"), { merchantEmail: data.merchantEmail, details: `توصيل مباشر (بوليصة: ${data.awb}) - تحصيل: ${data.amount} ج.م`, address: `${data.city} - ${data.address}`, paymentMethod: data.paymentType || 'normal', status: "جاري البحث عن مندوب", timestamp: new Date(), branchName: adminBranch === 'all' ? "المركز الرئيسي" : adminBranch, type: 'radar', linkedShipmentId: id }); 
@@ -970,7 +971,6 @@
             const id = document.getElementById('transitShipId').value;
             const target = document.getElementById('transitTargetBranch').value;
             if(!target) return Swal.fire('تنبيه', 'برجاء اختيار المحافظة المتجه إليها الطرد', 'warning');
-            
             try {
                 await updateDoc(doc(db, "shipments", id), { status: `ترانزيت إلى ${target}`, targetBranch: target });
                 document.getElementById('transitModal').style.display = 'none';
@@ -996,8 +996,10 @@
 
             for(let key in window.loadedShipmentsData) {
                 let s = window.loadedShipmentsData[key];
-                if(s.courierName === courierName && s.status !== 'تم التسليم' && s.status !== 'تمت التسوية' && s.status !== 'مرتجع') {
-                    targetShipments.push(s); totalCod += Number(s.amount) || 0;
+                // استبعاد الشحنات التي تمت تسويتها أو المرتجعة أو المؤجلة
+                if(s.courierName === courierName && s.status !== 'تم التسليم' && s.status !== 'تمت التسوية' && s.status !== 'مرتجع' && s.status !== 'مؤجل') {
+                    targetShipments.push(s); 
+                    totalCod += Number(s.amount) || 0;
                 }
             }
 
@@ -1012,20 +1014,19 @@
             let tableRows = '';
             targetShipments.forEach((s, index) => {
                 tableRows += `<tr>
-                    <td style="border:1px solid #000; padding:4px; text-align:center; font-size:11px;">${index + 1}</td>
-                    <td style="border:1px solid #000; padding:4px; text-align:center; font-size:11px;"><b>${s.awb}</b></td>
-                    <td style="border:1px solid #000; padding:4px; text-align:center; font-size:11px;">${s.merchant}</td>
-                    <td style="border:1px solid #000; padding:4px; text-align:center; font-size:11px; word-break:break-word;">${s.name} (${s.phone})<br>${s.city} - ${s.address}</td>
-                    <td style="border:1px solid #000; padding:4px; text-align:center; color:#b82329; font-weight:bold; font-size:12px; white-space:nowrap !important;">${s.amount} ج.م</td>
-                    <td style="border:1px solid #000; padding:4px; text-align:center;"></td>
-                </tr>`;
+                    <td style="border:1px solid #000; padding:4px; text-align:center; font-size:11px;">${index + 1}<\/td>
+                    <td style="border:1px solid #000; padding:4px; text-align:center; font-size:11px;"><b>${s.awb}<\/b><\/td>
+                    <td style="border:1px solid #000; padding:4px; text-align:center; font-size:11px;">${s.merchant}<\/td>
+                    <td style="border:1px solid #000; padding:4px; text-align:center; font-size:11px; word-break:break-word;">${s.name} (${s.phone})<br>${s.city} - ${s.address}<\/td>
+                    <td style="border:1px solid #000; padding:4px; text-align:center; color:#b82329; font-weight:bold; font-size:12px; white-space:nowrap !important;">${s.amount} ج.م<\/td>
+                    <td style="border:1px solid #000; padding:4px; text-align:center;"><\/td>
+                <\/tr>`;
             });
             
             let starsHtml = '';
             let filledStars = 3; 
             if (successCount >= 2000) filledStars = 5;
             else if (successCount >= 1000) filledStars = 4;
-            
             for(let i=0; i<5; i++) {
                 if(i < filledStars) starsHtml += '<i class="fa-solid fa-star" style="color:#ffc107 !important;"></i> ';
                 else starsHtml += '<i class="fa-regular fa-star" style="color:#ccc !important;"></i> ';
@@ -1052,11 +1053,9 @@
                             <div title="تقييم بناءً على التسليمات الناجحة" style="font-size:10px; margin-top:2px;">${starsHtml}</div>
                         </div>
                     </div>
-                    
                     <div style="font-size:11px; font-weight:bold; color:#111; text-align:center; background:#FFC300; padding:3px; border-radius:5px; margin-bottom:5px; border:1px dashed #111;">
                         <i class="fa-solid fa-quote-right"></i> أنت لست مندوباً، أنت "سفير" للشركة! إظهارك للود والاحترام للعميل أمر واجب <i class="fa-solid fa-quote-left"></i>
                     </div>
-
                     <table style="width:100%; border-collapse:collapse; margin-bottom:5px; table-layout:fixed; font-size:12px; box-sizing:border-box;">
                         <thead>
                             <tr>
@@ -1070,29 +1069,19 @@
                         </thead>
                         <tbody>${tableRows}</tbody>
                     </table>
-                    
                     <div style="border:2px solid #800020; padding:5px; text-align:center; margin-bottom:5px; background:#fff3cd; page-break-inside: avoid;">
                         <h2 style="margin:0; color:#800020; font-size:14px;">إجمالي المطلوب تحصيله: ${totalCod} ج.م</h2>
                         <p style="margin:0; font-weight:bold; font-size:10px;">(إجمالي الطرود: ${targetShipments.length} طرد)</p>
                     </div>
-                    
                     <div style="page-break-inside: avoid; display:flex; gap:10px;">
                         <div style="flex:1; background:#ffeaea; border:1px solid #800020; padding:5px; border-radius:5px; color:#800020; font-size:9px;">
                             <h4 style="margin:0 0 2px 0; text-align:center;"><i class="fa-solid fa-triangle-exclamation"></i> تعليمات للمندوبين</h4>
-                            <ul style="margin:0; padding-right:15px; font-weight:bold;">
-                                <li>الإخطار الكاذب يعرضك لخصم 100 جنيه.</li>
-                                <li>التواصل صباحاً للتنسيق.</li>
-                            </ul>
+                            <ul style="margin:0; padding-right:15px; font-weight:bold;"><li>الإخطار الكاذب يعرضك لخصم 100 جنيه.</li><li>التواصل صباحاً للتنسيق.</li></ul>
                         </div>
-
                         <div style="flex:2; font-size:11px; text-align:justify; line-height:1.3; border:1px solid #000; padding:5px; background:#fafafa;">
                             <h3 style="margin:0 0 3px 0; color:#111; text-align:center; font-size:12px;">إقرار استلام عهدة نقدية</h3>
                             أقر أنا المندوب/ <b>......................................</b> بتسلمي الطرود المبينة أعلاه، وأتعهد بتسليم قيمتها للخزينة بالكامل بنهاية اليوم. وإلا أكون مبدداً للعهدة ومسئولاً قانونياً وفقاً للمادة (341) عقوبات.
-                            <div style="display:flex; justify-content:space-between; margin-top:10px; font-weight:bold;">
-                                <div>توقيع المندوب: ....................</div>
-                                <div>البصمة: ........</div>
-                                <div>توقيع الإدارة: ....................</div>
-                            </div>
+                            <div style="display:flex; justify-content:space-between; margin-top:10px; font-weight:bold;"><div>توقيع المندوب: ....................</div><div>البصمة: ........</div><div>توقيع الإدارة: ....................</div></div>
                         </div>
                     </div>
                 </div>
@@ -1103,12 +1092,13 @@
         window.printWaybillById = (id) => {
             const data = window.loadedShipmentsData[id];
             if(!data) return Swal.fire('خطأ', 'بيانات الشحنة غير متوفرة', 'error');
-
+            if(data.status === "تمت التسوية") {
+                return Swal.fire('غير مسموح', 'لا يمكن طباعة بوليصة تمت تسويتها مالياً.', 'warning');
+            }
             document.getElementById('mainHeader').style.display = 'none';
             document.getElementById('mainContainer').style.display = 'none';
             
             const timestamp = new Date().toLocaleString('ar-EG');
-            
             const fragileType = data.fragile || 'normal';
             const insuranceFee = data.insuranceFee || 0;
             
@@ -1142,30 +1132,13 @@
                             <p style="margin:0; font-size:13px; font-weight:bold;">بوليصة شحن إلكترونية</p>
                         </div>
                     </div>
-                    
                     ${fragileBannerHTML}
-
                     <div class="info-grid">
-                        <div class="box">
-                            <h3>بيانات المرسل (التاجر)</h3>
-                            <p style="margin:4px 0;">الاسم: <b>${data.merchant}</b></p>
-                            <p style="margin:4px 0;">الموبايل: <b dir="ltr">${data.merchantPhone || 'غير مسجل'}</b></p>
-                            <p style="margin:4px 0;">العنوان: <b>${data.merchantAddress || 'غير مسجل'}</b></p>
-                            <p style="margin:4px 0;">الوزن: <b>${data.weight || 1} كجم</b></p>
-                            <p style="margin:4px 0;">التاريخ: <b>${timestamp.split(',')[0]}</b></p>
-                        </div>
-                        <div class="box">
-                            <h3>بيانات المستلم (إلى)</h3>
-                            <p style="margin:4px 0;">الاسم: <b>${data.name}</b></p>
-                            <p style="margin:4px 0;">الموبايل: <b dir="ltr">${data.phone}</b> ${data.phone2 && data.phone2 !== 'undefined' && data.phone2 !== 'لا يوجد' ? `| <b dir="ltr">${data.phone2}</b>` : ''}</p>
-                            <p style="margin:4px 0;">المحافظة: <b>${data.city}</b></p>
-                            <p style="margin:4px 0;">العنوان: <b>${data.address}</b></p>
-                        </div>
+                        <div class="box"><h3>بيانات المرسل (التاجر)</h3><p style="margin:4px 0;">الاسم: <b>${data.merchant}</b></p><p style="margin:4px 0;">الموبايل: <b dir="ltr">${data.merchantPhone || 'غير مسجل'}</b></p><p style="margin:4px 0;">العنوان: <b>${data.merchantAddress || 'غير مسجل'}</b></p><p style="margin:4px 0;">الوزن: <b>${data.weight || 1} كجم</b></p><p style="margin:4px 0;">التاريخ: <b>${timestamp.split(',')[0]}</b></p></div>
+                        <div class="box"><h3>بيانات المستلم (إلى)</h3><p style="margin:4px 0;">الاسم: <b>${data.name}</b></p><p style="margin:4px 0;">الموبايل: <b dir="ltr">${data.phone}</b> ${data.phone2 && data.phone2 !== 'undefined' && data.phone2 !== 'لا يوجد' ? `| <b dir="ltr">${data.phone2}</b>` : ''}</p><p style="margin:4px 0;">المحافظة: <b>${data.city}</b></p><p style="margin:4px 0;">العنوان: <b>${data.address}</b></p></div>
                     </div>
-                    
                     <div class="cod-box"><h2 style="margin:0; color:#800020; font-size:22px;">المبلغ المطلوب تحصيله (COD): ${data.amount} ج.م</h2></div>
                     ${insurancePrintHTML}
-                    
                     <div class="constitution-columns">
                         <h4 style="text-align:center; column-span: all; font-size:13px; margin-bottom:8px;">شروط وأحكام الناقل (Axon Express)</h4>
                         <p><b>أولاً: إقرار باستلام البضاعة بحالة ظاهرية سليمة:</b> يستلم الناقل البضاعة بناءً على الإقرار الصادر من المرسل بأنها بحالة ظاهرية سليمة، وخالية من أي عيوب أو تلف، ومعبأة تعبئة مناسبة تتناسب مع طبيعة البضاعة ومتطلبات النقل البري، ويكون الناقل غير مسؤول عن الفحص الفني للبضاعة أو مكوناتها الداخلية.</p>
@@ -1194,7 +1167,6 @@
             setTimeout(() => { JsBarcode("#barcodePrint", data.awb, {format: "CODE128", width: 1.5, height: 35, displayValue: false}); }, 100);
         };
 
-        // --- وظائف الطوارئ والدعم ---
         function loadEmergencyOps(branchFilter = null) {
             onSnapshot(query(collection(db, "axon_rescue_orders"), orderBy("timestamp", "desc")), (snap) => {
                 let html = "", count = 0;
@@ -1204,9 +1176,10 @@
                     if(d.status !== "تم الإنقاذ") count++;
                     const dateStr = d.timestamp ? (d.timestamp.toDate ? d.timestamp.toDate().toLocaleString('ar-EG') : new Date(d.timestamp).toLocaleString('ar-EG')) : '-';
                     const gpsLink = d.gps.includes('http') ? `<a href="${d.gps}" target="_blank" style="color:var(--primary-blue); font-weight:bold;">📍 فتح الموقع على الخريطة</a>` : d.gps;
-                    html += `<tr style="${d.status === 'نداء استغاثة' ? 'background:#ffeaea;' : ''}"><td><span style="font-size:11px;">${dateStr}</span></td><td><b>${(d.merchantEmail||'').split('@')[0]}</b><br><span dir="ltr" style="font-size:11px; font-weight:bold; color:var(--primary-burgundy);">${d.phone}</span><br><span style="font-size:11px; color:gray;">${d.car}</span></td><td>${gpsLink}</td><td><select onchange="window.updateEmergencyStatus('axon_rescue_orders', '${doc.id}', this.value)" class="status-dropdown" style="margin-bottom:5px;"><option value="نداء استغاثة" ${d.status==='نداء استغاثة'?'selected':''}>🚨 نداء استغاثة</option><option value="ونش في الطريق" ${d.status==='ونش في الطريق'?'selected':''}>🚚 ونش في الطريق</option><option value="تم الإنقاذ" ${d.status==='تم الإنقاذ'?'selected':''}>✅ تم الإنقاذ</option></select><button class="btn-action btn-delete" onclick="window.deleteTicket('axon_rescue_orders', '${doc.id}')">مسح</button></td></tr>`;
+                    html += `<tr style="${d.status === 'نداء استغاثة' ? 'background:#ffeaea;' : ''}"><td><span style="font-size:11px;">${dateStr}</span><\/td><td><b>${(d.merchantEmail||'').split('@')[0]}</b><br><span dir="ltr" style="font-size:11px; font-weight:bold; color:var(--primary-burgundy);">${d.phone}</span><br><span style="font-size:11px; color:gray;">${d.car}</span><\/td><td>${gpsLink}<\/td><td><select onchange="window.updateEmergencyStatus('axon_rescue_orders', '${doc.id}', this.value)" class="status-dropdown" style="margin-bottom:5px;"><option value="نداء استغاثة" ${d.status==='نداء استغاثة'?'selected':''}>🚨 نداء استغاثة</option><option value="ونش في الطريق" ${d.status==='ونش في الطريق'?'selected':''}>🚚 ونش في الطريق</option><option value="تم الإنقاذ" ${d.status==='تم الإنقاذ'?'selected':''}>✅ تم الإنقاذ</option></select><button class="btn-action btn-delete" onclick="window.deleteTicket('axon_rescue_orders', '${doc.id}')">مسح</button><\/td><\/tr>`;
                 });
-                document.getElementById('rescueBody').innerHTML = html || "<tr><td colspan='4'>لا توجد نداءات استغاثة حالياً.</td></tr>"; updateEmergencyBadge(count);
+                document.getElementById('rescueBody').innerHTML = html || "<tr><td colspan='4'>لا توجد نداءات استغاثة حالياً.<\/tr>";
+                updateEmergencyBadge(count);
             });
             onSnapshot(query(collection(db, "axon_home_orders"), orderBy("timestamp", "desc")), (snap) => {
                 let html = "", count = 0;
@@ -1215,9 +1188,10 @@
                     if(branchFilter && branchFilter !== 'all' && d.branchName !== branchFilter) return;
                     if(d.status === "قيد التسعير") count++;
                     const dateStr = d.timestamp ? (d.timestamp.toDate ? d.timestamp.toDate().toLocaleDateString('ar-EG') : new Date(d.timestamp).toLocaleDateString('ar-EG')) : '-';
-                    html += `<tr><td><span style="font-size:11px;">${dateStr}</span></td><td><b>${(d.merchantEmail||'').split('@')[0]}</b><br><b dir="ltr" style="color:#d39e00;">${d.phone}</b></td><td><span style="font-size:11px;"><b>من:</b> ${d.from}</span><br><span style="font-size:11px;"><b>إلى:</b> ${d.to}</span></td><td><span style="background:#fff3cd; color:#856404; padding:3px 8px; border-radius:10px; font-size:11px; font-weight:bold;">${d.service}</span></td><td><select onchange="window.updateEmergencyStatus('axon_home_orders', '${doc.id}', this.value)" class="status-dropdown" style="margin-bottom:5px;"><option value="قيد التسعير" ${d.status==='قيد التسعير'?'selected':''}>قيد التسعير (مطلوب رد)</option><option value="تم التسعير والاتفاق" ${d.status==='تم التسعير والاتفاق'?'selected':''}>تم الاتفاق</option><option value="مرفوض" ${d.status==='مرفوض'?'selected':''}>مرفوض/ملغي</option></select><button class="btn-action btn-delete" onclick="window.deleteTicket('axon_home_orders', '${doc.id}')">مسح</button></td></tr>`;
+                    html += `<tr><td><span style="font-size:11px;">${dateStr}</span><\/td><td><b>${(d.merchantEmail||'').split('@')[0]}</b><br><b dir="ltr" style="color:#d39e00;">${d.phone}</b><\/td><td><span style="font-size:11px;"><b>من:</b> ${d.from}</span><br><span style="font-size:11px;"><b>إلى:</b> ${d.to}</span><\/td><td><span style="background:#fff3cd; color:#856404; padding:3px 8px; border-radius:10px; font-size:11px; font-weight:bold;">${d.service}</span><\/td><td><select onchange="window.updateEmergencyStatus('axon_home_orders', '${doc.id}', this.value)" class="status-dropdown" style="margin-bottom:5px;"><option value="قيد التسعير" ${d.status==='قيد التسعير'?'selected':''}>قيد التسعير (مطلوب رد)</option><option value="تم التسعير والاتفاق" ${d.status==='تم التسعير والاتفاق'?'selected':''}>تم الاتفاق</option><option value="مرفوض" ${d.status==='مرفوض'?'selected':''}>مرفوض/ملغي</option></select><button class="btn-action btn-delete" onclick="window.deleteTicket('axon_home_orders', '${doc.id}')">مسح</button><\/td><\/tr>`;
                 });
-                document.getElementById('homeBody').innerHTML = html || "<tr><td colspan='5'>لا توجد طلبات نقل عفش حالياً.</td></tr>"; const existingCount = parseInt(document.getElementById('emergencyBadge').innerText || 0); updateEmergencyBadge(existingCount + count);
+                document.getElementById('homeBody').innerHTML = html || "<tr><td colspan='5'>لا توجد طلبات نقل عفش حالياً.<\/tr>";
+                updateEmergencyBadge(count);
             });
         }
 
@@ -1234,25 +1208,26 @@
                     const dateStr = d.timestamp ? (d.timestamp.toDate ? d.timestamp.toDate().toLocaleString('ar-EG') : new Date(d.timestamp).toLocaleString('ar-EG')) : '-';
                     let contactInfo = `<b>${d.phone || 'لا يوجد'}</b>`;
                     if(d.phone && d.phone.length >= 10) { let waPhone = d.phone.startsWith('0') ? '2' + d.phone : d.phone; contactInfo += `<br><a href="https://wa.me/${waPhone}" target="_blank" style="background:#25D366; color:white; padding:4px 8px; border-radius:5px; text-decoration:none; font-size:11px; margin-top:5px; display:inline-block;"><i class="fa-brands fa-whatsapp"></i> رد واتساب</a>`; }
-                    html += `<tr><td><span style="font-size:11px;">${dateStr}</span></td><td><div style="max-width:250px; white-space:normal;">${d.message}</div></td><td dir="ltr">${contactInfo}</td><td><button class="btn-action btn-delete" onclick="window.deleteTicket('web_inquiries', '${doc.id}')">إغلاق التذكرة ✖</button></td></tr>`;
+                    html += `<tr><td><span style="font-size:11px;">${dateStr}</span><\/td><td><div style="max-width:250px; white-space:normal;">${d.message}</div><\/td><td dir="ltr">${contactInfo}<\/td><td><button class="btn-action btn-delete" onclick="window.deleteTicket('web_inquiries', '${doc.id}')">إغلاق التذكرة ✖</button><\/td><\/tr>`;
                 });
-                document.getElementById('ticketsBody').innerHTML = html || "<tr><td colspan='4'>لا توجد رسائل حالياً.</td></tr>"; updateBadge(count);
+                document.getElementById('ticketsBody').innerHTML = html || "<tr><td colspan='4'>لا توجد رسائل حالياً.<\/tr>";
+                updateBadge(count);
             });
             onSnapshot(query(collection(db, "careers"), orderBy("timestamp", "desc")), (snap) => {
                 let html = "";
-                snap.forEach(doc => { const d = doc.data(); const dateStr = d.timestamp ? (d.timestamp.toDate ? d.timestamp.toDate().toLocaleDateString('ar-EG') : new Date(d.timestamp).toLocaleDateString('ar-EG')) : '-'; html += `<tr><td><span style="font-size:11px;">${dateStr}</span></td><td><b>${d.name}</b><br><span style="color:var(--primary-blue); font-size:11px;">${d.position}</span></td><td>${d.city}<br><b dir="ltr">${d.phone}</b></td><td><div style="max-width:200px; white-space:normal; font-size:11px;">${d.notes || 'لا يوجد'}</div><button class="btn-action btn-delete" style="margin-top:5px;" onclick="window.deleteTicket('careers', '${doc.id}')">أرشفة</button></td></tr>`; });
-                document.getElementById('careersBody').innerHTML = html || "<tr><td colspan='4'>لا توجد طلبات انضمام.</td></tr>";
+                snap.forEach(doc => { const d = doc.data(); const dateStr = d.timestamp ? (d.timestamp.toDate ? d.timestamp.toDate().toLocaleDateString('ar-EG') : new Date(d.timestamp).toLocaleDateString('ar-EG')) : '-'; html += `<tr><td><span style="font-size:11px;">${dateStr}</span><\/td><td><b>${d.name}</b><br><span style="color:var(--primary-blue); font-size:11px;">${d.position}</span><\/td><td>${d.city}<br><b dir="ltr">${d.phone}</b><\/td><td><div style="max-width:200px; white-space:normal; font-size:11px;">${d.notes || 'لا يوجد'}</div><button class="btn-action btn-delete" style="margin-top:5px;" onclick="window.deleteTicket('careers', '${doc.id}')">أرشفة</button><\/td><\/tr>`; });
+                document.getElementById('careersBody').innerHTML = html || "<tr><td colspan='4'>لا توجد طلبات انضمام.<\/tr>";
             });
             onSnapshot(query(collection(db, "franchises"), orderBy("timestamp", "desc")), (snap) => {
                 let html = "";
-                snap.forEach(doc => { const d = doc.data(); const dateStr = d.timestamp ? (d.timestamp.toDate ? d.timestamp.toDate().toLocaleDateString('ar-EG') : new Date(d.timestamp).toLocaleDateString('ar-EG')) : '-'; html += `<tr><td><span style="font-size:11px;">${dateStr}</span></td><td><b>${d.name}</b></td><td>${d.city}<br><span style="color:${d.office==='نعم'?'green':'red'}; font-size:11px;">مقر: ${d.office}</span></td><td dir="ltr"><b>${d.phone}</b></td><td><div style="max-width:200px; white-space:normal; font-size:11px;">${d.notes || 'لا يوجد'}</div><button class="btn-action btn-delete" style="margin-top:5px;" onclick="window.deleteTicket('franchises', '${doc.id}')">أرشفة</button></td></tr>`; });
-                document.getElementById('franchiseBody').innerHTML = html || "<tr><td colspan='5'>لا توجد طلبات وكالة.</td></tr>";
+                snap.forEach(doc => { const d = doc.data(); const dateStr = d.timestamp ? (d.timestamp.toDate ? d.timestamp.toDate().toLocaleDateString('ar-EG') : new Date(d.timestamp).toLocaleDateString('ar-EG')) : '-'; html += `<tr><td><span style="font-size:11px;">${dateStr}</span><\/td><td><b>${d.name}</b><\/td><td>${d.city}<br><span style="color:${d.office==='نعم'?'green':'red'}; font-size:11px;">مقر: ${d.office}</span><\/td><td dir="ltr"><b>${d.phone}</b><\/td><td><div style="max-width:200px; white-space:normal; font-size:11px;">${d.notes || 'لا يوجد'}</div><button class="btn-action btn-delete" style="margin-top:5px;" onclick="window.deleteTicket('franchises', '${doc.id}')">أرشفة</button><\/td><\/tr>`; });
+                document.getElementById('franchiseBody').innerHTML = html || "<tr><td colspan='5'>لا توجد طلبات وكالة.<\/tr>";
             });
         }
         function updateBadge(count) { const badge = document.getElementById('ticketBadge'); if(count > 0) { badge.style.display = 'inline-block'; badge.innerText = count; } else { badge.style.display = 'none'; } }
         window.deleteTicket = async (collectionName, id) => { if(confirm("هل متأكد من الإعدام الرقمي لهذا السجل من قاعدة البيانات؟")) { await deleteDoc(doc(db, collectionName, id)); } };
 
-        // دالة تحميل الشحنات (مطورة لتحتوي على realShippingCost عند عدم وجوده)
+        // دالة تحميل الشحنات الأساسية (معدلة)
         function loadShipments(branchFilter = null) {
             let q = query(collection(db, "shipments"), orderBy("timestamp", "desc"));
             onSnapshot(q, (snap) => {
@@ -1272,6 +1247,9 @@
                     const d = docSnap.data(), id = docSnap.id;
                     if(d.deleted) return;
                     
+                    // استبعاد الشحنات التي تمت تسويتها (لن تظهر في القوائم الرئيسية)
+                    if(d.status === "تمت التسوية") return;
+                    
                     const merchant = d.merchantEmail ? d.merchantEmail.split('@')[0] : "إدارة";
                     citiesSet.add(d.city); merchantsSet.add(merchant);
 
@@ -1281,11 +1259,9 @@
                     if(advCity && d.city !== advCity) return;
                     if(advMerchant && merchant !== advMerchant) return;
 
-                    // تخزين realShippingCost لو مش موجود
                     if(!d.realShippingCost && d.city) {
                         const calculatedCost = getRealShippingCost(d);
                         if(calculatedCost !== 85 || d.city) {
-                            // تحديث غير متزامن ولكن ليس ضرورياً الآن، سنقوم به في الخلفية
                             updateDoc(doc(db, "shipments", id), { realShippingCost: calculatedCost }).catch(e=>{});
                             d.realShippingCost = calculatedCost;
                         } else {
@@ -1297,7 +1273,7 @@
                     
                     if(currentFilter === 'جديد' && !isNewShipment) return;
                     if(currentFilter === 'مطلوب تعيين' && d.status !== 'قيد التوصيل' && d.status !== 'Pending' && d.status !== 'بوليصة جديدة') return;
-                    if(currentFilter === 'مكتملة' && d.status !== 'تم التسليم' && d.status !== 'تمت التسوية') return;
+                    if(currentFilter === 'مكتملة' && d.status !== 'تم التسليم') return;
                     if(currentFilter === 'مع المناديب' && !d.status.includes('مندوب') && d.status !== 'مذاع للرادار') return;
                     if(currentFilter === 'مرتجع' && d.status !== 'مرتجع' && d.status !== 'مؤجل') return;
                     if(currentFilter === 'واردات' && d.targetBranch !== adminBranch) return;
@@ -1320,7 +1296,7 @@
                     if(isNewShipment) rowClass = "status-new-shipment"; 
                     else if(d.status === 'قيد التوصيل') rowClass = "status-danger";
                     else if(d.status === 'مذاع للرادار' || d.status.includes('مندوب')) rowClass = "status-warning";
-                    else if(d.status === 'تم التسليم' || d.status === 'تمت التسوية') rowClass = "status-success";
+                    else if(d.status === 'تم التسليم') rowClass = "status-success";
                     else if(d.status === 'مرتجع' || d.status === 'مؤجل') rowClass = "status-archived";
                     else if(d.status.includes('ترانزيت')) rowClass = "status-transit";
 
@@ -1346,53 +1322,5 @@
                     }
 
                     html += `<tr class="${rowClass}">
-                        <td style="white-space:nowrap; min-width:150px;">${actionBtns}</td>
-                        <td>
-                            <select id="st-${id}" class="status-dropdown" style="width:100%;">
-                                <option value="${d.status}" selected style="display:none;">${d.status}</option>
-                                <option value="بوليصة جديدة">بوليصة جديدة</option>
-                                <option value="قيد التوصيل">قيد التوصيل</option>
-                                <option value="مذاع للرادار">مذاع للرادار</option>
-                                <option value="تم التسليم">تم التسليم</option>
-                                <option value="مؤجل">مؤجل</option>
-                                <option value="مرتجع">مرتجع</option>
-                            </select>
-                            ${courierAction}
-                        </td>
-                        <td style="color:var(--primary-burgundy); font-weight:900; font-size:15px;">${d.amount}</td>
-                        <td><span style="background:#fff; padding:3px 8px; border-radius:10px; border:1px solid #ccc; font-weight:bold; color:#000;">${d.city}</span><br><small style="font-size:11px;">${d.address}</small></td>
-                        <td>${d.name}<br><small dir="ltr">${d.phone}</small></td>
-                        <td><b>${merchant}</b></td>
-                        <td><span style="background:#e0eaf5; padding:5px; border-radius:5px; color:var(--primary-black); font-weight:bold; font-size:12px;">${awb}</span><br><small style="font-size:10px;" dir="ltr">${dateStr}</small></td>
-                        <td><span style="background:#f4f7f6; padding:3px; border-radius:3px; font-size:11px; font-weight:bold;">${branch}</span></td>
-                    </tr>`;
-                });
-                
-                document.getElementById('shipmentsBody').innerHTML = html;
-                document.getElementById('totalShipments').innerText = count;
-                document.getElementById('totalMoney').innerText = totalM + " ج.م";
-
-                if(document.getElementById('advFilterBranch').options.length <= 1) {
-                    let cHtml = '<option value="">-- فلتر المحافظة (المدينة) --</option>';
-                    citiesSet.forEach(c => cHtml += `<option value="${c}">${c}</option>`);
-                    document.getElementById('advFilterBranch').innerHTML = cHtml;
-
-                    let mHtml = '<option value="">-- فلتر التاجر (الراسل) --</option>';
-                    merchantsSet.forEach(m => mHtml += `<option value="${m}">${m}</option>`);
-                    document.getElementById('advFilterMerchant').innerHTML = mHtml;
-                }
-            });
-        }
-
-        window.filterTable = () => {
-            const input = document.getElementById("searchInput").value.toUpperCase();
-            const tr = document.getElementById("shipmentsTable").getElementsByTagName("tr");
-            for (let i = 1; i < tr.length; i++) {
-                const tdText = tr[i].textContent || tr[i].innerText;
-                tr[i].style.display = tdText.toUpperCase().indexOf(input) > -1 ? "" : "none";
-            }
-        };
-
-    </script>
-</body>
-</html>
+                        <td style="white-space:nowrap; min-width:150px;">${actionBtns}<\/td>
+                        <td><select id="st-${id}" class="status-dropdown" style="width:100%;"><option value="${d.status}" selected style="display:none;">${d.status}<
