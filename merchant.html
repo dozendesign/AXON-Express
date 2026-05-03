@@ -29,13 +29,23 @@
             });
         })();
 
-        // دالة الدارك مود المستقلة لضمان العمل
+        // دالة الدارك مود الموحدة
         window.toggleTheme = () => {
             document.documentElement.classList.toggle('dark-mode');
             const isDark = document.documentElement.classList.contains('dark-mode');
             localStorage.setItem('axon_merchant_theme', isDark ? 'dark' : 'light');
-            const icon = document.getElementById('themeIcon');
-            if(icon) icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            const themeIcon = document.getElementById('themeIcon');
+            if(themeIcon) themeIcon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        };
+
+        // دالة الرجوع من الطباعة الموحدة
+        window.closePrintView = () => {
+            document.getElementById('printArea').style.display = 'none';
+            document.getElementById('printArea').innerHTML = ''; 
+            document.getElementById('mainHeader').style.display = 'flex';
+            document.getElementById('mainContainer').style.display = 'block';
+            const chatBtn = document.getElementById('floatingChatBtn');
+            if(chatBtn) chatBtn.style.display = 'flex';
         };
     </script>
 
@@ -71,9 +81,7 @@
         .header-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end;}
         
         .lang-btn { background: transparent; border: 2px solid var(--primary-yellow); color: var(--primary-yellow); padding: 5px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; font-size: 13px; transition: 0.3s;}
-        .lang-btn:hover { background: rgba(225, 231, 21, 0.1); }
         #logoutBtn { background: var(--primary-burgundy); border: 2px solid var(--primary-burgundy); color: var(--white); padding: 6px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; transition: 0.3s;}
-        #logoutBtn:hover { background: #5a0016; border-color: #5a0016; }
 
         .container { padding: 20px; max-width: 1200px; margin: 0 auto; min-height: 80vh;}
         
@@ -108,26 +116,42 @@
         .btn-home { background: #d39e00; } 
         .btn-rescue { background: var(--primary-burgundy); } 
 
-        .radar-merchant-section { background: var(--white); padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 2px dashed var(--primary-burgundy); display: none; position: relative; overflow: hidden;}
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .radar-merchant-section { background: var(--white); padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 2px dashed var(--primary-burgundy); animation: fadeIn 0.5s ease; display: none; position: relative; overflow: hidden;}
         .radar-merchant-section::before { content: ''; position: absolute; top: 0; right: 0; width: 5px; height: 100%; background: var(--primary-burgundy); }
         .radar-title { color: var(--primary-burgundy); margin-top: 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; font-size: 18px; }
         .radar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 15px; }
         .radar-card { background: #fdfdfd; border: 1px solid #e0e0e0; border-radius: 10px; padding: 15px; display: flex; flex-direction: column; gap: 10px; transition: 0.3s; position: relative;}
         
-        .search-box { width: 100%; padding: 12px 15px; border: 2px solid #ddd; border-radius: 8px; font-family: 'Cairo'; outline: none; margin-bottom: 15px; color: var(--dark-text);}
+        .search-box { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Cairo'; outline: none; margin-bottom: 15px; color: var(--dark-text);}
         .table-responsive { width: 100%; overflow-x: auto; background: var(--white); border-radius: 12px; border: 1px solid var(--border-color); animation: fadeIn 0.8s ease;}
         table { width: 100%; min-width: 1000px; border-collapse: collapse; }
         th, td { padding: 15px 12px; text-align: right; border-bottom: 1px solid var(--border-color); font-size: 14px;}
         th { background: var(--primary-blue); color: var(--white); font-weight: bold;}
-        .print-btn { background: var(--primary-blue); color: var(--white); border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; width: 100%;}
-        .track-btn { background: #17a2b8; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; width: 100%;}
+        .print-btn { background: var(--primary-blue); color: var(--white); border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; width: 100%; transition: 0.3s;}
+        .track-btn { background: #17a2b8; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; width: 100%; transition: 0.3s;}
         
         .card-chat-badge { position: absolute; background: var(--primary-burgundy); color: white; min-width: 22px; height: 22px; border-radius: 50%; font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: 900; border: 2px solid var(--white); box-shadow: 0 3px 6px rgba(128,0,32,0.5); z-index: 10; display: none; }
 
-        html.dark-mode { --white: #1a1a2e; --light-bg: #16213e; --dark-text: #e0e0e0; --border-color: #0f3460; --primary-blue: #4a90e2; --primary-black: #111111;}
-        html.dark-mode header { background: #1a1a2e; border-bottom: 4px solid var(--primary-burgundy); }
-        html.dark-mode .stat-card, html.dark-mode .business-info-wrapper, html.dark-mode .axon-plus-section { background: #1a1a2e; border-color: #0f3460; }
-        html.dark-mode input, html.dark-mode select, html.dark-mode textarea { background: #16213e; color: white; border-color: #0f3460; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center; z-index: 2000; padding: 15px; backdrop-filter: blur(5px);}
+        .modal-content { background: var(--white); padding: 25px; border-radius: 15px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; position: relative; animation: fadeIn 0.4s ease;}
+        .input-group label { font-size: 14px; font-weight: bold; color: var(--primary-blue); margin-top: 12px; display: block; }
+        .input-group input, .input-group select, .modal-content textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 8px; font-family: 'Cairo'; background: var(--white); color: var(--dark-text); transition: 0.3s;}
+        .close-btn { position: absolute; top: 15px; left: 15px; border: none; background: none; font-size: 24px; cursor: pointer; color: var(--primary-burgundy); transition: 0.3s; z-index: 10;}
+
+        .floating-chat { position: fixed; bottom: 20px; right: 20px; background: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999; text-decoration: none; transition: 0.3s;}
+        
+        .calc-summary { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 15px; border: 2px dashed #ccc; }
+        .calc-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; font-weight: bold; }
+        .calc-total { font-size: 18px; color: var(--primary-burgundy); border-top: 1px solid #ddd; padding-top: 8px; margin-top: 8px; }
+
+        /* Dark Mode CSS */
+        .dark-mode { --white: #1a1a2e; --light-bg: #16213e; --dark-text: #e0e0e0; --border-color: #0f3460; --primary-blue: #4a90e2; }
+        .dark-mode header { background: #1a1a2e; border-bottom: 4px solid var(--primary-burgundy); }
+        .dark-mode .stat-card, .dark-mode .business-info-wrapper, .dark-mode .axon-plus-section, .dark-mode .radar-card { background: #1a1a2e; border-color: #0f3460; }
+        .dark-mode input, .dark-mode select, .dark-mode textarea { background: #16213e; color: white; border-color: #0f3460; }
+        .dark-mode .table-responsive { background: #1a1a2e; border-color: #0f3460; }
 
         @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -139,15 +163,10 @@
         }
         
         .a4-wrapper { width: 200mm; margin: 0 auto; background: #fff; border: 2px solid var(--primary-blue); padding: 8px; box-sizing: border-box; color: #000; }
-        .print-controls { text-align: center; margin-bottom: 15px; padding: 15px; background: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
-        .print-controls button { cursor: pointer; padding: 12px 25px; margin: 5px; font-size: 16px; font-weight: bold; border: none; border-radius: 5px; color: white; font-family: 'Cairo';}
         .print-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #800020; padding-bottom: 5px; margin-bottom: 8px; flex-wrap: nowrap; gap: 10px;}
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px; }
         .box { border: 1px solid #ccc; padding: 5px; border-radius: 5px; font-size: 13px; color: #000;}
         .box h3 { margin: 0 0 5px 0; background: var(--primary-blue); color: #fff; padding: 3px; font-size: 13px; text-align: center;}
-        .cod-box { background: #fff; border: 2px solid #800020; text-align: center; padding: 5px; border-radius: 5px; margin-bottom:8px; color: #800020;}
-        .constitution-columns { column-count: 2; column-gap: 15px; font-size: 8.5px; line-height: 1.3; text-align: justify; border: 1px solid #000; padding: 8px; margin-bottom: 5px; background: #fff;}
-        .digital-sig { text-align: center; font-size: 8.5px; font-family: monospace; color: #000; border-top: 1px dashed #000; padding-top: 5px; font-weight: bold;}
     </style>
 </head>
 <body>
@@ -280,16 +299,76 @@
         </div>
     </div>
 
-    <div id="addModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('addModal').style.display='none'">✖</button><h3 style="color:var(--primary-blue); border-bottom: 2px solid var(--primary-burgundy); padding-bottom:10px; margin-top:0;" data-i18n="srv_awb">إصدار بوليصة شحن</h3><div class="input-group"><label>اسم المستلم</label><input type="text" id="recName" placeholder="الاسم ثلاثي"></div><div style="display:flex; gap:10px;"><div class="input-group" style="flex:1;"><label>الموبايل الأساسي</label><input type="tel" id="recPhone" placeholder="01xxxxxxxxx"></div><div class="input-group" style="flex:1;"><label>موبايل احتياطي</label><input type="tel" id="recPhone2" placeholder="اختياري"></div></div><div class="input-group"><label>المحافظة أو المدينة (الوجهة)</label><input type="text" id="recCity" list="egyptCitiesList" placeholder="اكتب اسم المحافظة أو المدينة..." onkeyup="window.updateShippingCalc()" onchange="window.updateShippingCalc()"><datalist id="egyptCitiesList"></datalist></div><div class="input-group" id="paymentTypeGroup" style="display:none; background:#e0eaf5; padding:12px; border-radius:8px; border:1px solid var(--primary-blue); margin-top:10px;"><label style="color:var(--primary-burgundy); font-size: 14px;"><i class="fa-solid fa-bolt"></i> نظام التحصيل (متاح للداخل فقط)</label><select id="shipmentPaymentType" style="border-color:var(--primary-blue); font-weight:bold;"><option value="normal">تحصيل عادي (التسوية مع الشركة)</option><option value="prepaid">دفع مقدم (الكابتن يدفع للتاجر عند الاستلام)</option></select></div><div class="input-group"><label>العنوان بالتفصيل</label><input type="text" id="recAddress" placeholder="الشارع، العمارة، الشقة"></div><div style="display:flex; gap:10px;"><div class="input-group" style="flex:1;"><label>الوزن (كجم)</label><input type="number" id="recWeight" value="1" min="1" oninput="window.updateShippingCalc()"></div><div class="input-group" style="flex:1;"><label>عدد القطع (اختياري)</label><input type="number" id="recPieces" placeholder="مثال: 3" min="1"></div><div class="input-group" style="flex:1;"><label>قيمة البضاعة المطلوبة</label><input type="number" id="codAmount" placeholder="تمن بضاعتك فقط" oninput="window.updateShippingCalc()"></div></div><div class="input-group"><label>نوع التغليف والتأمين</label><select id="fragileType" onchange="window.handleFragileChange()"><option value="normal">شحنة عادية (تغليف قياسي)</option><option value="insured">قابل للكسر + تأمين شامل (VIP) 🛡️</option><option value="uninsured">قابل للكسر + بدون تأمين (مسؤولية التاجر) ⚠️</option></select></div><div id="insuredDiv" style="display:none; background:#e0f7fa; padding:10px; border-radius:8px; border:1px solid #00acc1; margin-top:10px;"><label style="color:#00838f; font-weight:bold;">القيمة الحقيقية للطرد (لحساب التأمين 10%)</label><input type="number" id="itemRealValue" placeholder="أدخل السعر الحقيقي" oninput="window.updateShippingCalc()"><p style="font-size:12px; color:#006064; margin-top:8px; line-height:1.5;">⚠️ <b>تنبيه هام:</b> يُدفع مبلغ التأمين مقدماً ليد المندوب. يحق للمندوب فتح الطرد للمعاينة والمطابقة، وله حق الرفض في حال سوء التغليف أو تلاعب السعر. مبلغ التأمين غير مسترد لضمان النقل في حاويات مخصصة.</p></div><div id="uninsuredDiv" style="display:none; background:#fff3cd; padding:10px; border-radius:8px; border:1px solid #ffeeba; margin-top:10px;"><p style="font-size:12px; color:#856404; margin:0; line-height:1.5;">⚠️ <b>إقرار إخلاء مسؤولية:</b> أقر أنا الراسل بأنني قمت بتغليف الطرد داخلياً ليتحمل صدمات النقل البري، وأتحمل المسؤولية الكاملة عن أي تلف للقطعة، وأتنازل عن المطالبة بأي تعويض مادي.</p></div><div class="calc-summary"><div class="calc-row"><span>قيمة البضاعة:</span> <span id="lblCodAmount">0 ج.م</span></div><div class="calc-row"><span>رسوم الشحن المقررة:</span> <span id="lblShippingFee" style="color:var(--primary-blue);">0 ج.م</span></div><div class="calc-row calc-total"><span>الإجمالي للتحصيل (بالبوليصة):</span> <span id="lblTotalAmount">0 ج.م</span></div></div><button class="btn-service btn-main-action" id="btnSave" style="width:100%; margin-top:15px; justify-content:center;" onclick="window.saveShipment()"><i class="fa-solid fa-paper-plane"></i> <span data-i18n="btn_submit_awb">إرسال الشحنة وتوليد البوليصة بالإجمالي</span></button></div></div>
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="document.getElementById('addModal').style.display='none'">✖</button>
+            <h3 style="color:var(--primary-blue); border-bottom: 2px solid var(--primary-burgundy); padding-bottom:10px; margin-top:0;" data-i18n="srv_awb">إصدار بوليصة شحن</h3>
+            <div class="input-group"><label>اسم المستلم</label><input type="text" id="recName" placeholder="الاسم ثلاثي"></div>
+            <div style="display:flex; gap:10px;">
+                <div class="input-group" style="flex:1;"><label>الموبايل الأساسي</label><input type="tel" id="recPhone" placeholder="01xxxxxxxxx"></div>
+                <div class="input-group" style="flex:1;"><label>موبايل احتياطي</label><input type="tel" id="recPhone2" placeholder="اختياري"></div>
+            </div>
+            <div class="input-group">
+                <label>المحافظة أو المدينة (الوجهة)</label>
+                <input type="text" id="recCity" list="egyptCitiesList" placeholder="اكتب اسم المحافظة أو المدينة..." onkeyup="window.updateShippingCalc()" onchange="window.updateShippingCalc()">
+                <datalist id="egyptCitiesList"></datalist>
+            </div>
+            <div class="input-group" id="paymentTypeGroup" style="display:none; background:#e0eaf5; padding:12px; border-radius:8px; border:1px solid var(--primary-blue); margin-top:10px;">
+                <label style="color:var(--primary-burgundy); font-size: 14px;"><i class="fa-solid fa-bolt"></i> نظام التحصيل (متاح للداخل فقط)</label>
+                <select id="shipmentPaymentType" style="border-color:var(--primary-blue); font-weight:bold;">
+                    <option value="normal">تحصيل عادي (التسوية مع الشركة)</option>
+                    <option value="prepaid">دفع مقدم (الكابتن يدفع للتاجر عند الاستلام)</option>
+                </select>
+            </div>
+            <div class="input-group"><label>العنوان بالتفصيل</label><input type="text" id="recAddress" placeholder="الشارع، العمارة، الشقة"></div>
+            <div style="display:flex; gap:10px;">
+                <div class="input-group" style="flex:1;"><label>الوزن (كجم)</label><input type="number" id="recWeight" value="1" min="1" oninput="window.updateShippingCalc()"></div>
+                <div class="input-group" style="flex:1;"><label>عدد القطع (اختياري)</label><input type="number" id="recPieces" placeholder="مثال: 3" min="1"></div>
+                <div class="input-group" style="flex:1;"><label>قيمة البضاعة المطلوبة</label><input type="number" id="codAmount" placeholder="تمن بضاعتك فقط" oninput="window.updateShippingCalc()"></div>
+            </div>
+            <div class="input-group">
+                <label>نوع التغليف والتأمين</label>
+                <select id="fragileType" onchange="window.handleFragileChange()">
+                    <option value="normal">شحنة عادية (تغليف قياسي)</option>
+                    <option value="insured">قابل للكسر + تأمين شامل (VIP) 🛡️</option>
+                    <option value="uninsured">قابل للكسر + بدون تأمين (مسؤولية التاجر) ⚠️</option>
+                </select>
+            </div>
+            <div id="insuredDiv" style="display:none; background:#e0f7fa; padding:10px; border-radius:8px; border:1px solid #00acc1; margin-top:10px;">
+                <label style="color:#00838f; font-weight:bold;">القيمة الحقيقية للطرد (لحساب التأمين 10%)</label>
+                <input type="number" id="itemRealValue" placeholder="أدخل السعر الحقيقي" oninput="window.updateShippingCalc()">
+            </div>
+            <div id="uninsuredDiv" style="display:none; background:#fff3cd; padding:10px; border-radius:8px; border:1px solid #ffeeba; margin-top:10px;">
+                <p style="font-size:12px; color:#856404; margin:0; line-height:1.5;">⚠️ إقرار إخلاء مسؤولية عن تغليف الطرد.</p>
+            </div>
+            <div class="calc-summary">
+                <div class="calc-row"><span>قيمة البضاعة:</span> <span id="lblCodAmount">0 ج.م</span></div>
+                <div class="calc-row"><span>رسوم الشحن:</span> <span id="lblShippingFee" style="color:var(--primary-blue);">0 ج.م</span></div>
+                <div class="calc-row calc-total"><span>الإجمالي للتحصيل:</span> <span id="lblTotalAmount">0 ج.م</span></div>
+            </div>
+            <button class="btn-service btn-main-action" id="btnSave" style="width:100%; margin-top:15px;" onclick="window.saveShipment()">إرسال الشحنة وتوليد البوليصة</button>
+        </div>
+    </div>
 
-    <div id="coldModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('coldModal').style.display='none'">✖</button><h3 style="color:#0EA5E9; border-bottom:2px solid #0EA5E9; padding-bottom:10px; margin-top:0;">🥶 طلب شحن فريش/مبرد</h3><p style="font-size:13px; font-weight:bold; color:#0EA5E9; background:#e0f7fa; padding:8px; border-radius:5px;">رسوم الخدمة المقررة: <span id="coldLocalPrice">يتم حسابها...</span> ج.م</p><div class="input-group"><label>وقت جاهزية الأوردر</label><input type="time" id="coldTime"></div><div class="input-group"><label>عنوان المستلم</label><input type="text" id="coldAddress" placeholder="عنوان المستلم بالتفصيل"></div><div class="input-group"><label>قيمة التحصيل (COD)</label><input type="number" id="coldAmount" placeholder="تمن الأوردر فقط"></div><button onclick="window.submitColdOrder()" style="width:100%; background:#0EA5E9; color:white; padding:15px; border:none; border-radius:10px; font-weight:bold; margin-top:15px; cursor:pointer; font-family:'Cairo'; font-size:15px;">تأكيد طلب التوصيل المبرد</button></div></div>
-    <div id="homeModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('homeModal').style.display='none'">✖</button><h3 style="color:#d39e00; border-bottom: 2px solid var(--primary-blue); padding-bottom:10px; margin-top:0;">🚚 أكسون هوم (نقل الأثاث)</h3><div class="input-group"><label>نقل من</label><input type="text" id="homeFrom" placeholder="المنطقة والدور"></div><div class="input-group"><label>نقل إلى</label><input type="text" id="homeTo" placeholder="المنطقة والدور"></div><div class="input-group"><label>الخدمة</label><select id="homeService"><option value="سيارة وعمال">نقل + عمال</option><option value="سيارة وونش وعمال">نقل + ونش + عمال</option></select></div><div class="input-group"><label>رقم التواصل</label><input type="tel" id="homePhone" placeholder="01xxxxxxxxx"></div><button class="btn-service btn-home" style="width:100%; justify-content:center; margin-top:15px;" onclick="window.submitHomeOrder()">طلب معاينة</button></div></div>
-    <div id="rescueModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('rescueModal').style.display='none'">✖</button><h3 style="color:var(--primary-burgundy); border-bottom: 2px solid var(--primary-blue); padding-bottom:10px; margin-top:0;">🚨 طوارئ: أكسون إنقاذ</h3><div class="input-group"><label>رقم التليفون للتواصل (إلزامي)</label><input type="tel" id="rescuePhone" placeholder="01xxxxxxxxx"></div><div class="input-group"><label>نوع السيارة (اختياري)</label><input type="text" id="rescueCar" placeholder="مثال: كيا سيراتو"></div><div class="input-group"><label><i class="fa-solid fa-location-dot"></i> موقعك الحالي (إلزامي للونش)</label><input type="text" id="rescueGPS" placeholder="اضغط الزر الأسفل أو اكتب عنوان بدقة..."></div><button type="button" id="rescueLocationBtn" onclick="window.getRescueLocation()" style="background:#333; color:white; border:none; padding:12px; border-radius:8px; margin:10px 0; width:100%; cursor:pointer; font-weight:bold; font-family:'Cairo';"><i class="fa-solid fa-satellite-dish"></i> سحب موقعي آلياً</button><button class="btn-service btn-rescue" id="rescueSubmitBtn" style="width:100%; justify-content:center; margin-top:10px;" onclick="window.submitRescueOrder()"><i class="fa-solid fa-truck-pickup"></i> إرسال نداء الاستغاثة للشركة</button></div></div>
+    <div id="coldModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('coldModal').style.display='none'">✖</button><h3>🥶 طلب شحن فريش/مبرد</h3><div class="input-group"><label>وقت جاهزية الأوردر</label><input type="time" id="coldTime"></div><div class="input-group"><label>عنوان المستلم</label><input type="text" id="coldAddress"></div><div class="input-group"><label>قيمة التحصيل</label><input type="number" id="coldAmount"></div><button onclick="window.submitColdOrder()" class="btn-service" style="background:#0EA5E9; width:100%;">تأكيد الطلب</button></div></div>
+    
+    <div id="homeModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('homeModal').style.display='none'">✖</button><h3>🚚 أكسون هوم</h3><input type="text" id="homeFrom" placeholder="من"><input type="text" id="homeTo" placeholder="إلى"><input type="tel" id="homePhone" placeholder="رقم التواصل"><button onclick="window.submitHomeOrder()" class="btn-service btn-home" style="width:100%;">طلب معاينة</button></div></div>
+    
+    <div id="rescueModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="document.getElementById('rescueModal').style.display='none'">✖</button><h3>🚨 أكسون إنقاذ</h3><input type="tel" id="rescuePhone" placeholder="رقم الموبايل"><input type="text" id="rescueGPS" placeholder="الموقع"><button onclick="window.submitRescueOrder()" class="btn-service btn-rescue" style="width:100%;">إرسال استغاثة</button></div></div>
+
+    <div id="trackChatModal" class="modal">
+        <div class="modal-content" style="height: 80vh; display: flex; flex-direction: column;">
+            <button class="close-btn" onclick="window.closeTrackChat()">✖</button>
+            <h3 id="chatCourierName">تتبع المندوب</h3>
+            <div id="merchantMap" style="height: 200px; width: 100%; margin-bottom: 10px;"></div>
+            <div id="chatBox" style="flex: 1; overflow-y: auto; background: #f9f9f9; padding: 10px; border-radius: 8px;"></div>
+            <div style="display:flex; margin-top:10px;"><input type="text" id="chatInput" style="flex:1;"><button onclick="window.sendChatMessage()" style="background:#25D366; color:white; border:none; padding:10px;">إرسال</button></div>
+        </div>
+    </div>
 
     <footer style="text-align:center; padding:15px; background:var(--white); border-top:1px solid var(--border-color); margin-top:40px;">
         <h4 style="margin:0;color:var(--primary-blue);font-size:11px;font-weight:900;">تم الإنشاء بواسطة ESAIA</h4>
         <p style="margin:5px 0 0 0;color:var(--primary-burgundy);font-size:9px;font-weight:bold;">الشركة المصرية السعودية العامة لهندسة الهوية المؤسسية والصناعات المتقدمة</p>
-        <p style="margin:5px 0 0 0;color:#666;font-size:8px;font-family:Tahoma,sans-serif;">The Egyptian Saudi General Company for Corporate Identity Engineering and Advanced Industries</p>
     </footer>
 
     <div id="printArea"></div>
@@ -309,12 +388,13 @@
         });
         
         const auth = getAuth(app);
-        setPersistence(auth, browserLocalPersistence).catch(e => console.log("Persistence error:", e));
+        setPersistence(auth, browserLocalPersistence).catch(e => console.log(e));
         const db = getFirestore(app);
         
         let merchantEmail = "", merchantName = "", merchantIP = "جاري التحقق...", merchantPhone = "غير مسجل", merchantAddress = "غير مسجل", branchName = "المركز الرئيسي";
         let livePrices = { "القاهرة": 85, "الجيزة": 85, "الإسكندرية": 85 };
         let extraZones = {};
+        window.currentCreditLimit = 0;
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -324,7 +404,7 @@
                 merchantName = merchantEmail.split('@')[0];
                 document.getElementById('merchantEmailDisplay').innerHTML = `مرحباً بك: ${merchantName} <i class="fa-solid fa-bolt" style="color:#ffc107;"></i>`;
                 
-                // --- 🏆 الربط الصارم مع حائط البطولات من جدول الـ users ---
+                // --- 🏆 حائط البطولات والحد الائتماني الصارم ---
                 const userQ = query(collection(db, "users"), where("email", "==", merchantEmail));
                 onSnapshot(userQ, (userSnap) => {
                     if(!userSnap.empty) {
@@ -332,10 +412,11 @@
                         const lifetimeValue = userData.lifetime_sales || 0;
                         document.getElementById('lifetimeSales').innerText = lifetimeValue.toLocaleString('en-US') + " ج.م";
                         
-                        const creditLimitValue = lifetimeValue * 0.01;
-                        document.getElementById('creditLimit').innerText = creditLimitValue.toLocaleString('en-US') + " ج.م";
-                        document.getElementById('modalCreditLimit').innerText = creditLimitValue.toLocaleString('en-US') + " ج.م";
-                        window.currentCreditLimit = creditLimitValue;
+                        // الحد الائتماني 1%
+                        const limit = lifetimeValue * 0.01;
+                        window.currentCreditLimit = limit;
+                        document.getElementById('creditLimit').innerText = limit.toLocaleString('en-US') + " ج.م";
+                        document.getElementById('modalCreditLimit').innerText = limit.toLocaleString('en-US') + " ج.م";
                     }
                 });
 
@@ -351,38 +432,31 @@
                 onSnapshot(doc(db, "settings", "shipping_prices"), (snap) => {
                     if(snap.exists()) { 
                         let data = snap.data(); livePrices = { ...livePrices, ...data };
-                        extraZones = {};
                         const dataList = document.getElementById('egyptCitiesList');
                         if(dataList) {
                             dataList.innerHTML = ''; 
                             governorates.forEach(zone => {
-                                let option = document.createElement('option');
-                                option.value = zone;
+                                let option = document.createElement('option'); option.value = zone;
                                 if(data[zone]) { extraZones[zone] = data[zone]; option.text = `(+${data[zone]} ج.م إضافية)`; }
                                 dataList.appendChild(option);
                             });
                         }
                     }
                 });
-
                 loadShipments(); loadMerchantRadar();
             } else { window.location.href = "index.html"; }
         });
 
-        // 🖨️ وظيفة الطباعة مع إصلاح اللوجو وزرار الرجوع
+        // 🖨️ الطباعة وإصلاح اللوجو
         window.printWB = (awb, name, p1, p2, city, addr, w, pieces, amt, fragileType, mAddress, mPhone, insuranceFee) => {
             document.getElementById('mainHeader').style.display = 'none';
             document.getElementById('mainContainer').style.display = 'none';
 
-            const timestampStr = new Date().toLocaleString('ar-EG');
-            let fragileBannerHTML = '';
-            if (fragileType === 'insured') fragileBannerHTML = `<div class="fragile-banner" style="background:#800020; color:#fff;">شحنة مؤمن عليها VIP</div>`;
-            else if (fragileType === 'uninsured') fragileBannerHTML = `<div class="fragile-banner" style="background:#111; color:#E1E715;">شحنة قابلة للكسر (بدون تأمين)</div>`;
-
+            const ts = new Date().toLocaleString('ar-EG');
             document.getElementById('printArea').innerHTML = `
                 <div class="print-controls no-print">
-                    <button style="background: var(--primary-blue);" onclick="window.print()">طباعة</button>
-                    <button style="background: #800020;" onclick="window.closePrintView()">رجوع للسيستم</button>
+                    <button style="background:var(--primary-blue);" onclick="window.print()">طباعة</button>
+                    <button style="background:#800020;" onclick="window.closePrintView()">رجوع للسيستم</button>
                 </div>
                 <div class="a4-wrapper" dir="rtl">
                     <div class="print-header">
@@ -395,41 +469,86 @@
                     </div>
                     <div class="info-grid">
                         <div class="box"><h3>المرسل</h3><p>الاسم: ${merchantName}</p><p>العنوان: ${mAddress}</p></div>
-                        <div class="box"><h3>المستلم</h3><p>الاسم: ${name}</p><p>الموبايل: ${p1}</p><p>المدينة: ${city}</p></div>
+                        <div class="box"><h3>المستلم</h3><p>الاسم: ${name}</p><p>المدينة: ${city}</p></div>
                     </div>
-                    <div class="cod-box"><h2>المبلغ المطلوب: ${amt} ج.م</h2></div>
+                    <div class="cod-box"><h2>المبلغ للتحصيل: ${amt} ج.م</h2></div>
                     <div class="constitution-columns">
-                        <h4>شروط وأحكام الناقل</h4>
-                        <p>1. يلتزم الناقل بنقل الطرد بأمان. 2. لا تتحمل الشركة مسؤولية سوء التغليف الداخلي. 3. الشحنات الائتمانية تخضع لرسوم خدمة 58 ج.م.</p>
+                        <h4>شروط وأحكام</h4>
+                        <p>1. الشحن الائتماني يضيف 58 ج.م رسوم خدمة. 2. تأكد من أن طلباتك لا تتجاوز حدك الائتماني الموضح في لوحة التحكم.</p>
                     </div>
-                    <div class="digital-sig">توقيع رقمي موثق: [ID:${merchantName}] | [Time:${timestampStr}]</div>
+                    <div class="digital-sig">تم الإصدار في: ${ts}</div>
                 </div>`;
             document.getElementById('printArea').style.display = 'block';
-            setTimeout(() => { JsBarcode("#bc", awb, {format:"CODE128", width:1.5, height:35, displayValue:false}); }, 100);
-        };
-
-        window.closePrintView = () => {
-            document.getElementById('printArea').style.display = 'none';
-            document.getElementById('mainHeader').style.display = 'flex';
-            document.getElementById('mainContainer').style.display = 'block';
+            setTimeout(() => JsBarcode("#bc", awb, {format:"CODE128", width:1.5, height:35, displayValue:false}), 100);
         };
 
         const governorates = ["القاهرة", "الجيزة", "الإسكندرية", "الدقهلية", "الغربية", "المنوفية", "الشرقية", "القليوبية", "البحيرة", "كفر الشيخ", "دمياط", "الإسماعيلية", "بورسعيد", "السويس", "مرسى مطروح", "شمال سيناء", "جنوب سيناء", "البحر الأحمر", "الفيوم", "بني سويف", "المنيا", "أسيوط", "سوهاج", "قنا", "الأقصر", "أسوان", "الوادي الجديد"];
 
-        // Remaining Helper Functions as per original code
+        // Functions Logic
         window.getCityPrice = (city) => livePrices[city] || 85;
-        window.saveBusinessInfo = async () => { /* Logic to save address/phone */ };
-        window.updateShippingCalc = () => { /* Logic for live calc */ };
-        window.saveShipment = async () => { /* Logic to save to shipments table */ };
-        window.loadShipments = () => { /* Logic to display table with fixed date parser */ };
-        window.loadMerchantRadar = () => { /* Radar display logic */ };
+        window.saveBusinessInfo = async () => {
+            const p = document.getElementById('merchantBusinessPhone').value.trim();
+            const a = document.getElementById('merchantBusinessAddress').value.trim();
+            await setDoc(doc(db, "merchant_profiles", merchantEmail), { businessPhone: p, businessAddress: a }, { merge: true });
+            Swal.fire('تم الحفظ','','success');
+        };
+        window.updateShippingCalc = () => {
+            const cod = Number(document.getElementById('codAmount').value) || 0;
+            const city = document.getElementById('recCity').value.trim();
+            const base = window.getCityPrice(city);
+            document.getElementById('lblCodAmount').innerText = cod + " ج.م";
+            document.getElementById('lblShippingFee').innerText = base + " ج.م";
+            document.getElementById('lblTotalAmount').innerText = (cod + base) + " ج.م";
+        };
+        window.submitEshteryly = async () => {
+            const pay = document.getElementById('eshPayment').value;
+            const details = document.getElementById('eshDetails').value.trim();
+            // هنا بيتم فحص الحد الائتماني لو اختار خصم من المستحقات
+            if(pay === 'balance' && window.currentCreditLimit <= 0) {
+                return Swal.fire('الائتمان غير كافي', 'عذراً، حدك الائتماني 0 حالياً. لا يمكنك استخدام الشراء الائتماني حتى تزيد مبيعاتك في حائط البطولات.', 'error');
+            }
+            await addDoc(collection(db, "eshteryly_orders"), {
+                merchantEmail, details: details + (pay === 'balance' ? ' | (شراء ائتماني + 58ج)' : ''),
+                address: document.getElementById('eshAddress').value, paymentMethod: pay,
+                status: "جاري البحث عن مندوب", timestamp: new Date(), branchName
+            });
+            document.getElementById('eshterylyModal').style.display='none';
+            Swal.fire('تم البث للرادار','','success');
+        };
+
         window.togglePaymentDetails = () => {
             const val = document.getElementById('eshPayment').value;
             document.getElementById('balanceDetails').style.display = val === 'balance' ? 'block' : 'none';
             document.getElementById('instapayDetails').style.display = val === 'instapay' ? 'block' : 'none';
             document.getElementById('vfcashDetails').style.display = val === 'vfcash' ? 'block' : 'none';
         };
-        window.submitEshteryly = async () => { /* Submit with credit limit check warning */ };
+
+        // Remaining logic (Shipments, Radar, etc.) as requested
+        function loadShipments() {
+            onSnapshot(query(collection(db, "shipments"), where("merchantEmail", "==", merchantEmail)), (snap) => {
+                let html = "", count = 0, total = 0;
+                snap.forEach(d => {
+                    const data = d.data(); if(data.deleted) return;
+                    count++; total += (data.amount || 0);
+                    const ts = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleDateString('ar-EG') : '-';
+                    html += `<tr><td>${data.awb || d.id.substring(0,5)}</td><td>${ts}</td><td>${data.name}</td><td>${data.phone}</td><td>${data.city}</td><td>${data.amount}</td><td>${data.status}</td><td><button onclick="window.printWB('${data.awb}','${data.name}','${data.phone}','','${data.city}','${data.address}','1','1','${data.amount}','${data.fragile}','${merchantAddress}','${merchantPhone}',0)" class="print-btn">طباعة</button></td></tr>`;
+                });
+                document.getElementById('tableBody').innerHTML = html;
+                document.getElementById('totalShipments').innerText = count;
+                document.getElementById('totalMoney').innerText = total + " ج.م";
+            });
+        }
+        function loadMerchantRadar() {
+            onSnapshot(query(collection(db, "eshteryly_orders"), where("merchantEmail", "==", merchantEmail)), (snap) => {
+                let html = "";
+                snap.forEach(d => {
+                    const data = d.data();
+                    html += `<div class="radar-card"><h4>${data.status}</h4><p>${data.details}</p></div>`;
+                });
+                document.getElementById('radarGridBody').innerHTML = html;
+                document.getElementById('merchantRadarSection').style.display = snap.empty ? 'none' : 'block';
+            });
+        }
         window.logout = () => signOut(auth).then(() => window.location.href="index.html");
     </script>
 </body>
