@@ -42,13 +42,14 @@
         .close-btn{position:absolute;top:10px;left:10px;background:none;border:none;font-size:24px;cursor:pointer;color:#800020;}
         .summary-box{background:#f4f4f4;padding:10px;border-radius:8px;display:flex;justify-content:space-around;margin:15px 0;}
         
+        /* إعدادات الطباعة بالعرض وتظبيط اللوجو */
         @media print {
             @page { size: landscape; margin: 10mm; }
             body * { visibility: hidden; }
             #printArea, #printArea * { visibility: visible; }
             #printArea { position: absolute; top: 0; left: 0; width: 100%; }
-            .print-table { font-size: 10px; border-collapse: collapse; width: 100%; }
-            .print-table td, .print-table th { border: 1px solid #000; padding: 4px; }
+            .print-table { font-size: 12px; border-collapse: collapse; width: 100%; }
+            .print-table td, .print-table th { border: 1px solid #000; padding: 6px; text-align: center; }
             .print-logo { width: 3cm !important; height: 3cm !important; object-fit: contain; }
         }
     </style>
@@ -178,7 +179,7 @@
             await addDoc(collection(db, "expenses"), { 
                 description: desc, 
                 amount: amt, 
-                timestamp: new Date(), 
+                timestamp: new Date().toISOString(), // تأمين حفظ التاريخ كنص لتسهيل الترتيب
                 branchName: selectedBranch === 'all' ? 'all' : selectedBranch, 
                 addedBy: auth.currentUser?.email 
             });
@@ -191,46 +192,40 @@
     function loadExpenses(){
         let q = collection(db, "expenses");
         if(selectedBranch !== 'all') q = query(q, where("branchName", "==", selectedBranch));
-        onSnapshot(query(q, orderBy("timestamp","desc")), snap => {
+        
+        // شلنا الـ orderBy من الفايربيز عشان ميطلبش Index ويعطل، وهنرتبهم بالجافاسكريبت
+        onSnapshot(q, snap => {
+            let expensesArr = [];
+            snap.forEach(d => expensesArr.push(d.data()));
+            
+            // ترتيب تنازلي (الأحدث أولاً)
+            expensesArr.sort((a,b) => {
+                let t1 = new Date(a.timestamp).getTime() || 0;
+                let t2 = new Date(b.timestamp).getTime() || 0;
+                return t2 - t1;
+            });
+
             let html = "";
             totalExpensesAmount = 0;
-            snap.forEach(d => { 
-                let data = d.data(); 
+            expensesArr.forEach(data => { 
                 totalExpensesAmount += Number(data.amount || 0);
-                let dateStr = "";
-                if(data.timestamp && typeof data.timestamp.toDate === 'function'){
-                    dateStr = data.timestamp.toDate().toLocaleDateString();
-                } else if(data.timestamp) {
-                    dateStr = new Date(data.timestamp).toLocaleDateString();
-                } else {
-                    dateStr = new Date().toLocaleDateString();
-                }
-                html += `<tr><td style="font-size:13px;">${dateStr}</td><td style="font-size:13px;">${data.description}</td><td style="font-size:13px; font-weight:bold;">${data.amount} ج.م</td></tr>`;
+                let dateStr = data.timestamp ? new Date(data.timestamp).toLocaleDateString() : new Date().toLocaleDateString();
+                html += `<tr><td style="font-size:13px; text-align:center;">${dateStr}</td><td style="font-size:13px;">${data.description}</td><td style="font-size:13px; font-weight:bold; text-align:center;">${data.amount} ج.م</td></tr>`;
             });
+            
             document.getElementById('expensesBody').innerHTML = html || "<tr><td colspan='3' style='text-align:center;'>لا توجد مصروفات</td></tr>";
             updateNetProfitUI();
         });
     }
 
     function getShippingCost(city){
-        if(!city) return 85;
+        if(!city || typeof city !== 'string') return 85;
         let norm = city.trim().replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/[ىي]/g,'ي');
-        for(let zone in livePrices){
-            if(zone.includes('-')){
-                let parts = zone.split('-');
-                let normZone = zone.replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/[ىي]/g,'ي');
-                let sub = parts[1] ? parts[1].trim().replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/[ىي]/g,'ي') : "";
-                if(normZone === norm || (sub && norm.includes(sub))){
-                    let base = Number(livePrices[parts[0].trim()]) || 85;
-                    let extra = Number(livePrices[zone]) || 0;
-                    return base + extra;
-                }
-            }
-        }
         for(let gov in livePrices){
-            if(!gov.includes('-')){
-                let normGov = gov.replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/[ىي]/g,'ي');
-                if(norm.includes(normGov) || normGov.includes(norm)) return Number(livePrices[gov]) || 85;
+            let normGov = gov.replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/[ىي]/g,'ي');
+            if(norm.includes(normGov) || normGov.includes(norm)) {
+                let base = Number(livePrices[gov]);
+                if(!isNaN(base)) return base;
             }
         }
         return 85;
@@ -245,8 +240,10 @@
         let allItems = [...shipments.map(s=>({...s, type:'shipment'})), ...radarTasks.map(r=>({...r, type:'radar'}))];
         allItems.forEach(v => {
             if(v.deleted) return;
-            let itemBranch = v.branchName || v.city || "غير محدد";
-            if(branch !== 'all' && !itemBranch.includes(branch)) return;
+            
+            // فلتر الواجهة بيعتمد على فرع التاجر
+            let itemBranchForFilter = v.branchName || "غير محدد";
+            if(branch !== 'all' && !itemBranchForFilter.includes(branch)) return;
 
             let weight = Number(v.weight||1);
             let insurance = Number(v.insuranceFee||0);
@@ -254,18 +251,24 @@
             let merchantEmail = v.merchantEmail || "إدارة";
             let courierName = v.courierName || (v.type==='radar' && v.courierName ? v.courierName : "غير محدد");
 
-            // 1. تحديد إجمالي الـ COD بدقة من الفاتورة المحفوظة
+            // --- التعديل الجوهري للحاسبة ---
+            // 1. تحديد إجمالي الـ COD بدقة
             let collected = Number(v.cod !== undefined ? v.cod : (v.total !== undefined ? v.total : (v.totalCod !== undefined ? v.totalCod : (v.amount || 0))));
             
-            // 2. سحب مصاريف الشحن المحفوظة في البوليصة لتجنب أي فرق حسابي
+            // 2. سحب مصاريف الشحن
             let shipCost = null;
-            if(v.shippingCost !== undefined && v.shippingCost !== null) shipCost = Number(v.shippingCost);
-            else if(v.shippingFee !== undefined && v.shippingFee !== null) shipCost = Number(v.shippingFee);
-            else if(v.shipping_cost !== undefined && v.shipping_cost !== null) shipCost = Number(v.shipping_cost);
+            const possibleShippingKeys = ['shippingCost', 'shippingFee', 'shipping_cost', 'deliveryFee', 'deliveryCost', 'shipping', 'delivery_fee'];
+            for(let key of possibleShippingKeys) {
+                if(v[key] !== undefined && v[key] !== null && String(v[key]).trim() !== "") {
+                    shipCost = Number(v[key]);
+                    break;
+                }
+            }
             
-            // حساب احتياطي لو الشحن مش متسجل في البوليصة
+            // 3. لو الشحن مفقود، نحسبه من (مدينة المستلم) وليس فرع التاجر
             if(shipCost === null || isNaN(shipCost)) {
-                let baseCost = getShippingCost(itemBranch);
+                let destCity = v.city || v.governorate || v.address || ""; 
+                let baseCost = getShippingCost(destCity);
                 let overWeight = (weight > 2) ? Math.ceil(weight - 2) * 8 : 0;
                 shipCost = baseCost + overWeight;
             }
@@ -282,7 +285,7 @@
 
             if((status === "تم التسليم" || status === "تم التسليم بنجاح") && v.type === 'shipment' && status !== "تمت التسوية" && merchantEmail !== "إدارة"){
                 if(!merchants[merchantEmail]) merchants[merchantEmail] = { count:0, totalCod:0, totalFees:0, items:[] };
-                let net = collected - companyProfit;
+                let net = collected - companyProfit; // الصافي = الإجمالي - الشحن (9350 - 350 = 9000)
                 merchants[merchantEmail].items.push({...v, awb:v.awb||("AXN"+v.id?.substring(0,5)), shipCost: companyProfit, net: net, collected: collected});
                 merchants[merchantEmail].totalCod += collected;
                 merchants[merchantEmail].totalFees += companyProfit;
@@ -370,10 +373,10 @@
         let data = currentCourierData?.data;
         if(!data) return;
         let rows = "", total=0, idx=1;
-        data.shipments.forEach(s => { let c=Number(s.totalCollected)||0; total+=c; rows+=`<tr><td style="border:1px solid #000; padding:2px;">${idx++}</td><td style="border:1px solid #000; padding:2px;">${s.awb}</td><td style="border:1px solid #000; padding:2px;">${(s.merchantEmail||'').split('@')[0]}</td><td style="border:1px solid #000; padding:2px;">${s.name} (${s.phone})<br>${s.city}</td><td style="border:1px solid #000; padding:2px;">${c} ج.م</td></tr>`; });
-        data.radar.forEach(r => { let c=r.paymentMethod==='pickup'?0:(Number(r.totalCollected)||0); total+=c; rows+=`<tr><td style="border:1px solid #000; padding:2px;">${idx++}</td><td style="border:1px solid #000; padding:2px;">رادار</td><td style="border:1px solid #000; padding:2px;">-</td><td style="border:1px solid #000; padding:2px;">${r.details?.substring(0,40)}<br>${r.address?.substring(0,40)}</td><td style="border:1px solid #000; padding:2px;">${c} ج.م</td></tr>`; });
+        data.shipments.forEach(s => { let c=Number(s.totalCollected)||0; total+=c; rows+=`<tr><td style="border:1px solid #000; padding:4px;">${idx++}</td><td style="border:1px solid #000; padding:4px;">${s.awb}</td><td style="border:1px solid #000; padding:4px;">${(s.merchantEmail||'').split('@')[0]}</td><td style="border:1px solid #000; padding:4px;">${s.name} (${s.phone})<br>${s.city}</td><td style="border:1px solid #000; padding:4px;">${c} ج.م</td></tr>`; });
+        data.radar.forEach(r => { let c=r.paymentMethod==='pickup'?0:(Number(r.totalCollected)||0); total+=c; rows+=`<tr><td style="border:1px solid #000; padding:4px;">${idx++}</td><td style="border:1px solid #000; padding:4px;">رادار</td><td style="border:1px solid #000; padding:4px;">-</td><td style="border:1px solid #000; padding:4px;">${r.details?.substring(0,40)}<br>${r.address?.substring(0,40)}</td><td style="border:1px solid #000; padding:4px;">${c} ج.م</td></tr>`; });
         let html = `<div style="direction:rtl;padding:2mm;font-family:'Cairo';"><div style="display:flex;justify-content:space-between;margin-bottom:5px;"><div><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" class="print-logo"> <br><b>AXON EXPRESS</b><br>فرع ${selectedBranch}</div><div><h3 style="margin:0;">تصفية عهدة كابتن</h3><p style="margin:0;">${new Date().toLocaleString()}</p></div><div><h3 style="margin:0;">${currentCourierData.name}</h3></div></div>
-        <table class="print-table" style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr><th style="border:1px solid #000;padding:5px;">م</th><th style="border:1px solid #000;padding:5px;">رقم البوليصة</th><th style="border:1px solid #000;padding:5px;">التاجر</th><th style="border:1px solid #000;padding:5px;">بيانات المستلم</th><th style="border:1px solid #000;padding:5px;">المبلغ</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="5" style="border:1px solid #000;padding:5px;"><div style="border:2px solid #800020;background:#fff3cd;padding:5px;"><b>إجمالي العهدة: ${total} ج.م</b></div></td></tr></tfoot></table>
+        <table class="print-table"><thead><tr><th style="border:1px solid #000;padding:6px;">م</th><th style="border:1px solid #000;padding:6px;">رقم البوليصة</th><th style="border:1px solid #000;padding:6px;">التاجر</th><th style="border:1px solid #000;padding:6px;">بيانات المستلم</th><th style="border:1px solid #000;padding:6px;">المبلغ</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="5" style="border:1px solid #000;padding:6px;"><div style="border:2px solid #800020;background:#fff3cd;padding:6px;"><b>إجمالي العهدة: ${total} ج.م</b></div></td></tr></tfoot></table>
         <div style="display:flex;justify-content:space-between;border-top:1px solid #000;margin-top:10px;padding-top:5px;"><div>توقيع المندوب: ${currentCourierData.name}</div><div>توقيع الخزينة: ........</div><div>التاريخ: ${new Date().toLocaleDateString()}</div></div></div>`;
         document.getElementById('printArea').innerHTML = html;
         window.print();
@@ -389,7 +392,7 @@
         let net = data.totalCod - data.totalFees;
         document.getElementById('merchantNet').innerText = net + " ج.م";
         let rows = "";
-        data.items.forEach(i => { rows += `<tr><td style="text-align:center;">${i.timestamp?.toDate().toLocaleDateString()||'-'}</td><td style="text-align:center;">${i.awb}</td><td style="text-align:right;">${i.name} (${i.city})</td><td style="text-align:center;">${i.collected}</td><td style="text-align:center;">${i.shipCost}</td><td style="color:#10B981; text-align:center;">${i.net} ج.م</td></tr>`; });
+        data.items.forEach(i => { rows += `<tr><td style="text-align:center;">${i.timestamp?.toDate ? i.timestamp.toDate().toLocaleDateString() : new Date(i.timestamp).toLocaleDateString()}</td><td style="text-align:center;">${i.awb}</td><td style="text-align:right;">${i.name} (${i.city})</td><td style="text-align:center;">${i.collected}</td><td style="text-align:center;">${i.shipCost}</td><td style="color:#10B981; text-align:center;">${i.net} ج.م</td></tr>`; });
         document.getElementById('merchantItemsBody').innerHTML = rows;
         document.getElementById('merchantModal').style.display = 'flex';
     };
@@ -453,10 +456,10 @@
         let data = merchantsMap[currentMerchantEmail];
         if(!data) return;
         let rows = "", totalNet = 0;
-        data.items.forEach(i => { totalNet += Number(i.net); rows += `<tr><td style="border:1px solid #000; padding:4px;">${i.timestamp?.toDate().toLocaleDateString()||'-'}</td><td style="border:1px solid #000; padding:4px;">${i.awb}</td><td style="border:1px solid #000; padding:4px;">${i.name} (${i.city})</td><td style="border:1px solid #000; padding:4px;">${i.collected}</td><td style="border:1px solid #000; padding:4px;">${i.shipCost}</td><td style="border:1px solid #000; padding:4px; color:#10B981;">${i.net} ج.م</td></tr>`; });
+        data.items.forEach(i => { totalNet += Number(i.net); let dateStr = i.timestamp?.toDate ? i.timestamp.toDate().toLocaleDateString() : new Date(i.timestamp).toLocaleDateString(); rows += `<tr><td style="border:1px solid #000; padding:6px; text-align:center;">${dateStr}</td><td style="border:1px solid #000; padding:6px; text-align:center;">${i.awb}</td><td style="border:1px solid #000; padding:6px; text-align:center;">${i.name} (${i.city})</td><td style="border:1px solid #000; padding:6px; text-align:center;">${i.collected}</td><td style="border:1px solid #000; padding:6px; text-align:center;">${i.shipCost}</td><td style="border:1px solid #000; padding:6px; text-align:center; color:#10B981;">${i.net} ج.م</td></tr>`; });
         let html = `<div style="direction:rtl;padding:2mm;font-family:'Cairo';"><div style="display:flex;justify-content:space-between;margin-bottom:5px;"><div><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" class="print-logo"> <br><b>AXON EXPRESS</b><br>فرع ${selectedBranch}</div><div><h3 style="margin:0;">كشف حساب تاجر</h3><p style="margin:0;">${new Date().toLocaleString()}</p></div><div><h3 style="margin:0;">${currentMerchantEmail.split('@')[0]}</h3></div></div>
         <div style="background:#f0f0f0;padding:2px;margin-bottom:3px;">عدد البوالص: ${data.count}</div>
-        <table class="print-table" style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr><th style="border:1px solid #000;padding:5px;">التاريخ</th><th style="border:1px solid #000;padding:5px;">البوليصة</th><th style="border:1px solid #000;padding:5px;">المستلم</th><th style="border:1px solid #000;padding:5px;">COD</th><th style="border:1px solid #000;padding:5px;">مخصوم</th><th style="border:1px solid #000;padding:5px;">الصافي</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="6" style="border:1px solid #000;padding:5px;"><div style="border:2px solid #10B981;background:#d1fae5;padding:5px;"><b>صافي المستحق: ${totalNet} ج.م</b></div></td></tr></tfoot></table>
+        <table class="print-table"><thead><tr><th style="border:1px solid #000;padding:6px;text-align:center;">التاريخ</th><th style="border:1px solid #000;padding:6px;text-align:center;">البوليصة</th><th style="border:1px solid #000;padding:6px;text-align:center;">المستلم</th><th style="border:1px solid #000;padding:6px;text-align:center;">COD</th><th style="border:1px solid #000;padding:6px;text-align:center;">مخصوم</th><th style="border:1px solid #000;padding:6px;text-align:center;">الصافي</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="6" style="border:1px solid #000;padding:6px;"><div style="border:2px solid #10B981;background:#d1fae5;padding:6px;"><b>صافي المستحق: ${totalNet} ج.م</b></div></td></tr></tfoot></table>
         <div style="display:flex;justify-content:space-between;border-top:1px solid #000;margin-top:10px;padding-top:5px;"><div>توقيع التاجر: ${currentMerchantEmail.split('@')[0]}</div><div>توقيع الخزينة: ........</div><div>التاريخ: ${new Date().toLocaleDateString()}</div></div></div>`;
         document.getElementById('printArea').innerHTML = html;
         window.print();
