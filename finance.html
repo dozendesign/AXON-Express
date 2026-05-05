@@ -351,22 +351,11 @@
                         batch.delete(doc(db, "shipments", item.id)); 
                     });
                     
-                    // 2. تحديث حائط البطولات باستخدام "الاستعلام" لضمان الوصول للمستند الصح
-                    const userQuery = query(collection(db, "users"), where("email", "==", email));
-                    const userSnap = await getDocs(userQuery);
-                    
-                    if (!userSnap.empty) {
-                        // لو التاجر له مستند قديم بـ ID مختلف، بنحدثه
-                        batch.update(userSnap.docs[0].ref, { 
-                            lifetime_sales: increment(data.totalCod) 
-                        });
-                    } else {
-                        // لو التاجر جديد خالص، بنكاريت له مستند جديد
-                        batch.set(doc(db, "users", email), { 
-                            email: email, 
-                            lifetime_sales: data.totalCod 
-                        });
-                    }
+                    // 2. تحديث حائط البطولات مباشرة في جدول merchant_profiles باستخدام الإيميل
+                    const merchantRef = doc(db, "merchant_profiles", email);
+                    batch.set(merchantRef, { 
+                        lifetime_sales: increment(data.totalCod) 
+                    }, { merge: true });
 
                     await batch.commit();
                     
@@ -410,15 +399,11 @@
             return;
         }
         
-        try {
-            const adminDoc = await getDoc(doc(db, "admins", user.uid));
-            if(adminDoc.exists() && (adminDoc.data().role === 'super_admin' || adminDoc.data().role === 'branch_admin')){
-                window.loadFinancialData();
-            } else {
-                Swal.fire('غير مصرح','ليس لديك صلاحية الوصول إلى الخزينة','error').then(()=> signOut(auth));
-            }
-        } catch (e) {
-            console.error("Auth error:", e);
+        const adminDoc = await getDoc(doc(db, "admins", user.uid));
+        if(adminDoc.exists() && (adminDoc.data().role === 'super_admin' || adminDoc.data().role === 'branch_admin')){
+            window.loadFinancialData();
+        } else {
+            Swal.fire('غير مصرح','ليس لديك صلاحية الوصول إلى الخزينة','error').then(()=> signOut(auth));
         }
     });
 
