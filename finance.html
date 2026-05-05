@@ -325,8 +325,13 @@
     };
 
     window.settleMerchant = async () => {
-        let email = currentMerchantEmail;
-        let data = merchantsMap[email];
+        let rawEmail = currentMerchantEmail;
+        if(!rawEmail) return;
+
+        // تنظيف الإيميل لضمان مطابقة الـ ID في الفايربيز (سمول وبدون مسافات)
+        let email = rawEmail.trim().toLowerCase();
+        let data = merchantsMap[rawEmail];
+        
         if(!data || !data.items.length) return Swal.fire('تنبيه','لا توجد بوالص لتسويتها','warning');
         
         closeModal('merchantModal');
@@ -345,26 +350,25 @@
                 Swal.fire({ title: 'جاري التنفيذ...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
                 try {
                     const batch = writeBatch(db);
-                    
-                    // تحويل المبلغ لرقم صريح للتأكد من نجاح الـ increment
                     const totalCodAmount = Number(data.totalCod);
                     
-                    // 1. حذف البوالص نهائياً
                     data.items.forEach(item => { 
                         batch.delete(doc(db, "shipments", item.id)); 
                     });
                     
-                    // 2. تحديث حائط البطولات في merchant_profiles
+                    // تحديث حائط البطولات في merchant_profiles باستخدام الإيميل "النظيف"
                     const merchantRef = doc(db, "merchant_profiles", email);
                     batch.set(merchantRef, { 
                         lifetime_sales: increment(totalCodAmount) 
                     }, { merge: true });
 
                     await batch.commit();
+                    console.log("Settlement committed for:", email, "Amount:", totalCodAmount);
                     
                     Swal.fire('تم بنجاح!', `تمت التسوية، حُذفت البوالص، وتمت إضافة ${totalCodAmount} ج.م إلى حائط البطولات.`, 'success');
                     refreshData();
                 } catch(e){ 
+                    console.error("Settlement Error:", e);
                     Swal.fire('خطأ', e.message, 'error'); 
                 }
             }
