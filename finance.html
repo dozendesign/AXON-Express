@@ -183,9 +183,9 @@
             let html = "";
             snap.forEach(d => { 
                 let data = d.data(); 
-                html += `<tr><td style="font-size:13px;">${data.timestamp?.toDate().toLocaleDateString()||'-'}</td><td style="font-size:13px;">${data.description}</td><td style="font-size:13px; font-weight:bold;">${data.amount} ج.م</noscript></tr>`;
+                html += `<tr><td style="font-size:13px;">${data.timestamp?.toDate().toLocaleDateString()||'-'}</td><td style="font-size:13px;">${data.description}</td><td style="font-size:13px; font-weight:bold;">${data.amount} ج.م</td></tr>`;
             });
-            document.getElementById('expensesBody').innerHTML = html || "<tr><td colspan='3'>لا توجد مصروفات</tr>";
+            document.getElementById('expensesBody').innerHTML = html || "<tr><td colspan='3'>لا توجد مصروفات</td></tr>";
         });
     }
 
@@ -268,7 +268,7 @@
         for(let c in couriers){
             courierHtml += `<tr><td style="text-align:right;"><b>${c}</b></td><td style="text-align:center;">${couriers[c].count}</td><td style="color:#800020; text-align:center;">${couriers[c].totalCollected} ج.م</td><td style="text-align:center;"><button class="btn-view" onclick="showCourierDetails('${c}')">فتح العهدة</button></td></tr>`;
         }
-        document.getElementById('couriersBody').innerHTML = courierHtml || "<td><td colspan='4' style='text-align:center;'>لا توجد عهدة حالية</tr>";
+        document.getElementById('couriersBody').innerHTML = courierHtml || "<tr><td colspan='4' style='text-align:center;'>لا توجد عهدة حالية</td></tr>";
 
         let merchantHtml = "";
         for(let m in merchants){
@@ -276,7 +276,7 @@
             let net = data.totalCod - data.totalFees;
             merchantHtml += `<tr><td style="text-align:right;"><b>${m.split('@')[0]}</b></td><td style="text-align:center;">${data.count}</td><td style="text-align:center;">${data.totalCod} ج.م</td><td style="color:#800020; text-align:center;">${data.totalFees} ج.م</td><td style="color:#10B981; text-align:center;">${net} ج.م</td><td style="text-align:center;"><button class="btn-view" onclick="showMerchantDetails('${m}')">تسوية</button></td></tr>`;
         }
-        document.getElementById('merchantsBody').innerHTML = merchantHtml || "<tr><td colspan='6' style='text-align:center;'>لا توجد مستحقات</tr>";
+        document.getElementById('merchantsBody').innerHTML = merchantHtml || "<tr><td colspan='6' style='text-align:center;'>لا توجد مستحقات</td></tr>";
 
         document.getElementById('loading').style.display = 'none';
         document.getElementById('dashboard').style.display = 'block';
@@ -292,7 +292,7 @@
         let rows = "";
         data.shipments.forEach(s => { rows += `<tr><td style="text-align:right;">بوليصة</td><td style="text-align:center;">${s.awb}</td><td style="text-align:right;">${(s.merchantEmail||'').split('@')[0]}</td><td style="text-align:center;">${s.totalCollected} ج.م</td><td style="text-align:center;">${s.status}</td></tr>`; });
         data.radar.forEach(r => { rows += `<tr><td style="text-align:right;">رادار</td><td style="text-align:center;">${r.details?.substring(0,50)}</td><td style="text-align:right;">${r.address?.substring(0,50)}</td><td style="text-align:center;">${r.paymentMethod==='pickup'?'بيكب':r.totalCollected+' ج.م'}</td><td style="text-align:center;">${r.status}</td></tr>`; });
-        document.getElementById('courierDetailsBody').innerHTML = rows || "<td><td colspan='5' style='text-align:center;'>لا توجد بيانات</tr>";
+        document.getElementById('courierDetailsBody').innerHTML = rows || "<tr><td colspan='5' style='text-align:center;'>لا توجد بيانات</td></tr>";
         document.getElementById('courierModal').style.display = 'flex';
     };
 
@@ -346,15 +346,27 @@
                 try {
                     const batch = writeBatch(db);
                     
+                    // 1. حذف البوالص نهائياً من الداتا بيز
                     data.items.forEach(item => { 
                         batch.delete(doc(db, "shipments", item.id)); 
                     });
                     
-                    const userRef = doc(db, "users", email);
-                    batch.set(userRef, { 
-                        email: email, 
-                        lifetime_sales: increment(data.totalCod) 
-                    }, { merge: true });
+                    // 2. تحديث حائط البطولات باستخدام "الاستعلام" لضمان الوصول للمستند الصح
+                    const userQuery = query(collection(db, "users"), where("email", "==", email));
+                    const userSnap = await getDocs(userQuery);
+                    
+                    if (!userSnap.empty) {
+                        // لو التاجر له مستند قديم بـ ID مختلف، بنحدثه
+                        batch.update(userSnap.docs[0].ref, { 
+                            lifetime_sales: increment(data.totalCod) 
+                        });
+                    } else {
+                        // لو التاجر جديد خالص، بنكاريت له مستند جديد
+                        batch.set(doc(db, "users", email), { 
+                            email: email, 
+                            lifetime_sales: data.totalCod 
+                        });
+                    }
 
                     await batch.commit();
                     
@@ -398,11 +410,15 @@
             return;
         }
         
-        const adminDoc = await getDoc(doc(db, "admins", user.uid));
-        if(adminDoc.exists() && (adminDoc.data().role === 'super_admin' || adminDoc.data().role === 'branch_admin')){
-            window.loadFinancialData();
-        } else {
-            Swal.fire('غير مصرح','ليس لديك صلاحية الوصول إلى الخزينة','error').then(()=> signOut(auth));
+        try {
+            const adminDoc = await getDoc(doc(db, "admins", user.uid));
+            if(adminDoc.exists() && (adminDoc.data().role === 'super_admin' || adminDoc.data().role === 'branch_admin')){
+                window.loadFinancialData();
+            } else {
+                Swal.fire('غير مصرح','ليس لديك صلاحية الوصول إلى الخزينة','error').then(()=> signOut(auth));
+            }
+        } catch (e) {
+            console.error("Auth error:", e);
         }
     });
 
