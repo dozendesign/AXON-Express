@@ -333,26 +333,39 @@
         
         Swal.fire({
             title: 'تأكيد التسوية المالية',
-            html: `<strong style="color:#10B981;">سيتم إضافة ${data.totalCod} ج.م إلى حائط بطولات التاجر (lifetime_sales).</strong><br>بعد التسوية، لن تظهر هذه البوالص في قائمة المستحقات.`,
+            html: `<strong style="color:#10B981;">سيتم إضافة ${data.totalCod} ج.م إلى حائط بطولات التاجر.</strong><br>⚠️ <span style="color:#800020;">سيتم حذف هذه البوالص نهائياً من النظام لتخفيف الزحمة.</span>`,
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'نعم، قم بالتسوية',
+            confirmButtonText: 'نعم، قم بالتسوية والحذف',
             cancelButtonText: 'إلغاء',
-            confirmButtonColor: '#10B981'
+            confirmButtonColor: '#10B981',
+            cancelButtonColor: '#111'
         }).then(async (result) => {
             if (result.isConfirmed) {
-                Swal.fire({ title: 'جاري التسوية...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                Swal.fire({ title: 'جاري التنفيذ...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
                 try {
                     const batch = writeBatch(db);
-                    data.items.forEach(item => { batch.update(doc(db, "shipments", item.id), { status: "تمت التسوية" }); });
-                    const userQuery = query(collection(db, "users"), where("email", "==", email));
-                    const snap = await getDocs(userQuery);
-                    if(!snap.empty) batch.update(snap.docs[0].ref, { lifetime_sales: increment(data.totalCod) });
-                    else batch.set(doc(db, "users", email), { email: email, lifetime_sales: data.totalCod });
+                    
+                    // 1. حذف البوالص نهائياً من الداتا بيز عشان الزحمة عند الأدمن
+                    data.items.forEach(item => { 
+                        batch.delete(doc(db, "shipments", item.id)); 
+                    });
+                    
+                    // 2. تحديث حائط البطولات بطريقة احترافية توفر استهلاك الفايربيز
+                    const userRef = doc(db, "users", email);
+                    batch.set(userRef, { 
+                        email: email, 
+                        lifetime_sales: increment(data.totalCod) 
+                    }, { merge: true });
+
+                    // تنفيذ العمليتين مع بعض في نفس اللحظة
                     await batch.commit();
-                    Swal.fire('تم بنجاح!', `تمت التسوية وإضافة ${data.totalCod} ج.م إلى حائط البطولات.`, 'success');
+                    
+                    Swal.fire('تم بنجاح!', `تمت التسوية، حُذفت البوالص، وتمت إضافة ${data.totalCod} ج.م إلى حائط البطولات.`, 'success');
                     refreshData();
-                } catch(e){ Swal.fire('خطأ', e.message, 'error'); }
+                } catch(e){ 
+                    Swal.fire('خطأ', e.message, 'error'); 
+                }
             }
         });
     };
