@@ -629,28 +629,28 @@
                 merchantName = merchantEmail.split('@')[0];
                 document.getElementById('merchantEmailDisplay').innerHTML = `مرحباً بك: ${merchantName} <i class="fa-solid fa-bolt" style="color:#ffc107;"></i>`;
                 
-                const profileSnap = await getDoc(doc(db, "merchant_profiles", merchantEmail));
-                if(profileSnap.exists()) {
-                    if(profileSnap.data().businessPhone) {
-                        merchantPhone = profileSnap.data().businessPhone;
-                        document.getElementById('merchantBusinessPhone').value = merchantPhone;
-                    }
-                    if(profileSnap.data().businessAddress) {
-                        merchantAddress = profileSnap.data().businessAddress;
-                        document.getElementById('merchantBusinessAddress').value = merchantAddress;
-                    }
-                    if(profileSnap.data().branchName) {
-                        branchName = profileSnap.data().branchName;
-                    }
-                }
-
-                const userQ = query(collection(db, "users"), where("email", "==", merchantEmail));
-                onSnapshot(userQ, (userSnap) => {
-                    if(!userSnap.empty) {
-                        const userData = userSnap.docs[0].data();
-                        const sales = userData.lifetime_sales || 0;
+                // الاستماع اللحظي لتحديثات حائط البطولات من merchant_profiles
+                onSnapshot(doc(db, "merchant_profiles", merchantEmail), (docSnap) => {
+                    if(docSnap.exists()) {
+                        let data = docSnap.data();
+                        if(data.businessPhone) {
+                            merchantPhone = data.businessPhone;
+                            document.getElementById('merchantBusinessPhone').value = merchantPhone;
+                        }
+                        if(data.businessAddress) {
+                            merchantAddress = data.businessAddress;
+                            document.getElementById('merchantBusinessAddress').value = merchantAddress;
+                        }
+                        if(data.branchName) {
+                            branchName = data.branchName;
+                        }
+                        
+                        // ربط حائط البطولات المباشر 
+                        const sales = data.lifetime_sales || 0;
                         currentLifetimeSales = sales;
                         document.getElementById('lifetimeSales').innerText = sales.toLocaleString('en-US') + " ج.م";
+                        
+                        // ربط الائتمان 1%
                         currentCreditLimit = sales * 0.01;
                         document.getElementById('creditLimitDisplay').innerText = currentCreditLimit.toFixed(2) + " ج.م";
                         const creditSpan = document.getElementById('creditLimitAlertSpan');
@@ -953,6 +953,7 @@
                 totalAmount += 58;
             }
             try {
+                // اضافة ال amount و shippingCost عشان الخزنة تحسبها صح في الرادار
                 await addDoc(collection(db, "eshteryly_orders"), {
                     merchantEmail: merchantEmail,
                     details: finalDetails,
@@ -963,6 +964,8 @@
                     branchName: branchName,
                     type: "radar",
                     purchaseValue: purchaseValue,
+                    amount: totalAmount,
+                    shippingCost: localFee,
                     creditUsed: (payment === 'balance') ? true : false
                 });
                 Swal.fire('تم!', 'تم بث أوردر المشتريات للرادار.', 'success');
@@ -978,6 +981,7 @@
             let localFee = window.getCityPrice(branchName);
             let finalAmount = Number(rawAmount) + localFee; 
             try {
+                // اضافة ال amount و shippingCost للخزنة
                 await addDoc(collection(db, "eshteryly_orders"), {
                     merchantEmail: merchantEmail,
                     details: `🥶 كولد/فريش | الساعة: ${time} | تحصيل نهائي بالشحن: ${finalAmount} ج.م`,
@@ -986,7 +990,9 @@
                     status: "جاري البحث عن مندوب",
                     timestamp: new Date(),
                     branchName: branchName,
-                    type: "radar"
+                    type: "radar",
+                    amount: finalAmount,
+                    shippingCost: localFee
                 });
                 Swal.fire('تم!', 'تم بث أوردر الفريش لمناديب الكولد.', 'success');
             } catch(e) { Swal.fire('خطأ', e.message, 'error'); }
@@ -1085,7 +1091,8 @@
                     city, address, weight: weight, pieces: pieces, amount: finalAmount, insuranceFee: insuranceFee,
                     paymentType: paymentType, fragile: fragileType, merchantAddress: merchantAddress,
                     merchantPhone: merchantPhone, merchantIP: merchantIP, deviceInfo: deviceInfo,
-                    status: "قيد التوصيل", deleted: false, timestamp: new Date(), branchName, awb: awb
+                    status: "قيد التوصيل", deleted: false, timestamp: new Date(), branchName, awb: awb,
+                    shippingCost: totalShippingFee
                 });
                 document.getElementById('addModal').style.display='none';
                 document.querySelectorAll('#addModal input[type="text"], #addModal input[type="tel"], #addModal input[type="number"]').forEach(inp => { 
