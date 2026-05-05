@@ -346,20 +346,23 @@
                 try {
                     const batch = writeBatch(db);
                     
-                    // 1. حذف البوالص نهائياً من الداتا بيز
+                    // تحويل المبلغ لرقم صريح للتأكد من نجاح الـ increment
+                    const totalCodAmount = Number(data.totalCod);
+                    
+                    // 1. حذف البوالص نهائياً
                     data.items.forEach(item => { 
                         batch.delete(doc(db, "shipments", item.id)); 
                     });
                     
-                    // 2. تحديث حائط البطولات مباشرة في جدول merchant_profiles باستخدام الإيميل
+                    // 2. تحديث حائط البطولات في merchant_profiles
                     const merchantRef = doc(db, "merchant_profiles", email);
                     batch.set(merchantRef, { 
-                        lifetime_sales: increment(data.totalCod) 
+                        lifetime_sales: increment(totalCodAmount) 
                     }, { merge: true });
 
                     await batch.commit();
                     
-                    Swal.fire('تم بنجاح!', `تمت التسوية، حُذفت البوالص، وتمت إضافة ${data.totalCod} ج.م إلى حائط البطولات.`, 'success');
+                    Swal.fire('تم بنجاح!', `تمت التسوية، حُذفت البوالص، وتمت إضافة ${totalCodAmount} ج.م إلى حائط البطولات.`, 'success');
                     refreshData();
                 } catch(e){ 
                     Swal.fire('خطأ', e.message, 'error'); 
@@ -399,11 +402,15 @@
             return;
         }
         
-        const adminDoc = await getDoc(doc(db, "admins", user.uid));
-        if(adminDoc.exists() && (adminDoc.data().role === 'super_admin' || adminDoc.data().role === 'branch_admin')){
-            window.loadFinancialData();
-        } else {
-            Swal.fire('غير مصرح','ليس لديك صلاحية الوصول إلى الخزينة','error').then(()=> signOut(auth));
+        try {
+            const adminDoc = await getDoc(doc(db, "admins", user.uid));
+            if(adminDoc.exists() && (adminDoc.data().role === 'super_admin' || adminDoc.data().role === 'branch_admin')){
+                window.loadFinancialData();
+            } else {
+                Swal.fire('غير مصرح','ليس لديك صلاحية الوصول إلى الخزينة','error').then(()=> signOut(auth));
+            }
+        } catch (e) {
+            console.error("Auth error:", e);
         }
     });
 
