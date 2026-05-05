@@ -177,20 +177,26 @@
     };
 
     function loadExpenses(){
-        let q = collection(db, "expenses");
-        if(selectedBranch !== 'all') q = query(q, where("branchName", "==", selectedBranch));
-        onSnapshot(query(q, orderBy("timestamp","desc")), snap => {
-            let html = "";
-            snap.forEach(d => { 
-                let data = d.data(); 
-                html += `<tr><td style="font-size:13px;">${data.timestamp?.toDate().toLocaleDateString()||'-'}</td><td style="font-size:13px;">${data.description}</td><td style="font-size:13px; font-weight:bold;">${data.amount} ج.م</noscript></tr>`;
+        try {
+            let q = collection(db, "expenses");
+            if(selectedBranch !== 'all') q = query(q, where("branchName", "==", selectedBranch));
+            onSnapshot(query(q, orderBy("timestamp","desc")), snap => {
+                let html = "";
+                snap.forEach(d => { 
+                    let data = d.data(); 
+                    html += `<tr><td style="font-size:13px;">${data.timestamp?.toDate().toLocaleDateString()||'-'}</td><td style="font-size:13px;">${data.description}</td><td style="font-size:13px; font-weight:bold;">${data.amount} ج.م</noscript></tr>`;
+                });
+                document.getElementById('expensesBody').innerHTML = html || "<tr><td colspan='3'>لا توجد مصروفات</tr>";
+            }, err => {
+                document.getElementById('loading').innerHTML = `<h3 style="color:#800020;">خطأ في المصروفات: ${err.message}</h3>`;
             });
-            document.getElementById('expensesBody').innerHTML = html || "<tr><td colspan='3'>لا توجد مصروفات</tr>";
-        });
+        } catch(e) {
+            console.error("loadExpenses Error:", e);
+        }
     }
 
     function getShippingCost(city){
-        if(!city) return 85;
+        if(!city || typeof city !== 'string') return 85;
         let norm = city.trim().replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/[ىي]/g,'ي');
         for(let zone in livePrices){
             if(zone.includes('-')){
@@ -214,72 +220,79 @@
     }
 
     function processData(){
-        let branch = document.getElementById('branchSelect').value;
-        selectedBranch = branch;
-        let merchants = {}, couriers = {};
-        let totalCollected = 0, totalCompanyProfit = 0;
+        try {
+            let branch = document.getElementById('branchSelect').value;
+            selectedBranch = branch;
+            let merchants = {}, couriers = {};
+            let totalCollected = 0, totalCompanyProfit = 0;
 
-        let allItems = [...shipments.map(s=>({...s, type:'shipment'})), ...radarTasks.map(r=>({...r, type:'radar'}))];
-        allItems.forEach(v => {
-            if(v.deleted) return;
-            let itemBranch = v.branchName || v.city || "غير محدد";
-            if(branch !== 'all' && !itemBranch.includes(branch)) return;
+            let allItems = [...shipments.map(s=>({...s, type:'shipment'})), ...radarTasks.map(r=>({...r, type:'radar'}))];
+            allItems.forEach(v => {
+                if(v.deleted) return;
+                let itemBranch = v.branchName || v.city || "غير محدد";
+                if(typeof itemBranch !== 'string') itemBranch = String(itemBranch);
+                if(branch !== 'all' && !itemBranch.includes(branch)) return;
 
-            let amt = Number(v.amount||0), insurance = Number(v.insuranceFee||0), weight = Number(v.weight||1);
-            let status = v.status || "جديد";
-            let merchantEmail = v.merchantEmail || "إدارة";
-            let courierName = v.courierName || (v.type==='radar' && v.courierName ? v.courierName : "غير محدد");
+                let amt = Number(v.amount||0), insurance = Number(v.insuranceFee||0), weight = Number(v.weight||1);
+                let status = v.status || "جديد";
+                let merchantEmail = v.merchantEmail || "إدارة";
+                let courierName = v.courierName || (v.type==='radar' && v.courierName ? v.courierName : "غير محدد");
 
-            let baseCost = getShippingCost(itemBranch);
-            let overWeight = (weight>2) ? Math.ceil(weight-2)*8 : 0;
-            let shipCost = baseCost + overWeight;
-            let collected = amt + insurance;
-            let companyProfit = shipCost + insurance;
+                let baseCost = getShippingCost(itemBranch);
+                let overWeight = (weight>2) ? Math.ceil(weight-2)*8 : 0;
+                let shipCost = baseCost + overWeight;
+                let collected = amt + insurance;
+                let companyProfit = shipCost + insurance;
 
-            if(courierName && courierName !== "غير محدد"){
-                if(!couriers[courierName]) couriers[courierName] = { count:0, totalCollected:0, shipments:[], radar:[] };
-                couriers[courierName].count++;
-                if(v.type === 'shipment') couriers[courierName].shipments.push({...v, awb:v.awb||("AXN"+v.id?.substring(0,5)), totalCollected:collected});
-                else couriers[courierName].radar.push({...v, totalCollected:collected});
-                if(status === "تم التسليم" || status === "تم التسليم بنجاح") couriers[courierName].totalCollected += collected;
+                if(courierName && courierName !== "غير محدد"){
+                    if(!couriers[courierName]) couriers[courierName] = { count:0, totalCollected:0, shipments:[], radar:[] };
+                    couriers[courierName].count++;
+                    if(v.type === 'shipment') couriers[courierName].shipments.push({...v, awb:v.awb||("AXN"+v.id?.substring(0,5)), totalCollected:collected});
+                    else couriers[courierName].radar.push({...v, totalCollected:collected});
+                    if(status === "تم التسليم" || status === "تم التسليم بنجاح") couriers[courierName].totalCollected += collected;
+                }
+
+                if((status === "تم التسليم" || status === "تم التسليم بنجاح") && v.type === 'shipment' && status !== "تمت التسوية" && merchantEmail !== "إدارة"){
+                    if(!merchants[merchantEmail]) merchants[merchantEmail] = { count:0, totalCod:0, totalFees:0, items:[] };
+                    let net = amt - shipCost;
+                    merchants[merchantEmail].items.push({...v, awb:v.awb||("AXN"+v.id?.substring(0,5)), shipCost, net});
+                    merchants[merchantEmail].totalCod += amt;
+                    merchants[merchantEmail].totalFees += shipCost;
+                    merchants[merchantEmail].count++;
+                    totalCollected += collected;
+                    totalCompanyProfit += companyProfit;
+                }
+            });
+
+            merchantsMap = merchants;
+            couriersMap = couriers;
+
+            document.getElementById('statTotalCash').innerText = totalCollected + " ج.م";
+            document.getElementById('statProfit').innerText = totalCompanyProfit + " ج.م";
+            let netDues = totalCollected - totalCompanyProfit;
+            document.getElementById('statNetDues').innerText = netDues + " ج.م";
+
+            let courierHtml = "";
+            for(let c in couriers){
+                courierHtml += `<tr><td style="text-align:right;"><b>${c}</b></td><td style="text-align:center;">${couriers[c].count}</td><td style="color:#800020; text-align:center;">${couriers[c].totalCollected} ج.م</td><td style="text-align:center;"><button class="btn-view" onclick="showCourierDetails('${c}')">فتح العهدة</button></td></tr>`;
             }
+            document.getElementById('couriersBody').innerHTML = courierHtml || "<td><td colspan='4' style='text-align:center;'>لا توجد عهدة حالية</tr>";
 
-            if((status === "تم التسليم" || status === "تم التسليم بنجاح") && v.type === 'shipment' && status !== "تمت التسوية" && merchantEmail !== "إدارة"){
-                if(!merchants[merchantEmail]) merchants[merchantEmail] = { count:0, totalCod:0, totalFees:0, items:[] };
-                let net = amt - shipCost;
-                merchants[merchantEmail].items.push({...v, awb:v.awb||("AXN"+v.id?.substring(0,5)), shipCost, net});
-                merchants[merchantEmail].totalCod += amt;
-                merchants[merchantEmail].totalFees += shipCost;
-                merchants[merchantEmail].count++;
-                totalCollected += collected;
-                totalCompanyProfit += companyProfit;
+            let merchantHtml = "";
+            for(let m in merchants){
+                let data = merchants[m];
+                let net = data.totalCod - data.totalFees;
+                merchantHtml += `<tr><td style="text-align:right;"><b>${m.split('@')[0]}</b></td><td style="text-align:center;">${data.count}</td><td style="text-align:center;">${data.totalCod} ج.م</td><td style="color:#800020; text-align:center;">${data.totalFees} ج.م</td><td style="color:#10B981; text-align:center;">${net} ج.م</td><td style="text-align:center;"><button class="btn-view" onclick="showMerchantDetails('${m}')">تسوية</button></td></tr>`;
             }
-        });
+            document.getElementById('merchantsBody').innerHTML = merchantHtml || "<tr><td colspan='6' style='text-align:center;'>لا توجد مستحقات</tr>";
 
-        merchantsMap = merchants;
-        couriersMap = couriers;
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
 
-        document.getElementById('statTotalCash').innerText = totalCollected + " ج.م";
-        document.getElementById('statProfit').innerText = totalCompanyProfit + " ج.م";
-        let netDues = totalCollected - totalCompanyProfit;
-        document.getElementById('statNetDues').innerText = netDues + " ج.م";
-
-        let courierHtml = "";
-        for(let c in couriers){
-            courierHtml += `<tr><td style="text-align:right;"><b>${c}</b></td><td style="text-align:center;">${couriers[c].count}</td><td style="color:#800020; text-align:center;">${couriers[c].totalCollected} ج.م</td><td style="text-align:center;"><button class="btn-view" onclick="showCourierDetails('${c}')">فتح العهدة</button></td></tr>`;
+        } catch (error) {
+            console.error("ProcessData Error:", error);
+            document.getElementById('loading').innerHTML = `<h3 style="color:#800020;">خطأ في معالجة البيانات: ${error.message}</h3>`;
         }
-        document.getElementById('couriersBody').innerHTML = courierHtml || "<td><td colspan='4' style='text-align:center;'>لا توجد عهدة حالية</tr>";
-
-        let merchantHtml = "";
-        for(let m in merchants){
-            let data = merchants[m];
-            let net = data.totalCod - data.totalFees;
-            merchantHtml += `<tr><td style="text-align:right;"><b>${m.split('@')[0]}</b></td><td style="text-align:center;">${data.count}</td><td style="text-align:center;">${data.totalCod} ج.م</td><td style="color:#800020; text-align:center;">${data.totalFees} ج.م</td><td style="color:#10B981; text-align:center;">${net} ج.م</td><td style="text-align:center;"><button class="btn-view" onclick="showMerchantDetails('${m}')">تسوية</button></td></tr>`;
-        }
-        document.getElementById('merchantsBody').innerHTML = merchantHtml || "<tr><td colspan='6' style='text-align:center;'>لا توجد مستحقات</tr>";
-
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'block';
     }
 
     window.showCourierDetails = (name) => {
@@ -346,19 +359,16 @@
                 try {
                     const batch = writeBatch(db);
                     
-                    // 1. حذف البوالص نهائياً من الداتا بيز عشان الزحمة عند الأدمن
                     data.items.forEach(item => { 
                         batch.delete(doc(db, "shipments", item.id)); 
                     });
                     
-                    // 2. تحديث حائط البطولات بطريقة احترافية توفر استهلاك الفايربيز
                     const userRef = doc(db, "users", email);
                     batch.set(userRef, { 
                         email: email, 
                         lifetime_sales: increment(data.totalCod) 
                     }, { merge: true });
 
-                    // تنفيذ العمليتين مع بعض في نفس اللحظة
                     await batch.commit();
                     
                     Swal.fire('تم بنجاح!', `تمت التسوية، حُذفت البوالص، وتمت إضافة ${data.totalCod} ج.م إلى حائط البطولات.`, 'success');
@@ -387,28 +397,45 @@
         if(unsubShipments) unsubShipments();
         if(unsubRadar) unsubRadar();
         if(unsubPrices) unsubPrices();
-        unsubPrices = onSnapshot(doc(db, "settings", "shipping_prices"), snap => { if(snap.exists()) livePrices = snap.data(); processData(); });
-        unsubShipments = onSnapshot(collection(db, "shipments"), snap => { shipments = []; snap.forEach(d => shipments.push({ id:d.id, ...d.data() })); processData(); });
-        unsubRadar = onSnapshot(collection(db, "eshteryly_orders"), snap => { radarTasks = []; snap.forEach(d => radarTasks.push({ id:d.id, ...d.data() })); processData(); });
+        
+        unsubPrices = onSnapshot(doc(db, "settings", "shipping_prices"), snap => { 
+            if(snap.exists()) livePrices = snap.data(); processData(); 
+        }, err => {
+            document.getElementById('loading').innerHTML = `<h3 style="color:#800020;">خطأ في جلب الأسعار: ${err.message}</h3>`;
+        });
+        
+        unsubShipments = onSnapshot(collection(db, "shipments"), snap => { 
+            shipments = []; snap.forEach(d => shipments.push({ id:d.id, ...d.data() })); processData(); 
+        }, err => {
+            document.getElementById('loading').innerHTML = `<h3 style="color:#800020;">خطأ (صلاحيات الشحنات): ${err.message}</h3>`;
+        });
+        
+        unsubRadar = onSnapshot(collection(db, "eshteryly_orders"), snap => { 
+            radarTasks = []; snap.forEach(d => radarTasks.push({ id:d.id, ...d.data() })); processData(); 
+        }, err => {
+            document.getElementById('loading').innerHTML = `<h3 style="color:#800020;">خطأ (صلاحيات الرادار): ${err.message}</h3>`;
+        });
+        
         loadExpenses();
     };
 
-    // --- التعديل الجوهري: السماح المباشر للمستخدم admin@axon.com ---
     onAuthStateChanged(auth, async (user) => {
         if(!user){ window.location.href = "index.html"; return; }
         
         if(user.email === 'admin@axon.com'){
-            // المستخدم الرئيسي يدخل فوراً (الوثيقة في admins تم إنشاؤها سابقاً)
             window.loadFinancialData();
             return;
         }
         
-        // باقي المستخدمين (مثل branch_admin) يحتاجون إلى وثيقة admins
-        const adminDoc = await getDoc(doc(db, "admins", user.uid));
-        if(adminDoc.exists() && (adminDoc.data().role === 'super_admin' || adminDoc.data().role === 'branch_admin')){
-            window.loadFinancialData();
-        } else {
-            Swal.fire('غير مصرح','ليس لديك صلاحية الوصول إلى الخزينة','error').then(()=> signOut(auth));
+        try {
+            const adminDoc = await getDoc(doc(db, "admins", user.uid));
+            if(adminDoc.exists() && (adminDoc.data().role === 'super_admin' || adminDoc.data().role === 'branch_admin')){
+                window.loadFinancialData();
+            } else {
+                Swal.fire('غير مصرح','ليس لديك صلاحية الوصول إلى الخزينة','error').then(()=> signOut(auth));
+            }
+        } catch (error) {
+            document.getElementById('loading').innerHTML = `<h3 style="color:#800020;">خطأ في التحقق من الصلاحيات: ${error.message}</h3>`;
         }
     });
 
