@@ -254,18 +254,22 @@
             let merchantEmail = v.merchantEmail || "إدارة";
             let courierName = v.courierName || (v.type==='radar' && v.courierName ? v.courierName : "غير محدد");
 
-            // حسبة الشحن الدقيقة شاملة الوزن الزائد
-            let baseCost = getShippingCost(itemBranch);
-            let overWeight = (weight>2) ? Math.ceil(weight-2)*8 : 0;
+            // 1. تحديد إجمالي الـ COD بدقة من الفاتورة المحفوظة
+            let collected = Number(v.cod !== undefined ? v.cod : (v.total !== undefined ? v.total : (v.totalCod !== undefined ? v.totalCod : (v.amount || 0))));
             
-            // استخدام قيمة الشحن المسجلة أو حسابها لو مش موجودة
-            let savedShippingFee = v.shippingFee !== undefined ? Number(v.shippingFee) : (v.shippingCost !== undefined ? Number(v.shippingCost) : null);
-            let shipCost = savedShippingFee !== null ? savedShippingFee : (baseCost + overWeight);
+            // 2. سحب مصاريف الشحن المحفوظة في البوليصة لتجنب أي فرق حسابي
+            let shipCost = null;
+            if(v.shippingCost !== undefined && v.shippingCost !== null) shipCost = Number(v.shippingCost);
+            else if(v.shippingFee !== undefined && v.shippingFee !== null) shipCost = Number(v.shippingFee);
+            else if(v.shipping_cost !== undefined && v.shipping_cost !== null) shipCost = Number(v.shipping_cost);
             
-            // حساب قيمة الـ COD بدقة
-            let itemPrice = Number(v.amount||0);
-            let savedCod = v.cod !== undefined ? Number(v.cod) : (v.total !== undefined ? Number(v.total) : (v.totalCod !== undefined ? Number(v.totalCod) : null));
-            let collected = savedCod !== null ? savedCod : (itemPrice + shipCost + insurance);
+            // حساب احتياطي لو الشحن مش متسجل في البوليصة
+            if(shipCost === null || isNaN(shipCost)) {
+                let baseCost = getShippingCost(itemBranch);
+                let overWeight = (weight > 2) ? Math.ceil(weight - 2) * 8 : 0;
+                shipCost = baseCost + overWeight;
+            }
+
             let companyProfit = shipCost + insurance;
 
             if(courierName && courierName !== "غير محدد"){
@@ -279,7 +283,7 @@
             if((status === "تم التسليم" || status === "تم التسليم بنجاح") && v.type === 'shipment' && status !== "تمت التسوية" && merchantEmail !== "إدارة"){
                 if(!merchants[merchantEmail]) merchants[merchantEmail] = { count:0, totalCod:0, totalFees:0, items:[] };
                 let net = collected - companyProfit;
-                merchants[merchantEmail].items.push({...v, awb:v.awb||("AXN"+v.id?.substring(0,5)), shipCost: companyProfit, net: net});
+                merchants[merchantEmail].items.push({...v, awb:v.awb||("AXN"+v.id?.substring(0,5)), shipCost: companyProfit, net: net, collected: collected});
                 merchants[merchantEmail].totalCod += collected;
                 merchants[merchantEmail].totalFees += companyProfit;
                 merchants[merchantEmail].count++;
@@ -385,7 +389,7 @@
         let net = data.totalCod - data.totalFees;
         document.getElementById('merchantNet').innerText = net + " ج.م";
         let rows = "";
-        data.items.forEach(i => { rows += `<tr><td style="text-align:center;">${i.timestamp?.toDate().toLocaleDateString()||'-'}</td><td style="text-align:center;">${i.awb}</td><td style="text-align:right;">${i.name} (${i.city})</td><td style="text-align:center;">${i.totalCod || (Number(i.amount||0) + i.shipCost)}</td><td style="text-align:center;">${i.shipCost}</td><td style="color:#10B981; text-align:center;">${i.net} ج.م</td></tr>`; });
+        data.items.forEach(i => { rows += `<tr><td style="text-align:center;">${i.timestamp?.toDate().toLocaleDateString()||'-'}</td><td style="text-align:center;">${i.awb}</td><td style="text-align:right;">${i.name} (${i.city})</td><td style="text-align:center;">${i.collected}</td><td style="text-align:center;">${i.shipCost}</td><td style="color:#10B981; text-align:center;">${i.net} ج.م</td></tr>`; });
         document.getElementById('merchantItemsBody').innerHTML = rows;
         document.getElementById('merchantModal').style.display = 'flex';
     };
@@ -449,7 +453,7 @@
         let data = merchantsMap[currentMerchantEmail];
         if(!data) return;
         let rows = "", totalNet = 0;
-        data.items.forEach(i => { totalNet += Number(i.net); rows += `<tr><td style="border:1px solid #000; padding:4px;">${i.timestamp?.toDate().toLocaleDateString()||'-'}</td><td style="border:1px solid #000; padding:4px;">${i.awb}</td><td style="border:1px solid #000; padding:4px;">${i.name} (${i.city})</td><td style="border:1px solid #000; padding:4px;">${i.totalCod || (Number(i.amount||0) + i.shipCost)}</td><td style="border:1px solid #000; padding:4px;">${i.shipCost}</td><td style="border:1px solid #000; padding:4px; color:#10B981;">${i.net} ج.م</td></tr>`; });
+        data.items.forEach(i => { totalNet += Number(i.net); rows += `<tr><td style="border:1px solid #000; padding:4px;">${i.timestamp?.toDate().toLocaleDateString()||'-'}</td><td style="border:1px solid #000; padding:4px;">${i.awb}</td><td style="border:1px solid #000; padding:4px;">${i.name} (${i.city})</td><td style="border:1px solid #000; padding:4px;">${i.collected}</td><td style="border:1px solid #000; padding:4px;">${i.shipCost}</td><td style="border:1px solid #000; padding:4px; color:#10B981;">${i.net} ج.م</td></tr>`; });
         let html = `<div style="direction:rtl;padding:2mm;font-family:'Cairo';"><div style="display:flex;justify-content:space-between;margin-bottom:5px;"><div><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" class="print-logo"> <br><b>AXON EXPRESS</b><br>فرع ${selectedBranch}</div><div><h3 style="margin:0;">كشف حساب تاجر</h3><p style="margin:0;">${new Date().toLocaleString()}</p></div><div><h3 style="margin:0;">${currentMerchantEmail.split('@')[0]}</h3></div></div>
         <div style="background:#f0f0f0;padding:2px;margin-bottom:3px;">عدد البوالص: ${data.count}</div>
         <table class="print-table" style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr><th style="border:1px solid #000;padding:5px;">التاريخ</th><th style="border:1px solid #000;padding:5px;">البوليصة</th><th style="border:1px solid #000;padding:5px;">المستلم</th><th style="border:1px solid #000;padding:5px;">COD</th><th style="border:1px solid #000;padding:5px;">مخصوم</th><th style="border:1px solid #000;padding:5px;">الصافي</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="6" style="border:1px solid #000;padding:5px;"><div style="border:2px solid #10B981;background:#d1fae5;padding:5px;"><b>صافي المستحق: ${totalNet} ج.م</b></div></td></tr></tfoot></table>
