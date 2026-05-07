@@ -165,40 +165,48 @@
         body.dark-mode .chat-other { background: #16213e; color: #fff; border-color: #333;}
         body.dark-mode .chat-admin { background: #4a1919; color: #ff8a8a; border-color: #ff8a8a; }
 
+        .a4-wrapper { 
+            width: 100%; 
+            max-width: 210mm; 
+            min-height: 297mm; 
+            overflow: hidden; 
+            margin: 0 auto; 
+            background: #fff; 
+            border: 2px solid var(--primary-blue); 
+            padding: 10px; 
+            box-sizing: border-box; 
+            color: #000; 
+        }
+
+        /* تعديلات الطباعة للحفاظ على مقاس البوليصة بدون قطع في الموبايل */
         @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             body { background: #fff; margin: 0; padding: 0; color: #000; }
             header, .container, .floating-chat, .print-controls, footer { display: none !important; }
             #printArea { display: block !important; width: 100%; margin: 0; padding: 0; }
-            @page { size: A4 portrait; margin: 5mm; }
+            @page { size: A4 portrait; margin: 0; }
+            .a4-wrapper { 
+                width: 100% !important; 
+                max-width: 100% !important; 
+                border: none !important; 
+                margin: 0 !important; 
+                padding: 5mm !important; 
+                min-height: auto !important;
+            }
             .print-header img {
                 width: 3cm !important;
-                height: 2cm !important;
+                height: 3cm !important;
                 object-fit: contain !important;
             }
         }
         
-        .a4-wrapper { 
-            width: 200mm; 
-            height: 285mm; 
-            max-height: 285mm; 
-            overflow: hidden; 
-            margin: 0 auto; 
-            background: #fff; 
-            border: 2px solid var(--primary-blue); 
-            padding: 8px; 
-            box-sizing: border-box; 
-            color: #000; 
-            page-break-after: avoid; 
-            page-break-inside: avoid; 
-        }
         .print-controls { text-align: center; margin-bottom: 15px; padding: 15px; background: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
         .print-controls button { cursor: pointer; padding: 12px 25px; margin: 5px; font-size: 16px; font-weight: bold; border: none; border-radius: 5px; color: white; font-family: 'Cairo';}
         .print-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #800020; padding-bottom: 5px; margin-bottom: 8px; flex-wrap: nowrap; gap: 10px;}
         .print-header > div { flex: 1; text-align: center; overflow: hidden; }
         .print-header img {
             width: 3cm;
-            height: 2cm;
+            height: 3cm;
             object-fit: contain;
         }
         .barcode-svg { max-width: 100%; height: auto; }
@@ -267,7 +275,7 @@
                 </div>
                 <div class="stat-card">
                     <h3><i class="fa-solid fa-credit-card"></i> الحد الأقصى للتمويل (اشتريلي)</h3>
-                    <div class="value" id="creditLimitDisplay">0 ج.م</div>
+                    <div class="value" id="creditLimitDisplay">0 ج.م (متاح)</div>
                 </div>
                 <div class="stat-card"><h3 data-i18n="stat_active">إجمالي شحناتك النشطة</h3><div class="value" id="totalShipments">0</div></div>
                 <div class="stat-card"><h3 data-i18n="stat_cod">التحصيلات المتوقعة (COD)</h3><div class="value" id="totalMoney" style="color:var(--primary-burgundy);">0 ج.م</div></div>
@@ -429,7 +437,10 @@
             <p style="font-size:13px; font-weight:bold; color:var(--primary-burgundy); background:#ffeeba; padding:8px; border-radius:5px;">رسوم الخدمة المقررة: <span id="eshLocalPrice">يتم حسابها...</span> ج.م</p>
             <div class="input-group"><label>قيمة المشتريات (ج.م) *</label><input type="number" id="eshPurchaseValue" placeholder="إجمالي سعر المنتجات المطلوبة"></div>
             <div class="input-group"><label>تفاصيل الطلب (المنتجات المطلوبة)</label><textarea id="eshDetails" placeholder="اكتب طلباتك بالتفصيل الدقيق..." rows="3"></textarea></div>
-            <div class="input-group"><label>عنوان توصيل المشتريات</label><input type="text" id="eshAddress" placeholder="العنوان أو الصق رابط اللوكيشن"></div>
+            <div class="input-group">
+                <label>عنوان توصيل المشتريات (مقر المتجر)</label>
+                <input type="text" id="eshAddress" readonly style="background:#e9ecef; font-weight:bold;" placeholder="سيتم التسليم في عنوان المتجر">
+            </div>
             <div class="input-group">
                 <label>طريقة دفع قيمة المشتريات</label>
                 <select id="eshPayment" onchange="window.togglePaymentDetails()">
@@ -461,7 +472,11 @@
             <h3 style="color:#0EA5E9; border-bottom:2px solid #0EA5E9; padding-bottom:10px; margin-top:0;">🥶 طلب شحن فريش/مبرد</h3>
             <p style="font-size:13px; font-weight:bold; color:#0EA5E9; background:#e0f7fa; padding:8px; border-radius:5px;">رسوم الخدمة المقررة: <span id="coldLocalPrice">يتم حسابها...</span> ج.م</p>
             <div class="input-group"><label>وقت جاهزية الأوردر</label><input type="time" id="coldTime"></div>
-            <div class="input-group"><label>عنوان المستلم</label><input type="text" id="coldAddress" placeholder="عنوان المستلم بالتفصيل"></div>
+            <div class="input-group">
+                <label>استلام من (عنوان المتجر)</label>
+                <input type="text" id="coldPickupAddress" readonly style="background:#e9ecef; font-weight:bold;" placeholder="سيتم الاستلام من مقر المتجر">
+            </div>
+            <div class="input-group"><label>تسليم إلى (عنوان العميل)</label><input type="text" id="coldAddress" placeholder="اكتب عنوان المستلم بالتفصيل"></div>
             <div class="input-group"><label>قيمة التحصيل (COD)</label><input type="number" id="coldAmount" placeholder="تمن الأوردر فقط"></div>
             <button onclick="window.submitColdOrder()" style="width:100%; background:#0EA5E9; color:white; padding:15px; border:none; border-radius:10px; font-weight:bold; margin-top:15px; cursor:pointer; font-family:'Cairo'; font-size:15px;">تأكيد طلب التوصيل المبرد</button>
         </div>
@@ -514,6 +529,7 @@
 
         let currentCreditLimit = 0;
         let currentLifetimeSales = 0;
+        let usedCreditAmount = 0;
 
         window.toggleLang = () => { let lang = document.documentElement.lang === 'ar' ? 'en' : 'ar'; localStorage.setItem('axon_lang', lang); applyLang(lang); };
         function applyLang(lang) {
@@ -534,7 +550,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, where, or, setDoc, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, where, or, setDoc, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const app = initializeApp({
             apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
@@ -640,6 +656,8 @@
                         if(data.businessAddress) {
                             merchantAddress = data.businessAddress;
                             document.getElementById('merchantBusinessAddress').value = merchantAddress;
+                            document.getElementById('eshAddress').value = merchantAddress; // تثبيت عنوان المتجر لاشتريلي
+                            document.getElementById('coldPickupAddress').value = merchantAddress; // تثبيت عنوان الاستلام لكولد
                         }
                         if(data.branchName) {
                             branchName = data.branchName;
@@ -647,12 +665,15 @@
                         
                         // ربط حائط البطولات المباشر 
                         const sales = data.lifetime_sales || 0;
+                        usedCreditAmount = data.used_credit || 0;
                         currentLifetimeSales = sales;
                         document.getElementById('lifetimeSales').innerText = sales.toLocaleString('en-US') + " ج.م";
                         
-                        // ربط الائتمان 1%
-                        currentCreditLimit = sales * 0.01;
-                        document.getElementById('creditLimitDisplay').innerText = currentCreditLimit.toFixed(2) + " ج.م";
+                        // ربط الائتمان 1% مع خصم المستهلك
+                        let maxCredit = sales * 0.01;
+                        currentCreditLimit = maxCredit - usedCreditAmount;
+                        
+                        document.getElementById('creditLimitDisplay').innerText = currentCreditLimit.toFixed(2) + " ج.م (متاح)";
                         const creditSpan = document.getElementById('creditLimitAlertSpan');
                         if(creditSpan) creditSpan.innerText = currentCreditLimit.toFixed(2);
                     }
@@ -782,7 +803,8 @@
                 msgs.sort((a,b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
 
                 msgs.forEach(m => {
-                    if(m.orderId === currentChatOrderId || (!m.orderId && ((m.from === merchantEmail && m.to === courierName) || (m.from === courierName && m.to === merchantEmail)))) {
+                    // الفلتر الصارم: لازم الـ orderId يطابق الأوردر المفتوح بالظبط عشان نلغي الرسالة الشبح
+                    if(m.orderId === currentChatOrderId) {
                         let isMe = m.from === merchantEmail;
                         let msgClass = isMe ? "chat-mine" : "chat-other";
                         let senderName = isMe ? "أنت" : "الكابتن";
@@ -829,9 +851,11 @@
             return text.trim().replace(/\s+/g, ' ').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/[ىي]/g, 'ي'); 
         }
 
+        // التعديل الجذري في حاسبة الأسعار: إعطاء الأولوية للأسماء العربية لتطابق بورصة الأدمن تماماً
         window.getCityPrice = (cityName) => {
             if(!cityName) return 85; 
             let normalizedInput = normalizeArabic(cityName);
+            
             for (let zone in extraZones) {
                 let parts = zone.split('-');
                 let normalizedZone = normalizeArabic(zone);
@@ -843,17 +867,15 @@
                     return basePrice + extraFee; 
                 }
             }
-            let inputLower = cityName.toLowerCase();
-            if(normalizedInput.includes("قاهره") || normalizedInput.includes("جيزه") || inputLower.includes("cairo") || inputLower.includes("giza")) return Number(livePrices.cairo || livePrices['القاهرة'] || 85);
-            if(normalizedInput.includes("اسكندريه") || inputLower.includes("alex")) return Number(livePrices.alex || livePrices['الإسكندرية'] || 85);
-            if(normalizedInput.includes("بحيره") || inputLower.includes("beheira")) return Number(livePrices.beheira || livePrices['البحيرة'] || 125);
+            
             for (let gov in livePrices) {
                 let normalizedGov = normalizeArabic(gov);
                 if (normalizedInput.includes(normalizedGov) || normalizedGov.includes(normalizedInput)) {
                     return Number(livePrices[gov]);
                 }
             }
-            return 85; 
+            
+            return 85; // السعر الافتراضي لو المحافظة مش متسجلة خالص
         };
 
         window.handleFragileChange = () => {
@@ -929,17 +951,19 @@
 
         window.submitEshteryly = async () => {
             const details = document.getElementById('eshDetails').value.trim();
-            const address = document.getElementById('eshAddress').value.trim();
+            const address = merchantAddress; // استخدام وتثبيت عنوان المتجر كعنوان للتوصيل
             const payment = document.getElementById('eshPayment').value;
             const purchaseValueRaw = document.getElementById('eshPurchaseValue').value;
             const purchaseValue = parseFloat(purchaseValueRaw);
             
-            if(!details || !address || !payment) return Swal.fire('تنبيه', 'برجاء إكمال كافة البيانات واختيار طريقة الدفع.', 'warning');
+            if(!details || !payment) return Swal.fire('تنبيه', 'برجاء إكمال كافة البيانات واختيار طريقة الدفع.', 'warning');
+            if(address === "غير مسجل") return Swal.fire('تنبيه', 'برجاء كتابة وحفظ عنوان متجرك في أعلى الشاشة أولاً ليتمكن المندوب من توصيل مشترياتك إليه.', 'warning');
             if(isNaN(purchaseValue) || purchaseValue <= 0) return Swal.fire('تنبيه', 'يرجى إدخال قيمة المشتريات بشكل صحيح.', 'warning');
             
+            // كنترول الحد الائتماني
             if(payment === 'balance') {
                 if(purchaseValue > currentCreditLimit) {
-                    return Swal.fire('تم رفض العملية', `قيمة المشتريات (${purchaseValue} ج.م) تتجاوز الحد الائتماني المتاح (${currentCreditLimit.toFixed(2)} ج.م).`, 'error');
+                    return Swal.fire('الرصيد لا يكفي', `قيمة المشتريات (${purchaseValue} ج.م) تتجاوز الرصيد الائتماني المتاح لك (${currentCreditLimit.toFixed(2)} ج.م). برجاء سداد المستحقات السابقة لفتح رصيد جديد.`, 'error');
                 }
             }
             
@@ -948,16 +972,18 @@
             let localFee = window.getCityPrice(branchName);
             let totalAmount = purchaseValue + localFee;
             let finalDetails = details + ` | قيمة المشتريات: ${purchaseValue} ج.م | إجمالي الفاتورة مع الشحن: ${totalAmount} ج.م`;
+            
             if(payment === 'balance') {
                 finalDetails += ` | (تم تطبيق رسوم خدمة ائتمانية 58 ج.م) + 58`;
                 totalAmount += 58;
             }
+            
             try {
-                // اضافة ال amount و shippingCost عشان الخزنة تحسبها صح في الرادار
+                // اضافة ال amount صريحة عشان المندوب مايشوفش كلمة (مجاني)
                 await addDoc(collection(db, "eshteryly_orders"), {
                     merchantEmail: merchantEmail,
                     details: finalDetails,
-                    address: address,
+                    address: address, // العنوان ثابت وهو مقر المتجر
                     paymentMethod: payment,
                     status: "جاري البحث عن مندوب",
                     timestamp: new Date(),
@@ -968,30 +994,39 @@
                     shippingCost: localFee,
                     creditUsed: (payment === 'balance') ? true : false
                 });
+                
+                // لو الدفع بالرصيد، هنحدث الائتمان المستخدم في البروفايل
+                if(payment === 'balance') {
+                    await setDoc(doc(db, "merchant_profiles", merchantEmail), { used_credit: increment(purchaseValue) }, { merge: true });
+                }
+                
                 Swal.fire('تم!', 'تم بث أوردر المشتريات للرادار.', 'success');
             } catch (e) { Swal.fire('خطأ في الإرسال', e.message, 'error'); }
         };
 
         window.submitColdOrder = async () => {
             const time = document.getElementById('coldTime').value;
-            const address = document.getElementById('coldAddress').value.trim();
+            const pickupAddr = merchantAddress; // العنوان الإجباري للمتجر
+            const dropAddr = document.getElementById('coldAddress').value.trim(); // عنوان العميل
             const rawAmount = document.getElementById('coldAmount').value.trim();
-            if(!time || !address || !rawAmount) return Swal.fire('تنبيه', 'رجاء إكمال كافة بيانات أوردر الفريش', 'warning');
+            
+            if(!time || !dropAddr || !rawAmount) return Swal.fire('تنبيه', 'رجاء إكمال كافة بيانات أوردر الفريش', 'warning');
+            if(pickupAddr === "غير مسجل") return Swal.fire('تنبيه', 'برجاء حفظ عنوان متجرك في أعلى الشاشة أولاً ليتمكن المندوب من استلام الأوردر.', 'warning');
+            
             document.getElementById('coldModal').style.display = 'none';
             let localFee = window.getCityPrice(branchName);
             let finalAmount = Number(rawAmount) + localFee; 
             try {
-                // اضافة ال amount و shippingCost للخزنة
                 await addDoc(collection(db, "eshteryly_orders"), {
                     merchantEmail: merchantEmail,
-                    details: `🥶 كولد/فريش | الساعة: ${time} | تحصيل نهائي بالشحن: ${finalAmount} ج.م`,
-                    address: address,
+                    details: `🥶 كولد/فريش | الساعة: ${time} | استلام من المتجر: ${pickupAddr} | تسليم للعميل: ${dropAddr} | تحصيل نهائي بالشحن: ${finalAmount} ج.م`,
+                    address: dropAddr, // عنوان العميل
                     paymentMethod: "pickup",
                     status: "جاري البحث عن مندوب",
                     timestamp: new Date(),
                     branchName: branchName,
                     type: "radar",
-                    amount: finalAmount,
+                    amount: finalAmount, // عشان المندوب مايشوفش كلمة مجاني
                     shippingCost: localFee
                 });
                 Swal.fire('تم!', 'تم بث أوردر الفريش لمناديب الكولد.', 'success');
