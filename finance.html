@@ -42,14 +42,20 @@
         .close-btn{position:absolute;top:10px;left:10px;background:none;border:none;font-size:24px;cursor:pointer;color:#800020;}
         .summary-box{background:#f4f4f4;padding:10px;border-radius:8px;display:flex;justify-content:space-around;margin:15px 0;}
         
+        #printArea { display: none; }
+        .print-controls-ui { text-align: center; margin-bottom: 15px; padding: 10px; background: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .print-controls-ui button { cursor: pointer; padding: 10px 20px; margin: 5px; font-size: 14px; font-weight: bold; border: none; border-radius: 5px; color: white; font-family: 'Cairo'; }
+        
         @media print {
-            @page { size: landscape; margin: 10mm; }
-            body * { visibility: hidden; }
-            #printArea, #printArea * { visibility: visible; }
-            #printArea { position: absolute; top: 0; left: 0; width: 100%; }
-            .print-table { font-size: 10px; border-collapse: collapse; width: 100%; }
-            .print-table td, .print-table th { border: 1px solid #000; padding: 4px; }
-            .print-logo { width: 3cm !important; height: 3cm !important; object-fit: contain; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { background: #fff; margin: 0; padding: 0; color: #000; }
+            header, .container, .modal, .swal2-container, .print-controls-ui { display: none !important; }
+            #printArea { display: block !important; width: 100%; position: absolute; top: 0; left: 0; margin: 0; padding: 0; }
+            .a4-wrapper { width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 5mm !important; border: none !important; box-shadow: none !important; }
+            .print-table { font-size: 11px !important; border-collapse: collapse; width: 100%; page-break-inside: auto; }
+            .print-table tr { page-break-inside: avoid; page-break-after: auto; }
+            .print-table td, .print-table th { border: 1px solid #000 !important; padding: 5px !important; }
+            .print-logo { width: 3cm !important; height: 2cm !important; object-fit: contain; }
         }
     </style>
 </head>
@@ -150,6 +156,15 @@
         let netBranchProfit = totalCompanyProfit - totalExpensesAmount;
         document.getElementById('statNetBranchProfit').innerText = netBranchProfit + " ج.م";
     }
+
+    // دالة إغلاق شاشة الطباعة
+    window.closePrintView = () => {
+        document.getElementById('printArea').style.display = 'none';
+        document.getElementById('printArea').innerHTML = ''; 
+        document.body.style.overflow = 'auto'; // إعادة التمرير للصفحة
+        document.querySelector('header').style.display = 'flex';
+        document.querySelector('.container').style.display = 'block';
+    };
 </script>
 
 <script type="module">
@@ -178,7 +193,7 @@
             await addDoc(collection(db, "expenses"), { 
                 description: desc, 
                 amount: amt, 
-                timestamp: new Date().toISOString(),
+                timestamp: new Date().toISOString(), 
                 branchName: selectedBranch === 'all' ? 'all' : selectedBranch, 
                 addedBy: auth.currentUser?.email 
             });
@@ -367,11 +382,37 @@
         let rows = "", total=0, idx=1;
         data.shipments.forEach(s => { let c=Number(s.totalCollected)||0; total+=c; rows+=`<tr><td style="border:1px solid #000; padding:4px;">${idx++}</td><td style="border:1px solid #000; padding:4px;">${s.awb}</td><td style="border:1px solid #000; padding:4px;">${(s.merchantEmail||'').split('@')[0]}</td><td style="border:1px solid #000; padding:4px;">${s.name} (${s.phone})<br>${s.city}</td><td style="border:1px solid #000; padding:4px;">${c} ج.م</td></tr>`; });
         data.radar.forEach(r => { let c=r.paymentMethod==='pickup'?0:(Number(r.totalCollected)||0); total+=c; rows+=`<tr><td style="border:1px solid #000; padding:4px;">${idx++}</td><td style="border:1px solid #000; padding:4px;">رادار</td><td style="border:1px solid #000; padding:4px;">-</td><td style="border:1px solid #000; padding:4px;">${r.details?.substring(0,40)}<br>${r.address?.substring(0,40)}</td><td style="border:1px solid #000; padding:4px;">${c} ج.م</td></tr>`; });
-        let html = `<div style="direction:rtl;padding:2mm;font-family:'Cairo';"><div style="display:flex;justify-content:space-between;margin-bottom:5px;"><div><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" class="print-logo"> <br><b>AXON EXPRESS</b><br>فرع ${selectedBranch}</div><div><h3 style="margin:0;">تصفية عهدة كابتن</h3><p style="margin:0;">${new Date().toLocaleString()}</p></div><div><h3 style="margin:0;">${currentCourierData.name}</h3></div></div>
-        <table class="print-table"><thead><tr><th style="border:1px solid #000;padding:6px;">م</th><th style="border:1px solid #000;padding:6px;">رقم البوليصة</th><th style="border:1px solid #000;padding:6px;">التاجر</th><th style="border:1px solid #000;padding:6px;">بيانات المستلم</th><th style="border:1px solid #000;padding:6px;">المبلغ</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="5" style="border:1px solid #000;padding:6px;"><div style="border:2px solid #800020;background:#fff3cd;padding:6px;"><b>إجمالي العهدة: ${total} ج.م</b></div></td></tr></tfoot></table>
-        <div style="display:flex;justify-content:space-between;border-top:1px solid #000;margin-top:10px;padding-top:5px;"><div>توقيع المندوب: ${currentCourierData.name}</div><div>توقيع الخزينة: ........</div><div>التاريخ: ${new Date().toLocaleDateString()}</div></div></div>`;
-        document.getElementById('printArea').innerHTML = html;
-        window.print();
+        
+        let html = `
+        <style>@media print { @page { size: landscape !important; margin: 5mm; } }</style>
+        <div class="print-controls-ui no-print">
+            <button onclick="window.print()" style="background:#111;">🖨️ طباعة المانيفست</button>
+            <button onclick="window.closePrintView()" style="background:#800020;">رجوع للسيستم</button>
+        </div>
+        <div class="a4-wrapper" dir="rtl" style="font-family:'Cairo', sans-serif; background:#fff; padding:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;border-bottom:2px solid #111;padding-bottom:10px;">
+                <div><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" class="print-logo"> <br><b>AXON EXPRESS</b><br>الفرع: ${selectedBranch}</div>
+                <div style="text-align:center;"><h3 style="margin:0;font-size:18px;">تصفية عهدة كابتن</h3><p style="margin:0;font-size:12px;">${new Date().toLocaleString()}</p></div>
+                <div><h3 style="margin:0;background:#111;color:#E1E715;padding:5px 15px;border-radius:5px;">كابتن: ${currentCourierData.name}</h3></div>
+            </div>
+            <table class="print-table">
+                <thead><tr><th style="background:#111;color:#fff;">م</th><th style="background:#111;color:#fff;">البوليصة</th><th style="background:#111;color:#fff;">التاجر</th><th style="background:#111;color:#fff;">بيانات المستلم</th><th style="background:#111;color:#fff;">المبلغ</th></tr></thead>
+                <tbody>${rows}</tbody>
+                <tfoot><tr><td colspan="5"><div style="border:2px solid #800020;background:#fff3cd;padding:8px;font-size:16px;"><b>إجمالي العهدة: ${total} ج.م</b></div></td></tr></tfoot>
+            </table>
+            <div style="display:flex;justify-content:space-between;border-top:1px solid #000;margin-top:15px;padding-top:10px;font-weight:bold;">
+                <div>توقيع المندوب: ${currentCourierData.name}</div>
+                <div>توقيع الخزينة: ........................</div>
+            </div>
+        </div>`;
+        
+        document.querySelector('header').style.display = 'none';
+        document.querySelector('.container').style.display = 'none';
+        document.body.style.overflow = 'hidden'; 
+        
+        const printArea = document.getElementById('printArea');
+        printArea.innerHTML = html;
+        printArea.style.display = 'block';
     };
 
     window.showMerchantDetails = (email) => {
@@ -389,7 +430,6 @@
         document.getElementById('merchantModal').style.display = 'flex';
     };
 
-    // دالة تصفير الائتمان الخاصة بالخزنة
     window.resetMerchantCredit = async () => {
         let email = currentMerchantEmail;
         if(!email) return;
@@ -406,7 +446,6 @@
             if (result.isConfirmed) {
                 try {
                     const merchantRef = doc(db, "merchant_profiles", email);
-                    // تصفير حقل used_credit في بروفايل التاجر
                     await setDoc(merchantRef, { used_credit: 0 }, { merge: true });
                     Swal.fire('تم بنجاح', 'تم تصفير الائتمان المسحوب للتاجر. يمكنه الآن الطلب من جديد.', 'success');
                 } catch(e) {
@@ -475,13 +514,39 @@
         let data = merchantsMap[currentMerchantEmail];
         if(!data) return;
         let rows = "", totalNet = 0;
-        data.items.forEach(i => { totalNet += Number(i.net); let dateStr = i.timestamp?.toDate ? i.timestamp.toDate().toLocaleDateString() : new Date(i.timestamp).toLocaleDateString(); rows += `<tr><td style="border:1px solid #000; padding:6px; text-align:center;">${dateStr}</td><td style="border:1px solid #000; padding:6px; text-align:center;">${i.awb}</td><td style="border:1px solid #000; padding:6px; text-align:center;">${i.name} (${i.city})</td><td style="border:1px solid #000; padding:6px; text-align:center;">${i.collected}</td><td style="border:1px solid #000; padding:6px; text-align:center;">${i.shipCost}</td><td style="border:1px solid #000; padding:6px; text-align:center; color:#10B981;">${i.net} ج.م</td></tr>`; });
-        let html = `<div style="direction:rtl;padding:2mm;font-family:'Cairo';"><div style="display:flex;justify-content:space-between;margin-bottom:5px;"><div><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" class="print-logo"> <br><b>AXON EXPRESS</b><br>فرع ${selectedBranch}</div><div><h3 style="margin:0;">كشف حساب تاجر</h3><p style="margin:0;">${new Date().toLocaleString()}</p></div><div><h3 style="margin:0;">${currentMerchantEmail.split('@')[0]}</h3></div></div>
-        <div style="background:#f0f0f0;padding:2px;margin-bottom:3px;">عدد البوالص: ${data.count}</div>
-        <table class="print-table"><thead><tr><th style="border:1px solid #000;padding:6px;text-align:center;">التاريخ</th><th style="border:1px solid #000;padding:6px;text-align:center;">البوليصة</th><th style="border:1px solid #000;padding:6px;text-align:center;">المستلم</th><th style="border:1px solid #000;padding:6px;text-align:center;">COD</th><th style="border:1px solid #000;padding:6px;text-align:center;">مخصوم</th><th style="border:1px solid #000;padding:6px;text-align:center;">الصافي</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="6" style="border:1px solid #000;padding:6px;"><div style="border:2px solid #10B981;background:#d1fae5;padding:6px;"><b>صافي المستحق: ${totalNet} ج.م</b></div></td></tr></tfoot></table>
-        <div style="display:flex;justify-content:space-between;border-top:1px solid #000;margin-top:10px;padding-top:5px;"><div>توقيع التاجر: ${currentMerchantEmail.split('@')[0]}</div><div>توقيع الخزينة: ........</div><div>التاريخ: ${new Date().toLocaleDateString()}</div></div></div>`;
-        document.getElementById('printArea').innerHTML = html;
-        window.print();
+        data.items.forEach(i => { totalNet += Number(i.net); let dateStr = i.timestamp?.toDate ? i.timestamp.toDate().toLocaleDateString() : new Date(i.timestamp).toLocaleDateString(); rows += `<tr><td style="border:1px solid #000; padding:6px; text-align:center;">${dateStr}</td><td style="border:1px solid #000; padding:6px; text-align:center;">${i.awb}</td><td style="border:1px solid #000; padding:6px; text-align:center;">${i.name} (${i.city})</td><td style="border:1px solid #000; padding:6px; text-align:center; font-weight:bold;">${i.collected}</td><td style="border:1px solid #000; padding:6px; text-align:center;">${i.shipCost}</td><td style="border:1px solid #000; padding:6px; text-align:center; color:#10B981; font-weight:bold;">${i.net} ج.م</td></tr>`; });
+        
+        let html = `
+        <style>@media print { @page { size: portrait !important; margin: 5mm; } }</style>
+        <div class="print-controls-ui no-print">
+            <button onclick="window.print()" style="background:#111;">🖨️ طباعة كشف الحساب</button>
+            <button onclick="window.closePrintView()" style="background:#800020;">رجوع للسيستم</button>
+        </div>
+        <div class="a4-wrapper" dir="rtl" style="font-family:'Cairo', sans-serif; background:#fff; padding:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;border-bottom:2px solid #111;padding-bottom:10px;">
+                <div><img src="WhatsApp%20Image%202026-04-28%20at%209.22.48%20PM.png" class="print-logo"> <br><b>AXON EXPRESS</b><br>الفرع: ${selectedBranch}</div>
+                <div style="text-align:center;"><h3 style="margin:0;font-size:18px;">كشف حساب تاجر</h3><p style="margin:0;font-size:12px;">${new Date().toLocaleString()}</p></div>
+                <div><h3 style="margin:0;background:#111;color:#fff;padding:5px 15px;border-radius:5px;">التاجر: ${currentMerchantEmail.split('@')[0]}</h3></div>
+            </div>
+            <div style="background:#f0f0f0;padding:5px;margin-bottom:10px;font-weight:bold;">عدد البوالص: ${data.count}</div>
+            <table class="print-table">
+                <thead><tr><th style="background:#111;color:#fff;">التاريخ</th><th style="background:#111;color:#fff;">البوليصة</th><th style="background:#111;color:#fff;">المستلم</th><th style="background:#111;color:#fff;">COD</th><th style="background:#111;color:#fff;">مخصوم</th><th style="background:#111;color:#fff;">الصافي</th></tr></thead>
+                <tbody>${rows}</tbody>
+                <tfoot><tr><td colspan="6"><div style="border:2px solid #10B981;background:#d1fae5;padding:8px;font-size:16px;"><b>صافي المستحق للتاجر: ${totalNet} ج.م</b></div></td></tr></tfoot>
+            </table>
+            <div style="display:flex;justify-content:space-between;border-top:1px solid #000;margin-top:15px;padding-top:10px;font-weight:bold;">
+                <div>توقيع التاجر: ........................</div>
+                <div>توقيع الخزينة: ........................</div>
+            </div>
+        </div>`;
+        
+        document.querySelector('header').style.display = 'none';
+        document.querySelector('.container').style.display = 'none';
+        document.body.style.overflow = 'hidden';
+        
+        const printArea = document.getElementById('printArea');
+        printArea.innerHTML = html;
+        printArea.style.display = 'block';
     };
 
     window.loadFinancialData = () => {
