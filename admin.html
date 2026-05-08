@@ -244,6 +244,7 @@
         
         <div class="admin-tabs">
             <button class="admin-tab-btn active" onclick="switchAdminTab('mainOps')"><i class="fa-solid fa-truck-fast"></i> <span data-i18n="tab_main">العمليات الرئيسية</span></button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('exchangeOps')"><i class="fa-solid fa-tower-broadcast"></i> بورصة التسعير 📡</button>
             <button class="admin-tab-btn" onclick="switchAdminTab('emergencyOps')" style="color:var(--primary-burgundy);">
                 <i class="fa-solid fa-truck-medical"></i> <span data-i18n="tab_emergency">طوارئ ونقل</span> 🚨
                 <span id="emergencyBadge" style="background:red; color:white; border-radius:50%; padding:2px 6px; font-size:10px; margin-right:5px; display:none;">0</span>
@@ -305,16 +306,6 @@
                 </div>
             </div>
 
-            <div class="admin-section bourse-section" style="background: #f0f4f8; border: 2px dashed var(--primary-blue);" id="exchangeSection">
-                <h2 style="color: var(--primary-blue); border-bottom-color: var(--primary-blue);"><i class="fa-solid fa-tower-broadcast"></i> <span data-i18n="bourse_title">بورصة الشحن الحية (تحديث مركزي)</span></h2>
-                <div id="pricesGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 15px;"></div>
-                <div style="background: #e0eaf5; padding: 10px; border-radius: 5px; border: 1px solid var(--primary-blue); margin-bottom: 15px;">
-                    <label style="font-size:13px; font-weight:bold; color: var(--primary-burgundy);"><i class="fa-solid fa-triangle-exclamation"></i> غرامة تأجيل الاستلام:</label>
-                    <input type="number" id="pricePenalty" placeholder="مثال: 30" style="width:100%; padding:8px; border-radius:5px; border: 1px solid var(--primary-blue); font-weight:bold; color:var(--primary-burgundy);">
-                </div>
-                <button onclick="window.updateLivePrices()" style="background: var(--primary-blue); color: var(--primary-yellow); border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; font-family:'Cairo';">تحديث التسعيرة في الشبكة (أساسي + أطراف) 📡</button>
-            </div>
-
             <div class="admin-section">
                 <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; border-bottom: 2px solid var(--primary-yellow); padding-bottom: 10px; margin-bottom: 15px;">
                     <h2 style="border:none; margin:0; padding:0; color:var(--primary-blue);"><i class="fa-solid fa-boxes-packing" style="color:var(--primary-yellow);"></i> <span data-i18n="bank_title">بنك الشحنات الرئيسي</span></h2>
@@ -338,6 +329,19 @@
                         <tbody id="shipmentsBody"></tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+
+        <div id="exchangeOps" class="admin-tab-content">
+            <div class="admin-section bourse-section" style="background: #f0f4f8; border: 2px dashed var(--primary-blue);" id="exchangeSection">
+                <h2 style="color: var(--primary-blue); border-bottom-color: var(--primary-blue);"><i class="fa-solid fa-tower-broadcast"></i> <span data-i18n="bourse_title">بورصة الشحن الحية (تحديث مركزي)</span></h2>
+                <p style="font-size: 13px; color: #666;">أي تعديل هنا يتم تسميعه فوراً في حاسبات التسعير لدى كافة التجار وفي لوحات الخزينة.</p>
+                <div id="pricesGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 15px;"></div>
+                <div style="background: #e0eaf5; padding: 10px; border-radius: 5px; border: 1px solid var(--primary-blue); margin-bottom: 15px;">
+                    <label style="font-size:13px; font-weight:bold; color: var(--primary-burgundy);"><i class="fa-solid fa-triangle-exclamation"></i> غرامة تأجيل الاستلام:</label>
+                    <input type="number" id="pricePenalty" placeholder="مثال: 30" style="width:100%; padding:8px; border-radius:5px; border: 1px solid var(--primary-blue); font-weight:bold; color:var(--primary-burgundy);">
+                </div>
+                <button onclick="window.updateLivePrices()" style="background: var(--primary-blue); color: var(--primary-yellow); border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; font-family:'Cairo';">تحديث التسعيرة في الشبكة (أساسي + أطراف) 📡</button>
             </div>
         </div>
 
@@ -503,20 +507,34 @@
             if(!name || !email || !pass) return Swal.fire('بيانات ناقصة', 'رجاءً تعبئة الاسم والإيميل والباسورد', 'error');
             if(pass.length < 6) return Swal.fire('خطأ', 'الباسورد يجب أن يكون 6 أحرف أو أرقام على الأقل', 'error');
             if((adminRole === 'branch_admin' || adminRole === 'operator') && role === 'admin') return Swal.fire('صلاحيات محدودة', 'القيادة العليا فقط هي من تستطيع تعيين مديري الفروع.', 'error');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الإنشاء...'; btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الإنشاء والمصادقة...'; btn.disabled = true;
             try {
+                // 1. كاريت الحساب في الـ Authentication الأول
                 const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, pass);
-                const uid = userCredential.user.uid; await signOut(secondaryAuth);
-                let collectionName = "merchant_profiles"; if(role === "delivery") collectionName = "couriers"; if(role === "admin" || role === "operator") collectionName = "admins";
-                let userData = { name: name, email: email, role: role, timestamp: new Date() };
+                const uid = userCredential.user.uid; 
+                await signOut(secondaryAuth);
+                
+                // 2. ارمي الداتا في قاعدة البيانات بناءً على الصلاحية
+                let collectionName = "merchant_profiles"; 
+                if(role === "delivery") collectionName = "couriers"; 
+                if(role === "admin" || role === "operator") collectionName = "admins";
+                
                 let targetBranch = adminRole === 'super_admin' ? document.getElementById('newAccBranch').value : adminBranch;
-                if(role === "delivery") { userData.status = "offline"; userData.currentLocation = {lat: null, lng: null}; userData.branchName = targetBranch; userData.successfulDeliveries = 0; }
-                if(role === "admin" || role === "operator" || role === "merchant") { userData.branchName = targetBranch; }
+                let userData = { name: name, email: email, role: role, timestamp: new Date(), branchName: targetBranch };
+                
+                if(role === "delivery") { userData.status = "offline"; userData.currentLocation = {lat: null, lng: null}; userData.successfulDeliveries = 0; }
+                
                 await setDoc(doc(db, collectionName, role === "merchant" ? email : uid), userData);
                 if(role === "merchant") await setDoc(doc(db, "users", email), { email: email, lifetime_sales: 0 });
-                Swal.fire('عاش يا هندسة', `تم إنشاء حساب (${name}) بنجاح كـ (${role}) وربطه بفرع (${targetBranch})`, 'success');
+                
+                Swal.fire('تمت العملية بنجاح', `تم إنشاء الحساب (${name}) كـ (${role}) وتسجيله في النظام رسمياً ليتمكن من الدخول فوراً.`, 'success');
                 document.getElementById('newAccName').value = ''; document.getElementById('newAccEmail').value = ''; document.getElementById('newAccPass').value = '';
-            } catch (error) { Swal.fire('خطأ في الإنشاء', error.message, 'error'); } finally { btn.innerHTML = '<span data-i18n="btn_create">إنشاء الحساب فوراً</span> 🚀'; btn.disabled = false; }
+            } catch (error) { 
+                Swal.fire('خطأ في الإنشاء', error.message, 'error'); 
+            } finally { 
+                btn.innerHTML = '<span data-i18n="btn_create">إنشاء الحساب فوراً</span> 🚀'; 
+                btn.disabled = false; 
+            }
         };
 
         function initAdminMap() { adminMap = L.map('adminMap').setView([30.0444, 31.2357], 6); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(adminMap); }
