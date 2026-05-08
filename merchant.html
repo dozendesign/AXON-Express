@@ -672,6 +672,7 @@
                         // ربط الائتمان 1% مع خصم المستهلك
                         let maxCredit = sales * 0.01;
                         currentCreditLimit = maxCredit - usedCreditAmount;
+                        if(currentCreditLimit < 0) currentCreditLimit = 0;
                         
                         document.getElementById('creditLimitDisplay').innerText = currentCreditLimit.toFixed(2) + " ج.م (متاح)";
                         const creditSpan = document.getElementById('creditLimitAlertSpan');
@@ -856,6 +857,7 @@
             if(!cityName) return 85; 
             let normalizedInput = normalizeArabic(cityName);
             
+            // 1. أولوية البحث في الإكسترا زون الأول
             for (let zone in extraZones) {
                 let parts = zone.split('-');
                 let normalizedZone = normalizeArabic(zone);
@@ -868,6 +870,7 @@
                 }
             }
             
+            // 2. البحث الدقيق في المحافظات الأساسية بالاسم العربي حصراً
             for (let gov in livePrices) {
                 let normalizedGov = normalizeArabic(gov);
                 if (normalizedInput.includes(normalizedGov) || normalizedGov.includes(normalizedInput)) {
@@ -957,7 +960,7 @@
             const purchaseValue = parseFloat(purchaseValueRaw);
             
             if(!details || !payment) return Swal.fire('تنبيه', 'برجاء إكمال كافة البيانات واختيار طريقة الدفع.', 'warning');
-            if(address === "غير مسجل") return Swal.fire('تنبيه', 'برجاء كتابة وحفظ عنوان متجرك في أعلى الشاشة أولاً ليتمكن المندوب من توصيل مشترياتك إليه.', 'warning');
+            if(address === "غير مسجل" || !address) return Swal.fire('تنبيه', 'برجاء كتابة وحفظ عنوان متجرك في أعلى الشاشة أولاً ليتمكن المندوب من توصيل مشترياتك إليه.', 'warning');
             if(isNaN(purchaseValue) || purchaseValue <= 0) return Swal.fire('تنبيه', 'يرجى إدخال قيمة المشتريات بشكل صحيح.', 'warning');
             
             // كنترول الحد الائتماني
@@ -1011,7 +1014,7 @@
             const rawAmount = document.getElementById('coldAmount').value.trim();
             
             if(!time || !dropAddr || !rawAmount) return Swal.fire('تنبيه', 'رجاء إكمال كافة بيانات أوردر الفريش', 'warning');
-            if(pickupAddr === "غير مسجل") return Swal.fire('تنبيه', 'برجاء حفظ عنوان متجرك في أعلى الشاشة أولاً ليتمكن المندوب من استلام الأوردر.', 'warning');
+            if(pickupAddr === "غير مسجل" || !pickupAddr) return Swal.fire('تنبيه', 'برجاء حفظ عنوان متجرك في أعلى الشاشة أولاً ليتمكن المندوب من استلام الأوردر.', 'warning');
             
             document.getElementById('coldModal').style.display = 'none';
             let localFee = window.getCityPrice(branchName);
