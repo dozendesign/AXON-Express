@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محاكي شوبيفاي | Axon Test</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background: #f4f7f6; padding: 20px; text-align: center; }
+        .box { background: white; max-width: 400px; margin: 50px auto; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-top: 4px solid #95BF47; }
+        input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; font-weight: bold; text-align: center; direction: ltr;}
+        button { background: #95BF47; color: white; border: none; padding: 15px 20px; border-radius: 8px; cursor: pointer; font-family: 'Cairo'; font-weight: bold; font-size: 16px; width: 100%; transition: 0.3s; }
+        button:hover { background: #7a9c3a; }
+        #result { margin-top: 15px; font-weight: bold; font-size: 14px; padding: 10px; border-radius: 5px; display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="box">
+        <h2 style="color: #95BF47; margin-top: 0;">🛍️ محاكي أوردرات شوبيفاي</h2>
+        <p style="font-size: 14px; color: #555;">حط الكود السري بتاع التاجر (API Key) هنا عشان نبعت أوردر وهمي للسيستم بتاعك.</p>
+        
+        <input type="text" id="apiKey" placeholder="AXN_...">
+        
+        <button onclick="sendFakeOrder()" id="btn">إرسال أوردر وهمي (Test Order)</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function sendFakeOrder() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const resultDiv = document.getElementById('result');
+            const btn = document.getElementById('btn');
+
+            if(!apiKey) {
+                alert("لازم تحط الكود السري الأول!");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = "جاري الإرسال...";
+            resultDiv.style.display = 'none';
+
+            // بيانات الأوردر الوهمية كأنها جاية من شوبيفاي
+            const fakeShopifyData = {
+                current_total_price: "2500",
+                customer: {
+                    first_name: "عميل",
+                    last_name: "تجربة من شوبيفاي",
+                    phone: "01012345678"
+                },
+                shipping_address: {
+                    city: "الإسكندرية",
+                    address1: "شارع البحر، العمارة الزرقاء",
+                    address2: "الدور الرابع"
+                }
+            };
+
+            try {
+                const response = await fetch(`/api/shopify-webhook?apiKey=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(fakeShopifyData)
+                });
+
+                const data = await response.json();
+
+                resultDiv.style.display = 'block';
+                if(response.ok) {
+                    resultDiv.style.background = "#d4edda";
+                    resultDiv.style.color = "#155724";
+                    resultDiv.innerHTML = `✅ نجاح! الأوردر وصل Axon Express ورقم البوليصة: ${data.awb}`;
+                } else {
+                    resultDiv.style.background = "#f8d7da";
+                    resultDiv.style.color = "#721c24";
+                    resultDiv.innerHTML = `❌ فشل: ${data.error}`;
+                }
+            } catch(error) {
+                resultDiv.style.display = 'block';
+                resultDiv.style.background = "#f8d7da";
+                resultDiv.style.color = "#721c24";
+                resultDiv.innerHTML = `❌ خطأ في الاتصال: ${error.message}`;
+            }
+
+            btn.disabled = false;
+            btn.innerText = "إرسال أوردر وهمي (Test Order)";
+        }
+    </script>
+</body>
+</html>
