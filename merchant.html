@@ -265,6 +265,7 @@
                     <i class="fa-solid fa-phone" style="color:var(--primary-blue);"></i>
                     <input type="tel" id="merchantBusinessPhone" data-i18n-placeholder="m_phone_ph" placeholder="رقم المتجر (للتواصل)">
                     <button id="saveInfoBtn" style="background:var(--primary-burgundy); color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-family:'Cairo'; font-weight:bold;" onclick="window.saveBusinessInfo()"><i class="fa-solid fa-floppy-disk"></i> <span data-i18n="save">حفظ</span></button>
+                    <button id="shopifyBtn" style="background:#95BF47; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-family:'Cairo'; font-weight:bold; display:flex; align-items:center; gap:5px;" onclick="window.showShopifyModal()"><i class="fa-brands fa-shopify"></i> <span>ربط شوبيفاي</span></button>
                 </div>
             </div>
 
@@ -353,6 +354,33 @@
                     <button onclick="window.sendChatMessage()" style="background: #25D366; color: white; border: none; padding: 10px 15px; border-radius: 8px; margin-right: 10px; font-family: 'Cairo'; font-weight: bold; cursor: pointer; transition: 0.2s;"><i class="fa-solid fa-paper-plane"></i> إرسال</button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- مودال شوبيفاي -->
+    <div id="shopifyModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="document.getElementById('shopifyModal').style.display='none'">✖</button>
+            <h3 style="color:#95BF47; border-bottom: 2px solid var(--primary-blue); padding-bottom:10px; margin-top:0;"><i class="fa-brands fa-shopify"></i> إعدادات ربط شوبيفاي</h3>
+            <p style="font-size:13px; color:#555; background:#f4f7f6; padding:10px; border-radius:8px; border:1px solid #ccc;">انسخ الرابط والكود السري وضعهم في إعدادات (Webhooks) داخل متجرك في شوبيفاي لتنزيل الأوردرات أوتوماتيكياً على سيستم Axon.</p>
+
+            <div class="input-group">
+                <label>رابط الربط (Webhook URL)</label>
+                <div style="display:flex; gap:10px;">
+                    <input type="text" id="shopifyWebhookUrl" readonly value="https://axon-express.vercel.app/api/shopify-webhook" style="background:#e9ecef; flex:1; direction:ltr; text-align:left;">
+                    <button onclick="window.copyText('shopifyWebhookUrl')" style="background:var(--primary-blue); color:white; border:none; padding:10px; border-radius:5px; cursor:pointer;" title="نسخ الرابط"><i class="fa-solid fa-copy"></i></button>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>الكود السري (API Key)</label>
+                <div style="display:flex; gap:10px;">
+                    <input type="text" id="shopifyApiKey" readonly placeholder="اضغط على إنشاء كود للبدء" style="background:#e9ecef; flex:1; font-weight:bold; color:var(--primary-burgundy); direction:ltr; text-align:left;">
+                    <button onclick="window.copyText('shopifyApiKey')" style="background:var(--primary-blue); color:white; border:none; padding:10px; border-radius:5px; cursor:pointer;" title="نسخ الكود"><i class="fa-solid fa-copy"></i></button>
+                </div>
+            </div>
+
+            <button id="generateApiBtn" onclick="window.generateApiKey()" style="width:100%; background:#111; color:white; padding:15px; border:none; border-radius:10px; font-weight:bold; margin-top:15px; cursor:pointer; font-family:'Cairo'; font-size:15px; display:none;"><i class="fa-solid fa-key"></i> إنشاء كود سري جديد</button>
         </div>
     </div>
 
@@ -567,6 +595,7 @@
         const db = getFirestore(app);
         
         let merchantEmail = "", merchantName = "", merchantIP = "جاري التحقق...", merchantPhone = "غير مسجل", merchantAddress = "غير مسجل", branchName = "المركز الرئيسي";
+        let merchantApiKey = ""; // متغير الكود السري للربط
         
         let livePrices = {
             "القاهرة": 85, "الجيزة": 85, "الإسكندرية": 85,
@@ -662,6 +691,11 @@
                         if(data.branchName) {
                             branchName = data.branchName;
                         }
+                        if(data.apiKey) {
+                            merchantApiKey = data.apiKey;
+                        } else {
+                            merchantApiKey = "";
+                        }
                         
                         // ربط حائط البطولات المباشر 
                         const sales = data.lifetime_sales || 0;
@@ -732,6 +766,44 @@
                 }
             }
         }, 5000);
+
+        // وظائف ربط شوبيفاي
+        window.showShopifyModal = () => {
+            const modal = document.getElementById('shopifyModal');
+            const keyInput = document.getElementById('shopifyApiKey');
+            const genBtn = document.getElementById('generateApiBtn');
+            
+            if(merchantApiKey) {
+                keyInput.value = merchantApiKey;
+                genBtn.style.display = 'none';
+            } else {
+                keyInput.value = '';
+                genBtn.style.display = 'block';
+            }
+            modal.style.display = 'flex';
+        };
+
+        window.generateApiKey = async () => {
+            const newKey = "AXN_" + Math.random().toString(36).substring(2, 10).toUpperCase() + Math.random().toString(36).substring(2, 10).toUpperCase();
+            try {
+                await setDoc(doc(db, "merchant_profiles", merchantEmail), { apiKey: newKey }, { merge: true });
+                merchantApiKey = newKey;
+                document.getElementById('shopifyApiKey').value = newKey;
+                document.getElementById('generateApiBtn').style.display = 'none';
+                Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم إنشاء الكود السري بنجاح', showConfirmButton:false, timer:2000});
+            } catch(e) {
+                Swal.fire('خطأ', 'فشل إنشاء الكود: ' + e.message, 'error');
+            }
+        };
+
+        window.copyText = (elementId) => {
+            const copyText = document.getElementById(elementId);
+            if(!copyText.value) return Swal.fire('تنبيه', 'لا يوجد نص لنسخه', 'warning');
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(copyText.value);
+            Swal.fire({toast:true, position:'top-end', icon:'success', title:'تم النسخ', showConfirmButton:false, timer:1500});
+        };
 
         function startGlobalChatListener() {
             if(globalChatUnsubscribe) globalChatUnsubscribe();
