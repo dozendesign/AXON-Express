@@ -7,6 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- مكتبة Chart.js للرسوم البيانية -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         *{box-sizing:border-box;}
         body{font-family:'Cairo',sans-serif;margin:0;background:#f8f9fa;}
@@ -17,35 +19,38 @@
         .filter-bar{background:white;padding:15px;border-radius:12px;margin-bottom:20px;display:flex;align-items:center;gap:15px;flex-wrap:wrap;}
         select{padding:8px 12px;border-radius:8px;border:2px solid #111;font-family:'Cairo';font-weight:bold;}
         .tabs{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;}
-        .tab-btn{background:#e2e8f0;border:none;padding:8px 20px;border-radius:8px;cursor:pointer;font-weight:bold;}
+        .tab-btn{background:#e2e8f0;border:none;padding:8px 20px;border-radius:8px;cursor:pointer;font-weight:bold; white-space: nowrap;}
         .tab-btn.active{background:#111;color:#E1E715;}
         .tab-content{display:none;animation:fadeIn 0.3s;}
         .tab-content.active{display:block;}
         @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
         .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:25px;}
-        .stat-card{background:white;padding:20px;border-radius:12px;text-align:center;border-bottom:4px solid #111;}
+        .stat-card{background:white;padding:20px;border-radius:12px;text-align:center;border-bottom:4px solid #111; box-shadow:0 4px 10px rgba(0,0,0,0.05);}
         .stat-card.red{border-bottom-color:#800020;}
         .stat-card.green{border-bottom-color:#10B981;}
         .stat-card.blue{border-bottom-color:#17a2b8;}
-        .value{font-size:26px;font-weight:900;margin-top:5px;}
+        .stat-card h3, .stat-card h4 {margin: 0 0 10px 0; color: #555;}
+        .value{font-size:26px;font-weight:900;margin-top:5px; color: #111;}
         .table-responsive{overflow-x:auto;background:white;border-radius:12px;border:1px solid #ddd;margin-bottom:25px;}
         table{width:100%;min-width:800px;border-collapse:collapse;}
         th{background:#111;color:#E1E715;padding:12px;}
         td{padding:10px;border-bottom:1px solid #eee;}
-        button{border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:bold;margin:2px;}
+        button{border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:bold;margin:2px; font-family:'Cairo';}
         .btn-view{background:#17a2b8;color:white;}
         .btn-settle{background:#10B981;color:white;}
         .btn-print{background:#111;color:#E1E715;}
         .btn-danger{background:#800020;color:white;}
-        .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);align-items:center;justify-content:center;z-index:2000;}
-        .modal-content{background:white;padding:20px;border-radius:15px;max-width:900px;width:90%;max-height:90vh;overflow-y:auto;position:relative;}
+        .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);align-items:center;justify-content:center;z-index:2000; padding:15px;}
+        .modal-content{background:white;padding:20px;border-radius:15px;max-width:900px;width:100%;max-height:90vh;overflow-y:auto;position:relative;}
         .close-btn{position:absolute;top:10px;left:10px;background:none;border:none;font-size:24px;cursor:pointer;color:#800020;}
-        .summary-box{background:#f4f4f4;padding:10px;border-radius:8px;display:flex;justify-content:space-around;margin:15px 0;}
+        .summary-box{background:#f4f4f4;padding:10px;border-radius:8px;display:flex;justify-content:space-around;margin:15px 0; flex-wrap:wrap; gap:10px;}
         
         #printArea { display: none; }
         .print-controls-ui { text-align: center; margin-bottom: 15px; padding: 10px; background: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .print-controls-ui button { cursor: pointer; padding: 10px 20px; margin: 5px; font-size: 14px; font-weight: bold; border: none; border-radius: 5px; color: white; font-family: 'Cairo'; }
         
+        .chart-wrapper { background: #f8f9fa; padding: 15px; border-radius: 12px; border: 1px solid #ddd; position: relative; height: 300px; width: 100%; }
+
         @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             body { background: #fff; margin: 0; padding: 0; color: #000; }
@@ -93,6 +98,7 @@
             <button class="tab-btn active" onclick="showTab('overview')">الموقف العام</button>
             <button class="tab-btn" onclick="showTab('couriers')">عهد الكباتن</button>
             <button class="tab-btn" onclick="showTab('merchants')">تسويات التجار</button>
+            <button class="tab-btn" onclick="showTab('analytics')"><i class="fa-solid fa-chart-line"></i> أداء وتحليلات التجار</button>
             <button class="tab-btn" onclick="showTab('expenses')">المصروفات</button>
         </div>
         <div id="overview" class="tab-content active">
@@ -105,12 +111,57 @@
         </div>
         <div id="couriers" class="tab-content"><div class="table-responsive"><table><thead><tr><th>الكابتن</th><th>المهام</th><th>العهدة المطلوبة</th><th></th></tr></thead><tbody id="couriersBody"></tbody></table></div></div>
         <div id="merchants" class="tab-content"><div class="table-responsive"><table><thead><tr><th>التاجر</th><th>بوالص مسلمة</th><th>إجمالي COD</th><th>مخصوم</th><th>صافي المستحق</th><th></th></tr></thead><tbody id="merchantsBody"></tbody></table></div></div>
+        
+        <!-- التبويب الجديد للإحصائيات -->
+        <div id="analytics" class="tab-content">
+            <button class="btn-danger" id="syncStatsBtn" onclick="window.syncOldStats()" style="margin-bottom:15px; background:#f39c12; padding: 10px 15px;"><i class="fa-solid fa-rotate"></i> تهيئة الإحصائيات (للمرة الأولى فقط لحساب القديم)</button>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>التاجر</th>
+                            <th style="text-align:center;">إجمالي الشحنات</th>
+                            <th style="text-align:center;">تسليمات ناجحة</th>
+                            <th style="text-align:center;">شحنات (آخر 30 يوم)</th>
+                            <th style="text-align:center;">إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="analyticsBody"></tbody>
+                </table>
+            </div>
+        </div>
+
         <div id="expenses" class="tab-content"><button class="btn-danger" onclick="addExpense()">+ تسجيل مصروف</button><div class="table-responsive"><table><thead><tr><th>التاريخ</th><th>البيان</th><th>المبلغ</th></tr></thead><tbody id="expensesBody"></tbody></table></div></div>
     </div>
 </div>
 
 <div id="courierModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="closeModal('courierModal')">✖</button><h2>تفاصيل عهدة: <span id="courierNameModal"></span></h2><div class="summary-box"><div>النقدية المطلوبة: <span id="courierTotal"></span></div><div>عدد المهام: <span id="courierTasks"></span></div></div><div class="table-responsive"><table><thead><tr><th>النوع</th><th>رقم البوليصة/التفاصيل</th><th>التاجر/العنوان</th><th>المبلغ</th><th>الحالة</th></tr></thead><tbody id="courierDetailsBody"></tbody></table></div><div style="display:flex; gap:8px; justify-content:center; margin-top:15px;"><button class="btn-settle" onclick="settleCourier()">تسوية وحذف العهدة</button><button class="btn-print" onclick="printCourierManifest()">طباعة المانيفست</button></div></div></div>
 <div id="merchantModal" class="modal"><div class="modal-content"><button class="close-btn" onclick="closeModal('merchantModal')">✖</button><h2>كشف حساب: <span id="merchantNameModal"></span></h2><div class="summary-box"><div>إجمالي COD: <span id="merchantTotalCod"></span></div><div>مخصوم شحن: <span id="merchantTotalFees"></span></div><div>الصافي المستحق: <span id="merchantNet"></span></div></div><div class="table-responsive"><table><thead><tr><th>التاريخ</th><th>البوليصة</th><th>المستلم</th><th>COD</th><th>مخصوم</th><th>الصافي</th></tr></thead><tbody id="merchantItemsBody"></tbody></table></div><div style="display:flex; gap:8px; justify-content:center; margin-top:15px; flex-wrap:wrap;"><button class="btn-settle" onclick="settleMerchant()">اعتماد التسوية</button><button class="btn-settle" style="background:#f39c12;" onclick="resetMerchantCredit()">تصفير الائتمان 💳</button><button class="btn-print" onclick="printMerchantStatement()">طباعة الكشف</button></div></div></div>
+
+<!-- نافذة رسومات التحليل -->
+<div id="analyticsModal" class="modal">
+    <div class="modal-content" style="max-width: 850px;">
+        <button class="close-btn" onclick="closeModal('analyticsModal')">✖</button>
+        <h2>لوحة القياس: <span id="analyticMerchantName" style="color:var(--primary-blue);"></span></h2>
+        
+        <div class="stats" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); margin-bottom: 15px;">
+            <div class="stat-card blue" style="padding:15px;"><h4>إجمالي المبيعات</h4><div class="value" style="font-size:18px;" id="anTotalCod">0</div></div>
+            <div class="stat-card green" style="padding:15px;"><h4>مصروفات الشحن</h4><div class="value" style="font-size:18px;" id="anTotalFees">0</div></div>
+            <div class="stat-card red" style="padding:15px;"><h4>الائتمان المسحوب</h4><div class="value" style="font-size:18px;" id="anCredit">0</div></div>
+            <div class="stat-card" style="padding:15px; border-bottom-color:#f39c12;"><h4>استخدام اشتريلي</h4><div class="value" style="font-size:18px;" id="anEshteryly">0</div></div>
+        </div>
+        
+        <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+            <div style="flex: 1; min-width: 300px;" class="chart-wrapper">
+                <canvas id="shipmentChart"></canvas>
+            </div>
+            <div style="flex: 1; min-width: 300px;" class="chart-wrapper">
+                <canvas id="financeChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="printArea"></div>
 
 <script>
@@ -119,6 +170,12 @@
     let merchantsMap = {}, couriersMap = {};
     let selectedBranch = "all";
     let totalExpensesAmount = 0;
+    
+    // متغيرات الجرافيك
+    let shipmentChartInst = null;
+    let financeChartInst = null;
+    let usersDataMap = {};
+    let merchantProfilesMap = {};
 
     function showTab(id){
         document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
@@ -157,11 +214,10 @@
         document.getElementById('statNetBranchProfit').innerText = netBranchProfit + " ج.م";
     }
 
-    // دالة إغلاق شاشة الطباعة
     window.closePrintView = () => {
         document.getElementById('printArea').style.display = 'none';
         document.getElementById('printArea').innerHTML = ''; 
-        document.body.style.overflow = 'auto'; // إعادة التمرير للصفحة
+        document.body.style.overflow = 'auto'; 
         document.querySelector('header').style.display = 'flex';
         document.querySelector('.container').style.display = 'block';
     };
@@ -186,7 +242,7 @@
 
     let shipments = [], radarTasks = [];
     let livePrices = {};
-    let unsubShipments, unsubRadar, unsubPrices, unsubExpenses;
+    let unsubShipments, unsubRadar, unsubPrices, unsubExpenses, unsubUsers, unsubProfiles;
 
     window.addExpenseFirestore = async (desc, amt) => {
         try {
@@ -324,11 +380,166 @@
         }
         document.getElementById('merchantsBody').innerHTML = merchantHtml || "<tr><td colspan='6' style='text-align:center;'>لا توجد مستحقات</td></tr>";
 
+        // بناء جدول تحليلات التجار (Analytics)
+        let thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        let analyticsHtml = "";
+
+        for(let email in usersDataMap) {
+            let uData = usersDataMap[email];
+            let mProfile = merchantProfilesMap[email] || {};
+            let mBranch = mProfile.branchName || "المركز الرئيسي";
+            
+            if (branch !== 'all' && mBranch !== branch) continue; 
+            if (email === "admin@axon.com" || mProfile.role === "delivery" || mProfile.role === "admin" || mProfile.role === "operator") continue; 
+            
+            let mName = (mProfile.name || email.split('@')[0]);
+            let totalShip = uData.total_shipments || 0;
+            let successShip = uData.success_shipments || 0;
+
+            let last30 = 0;
+            let mShipments = shipments.filter(s => s.merchantEmail === email && !s.deleted);
+            mShipments.forEach(s => {
+                let sDate = s.timestamp?.toDate ? s.timestamp.toDate() : new Date(s.timestamp?.seconds ? s.timestamp.seconds*1000 : s.timestamp);
+                if(sDate >= thirtyDaysAgo) last30++;
+            });
+
+            analyticsHtml += `<tr>
+                <td style="text-align:right;"><b>${mName}</b><br><small style="color:gray">${mBranch}</small></td>
+                <td style="text-align:center; font-weight:bold; font-size:16px;">${totalShip}</td>
+                <td style="text-align:center; color:#10B981; font-weight:bold; font-size:16px;">${successShip}</td>
+                <td style="text-align:center; color:#17a2b8; font-weight:bold; font-size:16px;">${last30}</td>
+                <td style="text-align:center;"><button class="btn-view" onclick="openAnalyticsModal('${email}')"><i class="fa-solid fa-chart-pie"></i> تحليل</button></td>
+            </tr>`;
+        }
+        document.getElementById('analyticsBody').innerHTML = analyticsHtml || "<tr><td colspan='5' style='text-align:center;'>لا يوجد تجار أو بيانات</td></tr>";
+
         document.getElementById('loading').style.display = 'none';
         document.getElementById('dashboard').style.display = 'block';
         
         updateNetProfitUI();
     }
+
+    window.openAnalyticsModal = (email) => {
+        let uData = usersDataMap[email] || {};
+        let mProfile = merchantProfilesMap[email] || {};
+        let mName = mProfile.name || email.split('@')[0];
+        
+        document.getElementById('analyticMerchantName').innerText = mName;
+        
+        let usedCredit = mProfile.used_credit || 0;
+        let eshCount = uData.eshteryly_count || 0;
+        
+        let lifetimeCollected = 0;
+        let lifetimeFees = 0;
+        shipments.forEach(s => {
+            if (s.merchantEmail === email && !s.deleted && (s.status === "تم التسليم" || s.status === "تم التسليم بنجاح" || s.status === "تمت التسوية")) {
+                let c = Number(s.amount) || 0;
+                let f = Number(s.realShippingCost) || getShippingCost(s.city);
+                lifetimeCollected += c;
+                lifetimeFees += f;
+            }
+        });
+
+        document.getElementById('anTotalCod').innerText = lifetimeCollected + " ج.م";
+        document.getElementById('anTotalFees').innerText = lifetimeFees + " ج.م";
+        document.getElementById('anCredit').innerText = usedCredit + " ج.م";
+        document.getElementById('anEshteryly').innerText = eshCount;
+
+        let totalShip = uData.total_shipments || 0;
+        let successShip = uData.success_shipments || 0;
+        let failedShip = totalShip > successShip ? totalShip - successShip : 0;
+
+        if(shipmentChartInst) shipmentChartInst.destroy();
+        if(financeChartInst) financeChartInst.destroy();
+
+        const ctx1 = document.getElementById('shipmentChart').getContext('2d');
+        shipmentChartInst = new Chart(ctx1, {
+            type: 'doughnut',
+            data: {
+                labels: ['ناجح', 'مرتجع / أخرى'],
+                datasets: [{ data: [successShip, failedShip], backgroundColor: ['#10B981', '#800020'] }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: {position: 'bottom'}, title: { display: true, text: 'معدل التوصيل الناجح', font: {size: 16, family:'Cairo'} } } }
+        });
+
+        const ctx2 = document.getElementById('financeChart').getContext('2d');
+        financeChartInst = new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: ['محصل (COD)', 'رسوم الشحن', 'الائتمان المسحوب'],
+                datasets: [{ label: 'المبالغ (ج.م)', data: [lifetimeCollected, lifetimeFees, usedCredit], backgroundColor: ['#17a2b8', '#f39c12', '#D61C4E'] }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: {display: false}, title: { display: true, text: 'الموقف المالي العام للتاجر', font: {size: 16, family:'Cairo'} } } }
+        });
+
+        document.getElementById('analyticsModal').style.display = 'flex';
+    };
+
+    window.syncOldStats = async () => {
+        const res = await Swal.fire({
+            title: 'تهيئة الإحصائيات القديمة؟',
+            text: 'هذه العملية ستقوم بجرد كافة البوالص والمشتريات القديمة وتحديث ملفات التجار تلقائياً (تُستخدم مرة واحدة فقط).',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'نعم، ابدأ الجرد',
+            cancelButtonText: 'إلغاء',
+            confirmButtonColor: '#f39c12'
+        });
+        
+        if(!res.isConfirmed) return;
+
+        Swal.fire({title: 'جاري الجرد والتحديث...', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
+        
+        try {
+            let merchantStats = {};
+            
+            shipments.forEach(s => {
+                let mEmail = s.merchantEmail;
+                if(!mEmail || mEmail === "إدارة") return;
+                if(!merchantStats[mEmail]) merchantStats[mEmail] = { total: 0, success: 0 };
+                
+                if(!s.deleted) merchantStats[mEmail].total++;
+                if(s.status === "تم التسليم" || s.status === "تم التسليم بنجاح" || s.status === "تمت التسوية") {
+                    merchantStats[mEmail].success++;
+                }
+            });
+
+            radarTasks.forEach(r => {
+                let mEmail = r.merchantEmail;
+                if(!mEmail || mEmail === "عميل عام (موقع)" || mEmail === "إدارة") return;
+                if(!merchantStats[mEmail]) merchantStats[mEmail] = { total: 0, success: 0, eshteryly: 0 };
+                if(r.paymentMethod !== 'pickup' && !r.details?.includes('كولد')) {
+                    merchantStats[mEmail].eshteryly = (merchantStats[mEmail].eshteryly || 0) + 1;
+                }
+            });
+
+            let batchCount = 0;
+            let batch = writeBatch(db);
+            
+            for(let email in merchantStats) {
+                let ref = doc(db, "users", email);
+                batch.set(ref, {
+                    total_shipments: merchantStats[email].total,
+                    success_shipments: merchantStats[email].success,
+                    eshteryly_count: merchantStats[email].eshteryly || 0
+                }, { merge: true });
+                batchCount++;
+                
+                if(batchCount >= 400) {
+                    await batch.commit();
+                    batch = writeBatch(db);
+                    batchCount = 0;
+                }
+            }
+            if(batchCount > 0) await batch.commit();
+
+            document.getElementById('syncStatsBtn').style.display = 'none';
+            Swal.fire('نجاح', 'تم تهيئة الإحصائيات القديمة بنجاح وسيتم الاعتماد على التحديث التلقائي من الآن فصاعداً!', 'success');
+        } catch (e) {
+            Swal.fire('خطأ', e.message, 'error');
+        }
+    };
 
     window.showCourierDetails = (name) => {
         let data = couriersMap[name];
@@ -486,17 +697,8 @@
                         batch.delete(doc(db, "shipments", item.id)); 
                     });
                     
-                    const merchantRef = doc(db, "merchant_profiles", email);
-                    const merchantSnap = await getDoc(merchantRef);
-                    let currentSales = 0;
-                    if(merchantSnap.exists() && merchantSnap.data().lifetime_sales) {
-                        currentSales = Number(merchantSnap.data().lifetime_sales);
-                    }
-                    const newSales = currentSales + totalCodAmount;
-                    
-                    batch.set(merchantRef, { 
-                        lifetime_sales: newSales 
-                    }, { merge: true });
+                    const userRef = doc(db, "users", email);
+                    batch.set(userRef, { lifetime_sales: increment(totalCodAmount) }, { merge: true });
 
                     await batch.commit();
                     
@@ -553,9 +755,28 @@
         if(unsubShipments) unsubShipments();
         if(unsubRadar) unsubRadar();
         if(unsubPrices) unsubPrices();
+        if(unsubUsers) unsubUsers();
+        if(unsubProfiles) unsubProfiles();
+        
         unsubPrices = onSnapshot(doc(db, "settings", "shipping_prices"), snap => { if(snap.exists()) livePrices = snap.data(); processData(); });
         unsubShipments = onSnapshot(collection(db, "shipments"), snap => { shipments = []; snap.forEach(d => shipments.push({ id:d.id, ...d.data() })); processData(); });
         unsubRadar = onSnapshot(collection(db, "eshteryly_orders"), snap => { radarTasks = []; snap.forEach(d => radarTasks.push({ id:d.id, ...d.data() })); processData(); });
+        
+        unsubUsers = onSnapshot(collection(db, "users"), snap => {
+            usersDataMap = {};
+            snap.forEach(doc => usersDataMap[doc.id] = doc.data());
+            processData();
+        });
+        
+        unsubProfiles = onSnapshot(collection(db, "merchant_profiles"), snap => {
+            merchantProfilesMap = {};
+            snap.forEach(doc => {
+                let d = doc.data();
+                merchantProfilesMap[d.email || doc.id] = d;
+            });
+            processData();
+        });
+        
         loadExpenses();
     };
 
