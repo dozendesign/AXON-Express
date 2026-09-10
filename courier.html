@@ -48,6 +48,11 @@
         }
         .login-card input::placeholder { color: rgba(255,255,255,0.6); }
         .login-card input:focus { background: rgba(255,255,255,0.2); border-color: white; }
+        
+        .pass-wrapper { position: relative; width: 100%; }
+        .pass-wrapper i { position: absolute; left: 15px; top: 15px; color: rgba(255,255,255,0.6); cursor: pointer; font-size: 18px; transition: 0.3s; }
+        .pass-wrapper i:hover { color: white; }
+
         .login-btn {
             width: 100%; background: linear-gradient(90deg, var(--primary-red), #ff3b3b); color: white; border: none; padding: 15px; 
             border-radius: 15px; font-weight: 900; font-size: 18px; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(217, 4, 41, 0.4);
@@ -61,7 +66,20 @@
             border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; transition: background 0.3s;
         }
         .profile-area { display: flex; align-items: center; gap: 12px; }
-        .avatar { width: 50px; height: 50px; background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue)); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size:20px; box-shadow: 0 4px 10px rgba(30, 58, 138, 0.3);}
+        
+        /* الصورة الشخصية */
+        .avatar { 
+            width: 55px; height: 55px; background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue)); 
+            border-radius: 18px; display: flex; align-items: center; justify-content: center; color: white; 
+            font-weight: 900; font-size:20px; box-shadow: 0 4px 10px rgba(30, 58, 138, 0.3);
+            cursor: pointer; position: relative; overflow: hidden; background-size: cover; background-position: center; border: 2px solid var(--white);
+        }
+        .avatar-overlay {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 20px; background: rgba(0,0,0,0.5);
+            display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s;
+        }
+        .avatar:hover .avatar-overlay { opacity: 1; }
+
         .c-stars { color: #F59E0B; font-size: 12px; margin-top: 3px; letter-spacing: 2px;}
         .c-stars .empty-star { color: #E5E7EB; }
 
@@ -173,7 +191,12 @@
             <h1 style="color:white; margin-bottom:5px; font-size:32px; letter-spacing:2px;">AXON</h1>
             <p style="color:rgba(255,255,255,0.8); font-size:15px; margin-bottom:30px; font-weight:bold;">Captain Tactical App</p>
             <input type="email" id="cUser" placeholder="البريد الإلكتروني (الإيميل كامل)">
-            <input type="password" id="cPass" placeholder="كلمة السر">
+            
+            <div class="pass-wrapper">
+                <input type="password" id="cPass" placeholder="كلمة السر">
+                <i class="fa-solid fa-eye" id="togglePasswordBtn" onclick="window.togglePassword()"></i>
+            </div>
+
             <button class="login-btn" id="loginBtn" onclick="window.loginCourier()">تسجيل الدخول</button>
         </div>
     </div>
@@ -181,7 +204,12 @@
     <div class="app-container" id="appContent" style="display:none;">
         <div class="app-header">
             <div class="profile-area">
-                <div class="avatar" id="cInitials">AX</div>
+                <!-- زرار تغيير الصورة المخفي -->
+                <input type="file" id="profilePicInput" accept="image/*" style="display:none;" onchange="window.uploadProfilePic(event)">
+                <div class="avatar" id="cInitials" onclick="document.getElementById('profilePicInput').click()" title="اضغط لتغيير صورتك الشخصية">
+                    AX
+                    <div class="avatar-overlay"><i class="fa-solid fa-camera" style="font-size:12px; color:white;"></i></div>
+                </div>
                 <div>
                     <div style="font-size:12px; color:gray; font-weight:800; text-transform:uppercase;">كابتن أكسون</div>
                     <div style="font-size:18px; font-weight:900; line-height:1.2; color:var(--dark-text);" id="cDisplayName">...</div>
@@ -242,7 +270,6 @@
         </div>
     </div>
 
-    <!-- الأصوات -->
     <audio id="alertSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
     <audio id="msgSound" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3" preload="auto"></audio>
 
@@ -272,7 +299,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, doc, updateDoc, getDoc, addDoc, query, where, or, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, doc, updateDoc, getDoc, query, where, or, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         
         const app = initializeApp({
             apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
@@ -286,18 +313,41 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         
-        let currentCaptain = "", currentCaptainId = "", isOnline = false, watchId = null, lat = null, lng = null, ignored = new Set();
-        let notifiedTasks = new Set(); 
-        let globalOrdersData = {}; 
-        let livePricesCache = {}; 
-        let unreadMessagesByOrder = {}; 
-        let globalChatUnsubscribe = null;
-        let chatUnsubscribe = null;
-        let currentChatOrderId = "";
-        let currentChatMerchant = "";
+        // --- تعريف المتغيرات لتجنب أي Reference Error ---
+        window.currentCaptain = ""; 
+        window.currentCaptainId = ""; 
+        window.isOnline = false; 
+        window.watchId = null; 
+        window.lat = null; 
+        window.lng = null; 
+        window.ignored = new Set();
+        window.notifiedTasks = new Set(); 
+        window.globalOrdersData = {}; 
+        window.unreadMessagesByOrder = {}; 
+        window.globalChatUnsubscribe = null;
+        window.chatUnsubscribe = null;
+        window.currentChatOrderId = "";
+        window.currentChatMerchant = "";
+        
+        const publicIP = "مستخدم تطبيق الكابتن";
+        const publicDeviceInfo = navigator.userAgent.substring(0, 50) + "...";
+
+        window.togglePassword = () => {
+            const passInput = document.getElementById('cPass');
+            const icon = document.getElementById('togglePasswordBtn');
+            if(passInput.type === 'password') {
+                passInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        };
 
         window.updateOuterBadges = (orderId) => {
-            const count = unreadMessagesByOrder[orderId] || 0;
+            const count = window.unreadMessagesByOrder[orderId] || 0;
             document.querySelectorAll(`.out-badge[data-order="${orderId}"]`).forEach(el => {
                 if(count > 0) {
                     el.innerText = count;
@@ -308,16 +358,31 @@
             });
         };
 
-        let isAuthChecked = false;
+        window.uploadProfilePic = (event) => {
+            const file = event.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const base64 = e.target.result;
+                document.getElementById('cInitials').style.backgroundImage = `url(${base64})`;
+                document.getElementById('cInitials').innerText = ''; 
+                if(window.currentCaptainId) {
+                    try {
+                        await updateDoc(doc(db, "couriers", window.currentCaptainId), { profilePic: base64 });
+                        Swal.fire({toast:true, position:'top', icon:'success', title:'تم تحديث صورتك الشخصية بنجاح!', showConfirmButton:false, timer:2000});
+                    } catch(err) { console.log(err); }
+                }
+            };
+            reader.readAsDataURL(file);
+        };
 
         onAuthStateChanged(auth, async (user) => {
-            isAuthChecked = true;
             if (user) {
                 try {
                     const docSnap = await getDoc(doc(db, "couriers", user.uid));
                     if(docSnap.exists()) {
-                        currentCaptain = docSnap.data().name || user.email.split('@')[0];
-                        currentCaptainId = user.uid;
+                        window.currentCaptain = docSnap.data().name || user.email.split('@')[0];
+                        window.currentCaptainId = user.uid;
                         let successCount = docSnap.data().successfulDeliveries || 0;
                         let starsHtml = ''; let filledStars = 3;
                         if (successCount >= 2000) filledStars = 5;
@@ -328,10 +393,16 @@
                         }
                         document.getElementById('cStars').innerHTML = starsHtml;
 
+                        if(docSnap.data().profilePic) {
+                            document.getElementById('cInitials').style.backgroundImage = `url(${docSnap.data().profilePic})`;
+                            document.getElementById('cInitials').innerText = '';
+                        } else {
+                            document.getElementById('cInitials').innerText = window.currentCaptain.substring(0, 2).toUpperCase();
+                        }
+
                         document.getElementById('loginSection').style.display = 'none';
                         document.getElementById('appContent').style.display = 'block';
-                        document.getElementById('cDisplayName').innerText = currentCaptain;
-                        document.getElementById('cInitials').innerText = currentCaptain.substring(0, 2).toUpperCase();
+                        document.getElementById('cDisplayName').innerText = window.currentCaptain;
                         resetLoginBtn();
                         
                         startGlobalChatListener();
@@ -349,8 +420,8 @@
             } else {
                 document.getElementById('loginSection').style.display = 'flex';
                 document.getElementById('appContent').style.display = 'none';
-                if(watchId) { navigator.geolocation.clearWatch(watchId); watchId = null; }
-                if(globalChatUnsubscribe) { globalChatUnsubscribe(); globalChatUnsubscribe = null; }
+                if(window.watchId) { navigator.geolocation.clearWatch(window.watchId); window.watchId = null; }
+                if(window.globalChatUnsubscribe) { window.globalChatUnsubscribe(); window.globalChatUnsubscribe = null; }
                 releaseWakeLock();
                 resetLoginBtn();
             }
@@ -377,10 +448,10 @@
         };
 
         window.toggleShift = () => {
-            isOnline = !isOnline;
+            window.isOnline = !window.isOnline;
             const btn = document.getElementById('shiftBtn'), dot = document.getElementById('statusDot'), txt = document.getElementById('statusTxt');
 
-            if(isOnline) {
+            if(window.isOnline) {
                 btn.innerText = "إنهاء الوردية"; btn.style.background = "var(--primary-red)";
                 dot.className = "pulse-online"; txt.innerText = "متصل بالرادار 🟢";
                 Swal.fire({toast:true, position:'top', icon:'success', title:'وردية سعيدة يا بطل', showConfirmButton:false, timer:2000});
@@ -391,24 +462,24 @@
                 btn.innerText = "بدء الوردية"; btn.style.background = "var(--primary-blue)";
                 dot.className = ""; txt.innerText = "خارج الوردية";
                 releaseWakeLock();
-                if(watchId) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+                if(window.watchId) { navigator.geolocation.clearWatch(window.watchId); window.watchId = null; }
                 updateCourierStatus("offline");
             }
             loadRadar();
         };
 
         async function updateCourierStatus(status) {
-            if(!currentCaptainId) return;
-            try { await updateDoc(doc(db, "couriers", currentCaptainId), { status: status }); } catch(e) {}
+            if(!window.currentCaptainId) return;
+            try { await updateDoc(doc(db, "couriers", window.currentCaptainId), { status: status }); } catch(e) {}
         }
 
         function startTracking() {
             if(navigator.geolocation){
-                watchId = navigator.geolocation.watchPosition(async (pos) => {
-                    lat = pos.coords.latitude; lng = pos.coords.longitude;
+                window.watchId = navigator.geolocation.watchPosition(async (pos) => {
+                    window.lat = pos.coords.latitude; window.lng = pos.coords.longitude;
                     loadRadar(); 
-                    if(currentCaptainId && isOnline) {
-                        try { await updateDoc(doc(db, "couriers", currentCaptainId), { "currentLocation.lat": lat, "currentLocation.lng": lng, "lastUpdated": new Date() }); } catch(e) {}
+                    if(window.currentCaptainId && window.isOnline) {
+                        try { await updateDoc(doc(db, "couriers", window.currentCaptainId), { "currentLocation.lat": window.lat, "currentLocation.lng": window.lng, "lastUpdated": new Date() }); } catch(e) {}
                     }
                 }, err => {}, {enableHighAccuracy:true, maximumAge: 10000, timeout: 5000});
             } else { Swal.fire('خطأ', 'الـ GPS غير مدعوم', 'error'); }
@@ -421,7 +492,7 @@
         }
 
         function loadManifest() {
-            const q = query(collection(db, "shipments"), where("courierName", "==", currentCaptain));
+            const q = query(collection(db, "shipments"), where("courierName", "==", window.currentCaptain));
             onSnapshot(q, (snap) => {
                 let html = ""; let count = 0;
                 let docs = [];
@@ -431,10 +502,10 @@
                 docs.forEach(d => {
                     if(d.status !== "تم التسليم" && d.status !== "تمت التسوية" && d.status !== "مرتجع") {
                         count++;
-                        globalOrdersData[d.id] = {id: d.id, source: 'manifest', ...d};
+                        window.globalOrdersData[d.id] = {id: d.id, source: 'manifest', ...d};
                         const awb = d.awb || "AXN...";
                         const timeStr = formatTime(d.timestamp);
-                        let unread = unreadMessagesByOrder[d.id] || 0;
+                        let unread = window.unreadMessagesByOrder[d.id] || 0;
                         let badgeDisplay = unread > 0 ? 'flex' : 'none';
 
                         html += `
@@ -468,14 +539,14 @@
                     const d = docSnap.data(), id = docSnap.id;
                     let distance = "--", distVal = 9999;
                     
-                    if(lat && lng && d.address && d.address.includes('http')){
+                    if(window.lat && window.lng && d.address && d.address.includes('http')){
                         const match = d.address.match(/q=([\d\.-]+),([\d\.-]+)/);
                         if(match){
-                            distVal = parseFloat(calculateDistance(lat, lng, parseFloat(match[1]), parseFloat(match[2])));
+                            distVal = parseFloat(calculateDistance(window.lat, window.lng, parseFloat(match[1]), parseFloat(match[2])));
                             distance = distVal + " كم";
                             
-                            if(distVal < 5 && !notifiedTasks.has(id) && d.status === "جاري البحث عن مندوب" && !ignored.has(id)) {
-                                notifiedTasks.add(id); 
+                            if(distVal < 5 && !window.notifiedTasks.has(id) && d.status === "جاري البحث عن مندوب" && !window.ignored.has(id)) {
+                                window.notifiedTasks.add(id); 
                                 newAlert = true;
                             }
                         }
@@ -492,15 +563,15 @@
 
                     const timeStr = formatTime(d.timestamp);
 
-                    globalOrdersData[id] = {id, source: 'radar', distance, distVal, typeIcon, typeColor, typeBg, codText, timeStr, ...d};
+                    window.globalOrdersData[id] = {id, source: 'radar', distance, distVal, typeIcon, typeColor, typeBg, codText, timeStr, ...d};
 
-                    if(d.status === "جاري البحث عن مندوب" && isOnline && !ignored.has(id)){
-                        availableOrders.push(globalOrdersData[id]);
+                    if(d.status === "جاري البحث عن مندوب" && window.isOnline && !window.ignored.has(id)){
+                        availableOrders.push(window.globalOrdersData[id]);
                     }
 
-                    if(d.status === "تم الاستلام بواسطة المندوب" && d.courierName === currentCaptain){
+                    if(d.status === "تم الاستلام بواسطة المندوب" && d.courierName === window.currentCaptain){
                         myTasksCount++;
-                        let unread = unreadMessagesByOrder[id] || 0;
+                        let unread = window.unreadMessagesByOrder[id] || 0;
                         let badgeDisplay = unread > 0 ? 'flex' : 'none';
 
                         myTasksHtml += `
@@ -520,7 +591,7 @@
                     }
                 });
                 
-                if (newAlert && isOnline) {
+                if (newAlert && window.isOnline) {
                     const alertSnd = document.getElementById('alertSound');
                     alertSnd.currentTime = 0;
                     alertSnd.play().catch(e => {});
@@ -551,7 +622,7 @@
                     `;
                 });
 
-                document.getElementById('radarList').innerHTML = isOnline ? (radarHtml || "<div style='text-align:center; margin-top:40px;'><i class='fa-solid fa-satellite-dish fa-3x' style='color:#E5E7EB; margin-bottom:15px;'></i><p style='color:#9CA3AF; font-weight:bold; font-size:16px;'>الرادار خالي.. جاري البحث</p></div>") : "<div style='text-align:center; margin-top:40px;'><i class='fa-solid fa-power-off fa-3x' style='color:#E5E7EB; margin-bottom:15px;'></i><p style='color:#9CA3AF; font-weight:bold; font-size:16px;'>الرادار في وضع السكون.</p></div>";
+                document.getElementById('radarList').innerHTML = window.isOnline ? (radarHtml || "<div style='text-align:center; margin-top:40px;'><i class='fa-solid fa-satellite-dish fa-3x' style='color:#E5E7EB; margin-bottom:15px;'></i><p style='color:#9CA3AF; font-weight:bold; font-size:16px;'>الرادار خالي.. جاري البحث</p></div>") : "<div style='text-align:center; margin-top:40px;'><i class='fa-solid fa-power-off fa-3x' style='color:#E5E7EB; margin-bottom:15px;'></i><p style='color:#9CA3AF; font-weight:bold; font-size:16px;'>الرادار في وضع السكون.</p></div>";
                 document.getElementById('myTaskList').innerHTML = myTasksHtml || "<div style='text-align:center; margin-top:40px;'><i class='fa-solid fa-motorcycle fa-3x' style='color:#E5E7EB; margin-bottom:15px;'></i><p style='color:#9CA3AF; font-weight:bold; font-size:16px;'>لا توجد مهام مخطوفة</p></div>";
                 
                 const badge = document.getElementById('tasksBadge');
@@ -560,9 +631,9 @@
         }
 
         window.openOrderDetails = (id, source) => {
-            const data = globalOrdersData[id];
+            const data = window.globalOrdersData[id];
             if(!data) return;
-            let unreadCount = unreadMessagesByOrder[id] || 0;
+            let unreadCount = window.unreadMessagesByOrder[id] || 0;
             let badgeDisplay = unreadCount > 0 ? 'flex' : 'none';
             
             let phoneForWa = (data.phone || "").replace(/^0/, '20'); 
@@ -580,7 +651,7 @@
                 </div>
             `;
             if(source === 'radar') {
-                let isMine = data.status === "تم الاستلام بواسطة المندوب" && data.courierName === currentCaptain;
+                let isMine = data.status === "تم الاستلام بواسطة المندوب" && data.courierName === window.currentCaptain;
                 contentHtml += `
                     <div class="detail-box"><b style="color:var(--primary-blue); font-size:15px;"><i class="fa-solid fa-circle-info"></i> التفاصيل الدقيقة:</b><br><span style="color:#4B5563; display:block; margin-top:8px; font-weight:600; line-height:1.6;">${data.details}</span></div>
                     <div class="detail-box"><b style="color:var(--primary-blue); font-size:15px;"><i class="fa-solid fa-location-dot"></i> موقع الاستلام/التسليم:</b><br><span style="color:#4B5563; display:block; margin-top:8px; font-weight:600; line-height:1.6;">${data.address}</span></div>
@@ -632,15 +703,15 @@
             }
         };
 
-        window.ignoreOrder = (id) => { ignored.add(id); document.getElementById('orderDetailsModal').style.display = 'none'; loadRadar(); };
+        window.ignoreOrder = (id) => { window.ignored.add(id); document.getElementById('orderDetailsModal').style.display = 'none'; loadRadar(); };
         window.openNativeMap = (addr) => { const isAndroid = /android/i.test(navigator.userAgent || navigator.vendor || window.opera); if(isAndroid) { window.open(`google.navigation:q=${addr}`, '_system'); } else { window.open(`https://maps.google.com/?q=${addr}`, '_blank'); } };
 
         window.openChatModal = async (email, orderId) => {
             document.getElementById('orderDetailsModal').style.display = 'none';
-            currentChatMerchant = email;
-            currentChatOrderId = orderId || 'general';
-            unreadMessagesByOrder[currentChatOrderId] = 0;
-            window.updateOuterBadges(currentChatOrderId);
+            window.currentChatMerchant = email;
+            window.currentChatOrderId = orderId || 'general';
+            window.unreadMessagesByOrder[window.currentChatOrderId] = 0;
+            window.updateOuterBadges(window.currentChatOrderId);
             document.getElementById('chatModal').style.display = 'flex';
             let phone = "مخفي"; let callBtnHtml = "";
             try {
@@ -651,22 +722,22 @@
                 }
             } catch(err) {}
             document.getElementById('callMerchantBtnArea').innerHTML = callBtnHtml;
-            if(chatUnsubscribe) chatUnsubscribe();
-            chatUnsubscribe = onSnapshot(collection(db, "internal_chats"), (snap) => {
+            if(window.chatUnsubscribe) window.chatUnsubscribe();
+            window.chatUnsubscribe = onSnapshot(collection(db, "internal_chats"), (snap) => {
                 let html = ""; let msgs = [];
                 snap.forEach(doc => {
                     let md = doc.data();
                     msgs.push({id: doc.id, ...md});
-                    if(md.to === currentCaptain && !md.isRead && md.from === email && md.orderId === currentChatOrderId) {
+                    if(md.to === window.currentCaptain && !md.isRead && md.from === email && md.orderId === window.currentChatOrderId) {
                         updateDoc(doc.ref, { isRead: true }).catch(e=>{});
                     }
                 });
                 msgs.sort((a,b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
                 msgs.forEach(m => {
-                    if(m.orderId === currentChatOrderId || (!m.orderId && ((m.from === email && m.to === currentCaptain) || (m.from === currentCaptain && m.to === email)))) {
+                    if(m.orderId === window.currentChatOrderId || (!m.orderId && ((m.from === email && m.to === window.currentCaptain) || (m.from === window.currentCaptain && m.to === email)))) {
                         let msgClass = "chat-other";
                         let senderName = "التاجر";
-                        if(m.from === currentCaptain) { msgClass = "chat-mine"; senderName = "أنت"; }
+                        if(m.from === window.currentCaptain) { msgClass = "chat-mine"; senderName = "أنت"; }
                         else if(m.from === "admin@axon.com" || m.from.includes('AXON')) { msgClass = "chat-admin"; senderName = "🚨 الإدارة العليا"; }
                         html += `<div class="chat-bubble ${msgClass}"><b style="font-size:11px; opacity:0.7; display:block; margin-bottom:5px;">${senderName}</b>${m.message}</div>`;
                     }
@@ -679,17 +750,17 @@
 
         window.closeChatModal = () => {
             document.getElementById('chatModal').style.display = 'none';
-            if(chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
-            currentChatMerchant = ""; currentChatOrderId = "";
+            if(window.chatUnsubscribe) { window.chatUnsubscribe(); window.chatUnsubscribe = null; }
+            window.currentChatMerchant = ""; window.currentChatOrderId = "";
         };
 
         window.sendChatMessage = async () => {
             const input = document.getElementById('chatInputCourier');
             const msg = input.value.trim();
-            if(!msg || !currentChatMerchant) return;
+            if(!msg || !window.currentChatMerchant) return;
             input.value = "";
             try {
-                await addDoc(collection(db, "internal_chats"), { from: currentCaptain, to: currentChatMerchant, orderId: currentChatOrderId, message: msg, timestamp: new Date(), isRead: false });
+                await addDoc(collection(db, "internal_chats"), { from: window.currentCaptain, to: window.currentChatMerchant, orderId: window.currentChatOrderId, message: msg, timestamp: new Date(), isRead: false });
             } catch(e) {}
         };
 
@@ -709,12 +780,11 @@
 
         const requestWakeLock = async () => {
             if ('wakeLock' in navigator) {
-                try { wakeLock = await navigator.wakeLock.request('screen'); } 
+                try { window.wakeLock = await navigator.wakeLock.request('screen'); } 
                 catch (err) {}
             }
         };
-        const releaseWakeLock = () => { if (wakeLock !== null) { wakeLock.release(); wakeLock = null; } };
-        let wakeLock = null;
+        const releaseWakeLock = () => { if (window.wakeLock !== null && window.wakeLock !== undefined) { window.wakeLock.release(); window.wakeLock = null; } };
 
         if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
             Notification.requestPermission();
@@ -726,16 +796,16 @@
         }
 
         function startGlobalChatListener() {
-            if(globalChatUnsubscribe) globalChatUnsubscribe();
-            const chatQ = query(collection(db, "internal_chats"), or(where("from", "==", currentCaptain), where("to", "==", currentCaptain)));
+            if(window.globalChatUnsubscribe) window.globalChatUnsubscribe();
+            const chatQ = query(collection(db, "internal_chats"), or(where("from", "==", window.currentCaptain), where("to", "==", window.currentCaptain)));
             let initialLoad = true;
-            globalChatUnsubscribe = onSnapshot(chatQ, (snap) => {
+            window.globalChatUnsubscribe = onSnapshot(chatQ, (snap) => {
                 snap.docChanges().forEach((change) => {
                     if (change.type === "added") {
                         const msgData = change.doc.data();
                         const targetOrderId = msgData.orderId || 'general';
-                        if(msgData.from !== currentCaptain && !msgData.isRead && currentChatOrderId !== targetOrderId) {
-                            unreadMessagesByOrder[targetOrderId] = (unreadMessagesByOrder[targetOrderId] || 0) + 1;
+                        if(msgData.from !== window.currentCaptain && !msgData.isRead && window.currentChatOrderId !== targetOrderId) {
+                            window.unreadMessagesByOrder[targetOrderId] = (window.unreadMessagesByOrder[targetOrderId] || 0) + 1;
                             if(!initialLoad) {
                                 const snd = document.getElementById('msgSound');
                                 snd.currentTime = 0; 
