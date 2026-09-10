@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -1095,6 +1096,10 @@
                     await setDoc(doc(db, "merchant_profiles", merchantEmail), { used_credit: increment(purchaseValue) }, { merge: true });
                 }
                 
+                // --- بداية التعديل: زيادة عداد اشتريلي للتاجر ---
+                await setDoc(doc(db, "users", merchantEmail), { eshteryly_count: increment(1) }, { merge: true }).catch(e => console.log("Stat Error:", e));
+                // --- نهاية التعديل ---
+
                 Swal.fire('تم!', 'تم بث أوردر المشتريات للرادار.', 'success');
             } catch (e) { Swal.fire('خطأ في الإرسال', e.message, 'error'); }
         };
@@ -1224,6 +1229,11 @@
                     status: "قيد التوصيل", deleted: false, timestamp: new Date(), branchName, awb: awb,
                     shippingCost: totalShippingFee
                 });
+                
+                // --- بداية التعديل: زيادة عداد الشحنات للتاجر ---
+                await setDoc(doc(db, "users", merchantEmail), { total_shipments: increment(1) }, { merge: true }).catch(e => console.log("Stat Error:", e));
+                // --- نهاية التعديل ---
+
                 document.getElementById('addModal').style.display='none';
                 document.querySelectorAll('#addModal input[type="text"], #addModal input[type="tel"], #addModal input[type="number"]').forEach(inp => { 
                     if(inp.id !== 'merchantBusinessAddress' && inp.id !== 'merchantBusinessPhone') inp.value = ''; 
