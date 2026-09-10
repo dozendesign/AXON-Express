@@ -570,6 +570,18 @@
         let currentLifetimeSales = 0;
         let usedCreditAmount = 0;
 
+        function updateMerchantCreditDisplay() {
+            let maxCredit = currentLifetimeSales * 0.01;
+            currentCreditLimit = maxCredit - usedCreditAmount;
+            if(currentCreditLimit < 0) currentCreditLimit = 0;
+            
+            const limitDisplay = document.getElementById('creditLimitDisplay');
+            if (limitDisplay) limitDisplay.innerText = currentCreditLimit.toFixed(2) + " ج.م (متاح)";
+            
+            const creditSpan = document.getElementById('creditLimitAlertSpan');
+            if(creditSpan) creditSpan.innerText = currentCreditLimit.toFixed(2);
+        }
+
         window.toggleLang = () => { let lang = document.documentElement.lang === 'ar' ? 'en' : 'ar'; localStorage.setItem('axon_lang', lang); applyLang(lang); };
         function applyLang(lang) {
             document.documentElement.lang = lang; document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr'; 
@@ -685,7 +697,7 @@
                 merchantName = merchantEmail.split('@')[0];
                 document.getElementById('merchantEmailDisplay').innerHTML = `مرحباً بك: ${merchantName} <i class="fa-solid fa-bolt" style="color:#ffc107;"></i>`;
                 
-                // الاستماع اللحظي لتحديثات حائط البطولات من merchant_profiles
+                // الاستماع اللحظي لبيانات المتجر والائتمان المستخدم
                 onSnapshot(doc(db, "merchant_profiles", merchantEmail), (docSnap) => {
                     if(docSnap.exists()) {
                         let data = docSnap.data();
@@ -696,8 +708,8 @@
                         if(data.businessAddress) {
                             merchantAddress = data.businessAddress;
                             document.getElementById('merchantBusinessAddress').value = merchantAddress;
-                            document.getElementById('eshAddress').value = merchantAddress; // تثبيت عنوان المتجر لاشتريلي
-                            document.getElementById('coldPickupAddress').value = merchantAddress; // تثبيت عنوان الاستلام لكولد
+                            document.getElementById('eshAddress').value = merchantAddress; 
+                            document.getElementById('coldPickupAddress').value = merchantAddress; 
                         }
                         if(data.branchName) {
                             branchName = data.branchName;
@@ -708,20 +720,19 @@
                             merchantApiKey = "";
                         }
                         
-                        // ربط حائط البطولات المباشر 
-                        const sales = data.lifetime_sales || 0;
                         usedCreditAmount = data.used_credit || 0;
+                        updateMerchantCreditDisplay();
+                    }
+                });
+
+                // الاستماع اللحظي لإجمالي المبيعات (حائط البطولات) من جدول المستخدمين الصحيح
+                onSnapshot(doc(db, "users", merchantEmail), (docSnap) => {
+                    if(docSnap.exists()) {
+                        const sales = docSnap.data().lifetime_sales || 0;
                         currentLifetimeSales = sales;
-                        document.getElementById('lifetimeSales').innerText = sales.toLocaleString('en-US') + " ج.م";
-                        
-                        // ربط الائتمان 1% مع خصم المستهلك
-                        let maxCredit = sales * 0.01;
-                        currentCreditLimit = maxCredit - usedCreditAmount;
-                        if(currentCreditLimit < 0) currentCreditLimit = 0;
-                        
-                        document.getElementById('creditLimitDisplay').innerText = currentCreditLimit.toFixed(2) + " ج.م (متاح)";
-                        const creditSpan = document.getElementById('creditLimitAlertSpan');
-                        if(creditSpan) creditSpan.innerText = currentCreditLimit.toFixed(2);
+                        const lifetimeDisplay = document.getElementById('lifetimeSales');
+                        if (lifetimeDisplay) lifetimeDisplay.innerText = sales.toLocaleString('en-US') + " ج.م";
+                        updateMerchantCreditDisplay();
                     }
                 });
 
@@ -1037,13 +1048,13 @@
 
         window.submitEshteryly = async () => {
             const details = document.getElementById('eshDetails').value.trim();
-            const address = merchantAddress; // استخدام وتثبيت عنوان المتجر كعنوان للتوصيل
+            const address = merchantAddress; 
             const payment = document.getElementById('eshPayment').value;
             const purchaseValueRaw = document.getElementById('eshPurchaseValue').value;
             const purchaseValue = parseFloat(purchaseValueRaw);
             
             if(!details || !payment) return Swal.fire('تنبيه', 'برجاء إكمال كافة البيانات واختيار طريقة الدفع.', 'warning');
-            if(address === "غير مسجل" || !address) return Swal.fire('تنبيه', 'برجاء كتابة وحفظ عنوان متجرك في أعلى الشاشة أولاً ليتمكن المندوب من توصيل مشترياتك إليه.', 'warning');
+            if(address === "غير مسجل" || !address) return Swal.fire('تنبيه', 'برجاء كتابة وحفظ عنوان متجرك في أعلى الشاشة أولاً ليتمكن المندوب من توصيل مشتريات إليه.', 'warning');
             if(isNaN(purchaseValue) || purchaseValue <= 0) return Swal.fire('تنبيه', 'يرجى إدخال قيمة المشتريات بشكل صحيح.', 'warning');
             
             // كنترول الحد الائتماني
@@ -1065,11 +1076,10 @@
             }
             
             try {
-                // اضافة ال amount صريحة عشان المندوب مايشوفش كلمة (مجاني)
                 await addDoc(collection(db, "eshteryly_orders"), {
                     merchantEmail: merchantEmail,
                     details: finalDetails,
-                    address: address, // العنوان ثابت وهو مقر المتجر
+                    address: address,
                     paymentMethod: payment,
                     status: "جاري البحث عن مندوب",
                     timestamp: new Date(),
@@ -1081,7 +1091,6 @@
                     creditUsed: (payment === 'balance') ? true : false
                 });
                 
-                // لو الدفع بالرصيد، هنحدث الائتمان المستخدم في البروفايل
                 if(payment === 'balance') {
                     await setDoc(doc(db, "merchant_profiles", merchantEmail), { used_credit: increment(purchaseValue) }, { merge: true });
                 }
@@ -1092,8 +1101,8 @@
 
         window.submitColdOrder = async () => {
             const time = document.getElementById('coldTime').value;
-            const pickupAddr = merchantAddress; // العنوان الإجباري للمتجر
-            const dropAddr = document.getElementById('coldAddress').value.trim(); // عنوان العميل
+            const pickupAddr = merchantAddress;
+            const dropAddr = document.getElementById('coldAddress').value.trim(); 
             const rawAmount = document.getElementById('coldAmount').value.trim();
             
             if(!time || !dropAddr || !rawAmount) return Swal.fire('تنبيه', 'رجاء إكمال كافة بيانات أوردر الفريش', 'warning');
@@ -1106,13 +1115,13 @@
                 await addDoc(collection(db, "eshteryly_orders"), {
                     merchantEmail: merchantEmail,
                     details: `🥶 كولد/فريش | الساعة: ${time} | استلام من المتجر: ${pickupAddr} | تسليم للعميل: ${dropAddr} | تحصيل نهائي بالشحن: ${finalAmount} ج.م`,
-                    address: dropAddr, // عنوان العميل
+                    address: dropAddr,
                     paymentMethod: "pickup",
                     status: "جاري البحث عن مندوب",
                     timestamp: new Date(),
                     branchName: branchName,
                     type: "radar",
-                    amount: finalAmount, // عشان المندوب مايشوفش كلمة مجاني
+                    amount: finalAmount,
                     shippingCost: localFee
                 });
                 Swal.fire('تم!', 'تم بث أوردر الفريش لمناديب الكولد.', 'success');
@@ -1256,17 +1265,22 @@
 
         function loadShipments() {
             onSnapshot(query(collection(db, "shipments"), where("merchantEmail", "==", merchantEmail)), (snap) => {
+                window.loadedMerchantShipmentsData = {}; // تنظيف البيانات السابقة لضمان التحديث النظيف للجدول
                 let total = 0, html = "", count = 0;
                 let docs = [];
                 snap.forEach(docSnap => docs.push({id: docSnap.id, ...docSnap.data()}));
                 docs.sort((a, b) => b.timestamp - a.timestamp);
 
                 docs.forEach(d => {
-                    // استبعاد الشحنات المسوّاة والمرتجعة والمؤجلة
-                    if(d.deleted || d.status === "تمت التسوية" || d.status === "مرتجع" || d.status === "مؤجل") return;
+                    // التعديل هنا: السماح بظهور المرتجع والمؤجل للتاجر لمعرفة مصير شحنته مع استبعاد المحذوف والمسوى فقط
+                    if(d.deleted || d.status === "تمت التسوية") return;
                     
-                    total += Number(d.amount) || 0; 
+                    // لا يتم جمع مبالغ المرتجعات في التحصيلات المتوقعة (لأنها لم تسلم)
+                    if (d.status !== "مرتجع") {
+                        total += Number(d.amount) || 0; 
+                    }
                     count++;
+                    
                     const awb = d.awb || ("AXN" + d.id.substring(0,5).toUpperCase());
                     const fragileType = d.fragile || 'normal'; 
                     const insuranceFee = d.insuranceFee || 0;
@@ -1307,8 +1321,6 @@
                 window.updateBulkSelectionUI();
             });
         }
-
-        window.loadedMerchantShipmentsData = {};
 
         function escapeHTML(str) {
             if(!str) return '';
