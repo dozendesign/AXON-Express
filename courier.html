@@ -242,6 +242,7 @@
         </div>
     </div>
 
+    <!-- تم تغيير النغمة لواحدة أقوى للتنبيه الراداري -->
     <audio id="alertSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
     <audio id="msgSound" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3" preload="auto"></audio>
 
@@ -289,203 +290,7 @@
         let notifiedTasks = new Set(); 
         let globalOrdersData = {}; 
         let livePricesCache = {}; // للتسعير الحقيقي
-        const governorates = ["القاهرة", "الجيزة", "الإسكندرية", "الدقهلية", "الغربية", "المنوفية", "الشرقية", "القليوبية", "البحيرة", "كفر الشيخ", "دمياط", "الإسماعيلية", "بورسعيد", "السويس", "مرسى مطروح", "شمال سيناء", "جنوب سيناء", "البحر الأحمر", "الفيوم", "بني سويف", "المنيا", "أسيوط", "سوهاج", "قنا", "الأقصر", "أسوان", "الوادي الجديد"];
-        const extraZonesList = [
-            "القاهرة - مدينة نصر", "القاهرة - مصر الجديدة", "القاهرة - التجمع الأول", "القاهرة - التجمع الثالث", "القاهرة - التجمع الخامس", "القاهرة - الرحاب", "القاهرة - مدينتي", "القاهرة - الشروق", "القاهرة - بدر", "القاهرة - العاصمة الإدارية", "القاهرة - المعادي", "القاهرة - زهراء المعادي", "القاهرة - حلوان", "القاهرة - المرج", "القاهرة - السلام", "القاهرة - عين شمس", "القاهرة - المطرية", "القاهرة - شبرا", "القاهرة - الزيتون", "القاهرة - وسط البلد", "القاهرة - جاردن سيتي", "القاهرة - مدينة بدر الصناعية", "القاهرة - 15 مايو", "القاهرة - القطامية",
-            "الجيزة - الدقي", "الجيزة - المهندسين", "الجيزة - العجوزة", "الجيزة - الهرم", "الجيزة - فيصل", "الجيزة - بولاق الدكرور", "الجيزة - الطالبية", "الجيزة - إمبابة", "الجيزة - الوراق", "الجيزة - 6 أكتوبر", "الجيزة - حدائق أكتوبر", "الجيزة - الشيخ زايد", "الجيزة - أكتوبر الجديدة", "الجيزة - الواحات", "الجيزة - الصف", "الجيزة - أطفيح", "الجيزة - كرداسة", "الجيزة - أبو النمرس", "الجيزة - منشأة القناطر",
-            "الإسكندرية - سيدي جابر", "الإسكندرية - سموحة", "الإسكندرية - سبورتنج", "الإسكندرية - ميامي", "الإسكندرية - المنتزه", "الإسكندرية - العصافرة", "الإسكندرية - جليم", "الإسكندرية - لوران", "الإسكندرية - محرم بك", "الإسكندرية - كرموز", "الإسكندرية - العجمي", "الإسكندرية - البيطاش", "الإسكندرية - الهانوفيل", "الإسكندرية - العامرية", "الإسكندرية - برج العرب", "الإسكندرية - برج العرب الجديدة", "الإسكندرية - الكينج مريوط",
-            "القليوبية - شبرا الخيمة", "القليوبية - بنها", "القليوبية - قليوب", "القليوبية - القناطر الخيرية", "القليوبية - الخانكة", "القليوبية - العبور", "القليوبية - الخصوص", "القليوبية - شبين القناطر", "القليوبية - طوخ", "القليوبية - كفر شكر",
-            "الشرقية - الزقازيق", "الشرقية - العاشر من رمضان", "الشرقية - بلبيس", "الشرقية - أبو حماد", "الشرقية - منيا القمح", "الشرقية - فاقوس", "الشرقية - الحسينية", "الشرقية - ههيا", "الشرقية - مشتول السوق", "الشرقية - الصالحية الجديدة",
-            "الدقهلية - المنصورة", "الدقهلية - طلخا", "الدقهلية - ميت غمر", "الدقهلية - دكرنس", "الدقهلية - بلقاس", "الدقهلية - المنزلة", "الدقهلية - الجمالية", "الدقهلية - المطرية", "الدقهلية - شربين",
-            "الغربية - طنطا", "الغربية - المحلة الكبرى", "الغربية - زفتى", "الغربية - كفر الزيات", "الغربية - بسيون", "الغربية - سمنود", "الغربية - قطور",
-            "المنوفية - شبين الكوم", "المنوفية - السادات", "المنوفية - منوف", "المنوفية - قويسنا", "المنوفية - أشمون", "المنوفية - الباجور", "المنوفية - بركة السبع", "المنوفية - تلا",
-            "البحيرة - دمنهور", "البحيرة - كفر الدوار", "البحيرة - رشيد", "البحيرة - إدكو", "البحيرة - أبو حمص", "البحيرة - أبو المطامير", "البحيرة - وادي النطرون", "البحيرة - النوبارية",
-            "كفر الشيخ - دسوق", "كفر الشيخ - بيلا", "كفر الشيخ - الحامول", "كفر الشيخ - بلطيم", "كفر الشيخ - البرلس", "كفر الشيخ - مطوبس",
-            "دمياط - دمياط الجديدة", "دمياط - رأس البر", "دمياط - عزبة البرج", "دمياط - فارسكور", "دمياط - كفر سعد",
-            "الإسماعيلية - فايد", "الإسماعيلية - التل الكبير", "الإسماعيلية - القنطرة غرب", "الإسماعيلية - القنطرة شرق",
-            "بورسعيد - بورفؤاد", "بورسعيد - جنوب بورسعيد",
-            "السويس - فيصل", "السويس - عتاقة", "السويس - العين السخنة", "السويس - الجلالة",
-            "مطروح - الحمام", "مطروح - العلمين", "مطروح - العلمين الجديدة", "مطروح - مارينا", "مطروح - سيدي عبد الرحمن", "مطروح - الساحل الشمالي", "مطروح - الضبعة", "مطروح - النجيلة", "مطروح - سيوة", "مطروح - السلوم",
-            "شمال سيناء - العريش", "شمال سيناء - بئر العبد", "شمال سيناء - الشيخ زويد", "شمال سيناء - رفح",
-            "جنوب سيناء - شرم الشيخ", "جنوب سيناء - دهب", "جنوب سيناء - نويبع", "جنوب سيناء - طابا", "جنوب سيناء - الطور", "جنوب سيناء - سانت كاترين",
-            "البحر الأحمر - الغردقة", "البحر الأحمر - الجونة", "البحر الأحمر - سفاجا", "البحر الأحمر - القصير", "البحر الأحمر - مرسى علم", "البحر الأحمر - رأس غارب",
-            "الفيوم - سنورس", "الفيوم - إبشواي", "الفيوم - يوسف الصديق",
-            "بني سويف - الواسطي", "بني سويف - الفشن", "بني سويف - ببا", "بني سويف - سمسطا",
-            "المنيا - ملوي", "المنيا - سمالوط", "المنيا - بني مزار", "المنيا - مغاغة", "المنيا - أبو قرقاص",
-            "أسيوط - ديروط", "أسيوط - منفلوط", "أسيوط - القوصية", "أسيوط - أبنوب", "أسيوط - ساحل سليم",
-            "سوهاج - جرجا", "سوهاج - طهطا", "سوهاج - أخميم", "سوهاج - البلينا", "سوهاج - المنشأة",
-            "قنا - نجع حمادي", "قنا - قوص", "قنا - دشنا", "قنا - الوقف",
-            "الأقصر - إسنا", "الأقصر - أرمنت", "الأقصر - القرنة",
-            "أسوان - كوم أمبو", "أسوان - إدفو", "أسوان - دراو", "أسوان - أبو سمبل",
-            "الوادي الجديد - الخارجة", "الوادي الجديد - الداخلة", "الوادي الجديد - الفرافرة", "الوادي الجديد - باريس"
-        ];
-        
-        // تحميل الأسعار الحية من الإعدادات
-        function loadLivePrices() {
-            onSnapshot(doc(db, "settings", "shipping_prices"), (snap) => {
-                if(snap.exists()) {
-                    livePricesCache = snap.data();
-                }
-            });
-        }
-        
-        // دالة حساب سعر الشحن الحقيقي بناءً على المدينة والأسعار المخزنة
-        function getRealShippingCost(cityName) {
-            if(!cityName) return 85;
-            let normalizedInput = cityName.trim().replace(/\s+/g, ' ').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/[ىي]/g, 'ي');
-            for (let zone of extraZonesList) {
-                let parts = zone.split('-');
-                let normalizedZone = zone.replace(/\s+/g, ' ').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/[ىي]/g, 'ي');
-                let subCityName = parts[1] ? parts[1].trim().replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/[ىي]/g, 'ي') : "";
-                if (normalizedZone === normalizedInput || (subCityName && normalizedInput.includes(subCityName))) {
-                    let parentGov = parts[0].trim();
-                    let basePrice = Number(livePricesCache[parentGov]) || 85;
-                    let extraFee = Number(livePricesCache[zone]) || 0;
-                    return basePrice + extraFee;
-                }
-            }
-            for(let gov of governorates) {
-                let normalizedGov = gov.replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/[ىي]/g, 'ي');
-                if(normalizedInput.includes(normalizedGov) || normalizedGov.includes(normalizedInput)) {
-                    return Number(livePricesCache[gov]) || 85;
-                }
-            }
-            return 85;
-        }
-        
-        // تحديث أرباح التاجر (lifetime_sales) عند التسليم
-        async function updateMerchantSales(merchantEmail, totalAmount, realShippingCost) {
-            if(!merchantEmail) return;
-            const profit = totalAmount - realShippingCost;
-            if(profit <= 0) return;
-            const userQ = query(collection(db, "users"), where("email", "==", merchantEmail));
-            const uSnap = await getDocs(userQ);
-            if(!uSnap.empty) {
-                const uDoc = uSnap.docs[0];
-                await updateDoc(uDoc.ref, { lifetime_sales: increment(profit) });
-            }
-        }
-        
-        // عند قبول المهمة (للرادار) نحرص على تخزين realShippingCost في الشحنة المرتبطة إن وجدت
-        window.claimOrder = async (id, linkedShipmentId) => {
-            document.getElementById('orderDetailsModal').style.display = 'none';
-            try {
-                const taskRef = doc(db, "eshteryly_orders", id);
-                const taskSnap = await getDoc(taskRef);
-                const taskData = taskSnap.data();
-                if(!taskData) throw new Error("البيانات غير موجودة");
-                await updateDoc(taskRef, { status: "تم الاستلام بواسطة المندوب", courierName: currentCaptain, courierId: currentCaptainId });
-                if(linkedShipmentId) {
-                    const shipmentRef = doc(db, "shipments", linkedShipmentId);
-                    const shipmentSnap = await getDoc(shipmentRef);
-                    if(shipmentSnap.exists()) {
-                        const shipmentData = shipmentSnap.data();
-                        let shippingCost = shipmentData.realShippingCost;
-                        if(!shippingCost && shipmentData.city) {
-                            shippingCost = getRealShippingCost(shipmentData.city);
-                            await updateDoc(shipmentRef, { realShippingCost: shippingCost });
-                        }
-                        await updateDoc(shipmentRef, { status: "مع المندوب" });
-                    }
-                }
-                Swal.fire({toast:true, position:'top', icon:'success', title:'تم خطف المهمة بنجاح 🚀', showConfirmButton:false, timer:2000});
-                switchTab('myTasksTab', document.querySelectorAll('.nav-item')[1]);
-            } catch(e) { Swal.fire('خطأ', 'الصلاحيات لا تسمح أو المهمة اتخطفت من بطل تاني!', 'error'); }
-        };
-        
-        // إكمال التسليم (للرادار أو المانيفست) مع تحديث أرباح التاجر
-        window.completeTask = async (id, linkedShipmentId, source) => {
-            document.getElementById('orderDetailsModal').style.display = 'none';
-            const r = await Swal.fire({title:'تأكيد التسليم؟', text:'هل استلمت الكاش وتم تسليم الطرد؟', icon:'question', showCancelButton:true, confirmButtonText:'نعم ✅', cancelButtonText:'إلغاء', customClass: {confirmButton: 'btn-done', cancelButton: 'btn-ignore'}});
-            if(r.isConfirmed) {
-                try {
-                    if(source === 'radar') {
-                        // إنهاء مهمة الرادار
-                        const taskRef = doc(db, "eshteryly_orders", id);
-                        await updateDoc(taskRef, { status: "تم التسليم بنجاح" });
-                        if(linkedShipmentId) {
-                            const shipmentRef = doc(db, "shipments", linkedShipmentId);
-                            const shipmentSnap = await getDoc(shipmentRef);
-                            if(shipmentSnap.exists()) {
-                                const shipmentData = shipmentSnap.data();
-                                let shippingCost = shipmentData.realShippingCost;
-                                if(!shippingCost && shipmentData.city) {
-                                    shippingCost = getRealShippingCost(shipmentData.city);
-                                    await updateDoc(shipmentRef, { realShippingCost: shippingCost });
-                                } else if(!shippingCost) {
-                                    shippingCost = 85;
-                                }
-                                // تحديث أرباح التاجر
-                                await updateMerchantSales(shipmentData.merchantEmail, shipmentData.amount, shippingCost);
-                                await updateDoc(shipmentRef, { status: "تم التسليم", isAccounted: true, accountedAt: new Date() });
-                            }
-                        }
-                    } else if(source === 'manifest') {
-                        // إنهاء شحنة من المانيفست
-                        const shipmentRef = doc(db, "shipments", id);
-                        const shipmentSnap = await getDoc(shipmentRef);
-                        if(shipmentSnap.exists()) {
-                            const shipmentData = shipmentSnap.data();
-                            let shippingCost = shipmentData.realShippingCost;
-                            if(!shippingCost && shipmentData.city) {
-                                shippingCost = getRealShippingCost(shipmentData.city);
-                                await updateDoc(shipmentRef, { realShippingCost: shippingCost });
-                            } else if(!shippingCost) {
-                                shippingCost = 85;
-                            }
-                            await updateMerchantSales(shipmentData.merchantEmail, shipmentData.amount, shippingCost);
-                            await updateDoc(shipmentRef, { status: "تم التسليم", isAccounted: true, accountedAt: new Date() });
-                        }
-                    }
-                    
-                    try {
-                        const cRef = doc(db, "couriers", currentCaptainId);
-                        const cSnap = await getDoc(cRef);
-                        let currentDeliveries = cSnap.data().successfulDeliveries || 0;
-                        await updateDoc(cRef, { successfulDeliveries: currentDeliveries + 1 });
-                    } catch(e) {}
-                    
-                    Swal.fire({toast:true, position:'top', icon:'success', title:'عاش يا بطل، تمت المهمة بنجاح! 🏆', showConfirmButton:false, timer:2000});
-                } catch(err) {
-                    Swal.fire('خطأ في الإكمال', err.message, 'error');
-                }
-            }
-        };
-        
-        // دالة تحميل الرادار والمهام (نفس الكود السابق لكن مع تحديث المتغيرات)
-        function formatTime(ts) {
-            if(!ts) return "";
-            let date = ts.toDate ? ts.toDate() : new Date(ts);
-            return date.toLocaleString('ar-EG', { hour: '2-digit', minute:'2-digit', month:'short', day:'numeric' });
-        }
 
-        window.switchTab = (tabId, element) => {
-            document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            element.classList.add('active');
-            if(navigator.vibrate) navigator.vibrate(50);
-        };
-
-        const requestWakeLock = async () => {
-            if ('wakeLock' in navigator) {
-                try { wakeLock = await navigator.wakeLock.request('screen'); } 
-                catch (err) {}
-            }
-        };
-        const releaseWakeLock = () => { if (wakeLock !== null) { wakeLock.release(); wakeLock = null; } };
-        let wakeLock = null;
-
-        if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
-            Notification.requestPermission();
-        }
-
-        function resetLoginBtn() {
-            const btn = document.getElementById('loginBtn');
-            if(btn) { btn.innerHTML = 'تسجيل الدخول'; btn.disabled = false; }
-        }
-
-        let unreadMessagesByOrder = {};
         window.updateOuterBadges = (orderId) => {
             const count = unreadMessagesByOrder[orderId] || 0;
             document.querySelectorAll(`.out-badge[data-order="${orderId}"]`).forEach(el => {
@@ -498,44 +303,10 @@
             });
         };
 
-        let globalChatUnsubscribe = null;
-        let chatUnsubscribe = null;
-        let currentChatOrderId = "";
-        let currentChatMerchant = "";
-
-        function startGlobalChatListener() {
-            if(globalChatUnsubscribe) globalChatUnsubscribe();
-            const chatQ = query(collection(db, "internal_chats"), or(where("from", "==", currentCaptain), where("to", "==", currentCaptain)));
-            let initialLoad = true;
-            globalChatUnsubscribe = onSnapshot(chatQ, (snap) => {
-                snap.docChanges().forEach((change) => {
-                    if (change.type === "added") {
-                        const msgData = change.doc.data();
-                        const targetOrderId = msgData.orderId || 'general';
-                        if(msgData.from !== currentCaptain && !msgData.isRead && currentChatOrderId !== targetOrderId) {
-                            unreadMessagesByOrder[targetOrderId] = (unreadMessagesByOrder[targetOrderId] || 0) + 1;
-                            if(!initialLoad) {
-                                const snd = document.getElementById('msgSound');
-                                snd.currentTime = 0; 
-                                let playPromise = snd.play();
-                                if (playPromise !== undefined) { playPromise.catch(e => {}); }
-                                if(navigator.vibrate) navigator.vibrate([300, 100, 300, 100, 300]);
-                                Swal.fire({
-                                    toast: true, position: 'top', icon: 'info',
-                                    title: `رسالة بخصوص الطرد`,
-                                    text: msgData.message.substring(0, 30) + '...',
-                                    showConfirmButton: false, timer: 4000
-                                });
-                            }
-                            window.updateOuterBadges(targetOrderId);
-                        }
-                    }
-                });
-                initialLoad = false;
-            });
-        }
+        let isAuthChecked = false;
 
         onAuthStateChanged(auth, async (user) => {
+            isAuthChecked = true;
             if (user) {
                 try {
                     const docSnap = await getDoc(doc(db, "couriers", user.uid));
@@ -558,7 +329,6 @@
                         document.getElementById('cInitials').innerText = currentCaptain.substring(0, 2).toUpperCase();
                         resetLoginBtn();
                         
-                        loadLivePrices(); // تحميل الأسعار الحية
                         startGlobalChatListener();
                         loadManifest(); 
                     } else {
@@ -591,6 +361,11 @@
                 const msgAudio = document.getElementById('msgSound');
                 msgAudio.muted = true;
                 msgAudio.play().then(()=>{ msgAudio.pause(); msgAudio.muted = false; }).catch(e=>{});
+                
+                const alertAudio = document.getElementById('alertSound');
+                alertAudio.muted = true;
+                alertAudio.play().then(()=>{ alertAudio.pause(); alertAudio.muted = false; }).catch(e=>{});
+                
                 await signInWithEmailAndPassword(auth, u, p); 
             } 
             catch(e) { resetLoginBtn(); Swal.fire('خطأ في الدخول', 'بيانات غير صحيحة.', 'error'); }
@@ -599,8 +374,6 @@
         window.toggleShift = () => {
             isOnline = !isOnline;
             const btn = document.getElementById('shiftBtn'), dot = document.getElementById('statusDot'), txt = document.getElementById('statusTxt');
-            const msgAudio = document.getElementById('msgSound');
-            msgAudio.muted = true; msgAudio.play().then(()=>{msgAudio.pause(); msgAudio.muted=false;}).catch(e=>{});
 
             if(isOnline) {
                 btn.innerText = "إنهاء الوردية"; btn.style.background = "var(--primary-red)";
@@ -628,7 +401,7 @@
             if(navigator.geolocation){
                 watchId = navigator.geolocation.watchPosition(async (pos) => {
                     lat = pos.coords.latitude; lng = pos.coords.longitude;
-                    loadRadar();
+                    loadRadar(); // تحديث الرادار لترتيب المسافات اللحظي
                     if(currentCaptainId && isOnline) {
                         try { await updateDoc(doc(db, "couriers", currentCaptainId), { "currentLocation.lat": lat, "currentLocation.lng": lng, "lastUpdated": new Date() }); } catch(e) {}
                     }
@@ -695,8 +468,11 @@
                         if(match){
                             distVal = parseFloat(calculateDistance(lat, lng, parseFloat(match[1]), parseFloat(match[2])));
                             distance = distVal + " كم";
+                            
+                            // ---- الإضافة: التنبيه الراداري الذكي ----
                             if(distVal < 5 && !notifiedTasks.has(id) && d.status === "جاري البحث عن مندوب" && !ignored.has(id)) {
-                                notifiedTasks.add(id); newAlert = true;
+                                notifiedTasks.add(id); 
+                                newAlert = true;
                             }
                         }
                     }
@@ -712,7 +488,7 @@
 
                     const timeStr = formatTime(d.timestamp);
 
-                    globalOrdersData[id] = {id, source: 'radar', distance, typeIcon, typeColor, typeBg, codText, timeStr, ...d};
+                    globalOrdersData[id] = {id, source: 'radar', distance, distVal, typeIcon, typeColor, typeBg, codText, timeStr, ...d};
 
                     if(d.status === "جاري البحث عن مندوب" && isOnline && !ignored.has(id)){
                         availableOrders.push(globalOrdersData[id]);
@@ -739,8 +515,26 @@
                         `;
                     }
                 });
+                
+                // ---- الإضافة: التنبيه الصوتي והاهتزاز ----
+                if (newAlert && isOnline) {
+                    const alertSnd = document.getElementById('alertSound');
+                    alertSnd.currentTime = 0;
+                    alertSnd.play().catch(e => {});
+                    if(navigator.vibrate) navigator.vibrate([500, 200, 500, 200, 1000]);
+                    
+                    Swal.fire({
+                        toast: true, position: 'top', icon: 'warning',
+                        title: '🚨 رادار أكسون',
+                        text: 'يوجد أوردر في محيطك الجغرافي القريب جداً!',
+                        showConfirmButton: false, timer: 5000,
+                        background: '#D90429', color: '#ffffff'
+                    });
+                }
 
+                // ---- الإضافة: الترتيب الذكي (الأقرب فالأبعد) ----
                 availableOrders.sort((a,b) => (a.distVal||999) - (b.distVal||999));
+                
                 availableOrders.forEach(o => {
                     radarHtml += `
                         <div class="compact-card" style="border-right-color: ${o.typeColor};" onclick="window.openOrderDetails('${o.id}', 'radar')">
@@ -768,6 +562,15 @@
             if(!data) return;
             let unreadCount = unreadMessagesByOrder[id] || 0;
             let badgeDisplay = unreadCount > 0 ? 'flex' : 'none';
+            
+            // ---- الإضافة: تجهيز رسالة الواتساب الذكية ----
+            let phoneForWa = (data.phone || "").replace(/^0/, '20'); 
+            let waMessage = encodeURIComponent(`مرحباً، معك كابتن أكسون إكسبريس. أنا في طريقي إليك لتسليم الشحنة، يرجى الاستعداد واستلامها لتوفير وقتك. شكراً لتعاونك.`);
+            let waBtnHtml = `<button class="btn-u" style="background:#25D366; color:white; grid-column: span 2;" onclick="window.open('https://wa.me/${phoneForWa}?text=${waMessage}', '_blank')"><i class="fa-brands fa-whatsapp" style="font-size:20px;"></i> رسالة "أنا في الطريق"</button>`;
+
+            // ---- الإضافة: زرار الاتصال المباشر للعميل ----
+            let callBtnHtml = `<button class="btn-u" style="background:#3B82F6; color:white;" onclick="window.location.href='tel:${data.phone}'"><i class="fa-solid fa-phone"></i> اتصال بالعميل</button>`;
+
             let contentHtml = `
                 <button class="close-btn" onclick="document.getElementById('orderDetailsModal').style.display='none'"><i class="fa-solid fa-chevron-down"></i></button>
                 <div style="text-align:center; margin-bottom:25px; padding-top:35px;">
@@ -785,25 +588,132 @@
                 if(!isMine) {
                     contentHtml += `<div class="btn-grid"><button class="btn-u btn-claim" onclick="window.claimOrder('${id}', '${data.linkedShipmentId || ''}')"><i class="fa-solid fa-rocket"></i> قبول وخطف المهمة</button><button class="btn-u btn-ignore" style="grid-column: span 2;" onclick="window.ignoreOrder('${id}')">تجاهل الإشعار</button></div>`;
                 } else {
-                    contentHtml += `<div class="btn-grid"><button class="btn-u btn-nav" onclick="window.openNativeMap('${encodeURIComponent(data.address)}')"><i class="fa-solid fa-location-arrow"></i> خرائط الملاحة</button><button class="btn-u btn-contact" onclick="window.openChatModal('${data.merchantEmail}', '${id}')"><i class="fa-solid fa-comments"></i> محادثة بخصوص الطرد<span class="chat-notification-badge" id="badge-${id}" style="display:${badgeDisplay};">${unreadCount}</span></button><button class="btn-u btn-done" onclick="window.completeTask('${id}', '${data.linkedShipmentId || ''}', 'radar')"><i class="fa-solid fa-check-double"></i> إنهاء التسليم بنجاح</button></div>`;
+                    contentHtml += `<div class="btn-grid"><button class="btn-u btn-nav" onclick="window.openNativeMap('${encodeURIComponent(data.address)}')"><i class="fa-solid fa-location-arrow"></i> خرائط الملاحة</button><button class="btn-u btn-contact" onclick="window.openChatModal('${data.merchantEmail}', '${id}')"><i class="fa-solid fa-comments"></i> محادثة الإدارة <span class="chat-notification-badge" id="badge-${id}" style="display:${badgeDisplay};">${unreadCount}</span></button><button class="btn-u btn-done" onclick="window.completeTask('${id}', '${data.linkedShipmentId || ''}', 'radar')"><i class="fa-solid fa-check-double"></i> إنهاء التسليم بنجاح</button></div>`;
                 }
             } else if (source === 'manifest') {
                 contentHtml += `
                     <div class="detail-box"><div style="margin-bottom:12px;"><b><i class="fa-solid fa-user" style="color:var(--primary-blue); width:20px;"></i> المستلم:</b> <span style="color:#4B5563; font-weight:700;">${data.name}</span></div><div style="margin-bottom:12px;"><b><i class="fa-solid fa-phone" style="color:var(--primary-blue); width:20px;"></i> التليفون:</b> <span dir="ltr" style="font-weight:900; color:var(--primary-red); font-size:16px;">${data.phone}</span></div><div><b><i class="fa-solid fa-store" style="color:var(--primary-blue); width:20px;"></i> التاجر:</b> <span style="color:#4B5563; font-weight:700;">${data.merchantEmail.split('@')[0]}</span></div></div>
                     <div class="detail-box"><b style="font-size:15px; color:var(--primary-blue);"><i class="fa-solid fa-location-dot"></i> العنوان بالتفصيل:</b><br><span style="color:#4B5563; display:block; margin-top:8px; font-weight:600; line-height:1.6;">${data.city} - ${data.address}</span></div>
-                    <div class="btn-grid"><button class="btn-u btn-nav" onclick="window.openNativeMap('${encodeURIComponent(data.city + ' ' + data.address)}')"><i class="fa-solid fa-location-arrow"></i> الملاحة للعنوان</button><button class="btn-u btn-contact" onclick="window.openChatModal('${data.merchantEmail}', '${id}')"><i class="fa-solid fa-comments"></i> محادثة بخصوص الطرد<span class="chat-notification-badge" id="badge-${id}" style="display:${badgeDisplay};">${unreadCount}</span></button><button class="btn-u btn-done" onclick="window.completeTask('${id}', null, 'manifest')"><i class="fa-solid fa-check-double"></i> تم التسليم وقبض الكاش</button><button class="btn-u btn-ignore" style="grid-column: span 2;" onclick="window.markReturn('${id}')"><i class="fa-solid fa-rotate-left"></i> محاولة فاشلة (تأجيل/مرتجع)</button></div>
+                    <div class="btn-grid">
+                        ${callBtnHtml}
+                        <button class="btn-u btn-nav" onclick="window.openNativeMap('${encodeURIComponent(data.city + ' ' + data.address)}')"><i class="fa-solid fa-location-arrow"></i> الملاحة للعنوان</button>
+                        ${waBtnHtml}
+                        <button class="btn-u btn-contact" onclick="window.openChatModal('${data.merchantEmail}', '${id}')"><i class="fa-solid fa-comments"></i> محادثة الإدارة <span class="chat-notification-badge" id="badge-${id}" style="display:${badgeDisplay};">${unreadCount}</span></button>
+                        <button class="btn-u btn-done" onclick="window.completeTask('${id}', null, 'manifest')"><i class="fa-solid fa-check-double"></i> تم التسليم بنجاح</button>
+                        <button class="btn-u btn-ignore" style="grid-column: span 2;" onclick="window.markReturn('${id}')"><i class="fa-solid fa-rotate-left"></i> محاولة فاشلة (تأجيل/مرتجع)</button>
+                    </div>
                 `;
             }
             document.getElementById('orderDetailsContent').innerHTML = contentHtml;
             document.getElementById('orderDetailsModal').style.display = 'flex';
         };
 
+        // ---- الإضافة: تسجيل GPS عند المرتجع لمنع التلاعب ----
         window.markReturn = async (id) => {
             document.getElementById('orderDetailsModal').style.display = 'none';
-            const r = await Swal.fire({title:'سبب عدم التسليم؟', input: 'select', inputOptions: {'مؤجل': 'مؤجل لليوم التالي', 'مرتجع': 'رفض الاستلام (مرتجع)'}, showCancelButton:true});
+            const r = await Swal.fire({title:'سبب عدم التسليم؟', input: 'select', inputOptions: {'مؤجل': 'مؤجل لليوم التالي', 'مرتجع': 'رفض الاستلام (مرتجع)'}, showCancelButton:true, confirmButtonText:'تأكيد السبب وحفظ الـ GPS'});
             if(r.isConfirmed && r.value) {
-                await updateDoc(doc(db, "shipments", id), {status: r.value});
-                Swal.fire({toast:true, position:'top', icon:'info', title:'تم تحديث الحالة لـ ' + r.value, showConfirmButton:false, timer:2000});
+                Swal.fire({title: 'جاري التحقق من موقعك...', allowOutsideClick:false, didOpen:()=>{Swal.showLoading()}});
+                if(navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(async (pos) => {
+                        const failLat = pos.coords.latitude;
+                        const failLng = pos.coords.longitude;
+                        await updateDoc(doc(db, "shipments", id), {
+                            status: r.value, 
+                            failedAttemptLocation: `https://maps.google.com/?q=${failLat},${failLng}`,
+                            failedAttemptTime: new Date()
+                        });
+                        Swal.fire({toast:true, position:'top', icon:'info', title:'تم إثبات الحالة بالموقع الفعلي وتحديثها لـ ' + r.value, showConfirmButton:false, timer:2500});
+                    }, (err) => {
+                        Swal.fire('تنبيه أمني', 'يجب تفعيل خدمة الـ GPS لتأكيد المرتجع أو التأجيل كإثبات للإدارة.', 'error');
+                    }, { enableHighAccuracy: true, timeout: 5000 });
+                } else {
+                    Swal.fire('خطأ', 'جهازك لا يدعم الـ GPS.', 'error');
+                }
+            }
+        };
+
+        // باقي الدوال كما هي...
+        window.claimOrder = async (id, linkedShipmentId) => {
+            document.getElementById('orderDetailsModal').style.display = 'none';
+            try {
+                const taskRef = doc(db, "eshteryly_orders", id);
+                const taskSnap = await getDoc(taskRef);
+                const taskData = taskSnap.data();
+                if(!taskData) throw new Error("البيانات غير موجودة");
+                await updateDoc(taskRef, { status: "تم الاستلام بواسطة المندوب", courierName: currentCaptain, courierId: currentCaptainId });
+                if(linkedShipmentId) {
+                    const shipmentRef = doc(db, "shipments", linkedShipmentId);
+                    const shipmentSnap = await getDoc(shipmentRef);
+                    if(shipmentSnap.exists()) {
+                        const shipmentData = shipmentSnap.data();
+                        let shippingCost = shipmentData.realShippingCost;
+                        if(!shippingCost && shipmentData.city) {
+                            shippingCost = 85; // Fallback
+                            await updateDoc(shipmentRef, { realShippingCost: shippingCost });
+                        }
+                        await updateDoc(shipmentRef, { status: "مع المندوب" });
+                    }
+                }
+                Swal.fire({toast:true, position:'top', icon:'success', title:'تم خطف المهمة بنجاح 🚀', showConfirmButton:false, timer:2000});
+                switchTab('myTasksTab', document.querySelectorAll('.nav-item')[1]);
+            } catch(e) { Swal.fire('خطأ', 'الصلاحيات لا تسمح أو المهمة اتخطفت من بطل تاني!', 'error'); }
+        };
+
+        window.completeTask = async (id, linkedShipmentId, source) => {
+            document.getElementById('orderDetailsModal').style.display = 'none';
+            const r = await Swal.fire({title:'تأكيد التسليم؟', text:'هل استلمت الكاش وتم تسليم الطرد؟', icon:'question', showCancelButton:true, confirmButtonText:'نعم ✅', cancelButtonText:'إلغاء', customClass: {confirmButton: 'btn-done', cancelButton: 'btn-ignore'}});
+            if(r.isConfirmed) {
+                try {
+                    if(source === 'radar') {
+                        const taskRef = doc(db, "eshteryly_orders", id);
+                        await updateDoc(taskRef, { status: "تم التسليم بنجاح" });
+                        if(linkedShipmentId) {
+                            const shipmentRef = doc(db, "shipments", linkedShipmentId);
+                            const shipmentSnap = await getDoc(shipmentRef);
+                            if(shipmentSnap.exists()) {
+                                const shipmentData = shipmentSnap.data();
+                                let shippingCost = shipmentData.realShippingCost;
+                                if(!shippingCost) shippingCost = 85;
+                                const userQ = query(collection(db, "users"), where("email", "==", shipmentData.merchantEmail));
+                                const uSnap = await getDocs(userQ);
+                                if(!uSnap.empty) {
+                                    const profit = Number(shipmentData.amount) - shippingCost;
+                                    let docUpdates = { success_shipments: increment(1) };
+                                    if(profit > 0) docUpdates.lifetime_sales = increment(profit);
+                                    await updateDoc(uSnap.docs[0].ref, docUpdates);
+                                }
+                                await updateDoc(shipmentRef, { status: "تم التسليم", isAccounted: true, accountedAt: new Date() });
+                            }
+                        }
+                    } else if(source === 'manifest') {
+                        const shipmentRef = doc(db, "shipments", id);
+                        const shipmentSnap = await getDoc(shipmentRef);
+                        if(shipmentSnap.exists()) {
+                            const shipmentData = shipmentSnap.data();
+                            let shippingCost = shipmentData.realShippingCost;
+                            if(!shippingCost) shippingCost = 85;
+                            const userQ = query(collection(db, "users"), where("email", "==", shipmentData.merchantEmail));
+                            const uSnap = await getDocs(userQ);
+                            if(!uSnap.empty) {
+                                const profit = Number(shipmentData.amount) - shippingCost;
+                                let docUpdates = { success_shipments: increment(1) };
+                                if(profit > 0) docUpdates.lifetime_sales = increment(profit);
+                                await updateDoc(uSnap.docs[0].ref, docUpdates);
+                            }
+                            await updateDoc(shipmentRef, { status: "تم التسليم", isAccounted: true, accountedAt: new Date() });
+                        }
+                    }
+                    
+                    try {
+                        const cRef = doc(db, "couriers", currentCaptainId);
+                        await updateDoc(cRef, { successfulDeliveries: increment(1) });
+                    } catch(e) {}
+                    
+                    Swal.fire({toast:true, position:'top', icon:'success', title:'عاش يا بطل، تمت المهمة بنجاح! 🏆', showConfirmButton:false, timer:2000});
+                } catch(err) {
+                    Swal.fire('خطأ في الإكمال', err.message, 'error');
+                }
             }
         };
 
@@ -867,6 +777,70 @@
                 await addDoc(collection(db, "internal_chats"), { from: currentCaptain, to: currentChatMerchant, orderId: currentChatOrderId, message: msg, timestamp: new Date(), isRead: false });
             } catch(e) {}
         };
+
+        function formatTime(ts) {
+            if(!ts) return "";
+            let date = ts.toDate ? ts.toDate() : new Date(ts);
+            return date.toLocaleString('ar-EG', { hour: '2-digit', minute:'2-digit', month:'short', day:'numeric' });
+        }
+
+        window.switchTab = (tabId, element) => {
+            document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            element.classList.add('active');
+            if(navigator.vibrate) navigator.vibrate(50);
+        };
+
+        const requestWakeLock = async () => {
+            if ('wakeLock' in navigator) {
+                try { wakeLock = await navigator.wakeLock.request('screen'); } 
+                catch (err) {}
+            }
+        };
+        const releaseWakeLock = () => { if (wakeLock !== null) { wakeLock.release(); wakeLock = null; } };
+        let wakeLock = null;
+
+        if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+            Notification.requestPermission();
+        }
+
+        function resetLoginBtn() {
+            const btn = document.getElementById('loginBtn');
+            if(btn) { btn.innerHTML = 'تسجيل الدخول'; btn.disabled = false; }
+        }
+
+        function startGlobalChatListener() {
+            if(globalChatUnsubscribe) globalChatUnsubscribe();
+            const chatQ = query(collection(db, "internal_chats"), or(where("from", "==", currentCaptain), where("to", "==", currentCaptain)));
+            let initialLoad = true;
+            globalChatUnsubscribe = onSnapshot(chatQ, (snap) => {
+                snap.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        const msgData = change.doc.data();
+                        const targetOrderId = msgData.orderId || 'general';
+                        if(msgData.from !== currentCaptain && !msgData.isRead && currentChatOrderId !== targetOrderId) {
+                            unreadMessagesByOrder[targetOrderId] = (unreadMessagesByOrder[targetOrderId] || 0) + 1;
+                            if(!initialLoad) {
+                                const snd = document.getElementById('msgSound');
+                                snd.currentTime = 0; 
+                                let playPromise = snd.play();
+                                if (playPromise !== undefined) { playPromise.catch(e => {}); }
+                                if(navigator.vibrate) navigator.vibrate([300, 100, 300, 100, 300]);
+                                Swal.fire({
+                                    toast: true, position: 'top', icon: 'info',
+                                    title: `رسالة بخصوص الطرد`,
+                                    text: msgData.message.substring(0, 30) + '...',
+                                    showConfirmButton: false, timer: 4000
+                                });
+                            }
+                            window.updateOuterBadges(targetOrderId);
+                        }
+                    }
+                });
+                initialLoad = false;
+            });
+        }
 
         window.logout = () => signOut(auth).then(() => window.location.reload());
         window.toggleTheme = () => document.body.classList.toggle('dark-mode');
