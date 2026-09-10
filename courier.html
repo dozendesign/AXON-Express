@@ -242,7 +242,7 @@
         </div>
     </div>
 
-    <!-- تم تغيير النغمة لواحدة أقوى للتنبيه الراداري -->
+    <!-- الأصوات -->
     <audio id="alertSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
     <audio id="msgSound" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3" preload="auto"></audio>
 
@@ -289,7 +289,12 @@
         let currentCaptain = "", currentCaptainId = "", isOnline = false, watchId = null, lat = null, lng = null, ignored = new Set();
         let notifiedTasks = new Set(); 
         let globalOrdersData = {}; 
-        let livePricesCache = {}; // للتسعير الحقيقي
+        let livePricesCache = {}; 
+        let unreadMessagesByOrder = {}; 
+        let globalChatUnsubscribe = null;
+        let chatUnsubscribe = null;
+        let currentChatOrderId = "";
+        let currentChatMerchant = "";
 
         window.updateOuterBadges = (orderId) => {
             const count = unreadMessagesByOrder[orderId] || 0;
@@ -401,7 +406,7 @@
             if(navigator.geolocation){
                 watchId = navigator.geolocation.watchPosition(async (pos) => {
                     lat = pos.coords.latitude; lng = pos.coords.longitude;
-                    loadRadar(); // تحديث الرادار لترتيب المسافات اللحظي
+                    loadRadar(); 
                     if(currentCaptainId && isOnline) {
                         try { await updateDoc(doc(db, "couriers", currentCaptainId), { "currentLocation.lat": lat, "currentLocation.lng": lng, "lastUpdated": new Date() }); } catch(e) {}
                     }
@@ -469,7 +474,6 @@
                             distVal = parseFloat(calculateDistance(lat, lng, parseFloat(match[1]), parseFloat(match[2])));
                             distance = distVal + " كم";
                             
-                            // ---- الإضافة: التنبيه الراداري الذكي ----
                             if(distVal < 5 && !notifiedTasks.has(id) && d.status === "جاري البحث عن مندوب" && !ignored.has(id)) {
                                 notifiedTasks.add(id); 
                                 newAlert = true;
@@ -516,7 +520,6 @@
                     }
                 });
                 
-                // ---- الإضافة: التنبيه الصوتي והاهتزاز ----
                 if (newAlert && isOnline) {
                     const alertSnd = document.getElementById('alertSound');
                     alertSnd.currentTime = 0;
@@ -532,7 +535,6 @@
                     });
                 }
 
-                // ---- الإضافة: الترتيب الذكي (الأقرب فالأبعد) ----
                 availableOrders.sort((a,b) => (a.distVal||999) - (b.distVal||999));
                 
                 availableOrders.forEach(o => {
@@ -563,12 +565,10 @@
             let unreadCount = unreadMessagesByOrder[id] || 0;
             let badgeDisplay = unreadCount > 0 ? 'flex' : 'none';
             
-            // ---- الإضافة: تجهيز رسالة الواتساب الذكية ----
             let phoneForWa = (data.phone || "").replace(/^0/, '20'); 
             let waMessage = encodeURIComponent(`مرحباً، معك كابتن أكسون إكسبريس. أنا في طريقي إليك لتسليم الشحنة، يرجى الاستعداد واستلامها لتوفير وقتك. شكراً لتعاونك.`);
             let waBtnHtml = `<button class="btn-u" style="background:#25D366; color:white; grid-column: span 2;" onclick="window.open('https://wa.me/${phoneForWa}?text=${waMessage}', '_blank')"><i class="fa-brands fa-whatsapp" style="font-size:20px;"></i> رسالة "أنا في الطريق"</button>`;
 
-            // ---- الإضافة: زرار الاتصال المباشر للعميل ----
             let callBtnHtml = `<button class="btn-u" style="background:#3B82F6; color:white;" onclick="window.location.href='tel:${data.phone}'"><i class="fa-solid fa-phone"></i> اتصال بالعميل</button>`;
 
             let contentHtml = `
@@ -608,7 +608,6 @@
             document.getElementById('orderDetailsModal').style.display = 'flex';
         };
 
-        // ---- الإضافة: تسجيل GPS عند المرتجع لمنع التلاعب ----
         window.markReturn = async (id) => {
             document.getElementById('orderDetailsModal').style.display = 'none';
             const r = await Swal.fire({title:'سبب عدم التسليم؟', input: 'select', inputOptions: {'مؤجل': 'مؤجل لليوم التالي', 'مرتجع': 'رفض الاستلام (مرتجع)'}, showCancelButton:true, confirmButtonText:'تأكيد السبب وحفظ الـ GPS'});
@@ -629,90 +628,6 @@
                     }, { enableHighAccuracy: true, timeout: 5000 });
                 } else {
                     Swal.fire('خطأ', 'جهازك لا يدعم الـ GPS.', 'error');
-                }
-            }
-        };
-
-        // باقي الدوال كما هي...
-        window.claimOrder = async (id, linkedShipmentId) => {
-            document.getElementById('orderDetailsModal').style.display = 'none';
-            try {
-                const taskRef = doc(db, "eshteryly_orders", id);
-                const taskSnap = await getDoc(taskRef);
-                const taskData = taskSnap.data();
-                if(!taskData) throw new Error("البيانات غير موجودة");
-                await updateDoc(taskRef, { status: "تم الاستلام بواسطة المندوب", courierName: currentCaptain, courierId: currentCaptainId });
-                if(linkedShipmentId) {
-                    const shipmentRef = doc(db, "shipments", linkedShipmentId);
-                    const shipmentSnap = await getDoc(shipmentRef);
-                    if(shipmentSnap.exists()) {
-                        const shipmentData = shipmentSnap.data();
-                        let shippingCost = shipmentData.realShippingCost;
-                        if(!shippingCost && shipmentData.city) {
-                            shippingCost = 85; // Fallback
-                            await updateDoc(shipmentRef, { realShippingCost: shippingCost });
-                        }
-                        await updateDoc(shipmentRef, { status: "مع المندوب" });
-                    }
-                }
-                Swal.fire({toast:true, position:'top', icon:'success', title:'تم خطف المهمة بنجاح 🚀', showConfirmButton:false, timer:2000});
-                switchTab('myTasksTab', document.querySelectorAll('.nav-item')[1]);
-            } catch(e) { Swal.fire('خطأ', 'الصلاحيات لا تسمح أو المهمة اتخطفت من بطل تاني!', 'error'); }
-        };
-
-        window.completeTask = async (id, linkedShipmentId, source) => {
-            document.getElementById('orderDetailsModal').style.display = 'none';
-            const r = await Swal.fire({title:'تأكيد التسليم؟', text:'هل استلمت الكاش وتم تسليم الطرد؟', icon:'question', showCancelButton:true, confirmButtonText:'نعم ✅', cancelButtonText:'إلغاء', customClass: {confirmButton: 'btn-done', cancelButton: 'btn-ignore'}});
-            if(r.isConfirmed) {
-                try {
-                    if(source === 'radar') {
-                        const taskRef = doc(db, "eshteryly_orders", id);
-                        await updateDoc(taskRef, { status: "تم التسليم بنجاح" });
-                        if(linkedShipmentId) {
-                            const shipmentRef = doc(db, "shipments", linkedShipmentId);
-                            const shipmentSnap = await getDoc(shipmentRef);
-                            if(shipmentSnap.exists()) {
-                                const shipmentData = shipmentSnap.data();
-                                let shippingCost = shipmentData.realShippingCost;
-                                if(!shippingCost) shippingCost = 85;
-                                const userQ = query(collection(db, "users"), where("email", "==", shipmentData.merchantEmail));
-                                const uSnap = await getDocs(userQ);
-                                if(!uSnap.empty) {
-                                    const profit = Number(shipmentData.amount) - shippingCost;
-                                    let docUpdates = { success_shipments: increment(1) };
-                                    if(profit > 0) docUpdates.lifetime_sales = increment(profit);
-                                    await updateDoc(uSnap.docs[0].ref, docUpdates);
-                                }
-                                await updateDoc(shipmentRef, { status: "تم التسليم", isAccounted: true, accountedAt: new Date() });
-                            }
-                        }
-                    } else if(source === 'manifest') {
-                        const shipmentRef = doc(db, "shipments", id);
-                        const shipmentSnap = await getDoc(shipmentRef);
-                        if(shipmentSnap.exists()) {
-                            const shipmentData = shipmentSnap.data();
-                            let shippingCost = shipmentData.realShippingCost;
-                            if(!shippingCost) shippingCost = 85;
-                            const userQ = query(collection(db, "users"), where("email", "==", shipmentData.merchantEmail));
-                            const uSnap = await getDocs(userQ);
-                            if(!uSnap.empty) {
-                                const profit = Number(shipmentData.amount) - shippingCost;
-                                let docUpdates = { success_shipments: increment(1) };
-                                if(profit > 0) docUpdates.lifetime_sales = increment(profit);
-                                await updateDoc(uSnap.docs[0].ref, docUpdates);
-                            }
-                            await updateDoc(shipmentRef, { status: "تم التسليم", isAccounted: true, accountedAt: new Date() });
-                        }
-                    }
-                    
-                    try {
-                        const cRef = doc(db, "couriers", currentCaptainId);
-                        await updateDoc(cRef, { successfulDeliveries: increment(1) });
-                    } catch(e) {}
-                    
-                    Swal.fire({toast:true, position:'top', icon:'success', title:'عاش يا بطل، تمت المهمة بنجاح! 🏆', showConfirmButton:false, timer:2000});
-                } catch(err) {
-                    Swal.fire('خطأ في الإكمال', err.message, 'error');
                 }
             }
         };
