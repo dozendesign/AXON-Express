@@ -6,181 +6,190 @@
     <title>Axon Captain | رادار الأبطال</title>
     
     <link rel="manifest" href="manifest-captain.json">
-    <meta name="theme-color" content="#1E3A8A">
+    <meta name="theme-color" content="#0B132B">
     <link rel="apple-touch-icon" href="icon-512.png">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         :root { 
-            --primary-blue: #1E3A8A; 
-            --secondary-blue: #2563EB;
+            --primary-blue: #0B132B; 
+            --secondary-blue: #1C2541;
+            --accent-blue: #3A506B;
             --primary-red: #D90429; 
-            --bg-color: #F4F7F6; 
+            --secondary-red: #EF233C;
+            --bg-color: #F8FAFC; 
             --white: #ffffff; 
-            --dark-text: #111827; 
-            --soft-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-            --glass-bg: rgba(255, 255, 255, 0.85);
+            --dark-text: #0F172A; 
+            --soft-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --uber-radius: 24px;
         }
         
         body { font-family: 'Cairo', sans-serif; background: var(--bg-color); margin: 0; color: var(--dark-text); overflow-x: hidden; transition: background 0.3s ease; padding-bottom: 90px; }
         
         .app-container { max-width: 600px; margin: 0 auto; background: var(--bg-color); min-height: 100vh; position: relative;}
         
-        /* شاشة الدخول */
+        /* شاشة الدخول الاحترافية */
         #loginSection { 
-            background: linear-gradient(135deg, #0A192F, var(--primary-blue)); 
+            background: linear-gradient(135deg, #0B132B, #1C2541); 
             min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
         }
         .login-card {
-            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding: 40px 30px; border-radius: 30px; 
-            width: 100%; max-width: 400px; text-align: center; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 40px rgba(0,0,0,0.2); animation: fadeInUp 0.8s ease;
+            background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 40px 30px; border-radius: 35px; 
+            width: 100%; max-width: 400px; text-align: center; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 25px 50px rgba(0,0,0,0.3); animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
         .login-card input {
-            width: 100%; padding: 15px; margin-bottom: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.2); 
-            background: rgba(255,255,255,0.1); color: white; font-family: 'Cairo'; font-size: 16px; text-align: center; transition: 0.3s;
+            width: 100%; padding: 18px 20px; margin-bottom: 20px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.1); 
+            background: rgba(255,255,255,0.05); color: white; font-family: 'Cairo'; font-size: 16px; transition: all 0.3s;
         }
-        .login-card input::placeholder { color: rgba(255,255,255,0.6); }
-        .login-card input:focus { background: rgba(255,255,255,0.2); border-color: white; }
+        .login-card input::placeholder { color: rgba(255,255,255,0.5); font-weight: 600; }
+        .login-card input:focus { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.5); transform: translateY(-2px); }
         
         .pass-wrapper { position: relative; width: 100%; }
-        .pass-wrapper i { position: absolute; left: 15px; top: 15px; color: rgba(255,255,255,0.6); cursor: pointer; font-size: 18px; transition: 0.3s; }
+        .pass-wrapper i { position: absolute; left: 20px; top: 20px; color: rgba(255,255,255,0.5); cursor: pointer; font-size: 18px; transition: 0.3s; }
         .pass-wrapper i:hover { color: white; }
 
         .login-btn {
-            width: 100%; background: linear-gradient(90deg, var(--primary-red), #ff3b3b); color: white; border: none; padding: 15px; 
-            border-radius: 15px; font-weight: 900; font-size: 18px; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(217, 4, 41, 0.4);
+            width: 100%; background: linear-gradient(135deg, var(--secondary-red), var(--primary-red)); color: white; border: none; padding: 18px; 
+            border-radius: 18px; font-weight: 900; font-size: 18px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 10px 25px rgba(217, 4, 41, 0.4);
         }
-        .login-btn:active { transform: scale(0.95); }
+        .login-btn:active { transform: scale(0.96); box-shadow: 0 5px 15px rgba(217, 4, 41, 0.3); }
 
-        /* الهيدر */
+        /* الهيدر العلوي */
         .app-header {
             background: var(--white); padding: 15px 25px; display: flex; justify-content: space-between; 
-            align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: var(--soft-shadow);
-            border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; transition: background 0.3s;
+            align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 20px rgba(0,0,0,0.04);
+            border-bottom-left-radius: var(--uber-radius); border-bottom-right-radius: var(--uber-radius); transition: background 0.3s;
         }
-        .profile-area { display: flex; align-items: center; gap: 12px; }
+        .profile-area { display: flex; align-items: center; gap: 15px; }
         
         /* الصورة الشخصية */
         .avatar { 
-            width: 55px; height: 55px; background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue)); 
+            width: 55px; height: 55px; background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue)); 
             border-radius: 18px; display: flex; align-items: center; justify-content: center; color: white; 
-            font-weight: 900; font-size:20px; box-shadow: 0 4px 10px rgba(30, 58, 138, 0.3);
+            font-weight: 900; font-size:20px; box-shadow: 0 8px 15px rgba(11, 19, 43, 0.2);
             cursor: pointer; position: relative; overflow: hidden; background-size: cover; background-position: center; border: 2px solid var(--white);
+            transition: transform 0.3s;
         }
+        .avatar:active { transform: scale(0.92); }
         .avatar-overlay {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 20px; background: rgba(0,0,0,0.5);
-            display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s;
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 22px; background: rgba(0,0,0,0.6);
+            display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; backdrop-filter: blur(2px);
         }
         .avatar:hover .avatar-overlay { opacity: 1; }
 
-        .c-stars { color: #F59E0B; font-size: 12px; margin-top: 3px; letter-spacing: 2px;}
-        .c-stars .empty-star { color: #E5E7EB; }
+        .c-stars { color: #F59E0B; font-size: 13px; margin-top: 4px; letter-spacing: 2px; text-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);}
+        .c-stars .empty-star { color: #E2E8F0; text-shadow: none; }
 
-        /* شريط الحالة */
+        /* شريط الحالة والوردية */
         .status-container {
-            margin: 20px; background: var(--white); padding: 15px 25px; border-radius: 20px;
-            display: flex; justify-content: space-between; align-items: center; box-shadow: var(--soft-shadow); transition: background 0.3s;
+            margin: 25px 20px; background: var(--white); padding: 18px 25px; border-radius: var(--uber-radius);
+            display: flex; justify-content: space-between; align-items: center; box-shadow: var(--soft-shadow); transition: background 0.3s; border: 1px solid rgba(0,0,0,0.02);
         }
-        .status-badge { display: flex; align-items: center; gap: 10px; font-weight: bold; font-size:16px;}
-        .pulse-online { width: 14px; height: 14px; background: #10B981; border-radius: 50%; box-shadow: 0 0 0 rgba(16, 185, 129, 0.4); animation: pulse 2s infinite; }
-        .shift-btn { background: var(--primary-blue); color: white; border: none; padding: 10px 25px; border-radius: 12px; font-weight: bold; font-family:'Cairo'; font-size:15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.3s; }
-        .shift-btn:active { transform: scale(0.95); }
+        .status-badge { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size:17px;}
+        .pulse-online { width: 16px; height: 16px; background: #10B981; border-radius: 50%; box-shadow: 0 0 0 rgba(16, 185, 129, 0.4); animation: pulse 2s infinite; }
+        .shift-btn { background: var(--primary-blue); color: white; border: none; padding: 12px 28px; border-radius: 16px; font-weight: 900; font-family:'Cairo'; font-size:16px; box-shadow: 0 8px 20px rgba(11,19,43,0.2); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
+        .shift-btn:active { transform: scale(0.92); }
         
-        /* التابات السفلية */
+        /* التابات السفلية (Bottom Navigation) */
         .bottom-nav {
-            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 500px;
-            background: var(--glass-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); display: flex; justify-content: space-around; padding: 12px 5px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 25px; z-index: 1000; border: 1px solid rgba(255,255,255,0.2); transition: background 0.3s;
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 500px;
+            background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-around; padding: 15px 10px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12); border-radius: 30px; z-index: 1000; border: 1px solid rgba(255,255,255,0.4); transition: background 0.3s;
         }
         .nav-item {
-            flex: 1; text-align: center; color: #9CA3AF; font-size: 12px; font-weight: 800; cursor: pointer;
+            flex: 1; text-align: center; color: #94A3B8; font-size: 13px; font-weight: 800; cursor: pointer;
             display: flex; flex-direction: column; align-items: center; gap: 6px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative;
         }
-        .nav-item i { font-size: 22px; transition: 0.3s; }
+        .nav-item i { font-size: 24px; transition: 0.3s; }
         .nav-item.active { color: var(--primary-blue); }
-        .nav-item.active i { transform: translateY(-4px) scale(1.1); }
-        .nav-item.active span { transform: translateY(-2px); }
-        .nav-badge { position: absolute; top: -5px; right: 25px; background: var(--primary-red); color: white; border-radius: 50%; min-width: 18px; height: 18px; padding: 0 5px; font-size: 11px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(217,4,41,0.4); display: none; font-weight: bold;}
+        .nav-item.active i { transform: translateY(-6px) scale(1.15); color: var(--primary-red); }
+        .nav-item.active span { transform: translateY(-2px); color: var(--primary-blue); }
+        .nav-badge { position: absolute; top: -8px; right: 22px; background: var(--primary-red); color: white; border-radius: 50%; min-width: 20px; height: 20px; padding: 0 6px; font-size: 11px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(217,4,41,0.5); display: none; font-weight: 900;}
 
-        .page-tab { display: none; padding: 0 20px 20px 20px; animation: fadeInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .page-tab { display: none; padding: 0 20px 20px 20px; animation: fadeInRight 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
         .page-tab.active { display: block; }
         
-        /* الكروت */
+        /* الكروت (Uber Style Cards) */
         .compact-card {
-            background: var(--white); padding: 15px; border-radius: 20px; display: flex; align-items: center; 
-            justify-content: space-between; box-shadow: var(--soft-shadow); margin-bottom: 15px; cursor: pointer;
-            border-right: 5px solid var(--primary-blue); transition: all 0.3s ease; position: relative; overflow: visible;
+            background: var(--white); padding: 18px; border-radius: var(--uber-radius); display: flex; align-items: center; 
+            justify-content: space-between; box-shadow: var(--soft-shadow); margin-bottom: 18px; cursor: pointer;
+            border-right: 6px solid var(--primary-blue); transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); position: relative; overflow: visible;
         }
-        .compact-card:active { transform: scale(0.97); }
-        .card-icon { width: 50px; height: 50px; border-radius: 14px; background: #EEF2FF; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-left: 15px; flex-shrink: 0; transition: background 0.3s; position: relative;}
+        .compact-card:active { transform: scale(0.96); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .card-icon { width: 55px; height: 55px; border-radius: 16px; background: #F1F5F9; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-left: 15px; flex-shrink: 0; transition: background 0.3s; position: relative;}
         .card-info { flex: 1; overflow: hidden;}
-        .card-title { font-weight: 900; font-size: 16px; margin: 0; color: var(--dark-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 8px;}
-        .card-sub { font-size: 13px; color: #6B7280; margin: 4px 0 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 700;}
-        .card-time { font-size: 11px; color: #9CA3AF; margin-top: 6px; display: flex; align-items: center; gap: 5px; font-weight: 600;}
-        .card-price { font-weight: 900; color: var(--primary-red); font-size: 18px; text-align: left; white-space: nowrap; background: #FEF2F2; padding: 5px 10px; border-radius: 10px;}
-        .card-dist { font-size: 11px; background: var(--primary-blue); color: white; padding: 3px 8px; border-radius: 8px; font-weight: bold;}
+        .card-title { font-weight: 900; font-size: 17px; margin: 0; color: var(--dark-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 8px;}
+        .card-sub { font-size: 14px; color: #64748B; margin: 6px 0 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 700;}
+        .card-time { font-size: 12px; color: #94A3B8; margin-top: 8px; display: flex; align-items: center; gap: 5px; font-weight: 700;}
+        .card-price { font-weight: 900; color: var(--primary-red); font-size: 19px; text-align: left; white-space: nowrap; background: #FEF2F2; padding: 6px 12px; border-radius: 12px;}
+        .card-dist { font-size: 11px; background: var(--primary-blue); color: white; padding: 4px 10px; border-radius: 10px; font-weight: 800; letter-spacing: 0.5px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);}
 
-        /* الإشعار الخارجي المربوط برقم الطرد فقط */
         .card-chat-badge {
             position: absolute; top: -8px; left: -8px; background: var(--primary-red); color: white; 
-            min-width: 22px; height: 22px; border-radius: 50%; font-size: 11px; display: flex; align-items: center; 
-            justify-content: center; font-weight: 900; border: 2px solid var(--white); box-shadow: 0 3px 6px rgba(217,4,41,0.5); z-index: 10;
+            min-width: 24px; height: 24px; border-radius: 50%; font-size: 12px; display: flex; align-items: center; 
+            justify-content: center; font-weight: 900; border: 3px solid var(--white); box-shadow: 0 4px 8px rgba(217,4,41,0.5); z-index: 10;
         }
 
-        /* المودال */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); align-items: flex-end; justify-content: center; z-index: 2000; padding: 0;}
-        .modal-content { background: var(--bg-color); padding: 30px 25px; border-top-left-radius: 30px; border-top-right-radius: 30px; width: 100%; max-width: 600px; position: relative; max-height: 92vh; overflow-y: auto; animation: slideUpSmooth 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 -10px 40px rgba(0,0,0,0.15);}
+        /* المودال - Bottom Sheet الاحترافي */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); align-items: flex-end; justify-content: center; z-index: 2000; padding: 0; transition: 0.3s;}
+        .modal-content { background: var(--bg-color); padding: 35px 25px; border-radius: 35px 35px 0 0; width: 100%; max-width: 600px; position: relative; max-height: 90vh; overflow-y: auto; animation: slideUpSheet 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); box-shadow: 0 -15px 40px rgba(0,0,0,0.2);}
         
-        .close-btn { position: absolute; top: 15px; left: 15px; background: rgba(217, 4, 41, 0.1); border: none; font-size: 20px; cursor: pointer; color: var(--primary-red); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s; z-index: 10;}
-        .close-btn:active { transform: scale(0.9); background: rgba(217, 4, 41, 0.2); }
+        /* مؤشر السحب للمودال */
+        .modal-content::before { content: ''; position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 50px; height: 5px; background: #CBD5E1; border-radius: 10px; }
+
+        .close-btn { position: absolute; top: 20px; left: 20px; background: rgba(217, 4, 41, 0.08); border: none; font-size: 20px; cursor: pointer; color: var(--primary-red); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s; z-index: 10;}
+        .close-btn:active { transform: scale(0.9); background: rgba(217, 4, 41, 0.15); }
         
-        .detail-box { background: var(--white); padding: 18px; border-radius: 20px; margin-bottom: 15px; box-shadow: var(--soft-shadow); border: 1px solid rgba(0,0,0,0.02);}
+        .detail-box { background: var(--white); padding: 20px; border-radius: var(--uber-radius); margin-bottom: 18px; box-shadow: var(--soft-shadow); border: 1px solid rgba(0,0,0,0.03);}
         
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px;}
-        .btn-u { padding: 14px; border-radius: 15px; border: none; font-family: 'Cairo'; font-weight: 900; cursor: pointer; transition: 0.3s; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; position: relative;}
-        .btn-u:active { transform: scale(0.96); }
-        .btn-claim { background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue)); color: white; grid-column: span 2; font-size: 18px; box-shadow: 0 8px 20px rgba(30,58,138,0.3);}
-        .btn-ignore { background: #FEF2F2; color: var(--primary-red); }
-        .btn-nav { background: #EEF2FF; color: var(--primary-blue); }
-        .btn-done { background: linear-gradient(135deg, #10B981, #059669); color: white; grid-column: span 2; font-size: 18px; box-shadow: 0 8px 20px rgba(16,185,129,0.3);}
-        .btn-contact { background: #1F2937; color: white; grid-column: span 2; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px;}
+        .btn-u { padding: 16px; border-radius: 18px; border: none; font-family: 'Cairo'; font-weight: 900; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 10px; position: relative;}
+        .btn-u:active { transform: scale(0.95); }
+        .btn-claim { background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue)); color: white; grid-column: span 2; font-size: 18px; box-shadow: 0 10px 25px rgba(30,58,138,0.3);}
+        .btn-ignore { background: #FEE2E2; color: var(--primary-red); }
+        .btn-nav { background: #EFF6FF; color: var(--secondary-blue); }
+        .btn-done { background: linear-gradient(135deg, #10B981, #059669); color: white; grid-column: span 2; font-size: 18px; box-shadow: 0 10px 25px rgba(16,185,129,0.3);}
+        .btn-contact { background: #1E293B; color: white; grid-column: span 2; }
         
-        .chat-notification-badge { position: absolute; top: -5px; right: -5px; background: var(--primary-red); color: white; width: 20px; height: 20px; border-radius: 50%; font-size: 11px; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(217,4,41,0.5); font-weight: bold; border: 2px solid white; display: none; }
+        .chat-notification-badge { position: absolute; top: -6px; right: -6px; background: var(--primary-red); color: white; width: 24px; height: 24px; border-radius: 50%; font-size: 12px; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(217,4,41,0.5); font-weight: 900; border: 3px solid white; display: none; }
 
         /* الشات */
-        .chat-bubble { padding: 12px 18px; border-radius: 20px; max-width: 82%; font-size: 14px; line-height: 1.5; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 10px; clear: both; font-weight: 600;}
-        .chat-mine { background: #DCF8C6; float: left; border-bottom-left-radius: 5px; color: #000; }
-        .chat-other { background: #ffffff; float: right; border-bottom-right-radius: 5px; color: #000; border: 1px solid #E5E7EB;}
-        .chat-admin { background: #FEF2F2; float: right; border-bottom-right-radius: 5px; color: #D90429; border: 1px solid #FCA5A5; }
+        .chat-bubble { padding: 14px 20px; border-radius: 24px; max-width: 82%; font-size: 15px; line-height: 1.5; box-shadow: 0 4px 10px rgba(0,0,0,0.04); margin-bottom: 12px; clear: both; font-weight: 700;}
+        .chat-mine { background: #DCF8C6; float: left; border-bottom-left-radius: 6px; color: #064E3B; }
+        .chat-other { background: #ffffff; float: right; border-bottom-right-radius: 6px; color: #1E293B; border: 1px solid #E2E8F0;}
+        .chat-admin { background: #FEF2F2; float: right; border-bottom-right-radius: 6px; color: #991B1B; border: 1px solid #FECACA; }
 
-        body.dark-mode { --bg-color: #0F172A; --white: #1F2937; --dark-text: #F9FAFB; --soft-shadow: 0 10px 25px rgba(0,0,0,0.2); --glass-bg: rgba(31, 41, 55, 0.85); }
+        body.dark-mode { --bg-color: #0F172A; --white: #1E293B; --dark-text: #F8FAFC; --soft-shadow: 0 10px 30px rgba(0,0,0,0.4); --glass-bg: rgba(15, 23, 42, 0.85); }
         body.dark-mode .app-container { background: #0F172A; }
-        body.dark-mode .app-header, body.dark-mode .status-container { border: 1px solid #374151;}
-        body.dark-mode .bottom-nav { border: 1px solid #374151; box-shadow: 0 -5px 20px rgba(0,0,0,0.5);}
-        body.dark-mode .compact-card, body.dark-mode .detail-box { background: #1E293B; border-color: #374151; border-right-color: var(--primary-blue);}
-        body.dark-mode .card-icon { background: #0F172A; }
-        body.dark-mode .card-sub { color: #9CA3AF; }
+        body.dark-mode .app-header, body.dark-mode .status-container { border: 1px solid #334155; box-shadow: none;}
+        body.dark-mode .bottom-nav { border: 1px solid #334155; box-shadow: 0 -5px 25px rgba(0,0,0,0.5);}
+        body.dark-mode .compact-card, body.dark-mode .detail-box { background: #1E293B; border-color: #334155; border-right-color: var(--secondary-blue); box-shadow: none;}
+        body.dark-mode .card-icon { background: #0F172A; color: var(--secondary-blue) !important;}
+        body.dark-mode .card-sub { color: #94A3B8; }
         body.dark-mode .card-price { background: #450a0a; }
-        body.dark-mode .modal-content { background: #0F172A; border-top: 1px solid #374151;}
-        body.dark-mode .chat-other { background: #374151; color: #fff; border-color: #4B5563;}
-        body.dark-mode .close-btn { background: rgba(217, 4, 41, 0.2); }
+        body.dark-mode .modal-content { background: #0F172A; border-top: 1px solid #334155;}
+        body.dark-mode .chat-other { background: #1E293B; color: #F8FAFC; border-color: #334155;}
+        body.dark-mode .close-btn { background: rgba(217, 4, 41, 0.15); }
+        body.dark-mode .btn-nav { background: #1e3a8a; color: #bfdbfe; }
+        body.dark-mode .btn-ignore { background: #450a0a; color: #fca5a5; }
 
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
-        @keyframes slideUpSmooth { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); } 70% { box-shadow: 0 0 0 12px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+        @keyframes slideUpSheet { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes fadeInUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes fadeInRight { from { transform: translateX(15px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeInRight { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         
         .swal2-container { font-family: 'Cairo', sans-serif !important; z-index: 99999 !important; }
         
         #installPwaBtn {
-            display: none; background: linear-gradient(135deg, #10B981, #059669); border: none; color: white; padding: 6px 15px; border-radius: 12px; font-family: 'Cairo'; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 10px rgba(16,185,129,0.3); animation: pulse 2s infinite;
+            display: none; background: linear-gradient(135deg, #10B981, #059669); border: none; color: white; padding: 8px 18px; border-radius: 14px; font-family: 'Cairo'; font-weight: 900; font-size: 14px; cursor: pointer; box-shadow: 0 6px 15px rgba(16,185,129,0.3); animation: pulse 2s infinite;
         }
     </style>
 </head>
@@ -188,8 +197,8 @@
 
     <div id="loginSection">
         <div class="login-card">
-            <h1 style="color:white; margin-bottom:5px; font-size:32px; letter-spacing:2px;">AXON</h1>
-            <p style="color:rgba(255,255,255,0.8); font-size:15px; margin-bottom:30px; font-weight:bold;">Captain Tactical App</p>
+            <h1 style="color:white; margin-bottom:5px; font-size:38px; letter-spacing:3px;">AXON</h1>
+            <p style="color:rgba(255,255,255,0.8); font-size:16px; margin-bottom:35px; font-weight:800;">Captain Tactical App</p>
             <input type="email" id="cUser" placeholder="البريد الإلكتروني (الإيميل كامل)">
             
             <div class="pass-wrapper">
@@ -208,18 +217,18 @@
                 <input type="file" id="profilePicInput" accept="image/*" style="display:none;" onchange="window.uploadProfilePic(event)">
                 <div class="avatar" id="cInitials" onclick="document.getElementById('profilePicInput').click()" title="اضغط لتغيير صورتك الشخصية">
                     AX
-                    <div class="avatar-overlay"><i class="fa-solid fa-camera" style="font-size:12px; color:white;"></i></div>
+                    <div class="avatar-overlay"><i class="fa-solid fa-camera" style="font-size:14px; color:white;"></i></div>
                 </div>
                 <div>
-                    <div style="font-size:12px; color:gray; font-weight:800; text-transform:uppercase;">كابتن أكسون</div>
-                    <div style="font-size:18px; font-weight:900; line-height:1.2; color:var(--dark-text);" id="cDisplayName">...</div>
+                    <div style="font-size:13px; color:gray; font-weight:900; text-transform:uppercase;">كابتن أكسون</div>
+                    <div style="font-size:20px; font-weight:900; line-height:1.2; color:var(--dark-text);" id="cDisplayName">...</div>
                     <div class="c-stars" id="cStars"></div>
                 </div>
             </div>
-            <div style="display:flex; gap:12px; align-items:center;">
+            <div style="display:flex; gap:15px; align-items:center;">
                 <button id="installPwaBtn"><i class="fa-solid fa-download"></i> تثبيت</button>
-                <button onclick="window.toggleTheme()" style="background:none; border:none; color:var(--primary-blue); font-size:24px; transition:0.3s;"><i class="fa-solid fa-moon"></i></button>
-                <button onclick="window.logout()" style="background:none; border:none; color:var(--primary-red); font-size:22px; transition:0.3s;"><i class="fa-solid fa-power-off"></i></button>
+                <button onclick="window.toggleTheme()" style="background:none; border:none; color:var(--primary-blue); font-size:26px; transition:0.3s; cursor:pointer;"><i class="fa-solid fa-moon"></i></button>
+                <button onclick="window.logout()" style="background:none; border:none; color:var(--primary-red); font-size:24px; transition:0.3s; cursor:pointer;"><i class="fa-solid fa-power-off"></i></button>
             </div>
         </div>
 
@@ -232,23 +241,23 @@
         </div>
 
         <div id="radarTab" class="page-tab active">
-            <h3 style="margin-bottom:20px; color:var(--primary-blue); font-size:17px; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-satellite-dish fa-beat"></i> القريب منك (الرادار)</h3>
+            <h3 style="margin-bottom:20px; color:var(--primary-blue); font-size:18px; font-weight:900; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-satellite-dish fa-beat"></i> القريب منك (الرادار)</h3>
             <div id="radarList">
-                <p style="text-align:center; color:#9CA3AF; margin-top:40px; font-weight:bold; font-size:15px;">الرادار مغلق.. ابدأ الوردية يا بطل.</p>
+                <div style='text-align:center; margin-top:60px;'><i class='fa-solid fa-satellite-dish fa-4x' style='color:#E2E8F0; margin-bottom:20px;'></i><p style='color:#94A3B8; font-weight:800; font-size:17px;'>الرادار مغلق.. ابدأ الوردية يا بطل.</p></div>
             </div>
         </div>
 
         <div id="myTasksTab" class="page-tab">
-            <h3 style="margin-bottom:20px; color:var(--primary-blue); font-size:17px; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-motorcycle"></i> مهامي الحالية (مخطوفة)</h3>
+            <h3 style="margin-bottom:20px; color:var(--primary-blue); font-size:18px; font-weight:900; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-motorcycle"></i> مهامي الحالية (مخطوفة)</h3>
             <div id="myTaskList">
-                <p style="text-align:center; color:#9CA3AF; margin-top:40px; font-weight:bold; font-size:15px;">لا يوجد مهام رادار نشطة</p>
+                <div style='text-align:center; margin-top:60px;'><i class='fa-solid fa-motorcycle fa-4x' style='color:#E2E8F0; margin-bottom:20px;'></i><p style='color:#94A3B8; font-weight:800; font-size:17px;'>لا يوجد مهام رادار نشطة</p></div>
             </div>
         </div>
 
         <div id="manifestTab" class="page-tab">
-            <h3 style="margin-bottom:20px; color:var(--primary-blue); font-size:17px; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-file-invoice"></i> عهدة البوالص (المانيفست)</h3>
+            <h3 style="margin-bottom:20px; color:var(--primary-blue); font-size:18px; font-weight:900; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-file-invoice"></i> عهدة البوالص (المانيفست)</h3>
             <div id="manifestList">
-                <p style="text-align:center; color:#9CA3AF; margin-top:40px; font-weight:bold; font-size:15px;">لم يتم تعيين بوالص لك اليوم.</p>
+                <div style='text-align:center; margin-top:60px;'><i class='fa-solid fa-clipboard-check fa-4x' style='color:#E2E8F0; margin-bottom:20px;'></i><p style='color:#94A3B8; font-weight:800; font-size:17px;'>لم يتم تعيين بوالص لك اليوم.</p></div>
             </div>
         </div>
 
@@ -270,6 +279,7 @@
         </div>
     </div>
 
+    <!-- الأصوات -->
     <audio id="alertSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
     <audio id="msgSound" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3" preload="auto"></audio>
 
@@ -278,19 +288,19 @@
     </div>
 
     <div id="chatModal" class="modal">
-        <div class="modal-content" style="height: 88vh; padding:20px; background:var(--bg-color);">
-            <button class="close-btn" onclick="window.closeChatModal()"><i class="fa-solid fa-xmark"></i></button>
-            <h3 style="color:var(--primary-blue); margin-top:10px; border-bottom:2px solid var(--primary-red); padding-bottom:15px; text-align:center; font-size:18px;">
-                <i class="fa-solid fa-comments"></i> محادثة بخصوص الطرد
+        <div class="modal-content" style="height: 85vh; padding:25px 20px; background:var(--bg-color);">
+            <button class="close-btn" onclick="window.closeChatModal()"><i class="fa-solid fa-chevron-down"></i></button>
+            <h3 style="color:var(--primary-blue); margin-top:0; border-bottom:2px solid rgba(0,0,0,0.05); padding-bottom:20px; text-align:center; font-size:20px; font-weight:900;">
+                <i class="fa-solid fa-comments"></i> مركز الدعم
             </h3>
             
-            <div id="callMerchantBtnArea" style="margin-bottom: 15px;"></div>
+            <div id="callMerchantBtnArea" style="margin-bottom: 20px;"></div>
 
-            <div style="background: var(--white); border-radius: 20px; border: 1px solid rgba(0,0,0,0.05); display: flex; flex-direction: column; flex: 1; overflow: hidden; box-shadow:var(--soft-shadow);">
-                <div id="chatBoxCourier" style="flex: 1; padding: 15px; overflow-y: auto; display: block; background:var(--bg-color);"></div>
-                <div style="display: flex; border-top: 1px solid rgba(0,0,0,0.05); padding: 12px; background: var(--white);">
-                    <input type="text" id="chatInputCourier" placeholder="اكتب رسالتك هنا..." style="flex: 1; padding: 15px; border: 1px solid #E5E7EB; border-radius: 15px; font-family: 'Cairo'; outline: none; font-weight:bold; font-size:14px; background:#F9FAFB;">
-                    <button onclick="window.sendChatMessage()" style="background: #10B981; color: white; border: none; padding: 0 25px; border-radius: 15px; margin-right: 10px; font-family: 'Cairo'; font-weight: bold; cursor: pointer; font-size:18px; transition:0.3s; box-shadow: 0 4px 10px rgba(16,185,129,0.3);"><i class="fa-solid fa-paper-plane"></i></button>
+            <div style="background: var(--white); border-radius: var(--uber-radius); border: 1px solid rgba(0,0,0,0.03); display: flex; flex-direction: column; flex: 1; overflow: hidden; box-shadow:var(--soft-shadow);">
+                <div id="chatBoxCourier" style="flex: 1; padding: 20px; overflow-y: auto; display: block; background:var(--bg-color);"></div>
+                <div style="display: flex; border-top: 1px solid rgba(0,0,0,0.03); padding: 15px; background: var(--white);">
+                    <input type="text" id="chatInputCourier" placeholder="اكتب رسالتك هنا..." style="flex: 1; padding: 16px; border: 1px solid #E2E8F0; border-radius: 18px; font-family: 'Cairo'; outline: none; font-weight:700; font-size:15px; background:#F8FAFC;">
+                    <button onclick="window.sendChatMessage()" style="background: linear-gradient(135deg, #10B981, #059669); color: white; border: none; padding: 0 25px; border-radius: 18px; margin-right: 12px; font-family: 'Cairo'; font-weight: 900; cursor: pointer; font-size:20px; transition:0.3s; box-shadow: 0 8px 15px rgba(16,185,129,0.3);"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
         </div>
@@ -299,7 +309,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, doc, updateDoc, getDoc, query, where, or, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, doc, updateDoc, getDoc, setDoc, addDoc, query, where, or, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         
         const app = initializeApp({
             apiKey: "AIzaSyBuGdQQZ2lDu73W7wP3na45rlhiMXjaqGw",
@@ -313,7 +323,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         
-        // --- تعريف المتغيرات لتجنب أي Reference Error ---
+        // --- تعريف المتغيرات بوضوح تام لتجنب أي Reference Error ---
         window.currentCaptain = ""; 
         window.currentCaptainId = ""; 
         window.isOnline = false; 
@@ -328,9 +338,50 @@
         window.chatUnsubscribe = null;
         window.currentChatOrderId = "";
         window.currentChatMerchant = "";
+        window.livePricesCache = {}; // تعريف الكاش الخاص بالأسعار
         
         const publicIP = "مستخدم تطبيق الكابتن";
         const publicDeviceInfo = navigator.userAgent.substring(0, 50) + "...";
+
+        const governorates = ["القاهرة", "الجيزة", "الإسكندرية", "الدقهلية", "الغربية", "المنوفية", "الشرقية", "القليوبية", "البحيرة", "كفر الشيخ", "دمياط", "الإسماعيلية", "بورسعيد", "السويس", "مرسى مطروح", "شمال سيناء", "جنوب سيناء", "البحر الأحمر", "الفيوم", "بني سويف", "المنيا", "أسيوط", "سوهاج", "قنا", "الأقصر", "أسوان", "الوادي الجديد"];
+        const extraZonesList = [
+            "القاهرة - مدينة نصر", "القاهرة - مصر الجديدة", "القاهرة - التجمع الأول", "القاهرة - التجمع الثالث", "القاهرة - التجمع الخامس", "القاهرة - الرحاب", "القاهرة - مدينتي", "القاهرة - الشروق", "القاهرة - بدر", "القاهرة - العاصمة الإدارية", "القاهرة - المعادي", "القاهرة - زهراء المعادي", "القاهرة - حلوان", "القاهرة - المرج", "القاهرة - السلام", "القاهرة - عين شمس", "القاهرة - المطرية", "القاهرة - شبرا", "القاهرة - الزيتون", "القاهرة - وسط البلد", "القاهرة - جاردن سيتي", "القاهرة - مدينة بدر الصناعية", "القاهرة - 15 مايو", "القاهرة - القطامية",
+            "الجيزة - الدقي", "الجيزة - المهندسين", "الجيزة - العجوزة", "الجيزة - الهرم", "الجيزة - فيصل", "الجيزة - بولاق الدكرور", "الجيزة - الطالبية", "الجيزة - إمبابة", "الجيزة - الوراق", "الجيزة - 6 أكتوبر", "الجيزة - حدائق أكتوبر", "الجيزة - الشيخ زايد", "الجيزة - أكتوبر الجديدة", "الجيزة - الواحات", "الجيزة - الصف", "الجيزة - أطفيح", "الجيزة - كرداسة", "الجيزة - أبو النمرس", "الجيزة - منشأة القناطر",
+            "الإسكندرية - سيدي جابر", "الإسكندرية - سموحة", "الإسكندرية - سبورتنج", "الإسكندرية - ميامي", "الإسكندرية - المنتزه", "الإسكندرية - العصافرة", "الإسكندرية - جليم", "الإسكندرية - لوران", "الإسكندرية - محرم بك", "الإسكندرية - كرموز", "الإسكندرية - العجمي", "الإسكندرية - البيطاش", "الإسكندرية - الهانوفيل", "الإسكندرية - العامرية", "الإسكندرية - برج العرب", "الإسكندرية - برج العرب الجديدة", "الإسكندرية - الكينج مريوط",
+            "القليوبية - شبرا الخيمة", "القليوبية - بنها", "القليوبية - قليوب", "القليوبية - القناطر الخيرية", "القليوبية - الخانكة", "القليوبية - العبور", "القليوبية - الخصوص", "القليوبية - شبين القناطر", "القليوبية - طوخ", "القليوبية - كفر شكر",
+            "الشرقية - الزقازيق", "الشرقية - العاشر من رمضان", "الشرقية - بلبيس", "الشرقية - أبو حماد", "الشرقية - منيا القمح", "الشرقية - فاقوس", "الشرقية - الحسينية", "الشرقية - ههيا", "الشرقية - مشتول السوق", "الشرقية - الصالحية الجديدة",
+            "الدقهلية - المنصورة", "الدقهلية - طلخا", "الدقهلية - ميت غمر", "الدقهلية - دكرنس", "الدقهلية - بلقاس", "الدقهلية - المنزلة", "الدقهلية - الجمالية", "الدقهلية - المطرية", "الدقهلية - شربين",
+            "الغربية - طنطا", "الغربية - المحلة الكبرى", "الغربية - زفتى", "الغربية - كفر الزيات", "الغربية - بسيون", "الغربية - سمنود", "الغربية - قطور",
+            "المنوفية - شبين الكوم", "المنوفية - السادات", "المنوفية - منوف", "المنوفية - قويسنا", "المنوفية - أشمون", "المنوفية - الباجور", "المنوفية - بركة السبع", "المنوفية - تلا",
+            "البحيرة - دمنهور", "البحيرة - كفر الدوار", "البحيرة - رشيد", "البحيرة - إدكو", "البحيرة - أبو حمص", "البحيرة - أبو المطامير", "البحيرة - وادي النطرون", "البحيرة - النوبارية",
+            "كفر الشيخ - دسوق", "كفر الشيخ - بيلا", "كفر الشيخ - الحامول", "كفر الشيخ - بلطيم", "كفر الشيخ - البرلس", "كفر الشيخ - مطوبس",
+            "دمياط - دمياط الجديدة", "دمياط - رأس البر", "دمياط - عزبة البرج", "دمياط - فارسكور", "دمياط - كفر سعد",
+            "الإسماعيلية - فايد", "الإسماعيلية - التل الكبير", "الإسماعيلية - القنطرة غرب", "الإسماعيلية - القنطرة شرق",
+            "بورسعيد - بورفؤاد", "بورسعيد - جنوب بورسعيد",
+            "السويس - فيصل", "السويس - عتاقة", "السويس - العين السخنة", "السويس - الجلالة",
+            "مطروح - الحمام", "مطروح - العلمين", "مطروح - العلمين الجديدة", "مطروح - مارينا", "مطروح - سيدي عبد الرحمن", "مطروح - الساحل الشمالي", "مطروح - الضبعة", "مطروح - النجيلة", "مطروح - سيوة", "مطروح - السلوم",
+            "شمال سيناء - العريش", "شمال سيناء - بئر العبد", "شمال سيناء - الشيخ زويد", "شمال سيناء - رفح",
+            "جنوب سيناء - شرم الشيخ", "جنوب سيناء - دهب", "جنوب سيناء - نويبع", "جنوب سيناء - طابا", "جنوب سيناء - الطور", "جنوب سيناء - سانت كاترين",
+            "البحر الأحمر - الغردقة", "البحر الأحمر - الجونة", "البحر الأحمر - سفاجا", "البحر الأحمر - القصير", "البحر الأحمر - مرسى علم", "البحر الأحمر - رأس غارب",
+            "الفيوم - سنورس", "الفيوم - إبشواي", "الفيوم - يوسف الصديق",
+            "بني سويف - الواسطي", "بني سويف - الفشن", "بني سويف - ببا", "بني سويف - سمسطا",
+            "المنيا - ملوي", "المنيا - سمالوط", "المنيا - بني مزار", "المنيا - مغاغة", "المنيا - أبو قرقاص",
+            "أسيوط - ديروط", "أسيوط - منفلوط", "أسيوط - القوصية", "أسيوط - أبنوب", "أسيوط - ساحل سليم",
+            "سوهاج - جرجا", "سوهاج - طهطا", "سوهاج - أخميم", "سوهاج - البلينا", "سوهاج - المنشأة",
+            "قنا - نجع حمادي", "قنا - قوص", "قنا - دشنا", "قنا - الوقف",
+            "الأقصر - إسنا", "الأقصر - أرمنت", "الأقصر - القرنة",
+            "أسوان - كوم أمبو", "أسوان - إدفو", "أسوان - دراو", "أسوان - أبو سمبل",
+            "الوادي الجديد - الخارجة", "الوادي الجديد - الداخلة", "الوادي الجديد - الفرافرة", "الوادي الجديد - باريس"
+        ];
+
+        // --- دالة تحميل الأسعار لحساب الشحن بدقة للتاجر ---
+        function loadLivePrices() {
+            onSnapshot(doc(db, "settings", "shipping_prices"), (snap) => {
+                if(snap.exists()) {
+                    window.livePricesCache = snap.data();
+                }
+            });
+        }
 
         window.togglePassword = () => {
             const passInput = document.getElementById('cPass');
@@ -405,6 +456,7 @@
                         document.getElementById('cDisplayName').innerText = window.currentCaptain;
                         resetLoginBtn();
                         
+                        loadLivePrices(); // 🚀 استدعاء دالة التسعير التي كانت مفقودة وتسبب توقف الكود
                         startGlobalChatListener();
                         loadManifest(); 
                     } else {
@@ -524,7 +576,7 @@
                         `;
                     }
                 });
-                document.getElementById('manifestList').innerHTML = html || "<div style='text-align:center; margin-top:40px;'><i class='fa-solid fa-clipboard-check fa-3x' style='color:#E5E7EB; margin-bottom:15px;'></i><p style='color:#9CA3AF; font-weight:bold; font-size:16px;'>لا يوجد عهدة بوالص مفتوحة.</p></div>";
+                document.getElementById('manifestList').innerHTML = html || "<div style='text-align:center; margin-top:60px;'><i class='fa-solid fa-clipboard-check fa-4x' style='color:#E2E8F0; margin-bottom:20px;'></i><p style='color:#94A3B8; font-weight:800; font-size:17px;'>لم يتم تعيين بوالص لك اليوم.</p></div>";
                 const badge = document.getElementById('manifestBadge');
                 if(count > 0) { badge.style.display = 'flex'; badge.innerText = count; } else { badge.style.display = 'none'; }
             });
@@ -545,6 +597,7 @@
                             distVal = parseFloat(calculateDistance(window.lat, window.lng, parseFloat(match[1]), parseFloat(match[2])));
                             distance = distVal + " كم";
                             
+                            // ---- التنبيه الراداري الذكي ----
                             if(distVal < 5 && !window.notifiedTasks.has(id) && d.status === "جاري البحث عن مندوب" && !window.ignored.has(id)) {
                                 window.notifiedTasks.add(id); 
                                 newAlert = true;
@@ -569,7 +622,8 @@
                         availableOrders.push(window.globalOrdersData[id]);
                     }
 
-                    if(d.status === "تم الاستلام بواسطة المندوب" && d.courierName === window.currentCaptain){
+                    // هنا بنضمن إن المهام الخاصة بالكابتن ده تحديداً تظهر بدقة
+                    if(d.status === "تم الاستلام بواسطة المندوب" && (d.courierName === window.currentCaptain || d.courierId === window.currentCaptainId)){
                         myTasksCount++;
                         let unread = window.unreadMessagesByOrder[id] || 0;
                         let badgeDisplay = unread > 0 ? 'flex' : 'none';
@@ -591,6 +645,7 @@
                     }
                 });
                 
+                // تشغيل الصوت في حالة أوردر قريب
                 if (newAlert && window.isOnline) {
                     const alertSnd = document.getElementById('alertSound');
                     alertSnd.currentTime = 0;
@@ -606,12 +661,13 @@
                     });
                 }
 
+                // ترتيب ذكي حسب الأقرب
                 availableOrders.sort((a,b) => (a.distVal||999) - (b.distVal||999));
                 
                 availableOrders.forEach(o => {
                     radarHtml += `
                         <div class="compact-card" style="border-right-color: ${o.typeColor};" onclick="window.openOrderDetails('${o.id}', 'radar')">
-                            <div class="card-icon" style="color:${o.typeColor};"><i class="fa-solid ${o.typeIcon}"></i></div>
+                            <div class="card-icon" style="background:${o.typeBg}; color:${o.typeColor};"><i class="fa-solid ${o.typeIcon}"></i></div>
                             <div class="card-info">
                                 <h4 class="card-title">${o.merchantEmail.split('@')[0]} <span class="card-dist">${o.distance}</span></h4>
                                 <p class="card-sub">${o.details}</p>
@@ -622,13 +678,84 @@
                     `;
                 });
 
-                document.getElementById('radarList').innerHTML = window.isOnline ? (radarHtml || "<div style='text-align:center; margin-top:40px;'><i class='fa-solid fa-satellite-dish fa-3x' style='color:#E5E7EB; margin-bottom:15px;'></i><p style='color:#9CA3AF; font-weight:bold; font-size:16px;'>الرادار خالي.. جاري البحث</p></div>") : "<div style='text-align:center; margin-top:40px;'><i class='fa-solid fa-power-off fa-3x' style='color:#E5E7EB; margin-bottom:15px;'></i><p style='color:#9CA3AF; font-weight:bold; font-size:16px;'>الرادار في وضع السكون.</p></div>";
-                document.getElementById('myTaskList').innerHTML = myTasksHtml || "<div style='text-align:center; margin-top:40px;'><i class='fa-solid fa-motorcycle fa-3x' style='color:#E5E7EB; margin-bottom:15px;'></i><p style='color:#9CA3AF; font-weight:bold; font-size:16px;'>لا توجد مهام مخطوفة</p></div>";
+                document.getElementById('radarList').innerHTML = window.isOnline ? (radarHtml || "<div style='text-align:center; margin-top:60px;'><i class='fa-solid fa-satellite-dish fa-4x' style='color:#E2E8F0; margin-bottom:20px;'></i><p style='color:#94A3B8; font-weight:800; font-size:17px;'>الرادار خالي.. جاري البحث</p></div>") : "<div style='text-align:center; margin-top:60px;'><i class='fa-solid fa-power-off fa-4x' style='color:#E2E8F0; margin-bottom:20px;'></i><p style='color:#94A3B8; font-weight:800; font-size:17px;'>الرادار في وضع السكون.</p></div>";
+                document.getElementById('myTaskList').innerHTML = myTasksHtml || "<div style='text-align:center; margin-top:60px;'><i class='fa-solid fa-motorcycle fa-4x' style='color:#E2E8F0; margin-bottom:20px;'></i><p style='color:#94A3B8; font-weight:800; font-size:17px;'>لا توجد مهام مخطوفة</p></div>";
                 
                 const badge = document.getElementById('tasksBadge');
                 if(myTasksCount > 0) { badge.style.display = 'flex'; badge.innerText = myTasksCount; } else { badge.style.display = 'none'; }
             });
         }
+
+        function normalizeArabic(text) {
+            if (!text) return "";
+            return text.trim().replace(/\s+/g, ' ').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/[ىي]/g, 'ي'); 
+        }
+
+        // دالة حساب سعر الشحن
+        function getRealShippingCost(cityName) {
+            if(!cityName) return 85; 
+            let normalizedInput = normalizeArabic(cityName);
+            
+            for (let zone of extraZonesList) {
+                let parts = zone.split('-');
+                let normalizedZone = normalizeArabic(zone);
+                let subCityName = normalizeArabic(parts[1] || ""); 
+                if (normalizedZone === normalizedInput || (subCityName && normalizedInput.includes(subCityName))) {
+                    let parentGov = parts[0].trim();
+                    let basePrice = Number(window.livePricesCache[parentGov]) || 85;
+                    let extraFee = Number(window.livePricesCache[zone]) || 0;
+                    return basePrice + extraFee; 
+                }
+            }
+            for (let gov of governorates) {
+                let normalizedGov = normalizeArabic(gov);
+                if (normalizedInput.includes(normalizedGov) || normalizedGov.includes(normalizedInput)) {
+                    return Number(window.livePricesCache[gov]) || 85;
+                }
+            }
+            return 85; 
+        }
+
+        // 🚀 إصلاح دالة قبول وخطف المهمة 🚀
+        window.claimOrder = async (id, linkedShipmentId) => {
+            const btn = document.querySelector('.btn-claim');
+            if(btn) { btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الخطف...'; btn.disabled = true; }
+            
+            try {
+                const taskRef = doc(db, "eshteryly_orders", id);
+                await updateDoc(taskRef, { 
+                    status: "تم الاستلام بواسطة المندوب", 
+                    courierName: window.currentCaptain, 
+                    courierId: window.currentCaptainId 
+                });
+                
+                if(linkedShipmentId && linkedShipmentId.trim() !== '') {
+                    const shipmentRef = doc(db, "shipments", linkedShipmentId);
+                    const shipmentSnap = await getDoc(shipmentRef);
+                    if(shipmentSnap.exists()) {
+                        const shipmentData = shipmentSnap.data();
+                        let shippingCost = shipmentData.realShippingCost;
+                        if(!shippingCost && shipmentData.city) {
+                            shippingCost = getRealShippingCost(shipmentData.city);
+                            await updateDoc(shipmentRef, { realShippingCost: shippingCost });
+                        }
+                        await updateDoc(shipmentRef, { 
+                            status: "مع المندوب",
+                            courierName: window.currentCaptain
+                        });
+                    }
+                }
+                
+                document.getElementById('orderDetailsModal').style.display = 'none';
+                Swal.fire({toast:true, position:'top', icon:'success', title:'تم خطف المهمة بنجاح 🚀', showConfirmButton:false, timer:2000});
+                window.switchTab('myTasksTab', document.querySelectorAll('.nav-item')[1]);
+                
+            } catch(e) { 
+                console.error(e);
+                Swal.fire('خطأ', 'فشلت العملية، تأكد من الاتصال أو قد تكون المهمة اتخطفت!', 'error'); 
+            }
+            if(btn) { btn.innerHTML = '<i class="fa-solid fa-rocket"></i> قبول وخطف المهمة'; btn.disabled = false; }
+        };
 
         window.openOrderDetails = (id, source) => {
             const data = window.globalOrdersData[id];
@@ -639,38 +766,37 @@
             let phoneForWa = (data.phone || "").replace(/^0/, '20'); 
             let waMessage = encodeURIComponent(`مرحباً، معك كابتن أكسون إكسبريس. أنا في طريقي إليك لتسليم الشحنة، يرجى الاستعداد واستلامها لتوفير وقتك. شكراً لتعاونك.`);
             let waBtnHtml = `<button class="btn-u" style="background:#25D366; color:white; grid-column: span 2;" onclick="window.open('https://wa.me/${phoneForWa}?text=${waMessage}', '_blank')"><i class="fa-brands fa-whatsapp" style="font-size:20px;"></i> رسالة "أنا في الطريق"</button>`;
-
             let callBtnHtml = `<button class="btn-u" style="background:#3B82F6; color:white;" onclick="window.location.href='tel:${data.phone}'"><i class="fa-solid fa-phone"></i> اتصال بالعميل</button>`;
 
             let contentHtml = `
                 <button class="close-btn" onclick="document.getElementById('orderDetailsModal').style.display='none'"><i class="fa-solid fa-chevron-down"></i></button>
-                <div style="text-align:center; margin-bottom:25px; padding-top:35px;">
-                    <div style="background:${data.typeColor || 'var(--primary-blue)'}; color:white; width:80px; height:80px; border-radius:25px; display:flex; align-items:center; justify-content:center; font-size:35px; margin:0 auto 15px auto; box-shadow:0 10px 20px rgba(0,0,0,0.15);"><i class="fa-solid ${data.typeIcon || 'fa-box-open'}"></i></div>
-                    <h2 style="margin:0; color:var(--dark-text); font-size:24px; font-weight:900;">${data.merchantEmail.split('@')[0]}</h2>
-                    <div style="font-size:28px; font-weight:900; color:var(--primary-red); margin-top:8px;">${data.amount || data.codText} ${source === 'manifest' ? 'ج.م' : ''}</div>
+                <div style="text-align:center; margin-bottom:25px; padding-top:20px;">
+                    <div style="background:${data.typeColor || 'var(--primary-blue)'}; color:white; width:85px; height:85px; border-radius:28px; display:flex; align-items:center; justify-content:center; font-size:38px; margin:0 auto 20px auto; box-shadow:0 15px 30px rgba(0,0,0,0.15);"><i class="fa-solid ${data.typeIcon || 'fa-box-open'}"></i></div>
+                    <h2 style="margin:0; color:var(--dark-text); font-size:26px; font-weight:900;">${data.merchantEmail.split('@')[0]}</h2>
+                    <div style="font-size:30px; font-weight:900; color:var(--primary-red); margin-top:8px;">${data.amount || data.codText} ${source === 'manifest' ? 'ج.م' : ''}</div>
                 </div>
             `;
             if(source === 'radar') {
-                let isMine = data.status === "تم الاستلام بواسطة المندوب" && data.courierName === window.currentCaptain;
+                let isMine = data.status === "تم الاستلام بواسطة المندوب" && (data.courierName === window.currentCaptain || data.courierId === window.currentCaptainId);
                 contentHtml += `
-                    <div class="detail-box"><b style="color:var(--primary-blue); font-size:15px;"><i class="fa-solid fa-circle-info"></i> التفاصيل الدقيقة:</b><br><span style="color:#4B5563; display:block; margin-top:8px; font-weight:600; line-height:1.6;">${data.details}</span></div>
-                    <div class="detail-box"><b style="color:var(--primary-blue); font-size:15px;"><i class="fa-solid fa-location-dot"></i> موقع الاستلام/التسليم:</b><br><span style="color:#4B5563; display:block; margin-top:8px; font-weight:600; line-height:1.6;">${data.address}</span></div>
+                    <div class="detail-box"><b style="color:var(--primary-blue); font-size:16px;"><i class="fa-solid fa-circle-info"></i> التفاصيل الدقيقة:</b><br><span style="color:#475569; display:block; margin-top:8px; font-weight:700; line-height:1.6; font-size:15px;">${data.details}</span></div>
+                    <div class="detail-box"><b style="color:var(--primary-blue); font-size:16px;"><i class="fa-solid fa-location-dot"></i> موقع الاستلام/التسليم:</b><br><span style="color:#475569; display:block; margin-top:8px; font-weight:700; line-height:1.6; font-size:15px;">${data.address}</span></div>
                 `;
                 if(!isMine) {
                     contentHtml += `<div class="btn-grid"><button class="btn-u btn-claim" onclick="window.claimOrder('${id}', '${data.linkedShipmentId || ''}')"><i class="fa-solid fa-rocket"></i> قبول وخطف المهمة</button><button class="btn-u btn-ignore" style="grid-column: span 2;" onclick="window.ignoreOrder('${id}')">تجاهل الإشعار</button></div>`;
                 } else {
-                    contentHtml += `<div class="btn-grid"><button class="btn-u btn-nav" onclick="window.openNativeMap('${encodeURIComponent(data.address)}')"><i class="fa-solid fa-location-arrow"></i> خرائط الملاحة</button><button class="btn-u btn-contact" onclick="window.openChatModal('${data.merchantEmail}', '${id}')"><i class="fa-solid fa-comments"></i> محادثة الإدارة <span class="chat-notification-badge" id="badge-${id}" style="display:${badgeDisplay};">${unreadCount}</span></button><button class="btn-u btn-done" onclick="window.completeTask('${id}', '${data.linkedShipmentId || ''}', 'radar')"><i class="fa-solid fa-check-double"></i> إنهاء التسليم بنجاح</button></div>`;
+                    contentHtml += `<div class="btn-grid"><button class="btn-u btn-nav" onclick="window.openNativeMap('${encodeURIComponent(data.address)}')"><i class="fa-solid fa-location-arrow"></i> الملاحة</button><button class="btn-u btn-contact" onclick="window.openChatModal('${data.merchantEmail}', '${id}')"><i class="fa-solid fa-comments"></i> الإدارة <span class="chat-notification-badge" id="badge-${id}" style="display:${badgeDisplay};">${unreadCount}</span></button><button class="btn-u btn-done" onclick="window.completeTask('${id}', '${data.linkedShipmentId || ''}', 'radar')"><i class="fa-solid fa-check-double"></i> إنهاء التسليم بنجاح</button></div>`;
                 }
             } else if (source === 'manifest') {
                 contentHtml += `
-                    <div class="detail-box"><div style="margin-bottom:12px;"><b><i class="fa-solid fa-user" style="color:var(--primary-blue); width:20px;"></i> المستلم:</b> <span style="color:#4B5563; font-weight:700;">${data.name}</span></div><div style="margin-bottom:12px;"><b><i class="fa-solid fa-phone" style="color:var(--primary-blue); width:20px;"></i> التليفون:</b> <span dir="ltr" style="font-weight:900; color:var(--primary-red); font-size:16px;">${data.phone}</span></div><div><b><i class="fa-solid fa-store" style="color:var(--primary-blue); width:20px;"></i> التاجر:</b> <span style="color:#4B5563; font-weight:700;">${data.merchantEmail.split('@')[0]}</span></div></div>
-                    <div class="detail-box"><b style="font-size:15px; color:var(--primary-blue);"><i class="fa-solid fa-location-dot"></i> العنوان بالتفصيل:</b><br><span style="color:#4B5563; display:block; margin-top:8px; font-weight:600; line-height:1.6;">${data.city} - ${data.address}</span></div>
+                    <div class="detail-box"><div style="margin-bottom:12px; font-size:15px;"><b><i class="fa-solid fa-user" style="color:var(--primary-blue); width:20px;"></i> المستلم:</b> <span style="color:#475569; font-weight:800;">${data.name}</span></div><div style="margin-bottom:12px; font-size:15px;"><b><i class="fa-solid fa-phone" style="color:var(--primary-blue); width:20px;"></i> التليفون:</b> <span dir="ltr" style="font-weight:900; color:var(--primary-red); font-size:17px;">${data.phone}</span></div><div style="font-size:15px;"><b><i class="fa-solid fa-store" style="color:var(--primary-blue); width:20px;"></i> التاجر:</b> <span style="color:#475569; font-weight:800;">${data.merchantEmail.split('@')[0]}</span></div></div>
+                    <div class="detail-box"><b style="font-size:16px; color:var(--primary-blue);"><i class="fa-solid fa-location-dot"></i> العنوان بالتفصيل:</b><br><span style="color:#475569; display:block; margin-top:8px; font-weight:700; line-height:1.6; font-size:15px;">${data.city} - ${data.address}</span></div>
                     <div class="btn-grid">
                         ${callBtnHtml}
-                        <button class="btn-u btn-nav" onclick="window.openNativeMap('${encodeURIComponent(data.city + ' ' + data.address)}')"><i class="fa-solid fa-location-arrow"></i> الملاحة للعنوان</button>
+                        <button class="btn-u btn-nav" onclick="window.openNativeMap('${encodeURIComponent(data.city + ' ' + data.address)}')"><i class="fa-solid fa-location-arrow"></i> الملاحة</button>
                         ${waBtnHtml}
-                        <button class="btn-u btn-contact" onclick="window.openChatModal('${data.merchantEmail}', '${id}')"><i class="fa-solid fa-comments"></i> محادثة الإدارة <span class="chat-notification-badge" id="badge-${id}" style="display:${badgeDisplay};">${unreadCount}</span></button>
-                        <button class="btn-u btn-done" onclick="window.completeTask('${id}', null, 'manifest')"><i class="fa-solid fa-check-double"></i> تم التسليم بنجاح</button>
+                        <button class="btn-u btn-contact" onclick="window.openChatModal('${data.merchantEmail}', '${id}')"><i class="fa-solid fa-comments"></i> الدعم <span class="chat-notification-badge" id="badge-${id}" style="display:${badgeDisplay};">${unreadCount}</span></button>
+                        <button class="btn-u btn-done" onclick="window.completeTask('${id}', null, 'manifest')"><i class="fa-solid fa-check-double"></i> تم التسليم</button>
                         <button class="btn-u btn-ignore" style="grid-column: span 2;" onclick="window.markReturn('${id}')"><i class="fa-solid fa-rotate-left"></i> محاولة فاشلة (تأجيل/مرتجع)</button>
                     </div>
                 `;
@@ -679,11 +805,72 @@
             document.getElementById('orderDetailsModal').style.display = 'flex';
         };
 
+        // إكمال التسليم مع مؤشر التحميل
+        window.completeTask = async (id, linkedShipmentId, source) => {
+            document.getElementById('orderDetailsModal').style.display = 'none';
+            const r = await Swal.fire({title:'تأكيد التسليم؟', text:'هل استلمت الكاش وتم تسليم الطرد؟', icon:'question', showCancelButton:true, confirmButtonText:'نعم ✅', cancelButtonText:'إلغاء', customClass: {confirmButton: 'btn-done', cancelButton: 'btn-ignore'}});
+            if(r.isConfirmed) {
+                Swal.fire({ title: 'جاري تسجيل التسليم...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                try {
+                    if(source === 'radar') {
+                        const taskRef = doc(db, "eshteryly_orders", id);
+                        await updateDoc(taskRef, { status: "تم التسليم بنجاح" });
+                        if(linkedShipmentId && linkedShipmentId.trim() !== '') {
+                            const shipmentRef = doc(db, "shipments", linkedShipmentId);
+                            const shipmentSnap = await getDoc(shipmentRef);
+                            if(shipmentSnap.exists()) {
+                                const shipmentData = shipmentSnap.data();
+                                let shippingCost = shipmentData.realShippingCost;
+                                if(!shippingCost) shippingCost = 85;
+                                const userQ = query(collection(db, "users"), where("email", "==", shipmentData.merchantEmail));
+                                const uSnap = await getDocs(userQ);
+                                if(!uSnap.empty) {
+                                    const profit = Number(shipmentData.amount) - shippingCost;
+                                    let docUpdates = { success_shipments: increment(1) };
+                                    if(profit > 0) docUpdates.lifetime_sales = increment(profit);
+                                    await updateDoc(uSnap.docs[0].ref, docUpdates);
+                                }
+                                await updateDoc(shipmentRef, { status: "تم التسليم", isAccounted: true, accountedAt: new Date() });
+                            }
+                        }
+                    } else if(source === 'manifest') {
+                        const shipmentRef = doc(db, "shipments", id);
+                        const shipmentSnap = await getDoc(shipmentRef);
+                        if(shipmentSnap.exists()) {
+                            const shipmentData = shipmentSnap.data();
+                            let shippingCost = shipmentData.realShippingCost;
+                            if(!shippingCost) shippingCost = 85;
+                            const userQ = query(collection(db, "users"), where("email", "==", shipmentData.merchantEmail));
+                            const uSnap = await getDocs(userQ);
+                            if(!uSnap.empty) {
+                                const profit = Number(shipmentData.amount) - shippingCost;
+                                let docUpdates = { success_shipments: increment(1) };
+                                if(profit > 0) docUpdates.lifetime_sales = increment(profit);
+                                await updateDoc(uSnap.docs[0].ref, docUpdates);
+                            }
+                            await updateDoc(shipmentRef, { status: "تم التسليم", isAccounted: true, accountedAt: new Date() });
+                        }
+                    }
+                    
+                    if (window.currentCaptainId) {
+                        try {
+                            const cRef = doc(db, "couriers", window.currentCaptainId);
+                            await updateDoc(cRef, { successfulDeliveries: increment(1) });
+                        } catch(e) {}
+                    }
+                    
+                    Swal.fire({toast:true, position:'top', icon:'success', title:'عاش يا بطل، تمت المهمة بنجاح! 🏆', showConfirmButton:false, timer:2000});
+                } catch(err) {
+                    Swal.fire('خطأ في الإكمال', err.message, 'error');
+                }
+            }
+        };
+
         window.markReturn = async (id) => {
             document.getElementById('orderDetailsModal').style.display = 'none';
             const r = await Swal.fire({title:'سبب عدم التسليم؟', input: 'select', inputOptions: {'مؤجل': 'مؤجل لليوم التالي', 'مرتجع': 'رفض الاستلام (مرتجع)'}, showCancelButton:true, confirmButtonText:'تأكيد السبب وحفظ الـ GPS'});
             if(r.isConfirmed && r.value) {
-                Swal.fire({title: 'جاري التحقق من موقعك...', allowOutsideClick:false, didOpen:()=>{Swal.showLoading()}});
+                Swal.fire({title: 'جاري التحقق من موقعك كإثبات للإدارة...', allowOutsideClick:false, didOpen:()=>{Swal.showLoading()}});
                 if(navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(async (pos) => {
                         const failLat = pos.coords.latitude;
@@ -695,8 +882,8 @@
                         });
                         Swal.fire({toast:true, position:'top', icon:'info', title:'تم إثبات الحالة بالموقع الفعلي وتحديثها لـ ' + r.value, showConfirmButton:false, timer:2500});
                     }, (err) => {
-                        Swal.fire('تنبيه أمني', 'يجب تفعيل خدمة الـ GPS لتأكيد المرتجع أو التأجيل كإثبات للإدارة.', 'error');
-                    }, { enableHighAccuracy: true, timeout: 5000 });
+                        Swal.fire('تنبيه أمني', 'يجب تفعيل خدمة الـ GPS لتأكيد المرتجع أو التأجيل كإثبات للإدارة بأنك ذهبت للعميل.', 'error');
+                    }, { enableHighAccuracy: true, timeout: 7000 });
                 } else {
                     Swal.fire('خطأ', 'جهازك لا يدعم الـ GPS.', 'error');
                 }
@@ -718,7 +905,7 @@
                 const pSnap = await getDoc(doc(db, "merchant_profiles", email));
                 if(pSnap.exists() && pSnap.data().businessPhone) {
                     phone = pSnap.data().businessPhone;
-                    callBtnHtml = `<button onclick="window.location.href='tel:${phone}'" style="width:100%; padding:15px; border-radius:15px; border:none; background:linear-gradient(135deg, #10B981, #059669); color:white; font-family:'Cairo'; font-weight:900; font-size:16px; box-shadow:0 5px 15px rgba(16,185,129,0.3); transition:0.3s;"><i class="fa-solid fa-phone"></i> اتصال بالتاجر: <span dir="ltr">${phone}</span></button>`;
+                    callBtnHtml = `<button onclick="window.location.href='tel:${phone}'" style="width:100%; padding:15px; border-radius:18px; border:none; background:linear-gradient(135deg, #10B981, #059669); color:white; font-family:'Cairo'; font-weight:900; font-size:16px; box-shadow:0 8px 20px rgba(16,185,129,0.3); transition:0.3s; margin-bottom: 10px;"><i class="fa-solid fa-phone"></i> اتصال بالتاجر: <span dir="ltr">${phone}</span></button>`;
                 }
             } catch(err) {}
             document.getElementById('callMerchantBtnArea').innerHTML = callBtnHtml;
@@ -739,11 +926,11 @@
                         let senderName = "التاجر";
                         if(m.from === window.currentCaptain) { msgClass = "chat-mine"; senderName = "أنت"; }
                         else if(m.from === "admin@axon.com" || m.from.includes('AXON')) { msgClass = "chat-admin"; senderName = "🚨 الإدارة العليا"; }
-                        html += `<div class="chat-bubble ${msgClass}"><b style="font-size:11px; opacity:0.7; display:block; margin-bottom:5px;">${senderName}</b>${m.message}</div>`;
+                        html += `<div class="chat-bubble ${msgClass}"><b style="font-size:12px; opacity:0.6; display:block; margin-bottom:5px;">${senderName}</b>${m.message}</div>`;
                     }
                 });
                 const chatBox = document.getElementById('chatBoxCourier');
-                chatBox.innerHTML = html || "<div style='text-align:center; color:#9CA3AF; margin-top:50px;'><i class='fa-solid fa-handshake fa-3x' style='margin-bottom:15px; color:#E5E7EB;'></i><br><span style='font-weight:bold; font-size:15px;'>ابدأ المحادثة بخصوص الطرد ده.</span></div>";
+                chatBox.innerHTML = html || "<div style='text-align:center; color:#94A3B8; margin-top:50px;'><i class='fa-solid fa-handshake fa-4x' style='margin-bottom:15px; color:#E2E8F0;'></i><br><span style='font-weight:800; font-size:16px;'>ابدأ المحادثة بخصوص الطرد ده.</span></div>";
                 setTimeout(() => chatBox.scrollTop = chatBox.scrollHeight, 100);
             });
         };
@@ -828,7 +1015,15 @@
         }
 
         window.logout = () => signOut(auth).then(() => window.location.reload());
-        window.toggleTheme = () => document.body.classList.toggle('dark-mode');
+        window.toggleTheme = () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('axon_captain_theme', isDark ? 'dark' : 'light');
+        };
+        
+        if(localStorage.getItem('axon_captain_theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
         
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
