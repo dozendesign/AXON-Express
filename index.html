@@ -458,11 +458,13 @@
         <div class="modal-content">
             <button onclick="document.getElementById('loginModal').style.display='none'" class="close-btn">✖</button>
             <h3 style="color:var(--primary-blue); border-bottom:2px solid var(--primary-red); padding-bottom:15px; margin-top:0;"><i class="fa-solid fa-fingerprint"></i> بوابة التحقق</h3>
-            <div class="input-group">
-                <input type="text" id="merchantEmail" placeholder="كود الدخول (البريد الإلكتروني)">
-                <input type="password" id="merchantPassword" placeholder="شفرة المرور (الباسورد)">
-            </div>
-            <button id="btnLogin" class="btn-service btn-main-action" style="width:100%; justify-content:center; margin-top:15px;" onclick="window.handleLogin()">دخول المحطة</button>
+            <form autocomplete="off" onsubmit="event.preventDefault();">
+                <div class="input-group">
+                    <input type="text" id="merchantEmail" placeholder="كود الدخول (البريد الإلكتروني)" autocomplete="off">
+                    <input type="password" id="merchantPassword" placeholder="شفرة المرور (الباسورد)" autocomplete="new-password">
+                </div>
+                <button type="button" id="btnLogin" class="btn-service btn-main-action" style="width:100%; justify-content:center; margin-top:15px;" onclick="window.handleLogin()">دخول المحطة</button>
+            </form>
         </div>
     </div>
 
